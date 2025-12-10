@@ -3,6 +3,8 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "verbatimModuleSyntax": false,
+    "allowImportingTsExtensions": false,
+    "moduleResolution": "node",
     "types": ["jest", "@testing-library/jest-dom", "node"]
   },
   "include": ["src/**/*", "src/types/**/*"]
