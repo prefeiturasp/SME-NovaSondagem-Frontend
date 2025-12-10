@@ -1,4 +1,4 @@
-FROM node:22-alpine AS build
+FROM node:22-slim AS build
 WORKDIR /app
 
 COPY package*.json ./
@@ -15,7 +15,6 @@ COPY --from=build /app/dist .
 COPY configuracoes/default.conf /etc/nginx/conf.d/default.conf
 
 COPY startup.sh /
-
 RUN chmod +x /startup.sh
 
 EXPOSE 80
