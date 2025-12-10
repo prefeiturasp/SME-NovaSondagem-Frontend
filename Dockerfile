@@ -1,6 +1,8 @@
 FROM node:22-slim AS build
 WORKDIR /app
 
+ENV ROLLUP_SKIP_NATIVE=1
+
 COPY package*.json ./
 RUN npm install
 
