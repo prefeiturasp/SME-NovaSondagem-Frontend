@@ -11,6 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:coverage:file": "jest --coverage --collectCoverageFrom",
     "test:jenkins": "yarn tsc --noEmit"
   },
   "dependencies": {

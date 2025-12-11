@@ -69,7 +69,7 @@ describe("Componente <Autenticacao />", () => {
         setUserLogged({
           token: "abc123",
           dataHoraExpiracao: futureDate,
-          tipoPerfil: "1",
+          tipoPerfil: 1,
         })
       );
     });

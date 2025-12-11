@@ -13,7 +13,16 @@ module.exports = {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
       {
-        tsconfig: './tsconfig.test.json',
+        tsconfig: {
+          jsx: 'react-jsx',
+          esModuleInterop: true,
+          verbatimModuleSyntax: false,
+          allowImportingTsExtensions: false,
+          moduleResolution: 'node',
+          module: 'esnext',
+          target: 'ES2022',
+          types: ['jest', '@testing-library/jest-dom', 'node', 'vite/client']
+        },
       },
     ],
     '^.+\\.(js|jsx)$': [
@@ -44,9 +53,7 @@ module.exports = {
     '!src/main.tsx',           // ignora entrada da aplicação
     '!src/App.tsx',            // ignora arquivo estrutural
     '!src/AppRoutes.tsx',      // ignora roteamento
-    '!src/redux/store.tsx',    // ignora configuração do Redux
     '!src/vite-env.d.ts',      // ignora env types
-    '!src/servicos.ts',        // ignora servicos (usa import.meta do Vite)
     '!__mocks__/**/*',         // ignora mocks
   ],
 
