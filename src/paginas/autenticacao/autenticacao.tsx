@@ -48,7 +48,7 @@ export default function Autenticacao() {
           setUserLogged({
             token: storedToken,
             dataHoraExpiracao: exp!,
-            tipoPerfil: perfil ? perfil : null,
+            tipoPerfil: perfil || null,
           })
         );
 
