@@ -38,17 +38,18 @@ module.exports = {
 
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
 
-  // ✔ Cobertura ajustada corretamente
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',          // ignora types
     '!src/main.tsx',           // ignora entrada da aplicação
     '!src/App.tsx',            // ignora arquivo estrutural
+    '!src/AppRoutes.tsx',      // ignora roteamento
+    '!src/redux/store.tsx',    // ignora configuração do Redux
     '!src/vite-env.d.ts',      // ignora env types
+    '!src/servicos.ts',        // ignora servicos (usa import.meta do Vite)
     '!__mocks__/**/*',         // ignora mocks
   ],
 
-  // ✔ Alternativa adicional: ignora por padrão
   coveragePathIgnorePatterns: [
     '<rootDir>/__mocks__/',
     '<rootDir>/src/main.tsx',

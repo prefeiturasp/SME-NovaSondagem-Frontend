@@ -1,84 +1,80 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { servicos } from "../../servicos";
 import { logout, setUserLogged } from "../../redux/slices/authSlice";
 
-const Autenticacao: React.FC = () => {
+const PERFIL_ROUTES: Record<number, string> = {
+  1: "/",
+  2: "/",
+  3: "/",
+  4: "/ues",
+  5: "/dres",
+};
+
+function getRouteByPerfil(tipoPerfil: number | null) {
+  return tipoPerfil ? PERFIL_ROUTES[tipoPerfil] ?? "/sem-acesso" : "/sem-acesso";
+}
+
+function isTokenValid(exp: string | null) {
+  if (!exp) return false;
+  return new Date(exp) > new Date();
+}
+
+export default function Autenticacao() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const codigo = searchParams.get("codigo");
-
   const isExecuting = useRef(false);
 
   useEffect(() => {
-    const verificarToken = async () => {
-      if (isExecuting.current) return;
-      isExecuting.current = true;
+    if (isExecuting.current) return;
+    isExecuting.current = true;
 
-      const storedToken = localStorage.getItem("authToken");
-      const dataHoraExpiracao = localStorage.getItem("authExpiresAt");
-      const tipoPerfil = localStorage.getItem("tipoPerfil");
-      const tipoPerfilNum = tipoPerfil ? Number(tipoPerfil) : null;
+    const storedToken = localStorage.getItem("authToken");
+    const exp = localStorage.getItem("authExpiresAt");
+    const perfil = Number(localStorage.getItem("tipoPerfil"));
 
-      if (storedToken && dataHoraExpiracao) {
-        const expiraEm = new Date(dataHoraExpiracao);
-        if (expiraEm > new Date()) {
-          dispatch(
-            setUserLogged({
-              token: storedToken,
-              dataHoraExpiracao: dataHoraExpiracao,
-              tipoPerfil: tipoPerfil,
-            })
-          );
+    async function autenticar() {
+      if (storedToken && isTokenValid(exp)) {
+        dispatch(
+          setUserLogged({
+            token: storedToken,
+            dataHoraExpiracao: exp!,
+            tipoPerfil: perfil.toString(),
+          })
+        );
 
-          if (
-            tipoPerfilNum === 1 ||
-            tipoPerfilNum === 2 ||
-            tipoPerfilNum === 3
-          ) {
-            navigate("/");
-          } else if (tipoPerfilNum === 4 || tipoPerfilNum === 5) {
-            navigate("/ues");
-          }
-
-          return;
-        } else {
-          dispatch(logout());
-        }
+        navigate(getRouteByPerfil(perfil));
+        return;
       }
 
-      if (codigo) {
-        try {
-          const resposta = await servicos.post("/api/v1/autenticacao/validar", {
-            codigo,
-          });
+      if (storedToken) dispatch(logout());
 
-          const { token, dataHoraExpiracao, tipoPerfil } = resposta;
+      if (!codigo) {
+        navigate("/sem-acesso");
+        return;
+      }
 
-          dispatch(setUserLogged({ token, dataHoraExpiracao, tipoPerfil }));
+      try {
+        const resposta = await servicos.post("/api/v1/autenticacao/validar", {
+          codigo,
+        });
 
-          if (tipoPerfil === 1 || tipoPerfil === 2 || tipoPerfil === 3) {
-            navigate("/");
-          } else if (tipoPerfil === 4) {
-            navigate("/ues");
-          } else if (tipoPerfil === 5) {
-            navigate("/dres");
-          }
-        } catch (error) {
-          console.error("Erro ao autenticar:", error);
-          navigate("/sem-acesso");
-        }
-      } else {
+        const { token, dataHoraExpiracao, tipoPerfil } = resposta;
+
+        dispatch(setUserLogged({ token, dataHoraExpiracao, tipoPerfil }));
+
+        navigate(getRouteByPerfil(tipoPerfil));
+      } catch (err) {
+        console.error("Erro ao autenticar:", err);
         navigate("/sem-acesso");
       }
-    };
+    }
 
-    verificarToken();
+    autenticar();
   }, [codigo, dispatch, navigate]);
 
   return <div>Autenticando...</div>;
-};
-
-export default Autenticacao;
+}
