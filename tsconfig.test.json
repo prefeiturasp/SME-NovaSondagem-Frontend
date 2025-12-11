@@ -5,7 +5,9 @@
     "verbatimModuleSyntax": false,
     "allowImportingTsExtensions": false,
     "moduleResolution": "node",
-    "types": ["jest", "@testing-library/jest-dom", "node"]
+    "module": "esnext",
+    "target": "ES2022",
+    "types": ["jest", "@testing-library/jest-dom", "node", "vite/client"]
   },
   "include": ["src/**/*", "src/types/**/*"]
 }

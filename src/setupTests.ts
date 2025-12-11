@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(globalThis, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({
     matches: false,
@@ -13,3 +13,20 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
+
+// Mock import.meta.env para testes com Vite
+interface GlobalWithImport {
+  import: {
+    meta: {
+      env: Record<string, string>;
+    };
+  };
+}
+
+(globalThis as unknown as GlobalWithImport).import = {
+  meta: {
+    env: {
+      VITE_NOVA_SONDAGEM_API: 'http://localhost:3000'
+    }
+  }
+};

@@ -4,6 +4,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { servicos } from "../../servicos";
 import { logout, setUserLogged } from "../../redux/slices/authSlice";
 
+interface AutenticacaoResponse {
+  token: string;
+  dataHoraExpiracao: string;
+  tipoPerfil: number;
+}
+
 const PERFIL_ROUTES: Record<number, string> = {
   1: "/",
   2: "/",
@@ -42,7 +48,7 @@ export default function Autenticacao() {
           setUserLogged({
             token: storedToken,
             dataHoraExpiracao: exp!,
-            tipoPerfil: perfil.toString(),
+            tipoPerfil: perfil || null,
           })
         );
 
@@ -58,7 +64,7 @@ export default function Autenticacao() {
       }
 
       try {
-        const resposta = await servicos.post("/api/v1/autenticacao/validar", {
+        const resposta = await servicos.post<AutenticacaoResponse>("/api/v1/autenticacao/validar", {
           codigo,
         });
 

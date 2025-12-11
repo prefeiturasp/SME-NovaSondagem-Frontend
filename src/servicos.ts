@@ -1,7 +1,7 @@
 import axios from "axios";
+import { getApiUrl } from "./config";
 
-//const apiUrl = process.env.VITE_API_URL || "http://localhost:3000";
-const apiUrl = import.meta.env.VITE_NOVA_SONDAGEM_API;
+const apiUrl = getApiUrl();
 
 const api = axios.create({
   baseURL: apiUrl,
@@ -30,23 +30,23 @@ api.interceptors.response.use(
 );
 
 export const servicos = {
-  async get(endpoint: string, params = {}) {
-    const response = await api.get(endpoint, { params });
+  async get<T = unknown>(endpoint: string, params: Record<string, unknown> = {}): Promise<T> {
+    const response = await api.get<T>(endpoint, { params });
     return response.data;
   },
 
-  async post(endpoint: string, data: any) {
-    const response = await api.post(endpoint, data);
+  async post<T = unknown>(endpoint: string, data: unknown): Promise<T> {
+    const response = await api.post<T>(endpoint, data);
     return response.data;
   },
 
-  async put(endpoint: string, data: any) {
-    const response = await api.put(endpoint, data);
+  async put<T = unknown>(endpoint: string, data: unknown): Promise<T> {
+    const response = await api.put<T>(endpoint, data);
     return response.data;
   },
 
-  async delete(endpoint: string) {
-    const response = await api.delete(endpoint);
+  async delete<T = unknown>(endpoint: string): Promise<T> {
+    const response = await api.delete<T>(endpoint);
     return response.data;
   },
 };
