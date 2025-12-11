@@ -18,13 +18,13 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error: Error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    console.error("Erro na API:", error.response || error.message);
+  (error: Error) => {
+    console.error("Erro na API:", error);
     return Promise.reject(error);
   }
 );

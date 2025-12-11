@@ -26,8 +26,8 @@ const getInitialState = (): AuthState => {
 
   return {
     isAuthenticated: isTokenValid,
-    token: storedToken || null,
-    dataHoraExpiracao: storedExpiresAt || null,
+    token: storedToken ?? null,
+    dataHoraExpiracao: storedExpiresAt ?? null,
     tipoPerfil: storedTipoPerfil ? Number(storedTipoPerfil) : null,
   };
 };
