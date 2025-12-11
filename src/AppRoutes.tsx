@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "./redux/store";
-import Cabecalho from "./components/cabecalho/cabecalho";
-import Rodape from "./components/rodape/rodape";
-import Conteudo from "./components/conteudo/conteudo";
+import Cabecalho from "./componentes/cabecalho/cabecalho";
+import Rodape from "./componentes/rodape/rodape";
+import Conteudo from "./componentes/conteudo/conteudo";
 import SemAcesso from "./paginas/sem-acesso/SemAcesso";
 import Autenticacao from "./paginas/autenticacao/autenticacao";
 
