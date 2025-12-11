@@ -16,12 +16,25 @@ module.exports = {
         tsconfig: './tsconfig.test.json',
       },
     ],
+    '^.+\\.(js|jsx)$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          allowJs: true,
+          esModuleInterop: true,
+        },
+      },
+    ],
   },
 
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/__mocks__/fileMock.js',
   },
+
+  transformIgnorePatterns: [
+    'node_modules/(?!(antd|@ant-design|@rc-component|rc-.*|@babel)/)',
+  ],
 
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
 
