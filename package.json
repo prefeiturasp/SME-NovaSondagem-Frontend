@@ -14,9 +14,13 @@
     "test:jenkins": "yarn tsc --noEmit"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.11.1",
     "antd": "^6.1.0",
+    "axios": "^1.13.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.10.1",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
@@ -29,6 +33,7 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
+    "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
