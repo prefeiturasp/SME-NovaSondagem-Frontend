@@ -1,27 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "./redux/store";
-import Cabecalho from "./componentes/cabecalho/cabecalho";
-import Rodape from "./componentes/rodape/rodape";
-import Conteudo from "./componentes/conteudo/conteudo";
+import { Routes, Route } from "react-router-dom";
 import SemAcesso from "./paginas/sem-acesso/SemAcesso";
 import Autenticacao from "./paginas/autenticacao/autenticacao";
+import Home from "./paginas/home/home";
 
-const AppPadrao: React.FC = () => (
-  <div className="app-container">
-    <Cabecalho />
-    <Conteudo />
-    <Rodape />
-  </div>
-);
+
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -29,8 +16,10 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   if (isLoading) return <div>Carregando...</div>;
+  
+  return  <>{children}</>
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/sem-acesso" />;
+  //return isAuthenticated ? <>{children}</> : <Navigate to="/sem-acesso" />;
 };
 
 const AppRoutes: React.FC = () => (
@@ -41,7 +30,7 @@ const AppRoutes: React.FC = () => (
       path="/"
       element={
         <PrivateRoute>
-          <AppPadrao />
+          <Home />
         </PrivateRoute>
       }
     />    
