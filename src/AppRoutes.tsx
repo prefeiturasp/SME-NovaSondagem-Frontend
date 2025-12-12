@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import SemAcesso from "./paginas/sem-acesso/SemAcesso";
 import Autenticacao from "./paginas/autenticacao/autenticacao";
 import Home from "./paginas/home/home";
-
-
+import type { RootState } from "./redux/store";
+import { useSelector } from "react-redux";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -16,10 +19,8 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   if (isLoading) return <div>Carregando...</div>;
-  
-  return  <>{children}</>
 
-  //return isAuthenticated ? <>{children}</> : <Navigate to="/sem-acesso" />;
+  return isAuthenticated ? <Navigate to="/sem-acesso" /> : <>{children}</>;
 };
 
 const AppRoutes: React.FC = () => (
@@ -33,7 +34,7 @@ const AppRoutes: React.FC = () => (
           <Home />
         </PrivateRoute>
       }
-    />    
+    />
   </Routes>
 );
 
