@@ -6,12 +6,10 @@ import federation from '@originjs/vite-plugin-federation'
 export default defineConfig({
   server: {
     port: 5173,
-    strictPort: true,
     cors: true,
   },
   preview: {
     port: 5173,
-    strictPort: true,
     cors: true,
   },
   plugins: [
@@ -24,6 +22,26 @@ export default defineConfig({
       },
       shared: ['react', 'react-dom', 'react-router-dom', '@reduxjs/toolkit', 'react-redux'],
     }),
+    {
+      name: 'module-federation-debug',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          if (req.url?.includes('remoteEntry.js')) {
+            console.log('═══════════════════════════════════════════════════════');
+            console.log('📥 [REMOTE SERVER] remoteEntry.js requisitado!');
+            console.log('    Referer:', req.headers.referer || 'unknown');
+            console.log('    Host:', req.headers.host);
+            console.log('    Content-Type será: application/javascript');
+            console.log('═══════════════════════════════════════════════════════');
+
+            // Define o Content-Type correto para módulos ES
+            res.setHeader('Content-Type', 'application/javascript');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+          }
+          next();
+        });
+      },
+    },
   ],
   build: {
     modulePreload: false,
