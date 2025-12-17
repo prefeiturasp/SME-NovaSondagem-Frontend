@@ -1,0 +1,36 @@
+import { Empty, Select as SelectAnt } from "antd";
+import type { SelectProps } from "antd";
+import type { DefaultOptionType } from "antd/es/select";
+import React from "react";
+
+const Select: React.FC<SelectProps> = (props) => {
+  const filterOption = (input: string, option?: DefaultOptionType) => {
+    const value = option?.value?.toString()?.toLowerCase();
+    const drescription = option?.label?.toString()?.toLowerCase();
+
+    const hasValue = !!value && value?.indexOf(input?.toLowerCase()) >= 0;
+    const hasDesc =
+      !!drescription &&
+      drescription?.toLowerCase().indexOf(input?.toLowerCase()) >= 0;
+
+    return hasValue || hasDesc;
+  };
+
+  return (
+    <SelectAnt
+      notFoundContent={
+        <Empty
+          description="Sem dados"
+          className="ant-empty-small"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      }
+      showSearch
+      filterOption={filterOption}
+      getPopupContainer={(trigger) => trigger.parentElement}
+      {...props}
+    />
+  );
+};
+
+export default Select;

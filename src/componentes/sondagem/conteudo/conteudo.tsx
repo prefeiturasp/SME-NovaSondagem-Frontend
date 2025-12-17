@@ -1,13 +1,11 @@
-import { Row } from "antd";
-import { Header } from "antd/es/layout/layout";
+import React from "react";
+import SondagemNovo from "../../../paginas/sondagem";
 
 const Conteudo: React.FC = () => {
   return (
-    <Row>
-      <Header className="conteudo">
-        ESTE É O CONTEUDO
-      </Header>
-    </Row>
+    <>
+      <SondagemNovo></SondagemNovo>
+    </>
   );
 };
 export default Conteudo;

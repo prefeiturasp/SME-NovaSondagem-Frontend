@@ -1,10 +1,17 @@
-import { Empty, Select as SelectAnt, SelectProps } from 'antd';
-import { DefaultOptionType } from 'antd/es/select';
-import React, { useCallback, useEffect, useState } from 'react';
-import './index.css';
+import { Empty, Select as SelectAnt } from "antd";
+import type { SelectProps } from "antd";
+import type { DefaultOptionType } from "antd/es/select";
+import React, { useCallback, useEffect, useState } from "react";
+import "./index.css";
 
 interface SelectColoridoProps extends SelectProps {
-  tipoQuestao?: 'escrita' | 'reescrita' | 'producao' | 'leitura' | 'numeros' | 'mapeamento';
+  tipoQuestao?:
+    | "escrita"
+    | "reescrita"
+    | "producao"
+    | "leitura"
+    | "numeros"
+    | "mapeamento";
   anoTurma?: string;
 }
 
@@ -15,82 +22,124 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
   onChange,
   ...props
 }) => {
-  const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF');
-  const [textColor, setTextColor] = useState<string>('#000000');
+  const [backgroundColor, setBackgroundColor] = useState<string>("#FFFFFF");
+  const [textColor, setTextColor] = useState<string>("#000000");
 
   const filterOption = (input: string, option?: DefaultOptionType) => {
     const optionValue = option?.value?.toString()?.toLowerCase();
     const description = option?.label?.toString()?.toLowerCase();
 
-    const hasValue = !!optionValue && optionValue?.indexOf(input?.toLowerCase()) >= 0;
-    const hasDesc = !!description && description?.toLowerCase().indexOf(input?.toLowerCase()) >= 0;
+    const hasValue =
+      !!optionValue && optionValue?.indexOf(input?.toLowerCase()) >= 0;
+    const hasDesc =
+      !!description &&
+      description?.toLowerCase().indexOf(input?.toLowerCase()) >= 0;
 
     return hasValue || hasDesc;
   };
 
   const getColorByValue = useCallback(
     (selectedValue: any): { bg: string; text: string } => {
-      if (!selectedValue || !props.options) return { bg: '#FFFFFF', text: '#000000' };
+      if (!selectedValue || !props.options)
+        return { bg: "#FFFFFF", text: "#000000" };
 
-      let cores: string[];
-      let textColors: string[];
-      console.log('Testar com switch duplo e criar o switch de matematica', anoTurma);
+      let cores: string[] = [];
+      let textColors: string[] = [];
+      console.log(
+        "Testar com switch duplo e criar o switch de matematica",
+        anoTurma
+      );
       switch (tipoQuestao) {
-        case 'escrita':
+        case "escrita":
           switch (anoTurma) {
-            case '1':
-              cores = ['#FF3131', '#FFDE59', '#FF914D', '#5170FF', '#00BF63', '#FFFFFF'];
-              textColors = ['#FFFFFF', '#42474A', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#42474A'];
-              break;
-            case '2':
-              cores = ['#FF3131', '#FFDE59', '#FF914D', '#D9D2E9', '#D0C2EF', '#C3B0EB', '#AF92ED'];
+            case "1":
+              cores = [
+                "#FF3131",
+                "#FFDE59",
+                "#FF914D",
+                "#5170FF",
+                "#00BF63",
+                "#FFFFFF",
+              ];
               textColors = [
-                '#FFFFFF',
-                '#42474A',
-                '#FFFFFF',
-                '#42474A',
-                '#42474A',
-                '#42474A',
-                '#FFFFFF',
+                "#FFFFFF",
+                "#42474A",
+                "#FFFFFF",
+                "#FFFFFF",
+                "#FFFFFF",
+                "#42474A",
               ];
               break;
-            case '3':
-              cores = ['#FF3131', '#FFDE59', '#FF914D', '#D9D2E9', '#D0C2EF', '#C3B0EB', '#AF92ED'];
+            case "2":
+              cores = [
+                "#FF3131",
+                "#FFDE59",
+                "#FF914D",
+                "#D9D2E9",
+                "#D0C2EF",
+                "#C3B0EB",
+                "#AF92ED",
+              ];
               textColors = [
-                '#FFFFFF',
-                '#42474A',
-                '#FFFFFF',
-                '#42474A',
-                '#42474A',
-                '#42474A',
-                '#FFFFFF',
+                "#FFFFFF",
+                "#42474A",
+                "#FFFFFF",
+                "#42474A",
+                "#42474A",
+                "#42474A",
+                "#FFFFFF",
+              ];
+              break;
+            case "3":
+              cores = [
+                "#FF3131",
+                "#FFDE59",
+                "#FF914D",
+                "#D9D2E9",
+                "#D0C2EF",
+                "#C3B0EB",
+                "#AF92ED",
+              ];
+              textColors = [
+                "#FFFFFF",
+                "#42474A",
+                "#FFFFFF",
+                "#42474A",
+                "#42474A",
+                "#42474A",
+                "#FFFFFF",
               ];
               break;
           }
           break;
-        case 'leitura':
-          cores = ['#7ED957', '#FFDE59', '#F18888'];
-          textColors = ['#363636', '#363636', '#FFFFFF'];
+        case "leitura":
+          cores = ["#7ED957", "#FFDE59", "#F18888"];
+          textColors = ["#363636", "#363636", "#FFFFFF"];
           break;
-        case 'numeros':
-          cores = ['#D9EEFA', '#BBE0F6', '#8ED5FF', '#38B6FF'];
-          textColors = ['#42474A', '#42474A', '#42474A', '#42474A'];
+        case "numeros":
+          cores = ["#D9EEFA", "#BBE0F6", "#8ED5FF", "#38B6FF"];
+          textColors = ["#42474A", "#42474A", "#42474A", "#42474A"];
           break;
-        case 'mapeamento':
-          cores = ['#7ED957', '#FFDE59', '#F18888'];
-          textColors = ['#42474A', '#42474A', '#42474A'];
+        case "mapeamento":
+          cores = ["#7ED957", "#FFDE59", "#F18888"];
+          textColors = ["#42474A", "#42474A", "#42474A"];
           break;
         default:
-          cores = ['#E0E0E0', '#BDBDBD', '#9E9E9E', '#757575'];
-          textColors = ['#42474A', '#42474A', '#FFFFFF', '#FFFFFF'];
+          cores = ["#E0E0E0", "#BDBDBD", "#9E9E9E", "#757575"];
+          textColors = ["#42474A", "#42474A", "#FFFFFF", "#FFFFFF"];
       }
 
-      const index = props.options.findIndex((opt: any) => opt.value === selectedValue);
+      const index = props.options.findIndex(
+        (opt: any) => opt.value === selectedValue
+      );
       return index >= 0
-        ? { bg: cores[index % cores.length], text: textColors[index % textColors.length] }
-        : { bg: '#FFFFFF', text: '#000000' };
+        ? {
+            bg: cores[index % cores.length],
+            text: textColors[index % textColors.length],
+          }
+        : { bg: "#FFFFFF", text: "#000000" };
     },
-    [props.options, tipoQuestao, anoTurma],
+    [props.options, tipoQuestao, anoTurma]
   );
 
   const handleChange = (newValue: any, option: any) => {
@@ -138,7 +187,9 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
         value={value}
         onChange={handleChange}
         {...props}
-        className={`select-colorido select-colorido-${props.id} ${props.className || ''}`}
+        className={`select-colorido select-colorido-${props.id} ${
+          props.className || ""
+        }`}
       />
     </>
   );

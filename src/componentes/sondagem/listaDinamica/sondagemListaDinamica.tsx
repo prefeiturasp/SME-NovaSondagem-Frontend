@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Checkbox, Form, Space, Table, Tag } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { FileTextOutlined, TeamOutlined, EyeOutlined } from '@ant-design/icons';
-import Select from '@/components/sgp/sondagem/selectColorido';
-import { DadosTabelaDinamica, Estudante } from '../../../core/dto/types';
-import './sondagemListaDinamica.css';
+import React, { useEffect, useState } from "react";
+import { Checkbox, Form, Space, Table, Tag } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import { FileTextOutlined, TeamOutlined, EyeOutlined } from "@ant-design/icons";
+import Select from "@/components/sgp/sondagem/selectColorido";
+import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
+import "./sondagemListaDinamica.css";
 
 interface ListaSondagemEscritaProps {
   dados: DadosTabelaDinamica | null;
@@ -13,7 +13,7 @@ interface ListaSondagemEscritaProps {
 const SondagemListaDinamica: React.FC<
   ListaSondagemEscritaProps & { formListaDinamica: any; anoTurma: string }
 > = ({ dados, formListaDinamica, anoTurma }) => {
-  const mostrarColunaLP = dados?.questao === 'escrita';
+  const mostrarColunaLP = dados?.questao === "escrita";
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
 
   useEffect(() => {
@@ -32,13 +32,13 @@ const SondagemListaDinamica: React.FC<
         estudante.coluna.forEach((coluna, colunaIndex) => {
           const respostaSelecionada = coluna.resposta?.[0];
 
-          initialValues[`resposta_${estudanteIndex}_${colunaIndex}`] = respostaSelecionada
-            ? respostaSelecionada.opcaoRespostaId
-            : undefined;
+          initialValues[`resposta_${estudanteIndex}_${colunaIndex}`] =
+            respostaSelecionada
+              ? respostaSelecionada.opcaoRespostaId
+              : undefined;
 
-          initialValues[`respostaId_${estudanteIndex}_${colunaIndex}`] = respostaSelecionada
-            ? respostaSelecionada.id
-            : '';
+          initialValues[`respostaId_${estudanteIndex}_${colunaIndex}`] =
+            respostaSelecionada ? respostaSelecionada.id : "";
         });
       });
 
@@ -46,8 +46,14 @@ const SondagemListaDinamica: React.FC<
     }
   }, [opcoesCarregadas, dados, formListaDinamica]);
 
-  const handleSelectChange = (estudanteIndex: number, colunaIndex: number, value: number) => {
-    console.log(`Estudante ${estudanteIndex}, Coluna ${colunaIndex}, Novo valor: ${value}`);
+  const handleSelectChange = (
+    estudanteIndex: number,
+    colunaIndex: number,
+    value: number
+  ) => {
+    console.log(
+      `Estudante ${estudanteIndex}, Coluna ${colunaIndex}, Novo valor: ${value}`
+    );
   };
 
   const handleCheckboxChange = (estudanteIndex: number, checked: boolean) => {
@@ -59,31 +65,41 @@ const SondagemListaDinamica: React.FC<
 
   if (mostrarColunaLP) {
     columns.push({
-      title: <span style={{ fontSize: '11px', whiteSpace: 'normal' }}>LP como 2ª língua?</span>,
-      key: 'lp',
+      title: (
+        <span style={{ fontSize: "11px", whiteSpace: "normal" }}>
+          LP como 2ª língua?
+        </span>
+      ),
+      key: "lp",
       width: 110,
-      align: 'center',
-      fixed: 'left',
+      align: "center",
+      fixed: "left",
       render: (_, _record, index) => (
-        <Form.Item name={`lp_${index}`} valuePropName="checked" style={{ margin: 0 }}>
-          <Checkbox onChange={(e) => handleCheckboxChange(index, e.target.checked)} />
+        <Form.Item
+          name={`lp_${index}`}
+          valuePropName="checked"
+          style={{ margin: 0 }}
+        >
+          <Checkbox
+            onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+          />
         </Form.Item>
       ),
     });
   }
 
   columns.push({
-    title: 'Estudante',
-    key: 'estudante',
-    width: mostrarColunaLP ? '40%' : '50%',
-    fixed: 'left',
+    title: "Estudante",
+    key: "estudante",
+    width: mostrarColunaLP ? "40%" : "50%",
+    fixed: "left",
     render: (_, record) => (
-      <Space direction="vertical" size={0} style={{ width: '100%' }}>
+      <Space direction="vertical" size={0} style={{ width: "100%" }}>
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <span style={{ fontWeight: 500 }}>
@@ -91,17 +107,29 @@ const SondagemListaDinamica: React.FC<
           </span>
           <Space size={4}>
             {record.pap && (
-              <Tag color="blue" icon={<FileTextOutlined />} style={{ margin: 0, fontSize: 10 }}>
+              <Tag
+                color="blue"
+                icon={<FileTextOutlined />}
+                style={{ margin: 0, fontSize: 10 }}
+              >
                 PAP
               </Tag>
             )}
             {record.aee && (
-              <Tag color="green" icon={<TeamOutlined />} style={{ margin: 0, fontSize: 10 }}>
+              <Tag
+                color="green"
+                icon={<TeamOutlined />}
+                style={{ margin: 0, fontSize: 10 }}
+              >
                 AEE
               </Tag>
             )}
             {record.acessibilidade && (
-              <Tag color="orange" icon={<EyeOutlined />} style={{ margin: 0, fontSize: 10 }}>
+              <Tag
+                color="orange"
+                icon={<EyeOutlined />}
+                style={{ margin: 0, fontSize: 10 }}
+              >
                 Acessibilidade
               </Tag>
             )}
@@ -113,16 +141,16 @@ const SondagemListaDinamica: React.FC<
 
   const nomeQuestao = () => {
     switch (dados?.questao) {
-      case 'escrita':
-        return 'Sistema de escrita';
-      case 'reescrita':
-        return 'Reescrita';
-      case 'producao':
-        return 'Produção';
-      case 'leitura':
-        return 'Compreensão de textos';
+      case "escrita":
+        return "Sistema de escrita";
+      case "reescrita":
+        return "Reescrita";
+      case "producao":
+        return "Produção";
+      case "leitura":
+        return "Compreensão de textos";
       default:
-        return 'Questão';
+        return "Questão";
     }
   };
 
@@ -162,21 +190,23 @@ const SondagemListaDinamica: React.FC<
                 <Select
                   id={`select_${estudanteIndex}_${colunaIndex}`}
                   options={options}
-                  onChange={(value) => handleSelectChange(estudanteIndex, colunaIndex, value)}
+                  onChange={(value) =>
+                    handleSelectChange(estudanteIndex, colunaIndex, value)
+                  }
                   placeholder="Selecione"
                   disabled={isDisabled}
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                   getPopupContainer={() => document.body}
                   dropdownStyle={{ zIndex: 10000 }}
                   placement="bottomLeft"
                   tipoQuestao={
                     dados?.questao as
-                      | 'escrita'
-                      | 'reescrita'
-                      | 'producao'
-                      | 'leitura'
-                      | 'numeros'
-                      | 'mapeamento'
+                      | "escrita"
+                      | "reescrita"
+                      | "producao"
+                      | "leitura"
+                      | "numeros"
+                      | "mapeamento"
                   }
                   anoTurma={anoTurma}
                 />
@@ -194,7 +224,7 @@ const SondagemListaDinamica: React.FC<
 
   if (!dados || !dados.estudantes || dados.estudantes.length === 0) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
+      <div style={{ padding: "20px", textAlign: "center" }}>
         <p>Nenhum dado disponível para exibir.</p>
       </div>
     );
@@ -206,14 +236,14 @@ const SondagemListaDinamica: React.FC<
   }));
 
   return (
-    <div style={{ marginTop: 16, overflowX: 'auto' }}>
+    <div style={{ marginTop: 16, overflowX: "auto" }}>
       <Form form={formListaDinamica} component={false}>
         <Table
           columns={columns}
           dataSource={dataSourceComIndice}
           rowKey={(record: any) => record.uniqueKey}
           pagination={false}
-          scroll={{ x: 'max-content', y: 600 }}
+          scroll={{ x: "max-content", y: 600 }}
           bordered
           size="small"
           sticky
