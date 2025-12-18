@@ -1,10 +1,10 @@
-import { Modal, notification } from 'antd';
-import { CANCELADO_USUARIO, TOKEN_EXPIRADO } from '~/constantes';
-import { store } from '@/core/redux';
+import { Modal, notification } from "antd";
+import { CANCELADO_USUARIO, TOKEN_EXPIRADO } from "~/constantes/tokens/tokenExpirado";
+import { store } from "@/core/redux";
 import {
   alertaConfirmar,
   alertaFechar,
-} from '../redux/modulos/alertas/actions';
+} from "../redux/modulos/alertas/actions";
 
 const { confirm } = Modal;
 
@@ -12,22 +12,22 @@ const exibirAlerta = (tipo, mensagem) => {
   let titulo;
   let classeTipo;
   switch (tipo) {
-    case 'success':
-      titulo = 'Sucesso';
-      classeTipo = 'alerta-sucesso';
+    case "success":
+      titulo = "Sucesso";
+      classeTipo = "alerta-sucesso";
       break;
-    case 'error':
-      titulo = 'Erro';
-      classeTipo = 'alerta-erro';
+    case "error":
+      titulo = "Erro";
+      classeTipo = "alerta-erro";
       break;
-    case 'warning':
-      titulo = 'Aviso';
-      classeTipo = 'alerta-aviso';
+    case "warning":
+      titulo = "Aviso";
+      classeTipo = "alerta-aviso";
       break;
 
     default:
-      titulo = '';
-      classeTipo = '';
+      titulo = "";
+      classeTipo = "";
       break;
   }
   notification[tipo]({
@@ -38,23 +38,23 @@ const exibirAlerta = (tipo, mensagem) => {
   });
 };
 
-const sucesso = mensagem => {
-  exibirAlerta('success', mensagem);
+const sucesso = (mensagem) => {
+  exibirAlerta("success", mensagem);
 };
 
-const erro = mensagem => {
-  exibirAlerta('error', mensagem);
+const erro = (mensagem) => {
+  exibirAlerta("error", mensagem);
 };
 
-const aviso = mensagem => {
-  exibirAlerta('warning', mensagem);
+const aviso = (mensagem) => {
+  exibirAlerta("warning", mensagem);
 };
 
 const acharErro = (dados, resposta) => {
   return dados?.indexOf(resposta) >= 0;
 };
 
-const erros = listaErros => {
+const erros = (listaErros) => {
   const temErroIgual =
     acharErro(listaErros?.message, TOKEN_EXPIRADO) ||
     acharErro(listaErros?.message, CANCELADO_USUARIO);
@@ -62,10 +62,10 @@ const erros = listaErros => {
 
   if (!state?.usuario?.logado || temErroIgual) return;
   if (listaErros?.response?.data?.mensagens) {
-    listaErros.response.data.mensagens.forEach(mensagem => erro(mensagem));
+    listaErros.response.data.mensagens.forEach((mensagem) => erro(mensagem));
     return;
   }
-  erro('Ocorreu um erro interno.');
+  erro("Ocorreu um erro interno.");
 };
 
 const confirmacao = (
@@ -80,9 +80,9 @@ const confirmacao = (
   confirm({
     title: titulo,
     content: texto,
-    okText: okText || 'Confirmar',
-    okType: okType || 'primary',
-    cancelText: cancelText || 'Cancelar',
+    okText: okText || "Confirmar",
+    okType: okType || "primary",
+    cancelText: cancelText || "Cancelar",
     onOk() {
       confirmar();
     },
@@ -100,7 +100,7 @@ const confirmar = (
   textoCancelar,
   primeiroExibirTextoNegrito
 ) => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     store.dispatch(
       alertaConfirmar(
         titulo,

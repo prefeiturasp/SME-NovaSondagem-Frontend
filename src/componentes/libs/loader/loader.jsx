@@ -8,7 +8,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 
 // Componentes
-import { Base } from "./colors";
+import { Base } from "~/componentes/libs/colors/colors";
 
 const LoaderWrapper = styled.div`
   width: auto;

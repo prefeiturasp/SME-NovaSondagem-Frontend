@@ -1,4 +1,4 @@
-import { ModalidadeEnum } from '@/core/enum/modalidade-enum';
+import { ModalidadeEnum } from "@/core/enum/modalidade-enum";
 
 const obterModalidadeFiltroPrincipal = (modalidades, turmaSelecionada) => {
   const temSomenteUmaModalidade = modalidades?.length === 1;

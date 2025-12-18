@@ -1,10 +1,10 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { SGP_BUTTON_FECHAR_ALERTA } from '~/constantes/ids/button';
-import { removerAlerta } from '../redux/modulos/alertas/actions';
-import { MessageClick } from './alert.css';
+import React from "react";
+import { useDispatch } from "react-redux";
+import { SGP_BUTTON_FECHAR_ALERTA } from "~/constantes/ids/buttons";
+import { removerAlerta } from "~/redux/modulos/alertas/actions";
+import { MessageClick } from "./alert.css";
 
-const Alert = props => {
+const Alert = (props) => {
   const { tipo, id, mensagem, estiloTitulo, mensagemClick, marginBottom } =
     props.alerta;
   const { closable, className, onClickMessage } = props;
@@ -16,7 +16,7 @@ const Alert = props => {
       role="alert"
       style={marginBottom ? { marginBottom } : {}}
     >
-      <b style={estiloTitulo || { fontSize: '18px' }}>
+      <b style={estiloTitulo || { fontSize: "18px" }}>
         {mensagem}
         <MessageClick onClick={onClickMessage}>{mensagemClick}</MessageClick>
       </b>
@@ -31,7 +31,7 @@ const Alert = props => {
           <span aria-hidden="true">&times;</span>
         </button>
       ) : (
-        ''
+        ""
       )}
     </div>
   );

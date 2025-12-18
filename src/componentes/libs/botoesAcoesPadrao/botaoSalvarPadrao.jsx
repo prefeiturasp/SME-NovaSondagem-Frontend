@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
-import Button from '~/componentes/button';
-import { Colors } from '~/componentes/colors';
-import { SGP_BUTTON_SALVAR } from '../../constantes/ids/button';
+import PropTypes from "prop-types";
+import Button from "~/componentes/libs/button/button";
+import { Colors } from "~/componentes/libs/colors/colors";
+import { SGP_BUTTON_SALVAR } from "../../../constantes/ids/buttons";
 
-const BotaoSalvarPadrao = props => {
+const BotaoSalvarPadrao = (props) => {
   const { onClick, disabled } = props;
 
   return (

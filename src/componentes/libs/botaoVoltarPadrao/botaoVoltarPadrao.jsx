@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Tooltip } from 'antd';
-import Button from '~/componentes/button';
-import { SGP_BUTTON_VOLTAR } from '../../constantes/ids/button';
-import { Colors } from '~/componentes/colors';
+import React from "react";
+import PropTypes from "prop-types";
+import { Tooltip } from "antd";
+import Button from "~/componentes/libs/button/button";
+import { SGP_BUTTON_VOLTAR } from "~/constantes/ids/buttons";
+import { Colors } from "~/componentes/libs/colors/colors";
 
-const BotaoVoltarPadrao = props => {
+const BotaoVoltarPadrao = (props) => {
   const { onClick, className } = props;
 
   return (
@@ -14,7 +14,7 @@ const BotaoVoltarPadrao = props => {
       placement="left"
       mouseEnterDelay={0}
       className={className}
-      getTooltipContainer={trigger => trigger.parentNode}
+      getTooltipContainer={(trigger) => trigger.parentNode}
     >
       <span>
         <Button
@@ -37,7 +37,7 @@ BotaoVoltarPadrao.propTypes = {
 
 BotaoVoltarPadrao.defaultProps = {
   onClick: () => {},
-  className: '',
+  className: "",
 };
 
 export default BotaoVoltarPadrao;

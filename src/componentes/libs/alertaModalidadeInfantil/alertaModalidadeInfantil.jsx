@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import Alert from "~/componentes/alert";
+import Alert from "~/componentes/libs/alert/alert";
 import { ehTurmaInfantil } from "~/servicos/validacoes/validacoesInfatil";
 
 const AlertaModalidadeInfantil = (props) => {

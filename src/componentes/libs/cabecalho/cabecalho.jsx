@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import PropTypes from 'prop-types';
-import { Affix } from 'antd';
-import { useSelector } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import { Base } from '~/componentes/colors';
-import { obterAjudaDoSistemaURL } from '~/servicos';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import { Affix } from "antd";
+import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { Base } from "~/componentes/libs/colors/colors";
+import { obterAjudaDoSistemaURL } from "~/servicos/servico-navegacao";
 
 const Container = styled.div`
   span {
@@ -45,10 +45,10 @@ const Container = styled.div`
   }
 
   .ant-affix {
-    top: ${props => (props?.acessoAdmin ? '114.15px' : '70px')} !important;
+    top: ${(props) => (props?.acessoAdmin ? "114.15px" : "70px")} !important;
 
     @media (max-width: 768px) {
-      top: ${props => (props?.acessoAdmin ? '184.15px' : '140px')} !important;
+      top: ${(props) => (props?.acessoAdmin ? "184.15px" : "140px")} !important;
     }
   }
 
@@ -65,11 +65,11 @@ const Cabecalho = ({
   removeAffix,
   style,
 }) => {
-  const usuario = useSelector(state => state.usuario);
+  const usuario = useSelector((state) => state.usuario);
 
-  const [urlAjuda, setUrlAjuda] = useState('');
+  const [urlAjuda, setUrlAjuda] = useState("");
 
-  const onClickAjuda = () => window.open(urlAjuda, '_blank');
+  const onClickAjuda = () => window.open(urlAjuda, "_blank");
 
   useEffect(() => {
     const url = obterAjudaDoSistemaURL();
@@ -80,11 +80,11 @@ const Cabecalho = ({
     <div
       className="d-flex background-row pt-2"
       style={{
-        justifyContent: 'space-between',
-        flexWrap: 'wrap-reverse',
-        alignItems: 'end',
-        paddingLeft: '32px',
-        paddingRight: '32px',
+        justifyContent: "space-between",
+        flexWrap: "wrap-reverse",
+        alignItems: "end",
+        paddingLeft: "32px",
+        paddingRight: "32px",
         ...style,
       }}
     >
@@ -96,7 +96,7 @@ const Cabecalho = ({
             cursor="pointer"
             onClick={onClickAjuda}
             style={{
-              fontSize: '16px',
+              fontSize: "16px",
               color: Base.Azul,
               marginLeft: 5,
               marginRight: 5,
@@ -117,10 +117,10 @@ const Cabecalho = ({
 };
 
 Cabecalho.defaultProps = {
-  titulo: '',
-  pagina: '',
-  children: '',
-  classes: '',
+  titulo: "",
+  pagina: "",
+  children: "",
+  classes: "",
   removeAffix: false,
   style: {},
 };
