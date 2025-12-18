@@ -1,10 +1,10 @@
-import axios from 'axios';
-import moment from 'moment';
-import { urlBase } from '~/servicos/variaveis';
-import { store } from '@/core/redux';
-import { deslogarPorSessaoInvalida } from '~/servicos/ServicoUsuarioDeslogar';
-import { DeslogarSessaoExpirou } from '~/redux/modulos/usuario/actions';
-import { TOKEN_EXPIRADO } from '~/constantes';
+import axios from "axios";
+import moment from "moment";
+import { urlBase } from "~/servicos/variaveis";
+import { store } from "@/core/redux";
+import { deslogarPorSessaoInvalida } from "~/servicos/ServicoUsuarioDeslogar";
+import { DeslogarSessaoExpirou } from "~/redux/modulos/usuario/actions";
+import { TOKEN_EXPIRADO } from "~/constantes/tokens/tokenExpirado";
 
 let url = urlBase;
 
@@ -19,9 +19,9 @@ const renovaCancelToken = () => {
 };
 
 api.interceptors.request.use(
-  async config => {
+  async (config) => {
     const { token, dataHoraExpiracao } = store.getState().usuario;
-    const diff = moment().diff(dataHoraExpiracao, 'seconds');
+    const diff = moment().diff(dataHoraExpiracao, "seconds");
 
     if (!url) url = urlBase;
     if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -39,12 +39,12 @@ api.interceptors.request.use(
 
     return config;
   },
-  error => Promise.reject(error)
+  (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  (error) => {
     if (axios.isCancel(error)) return Promise.reject(error);
     if (error.response?.status === 401) {
       deslogarPorSessaoInvalida();
@@ -53,7 +53,7 @@ api.interceptors.response.use(
   }
 );
 
-api.CancelarRequisicoes = mensagem => {
+api.CancelarRequisicoes = (mensagem) => {
   CancelToken.cancel(mensagem);
 
   renovaCancelToken();

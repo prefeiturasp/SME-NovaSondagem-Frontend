@@ -1,14 +1,17 @@
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import Alert from "~/componentes/libs/alert/alert";
 import { ehTurmaInfantil } from "~/servicos/validacoes/validacoesInfatil";
 
 const AlertaModalidadeInfantil = (props) => {
-  const { turmaSelecionada } = useSelector((store) => store.usuario);
+  const usuario = useSelector((store) => store.usuario);
+  const turmaSelecionada = usuario?.turmaSelecionada;
 
-  const modalidadesFiltroPrincipal = useSelector(
-    (store) => store.filtro.modalidades
+  const filtro = useSelector((store) => store.filtro);
+  const modalidadesFiltroPrincipal = useMemo(
+    () => filtro?.modalidades || [],
+    [filtro?.modalidades]
   );
 
   const { exibir, validarModalidadeFiltroPrincipal, naoPermiteTurmaInfantil } =

@@ -1,6 +1,6 @@
 import { ROUTES } from "@/core/enum/routes";
 import { store } from "@/core/redux";
-import { FiltroHelper } from "~/componentes/libs/help/helper";
+import FiltroHelper from "~/componentes/libs/help/helper";
 import { ModalidadeEnum } from "@/core/enum/modalidade-enum";
 import tipoPermissao from "~/dtos/tipoPermissao";
 import { setSomenteConsulta } from "~/redux/modulos/navegacao/actions";

@@ -1,5 +1,5 @@
-import ServicoFiltro from '~/servicos/Componentes/ServicoFiltro';
-import { TOKEN_EXPIRADO } from '~/constantes';
+import ServicoFiltro from "~/servicos/servicoFiltro";
+import { TOKEN_EXPIRADO } from "~/constantes/tokens/tokenExpirado";
 
 class FiltroHelper {
   obterAnosLetivos = async ({ consideraHistorico, anoMinimo }) => {
@@ -9,9 +9,9 @@ class FiltroHelper {
       consideraHistorico,
       anoMinimo: anoMinimo !== undefined ? anoMinimo : 0,
     })
-      .then(resposta => {
+      .then((resposta) => {
         if (resposta.data) {
-          resposta.data.forEach(ano => {
+          resposta.data.forEach((ano) => {
             anosLetivosLista.push({ desc: ano, valor: ano });
           });
         }
@@ -21,13 +21,13 @@ class FiltroHelper {
       .catch(() => anosLetivosLista);
   };
 
-  obterAnosLetivosAtribuicao = async consideraHistorico => {
+  obterAnosLetivosAtribuicao = async (consideraHistorico) => {
     const anosLetivosLista = [];
 
     return ServicoFiltro.listarAnosLetivosAtribuicao(consideraHistorico)
-      .then(resposta => {
+      .then((resposta) => {
         if (resposta.data) {
-          resposta.data.forEach(ano => {
+          resposta.data.forEach((ano) => {
             anosLetivosLista.push({ desc: ano, valor: ano });
           });
         }
@@ -48,9 +48,9 @@ class FiltroHelper {
       consideraHistorico,
       anoLetivoSelecionado,
     })
-      .then(resposta => {
+      .then((resposta) => {
         if (resposta.data) {
-          resposta.data.forEach(modalidade => {
+          resposta.data.forEach((modalidade) => {
             modalidadesLista.push({
               desc: modalidade.descricao,
               valor: modalidade.id,
@@ -70,7 +70,7 @@ class FiltroHelper {
   }) => {
     const periodos = [];
 
-    if (!anoLetivoSelecionado || typeof anoLetivoSelecionado === 'undefined')
+    if (!anoLetivoSelecionado || typeof anoLetivoSelecionado === "undefined")
       return null;
 
     return ServicoFiltro.listarPeriodos({
@@ -78,9 +78,9 @@ class FiltroHelper {
       modalidadeSelecionada,
       anoLetivoSelecionado,
     })
-      .then(resposta => {
+      .then((resposta) => {
         if (resposta.data) {
-          resposta.data.forEach(periodo => {
+          resposta.data.forEach((periodo) => {
             periodos.push({ desc: periodo, valor: periodo });
           });
         }
@@ -100,7 +100,7 @@ class FiltroHelper {
   }) => {
     const dres = [];
 
-    if (!anoLetivoSelecionado || typeof anoLetivoSelecionado === 'undefined')
+    if (!anoLetivoSelecionado || typeof anoLetivoSelecionado === "undefined")
       return null;
 
     return ServicoFiltro.listarDres({
@@ -109,9 +109,9 @@ class FiltroHelper {
       periodoSelecionado,
       anoLetivoSelecionado,
     })
-      .then(resposta => {
+      .then((resposta) => {
         if (resposta.data) {
-          resposta.data.forEach(dre => {
+          resposta.data.forEach((dre) => {
             dres.push({
               desc: dre.nome,
               valor: dre.codigo,
@@ -120,7 +120,7 @@ class FiltroHelper {
             });
           });
         }
-        return dres.sort(this.ordenarLista('desc'));
+        return dres.sort(this.ordenarLista("desc"));
       })
       .catch(() => dres);
   };
@@ -134,7 +134,7 @@ class FiltroHelper {
   }) => {
     const unidadesEscolares = [];
 
-    if (!anoLetivoSelecionado || typeof anoLetivoSelecionado === 'undefined')
+    if (!anoLetivoSelecionado || typeof anoLetivoSelecionado === "undefined")
       return null;
 
     return ServicoFiltro.listarUnidadesEscolares({
@@ -144,9 +144,9 @@ class FiltroHelper {
       periodoSelecionado,
       anoLetivoSelecionado,
     })
-      .then(resposta => {
+      .then((resposta) => {
         if (resposta.data) {
-          resposta.data.forEach(unidade => {
+          resposta.data.forEach((unidade) => {
             unidadesEscolares.push({
               desc: unidade.nome,
               valor: unidade.codigo,
@@ -168,7 +168,7 @@ class FiltroHelper {
   }) => {
     const turmas = [];
 
-    if (!anoLetivoSelecionado || typeof anoLetivoSelecionado === 'undefined')
+    if (!anoLetivoSelecionado || typeof anoLetivoSelecionado === "undefined")
       return null;
 
     return ServicoFiltro.listarTurmas({
@@ -178,9 +178,9 @@ class FiltroHelper {
       periodoSelecionado,
       anoLetivoSelecionado,
     })
-      .then(resposta => {
+      .then((resposta) => {
         if (resposta.data) {
-          resposta.data.forEach(turma => {
+          resposta.data.forEach((turma) => {
             turmas.push({
               id: turma.id,
               desc: turma.nomeFiltro ? turma.nomeFiltro : turma.nome,
@@ -193,21 +193,21 @@ class FiltroHelper {
         }
         return turmas;
       })
-      .catch(e => {
+      .catch((e) => {
         if (e?.message.indexOf(TOKEN_EXPIRADO) >= 0) return e;
         return turmas;
       });
   };
 
-  ordenarLista = indice => {
+  ordenarLista = (indice) => {
     return function innerSort(a, b) {
       // eslint-disable-next-line no-prototype-builtins
       if (!a.hasOwnProperty(indice) || !b.hasOwnProperty(indice)) return 0;
 
       const itemA =
-        typeof a[indice] === 'string' ? a[indice].toUpperCase() : a[indice];
+        typeof a[indice] === "string" ? a[indice].toUpperCase() : a[indice];
       const itemB =
-        typeof b[indice] === 'string' ? b[indice].toUpperCase() : b[indice];
+        typeof b[indice] === "string" ? b[indice].toUpperCase() : b[indice];
 
       let ordem = 0;
       if (itemA > itemB) {

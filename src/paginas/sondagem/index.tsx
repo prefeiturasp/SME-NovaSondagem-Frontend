@@ -16,14 +16,15 @@ import { Form } from "antd";
 import MockDadosTabelaDinamica from "~/mocks/MockDadosTabelaDinamica.json";
 import type { DadosTabelaDinamica } from "../../core/dto/types";
 import SondagemListaDinamica from "../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
+import { useMemo } from "react";
 
 const SondagemNovo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
-  const { turmaSelecionada } = usuario;
+  const turmaSelecionada = usuario?.turmaSelecionada;
   const turmaId = turmaSelecionada ? turmaSelecionada.turma : 0;
   // const periodo = turmaSelecionada ? turmaSelecionada.periodo : 0;
-  const { modalidade } = turmaSelecionada;
-  const { ano } = turmaSelecionada;
+  const modalidade = turmaSelecionada?.modalidade;
+  const ano = turmaSelecionada?.ano;
 
   const [listaDisciplinas, setListaDisciplinas] = useState<
     Array<{ value: number; label: string }>
@@ -46,8 +47,10 @@ const SondagemNovo: React.FC = () => {
   // const [somenteConsulta, setSomenteConsulta] = useState(false); // Verificar se realmente vai ser usado.
   const [exibirLoader, setExibirLoader] = useState(false);
 
-  const modalidadesFiltroPrincipal = useSelector(
-    (store: any) => store.filtro.modalidades
+  const filtro = useSelector((store: any) => store.filtro);
+  const modalidadesFiltroPrincipal = useMemo(
+    () => filtro?.modalidades || [],
+    [filtro?.modalidades]
   );
 
   // const modalidadeFiltro = useSelector((store: any) => store.usuario.turmaSelecionada.modalidade);
@@ -325,20 +328,12 @@ const SondagemNovo: React.FC = () => {
         // setModoEdicao(false);
       }
     }
-  }, [
-    turmaSelecionada,
-    modalidade,
-    turmaId,
-    modalidadesFiltroPrincipal,
-    ano,
-    formFiltro,
-    verificarModalidadeTurma,
-  ]);
+  }, [turmaSelecionada, modalidade, turmaId, modalidadesFiltroPrincipal, ano]);
 
   return (
     <>
       <Loader loading={exibirLoader} tip="Carregando...">
-        {!turmaSelecionada.turma &&
+        {!turmaSelecionada?.turma &&
         !ehTurmaInfantil(modalidadesFiltroPrincipal, turmaSelecionada) ? (
           <Grid cols={12} className="p-0">
             <Alert

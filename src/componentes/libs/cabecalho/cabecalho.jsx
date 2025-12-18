@@ -45,10 +45,10 @@ const Container = styled.div`
   }
 
   .ant-affix {
-    top: ${(props) => (props?.acessoAdmin ? "114.15px" : "70px")} !important;
+    top: ${(props) => (props.$acessoAdmin ? "114.15px" : "70px")} !important;
 
     @media (max-width: 768px) {
-      top: ${(props) => (props?.acessoAdmin ? "184.15px" : "140px")} !important;
+      top: ${(props) => (props.$acessoAdmin ? "184.15px" : "140px")} !important;
     }
   }
 
@@ -110,7 +110,7 @@ const Cabecalho = ({
   );
 
   return (
-    <Container className={classes} acessoAdmin={!!usuario?.acessoAdmin}>
+    <Container className={classes} $acessoAdmin={!!usuario?.acessoAdmin}>
       {removeAffix ? componentePadrao : <Affix>{componentePadrao}</Affix>}
     </Container>
   );

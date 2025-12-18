@@ -1,30 +1,29 @@
-import produce from 'immer';
+import { produce } from "immer";
 
-const rotas = new Map();
 const inicial = {
   retraido: false,
-  rotaAtiva: '/',
-  rotas,
+  rotaAtiva: "/",
+  rotas: {},
   menuSelecionado: [],
   somenteConsulta: false,
 };
 
 export default function navegacao(state = inicial, action) {
-  return produce(state, draft => {
+  return produce(state, (draft) => {
     switch (action.type) {
-      case '@navegacao/retraido':
+      case "@navegacao/retraido":
         draft.retraido = action.payload;
         break;
-      case '@navegacao/rotaAtiva':
+      case "@navegacao/rotaAtiva":
         draft.rotaAtiva = action.payload;
         break;
-      case '@navegacao/rotas':
-        draft.rotas.set(action.payload.path, action.payload);
+      case "@navegacao/rotas":
+        draft.rotas[action.payload.path] = action.payload;
         break;
-      case '@navegacao/menuSelecionado':
+      case "@navegacao/menuSelecionado":
         draft.menuSelecionado = action.payload;
         break;
-      case '@navegacao/somenteConsulta':
+      case "@navegacao/somenteConsulta":
         draft.somenteConsulta = action.payload;
         break;
       default:
