@@ -171,7 +171,8 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
           color: ${textColor} !important;
         }
         .select-colorido-${props.id} .ant-select-arrow {
-          color: ${textColor} !important;}
+          color: ${textColor} !important;
+        }
       `}</style>
       <SelectAnt
         notFoundContent={

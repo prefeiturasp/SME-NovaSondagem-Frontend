@@ -1,3 +1,4 @@
+import React from "react";
 import Cabecalho from "../../componentes/sondagem/cabecalho/cabecalho";
 import Conteudo from "../../componentes/sondagem/conteudo/conteudo";
 import Rodape from "../../componentes/sondagem/rodape/rodape";

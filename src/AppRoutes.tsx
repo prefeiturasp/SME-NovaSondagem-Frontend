@@ -3,14 +3,14 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import SemAcesso from "./paginas/sem-acesso/SemAcesso";
 import Autenticacao from "./paginas/autenticacao/autenticacao";
 import Home from "./paginas/home/home";
-import type { RootState } from "./redux/store";
+import type { RootState } from "./types/redux";
 import { useSelector } from "react-redux";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+    (state: RootState) => state.usuario?.logado || false
   );
   const [isLoading, setIsLoading] = useState(true);
 
