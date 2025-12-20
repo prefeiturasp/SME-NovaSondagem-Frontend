@@ -5,13 +5,11 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { store } from "./core/redux";
 import "./main.css";
 import AppRoutes from "./AppRoutes";
-import GlobalStyle from "~/estilos/global";
 
 const App: React.FC = () => (
   <Provider store={store}>
     <ConfigProvider>
       <Router>
-        <GlobalStyle />
         <AppRoutes />
       </Router>
     </ConfigProvider>

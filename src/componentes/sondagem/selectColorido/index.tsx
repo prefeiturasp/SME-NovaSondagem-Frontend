@@ -43,8 +43,24 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
       if (!selectedValue || !props.options)
         return { bg: "#FFFFFF", text: "#000000" };
 
-      let cores: string[] = [];
-      let textColors: string[] = [];
+      // Inicializar com valores padrão para evitar erro de "usado antes de ser atribuído"
+      let cores: string[] = [
+        "#FF3131",
+        "#FFDE59",
+        "#FF914D",
+        "#5170FF",
+        "#00BF63",
+        "#FFFFFF",
+      ];
+      let textColors: string[] = [
+        "#FFFFFF",
+        "#42474A",
+        "#FFFFFF",
+        "#FFFFFF",
+        "#FFFFFF",
+        "#42474A",
+      ];
+
       console.log(
         "Testar com switch duplo e criar o switch de matematica",
         anoTurma
@@ -110,6 +126,10 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
                 "#FFFFFF",
               ];
               break;
+            default:
+              // Se não for ano 1, 2 ou 3, usar cores padrão
+              cores = ["#E0E0E0", "#BDBDBD", "#9E9E9E", "#757575"];
+              textColors = ["#42474A", "#42474A", "#FFFFFF", "#FFFFFF"];
           }
           break;
         case "leitura":
@@ -124,9 +144,7 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
           cores = ["#7ED957", "#FFDE59", "#F18888"];
           textColors = ["#42474A", "#42474A", "#42474A"];
           break;
-        default:
-          cores = ["#E0E0E0", "#BDBDBD", "#9E9E9E", "#757575"];
-          textColors = ["#42474A", "#42474A", "#FFFFFF", "#FFFFFF"];
+        // Não precisa de default aqui pois já inicializamos as variáveis no início
       }
 
       const index = props.options.findIndex(
@@ -144,6 +162,13 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
 
   const handleChange = (newValue: any, option: any) => {
     const colors = getColorByValue(newValue);
+    console.log("🎨 SelectColorido - Mudando cor:", {
+      value: newValue,
+      backgroundColor: colors.bg,
+      textColor: colors.text,
+      tipoQuestao,
+      anoTurma,
+    });
     setBackgroundColor(colors.bg);
     setTextColor(colors.text);
     if (onChange) {
@@ -155,25 +180,53 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
   useEffect(() => {
     if (value) {
       const colors = getColorByValue(value);
+      console.log("🎨 SelectColorido - Cor inicial:", {
+        value,
+        backgroundColor: colors.bg,
+        textColor: colors.text,
+        tipoQuestao,
+        anoTurma,
+        id: props.id,
+      });
       setBackgroundColor(colors.bg);
       setTextColor(colors.text);
     }
-  }, [value, getColorByValue]);
+  }, [value, getColorByValue, tipoQuestao, anoTurma, props.id]);
+
+  // Gera um ID único para este componente se não tiver
+  const uniqueId =
+    props.id || `select-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
     <>
-      <style>{`
-        .select-colorido-${props.id} .ant-select-selector {
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        /* Ant Design v6 - Estrutura atualizada */
+        .ant-select.select-colorido-${uniqueId} {
           background-color: ${backgroundColor} !important;
           border-color: ${backgroundColor} !important;
         }
-        .select-colorido-${props.id} .ant-select-selection-item {
+        .ant-select.select-colorido-${uniqueId} .ant-select-content,
+        .ant-select.select-colorido-${uniqueId} .ant-select-content-value {
+          color: ${textColor} !important;
+          font-weight: 500 !important;
+        }
+        .ant-select.select-colorido-${uniqueId} .ant-select-input {
           color: ${textColor} !important;
         }
-        .select-colorido-${props.id} .ant-select-arrow {
+        .ant-select.select-colorido-${uniqueId} .ant-select-suffix,
+        .ant-select.select-colorido-${uniqueId} .ant-select-arrow,
+        .ant-select.select-colorido-${uniqueId} .anticon {
           color: ${textColor} !important;
         }
-      `}</style>
+        .ant-select.select-colorido-${uniqueId}.ant-select-disabled {
+          opacity: 0.6 !important;
+          background-color: ${backgroundColor} !important;
+        }
+      `,
+        }}
+      />
       <SelectAnt
         notFoundContent={
           <Empty
@@ -188,7 +241,7 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
         value={value}
         onChange={handleChange}
         {...props}
-        className={`select-colorido select-colorido-${props.id} ${
+        className={`select-colorido select-colorido-${uniqueId} ${
           props.className || ""
         }`}
       />

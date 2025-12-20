@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Checkbox, Form, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { FileTextOutlined, TeamOutlined, EyeOutlined } from "@ant-design/icons";
-import Select from "@/components/sgp/sondagem/selectColorido";
+import SelectColorido from "@/componentes/sondagem/selectColorido";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
 import "./sondagemListaDinamica.css";
 
@@ -187,7 +187,7 @@ const SondagemListaDinamica: React.FC<
                 style={{ margin: 0 }}
                 rules={[{ required: false }]}
               >
-                <Select
+                <SelectColorido
                   id={`select_${estudanteIndex}_${colunaIndex}`}
                   options={options}
                   onChange={(value) =>
