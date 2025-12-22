@@ -59,5 +59,8 @@ export default defineConfig({
     target: "esnext",
     minify: false,
     cssCodeSplit: false,
+    rollupOptions: {
+      external: ["react", "react-dom", "react-redux"],
+    },
   },
 });

@@ -60,11 +60,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
         "#FFFFFF",
         "#42474A",
       ];
-
-      console.log(
-        "Testar com switch duplo e criar o switch de matematica",
-        anoTurma
-      );
       switch (tipoQuestao) {
         case "escrita":
           switch (anoTurma) {
@@ -162,13 +157,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
 
   const handleChange = (newValue: any, option: any) => {
     const colors = getColorByValue(newValue);
-    console.log("🎨 SelectColorido - Mudando cor:", {
-      value: newValue,
-      backgroundColor: colors.bg,
-      textColor: colors.text,
-      tipoQuestao,
-      anoTurma,
-    });
     setBackgroundColor(colors.bg);
     setTextColor(colors.text);
     if (onChange) {
@@ -180,14 +168,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
   useEffect(() => {
     if (value) {
       const colors = getColorByValue(value);
-      console.log("🎨 SelectColorido - Cor inicial:", {
-        value,
-        backgroundColor: colors.bg,
-        textColor: colors.text,
-        tipoQuestao,
-        anoTurma,
-        id: props.id,
-      });
       setBackgroundColor(colors.bg);
       setTextColor(colors.text);
     }
