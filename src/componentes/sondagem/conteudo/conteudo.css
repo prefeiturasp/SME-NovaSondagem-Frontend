@@ -1,11 +1,56 @@
-.labelSelectSondagem :global(.ant-form-item-label > label) {
-  font-weight: 700;
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+.textoSondagemEstilo {
   font-size: 14px;
   font-family: Roboto;
+  font-weight: 400;
+  color: #42474a;
+  margin-bottom: 1.5em;
+}
+
+.labelSelectSondagem label {
+  font-weight: 700;
+  font-size: 14px !important;
+  font-family: Roboto;
+  color: #595959;
 }
 
 .CardSondagemEfeitos {
   box-shadow: 0px 0px 6px 0px #0000001f;
   border-radius: 4px;
   background-color: #ffffff;
+}
+
+.linhaTituloBotao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
+.sondagemBotaoEstilo {
+  font-size: 14px;
+  font-family: Roboto;
+  font-weight: 700;
+  color: #08659a;
+  padding: 1em;
+  border: 1px solid #08659a;
+  border-radius: 4px;
+  margin-left: 1em;
+}
+
+.sondagemBotaoEstilo .anticon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.sondagemBotaoEstilo .anticon svg {
+  stroke-width: 50;
+}
+
+.tituloSondagem {
+  font-family: Roboto;
+  font-weight: 700;
+  font-size: 20px;
+  color: #42474a;
 }

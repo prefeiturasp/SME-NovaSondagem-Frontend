@@ -182,25 +182,24 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        /* Ant Design v6 - Estrutura atualizada */
-        .ant-select.select-colorido-${uniqueId} {
+        /* Ant Design v5 - Estrutura atualizada */
+        .ant-select.select-colorido-${uniqueId} .ant-select-selector {
           background-color: ${backgroundColor} !important;
           border-color: ${backgroundColor} !important;
         }
-        .ant-select.select-colorido-${uniqueId} .ant-select-content,
-        .ant-select.select-colorido-${uniqueId} .ant-select-content-value {
+        .ant-select.select-colorido-${uniqueId} .ant-select-selection-item,
+        .ant-select.select-colorido-${uniqueId} .ant-select-selection-placeholder {
           color: ${textColor} !important;
           font-weight: 500 !important;
         }
-        .ant-select.select-colorido-${uniqueId} .ant-select-input {
+        .ant-select.select-colorido-${uniqueId} .ant-select-selection-search-input {
           color: ${textColor} !important;
         }
-        .ant-select.select-colorido-${uniqueId} .ant-select-suffix,
         .ant-select.select-colorido-${uniqueId} .ant-select-arrow,
         .ant-select.select-colorido-${uniqueId} .anticon {
           color: ${textColor} !important;
         }
-        .ant-select.select-colorido-${uniqueId}.ant-select-disabled {
+        .ant-select.select-colorido-${uniqueId}.ant-select-disabled .ant-select-selector {
           opacity: 0.6 !important;
           background-color: ${backgroundColor} !important;
         }

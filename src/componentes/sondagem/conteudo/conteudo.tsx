@@ -4,9 +4,14 @@ import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/s
 import MockDadosTabelaDinamica from "~/mocks/MockDadosTabelaDinamica.json";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 const Conteudo: React.FC = () => {
   //const [exibirLoader, setExibirLoader] = useState(false);
+
+  const usuario = useSelector((store: any) => store.usuario);
+  console.log("Usuario no conteudo:", usuario);
 
   const [listaDisciplinas, setListaDisciplinas] = useState<
     Array<{ value: number; label: string }>
@@ -85,23 +90,53 @@ const Conteudo: React.FC = () => {
     }
   };
 
-  const salvarDadosLogin = () => {
-    console.log("Salvar dados de login");
+  const salvarDadosSondagem = () => {
+    console.log("Salvar dados de sondagem");
+  };
+
+  const CancelarCadastroSondagem = () => {
+    console.log("Cancelar cadastro de sondagem");
+  };
+
+  const voltarSondagem = () => {
+    console.log("Voltar para a tela anterior");
   };
 
   return (
     <>
-      <div>
-        <Button
-          onClick={() => {
-            salvarDadosLogin();
-          }}
-        >
-          Salvar
-        </Button>
-      </div>
-      <Card className="CardSondagemEfeitos">
+      <div className="linhaTituloBotao">
+        <div className="tituloSondagem">Sondagem</div>
         <div>
+          <Button
+            className="sondagemBotaoEstilo"
+            onClick={() => {
+              voltarSondagem();
+            }}
+            icon={<ArrowLeftOutlined />}
+          ></Button>
+
+          <Button
+            className="sondagemBotaoEstilo"
+            onClick={() => {
+              CancelarCadastroSondagem();
+            }}
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            className="sondagemBotaoEstilo"
+            onClick={() => {
+              salvarDadosSondagem();
+            }}
+          >
+            Salvar
+          </Button>
+        </div>
+      </div>
+
+      <Card className="CardSondagemEfeitos">
+        <div className="textoSondagemEstilo">
           <p>
             Preencha os campos para conferir as informações das turmas e
             estudantes da Unidade Educacional selecionada.

@@ -27,7 +27,20 @@ export default defineConfig({
       exposes: {
         "./Home": "./src/paginas/home/home.tsx",
       },
-      shared: ["react", "react-dom", "react-redux"],
+      shared: {
+        react: {
+          requiredVersion: "^18.2.0",
+        },
+        "react-dom": {
+          requiredVersion: "^18.2.0",
+        },
+        "react-redux": {
+          requiredVersion: "^8.1.3",
+        },
+        antd: {
+          requiredVersion: "^5.4.0",
+        },
+      },
     }),
     {
       name: "module-federation-debug",
@@ -60,7 +73,7 @@ export default defineConfig({
     minify: false,
     cssCodeSplit: false,
     rollupOptions: {
-      external: ["react", "react-dom", "react-redux"],
+      external: ["react-redux"],
     },
   },
 });
