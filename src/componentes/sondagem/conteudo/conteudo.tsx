@@ -51,7 +51,7 @@ const Conteudo: React.FC = () => {
     return false;
   }, [modalidade, ano]);
 
-  const obterDisciplinas = async () => {
+  const obterDisciplinas = useCallback(async () => {
     // const disciplinas = await ServicoDisciplina.obterDisciplinasPorTurma(
     //   turmaId
     // );
@@ -65,23 +65,39 @@ const Conteudo: React.FC = () => {
       setDesabilitarDisciplina(true);
       setListaDisciplinas([]);
     }
-  };
+  }, [formFiltro]);
+
+  const resetando = useCallback(() => {
+    formFiltro.resetFields();
+    setListaDisciplinas([]);
+    setDesabilitarDisciplina(true);
+    setDadosLista(null);
+    setModalidadeAnoValidos(false);
+  }, [formFiltro]);
 
   useEffect(() => {
+    setDadosLista(null);
+    setDesabilitarDisciplina(true);
     if (modalidade && ano) {
       const valido = verificarModalidadeTurma();
       setModalidadeAnoValidos(valido);
+
       if (valido && turma !== 0) {
         obterDisciplinas();
       } else {
-        setListaDisciplinas([]);
-        formFiltro.resetFields();
-        setDesabilitarDisciplina(true);
-        setDadosLista(null);
-        // setModoEdicao(false);
+        resetando();
       }
+    } else {
+      resetando();
     }
-  }, [modalidade, ano, turma, verificarModalidadeTurma, obterDisciplinas]);
+  }, [
+    modalidade,
+    ano,
+    turma,
+    verificarModalidadeTurma,
+    obterDisciplinas,
+    resetando,
+  ]);
 
   const onChangeDisciplinas = async (disciplinaId: any) => {
     if (disciplinaId) {
@@ -242,7 +258,7 @@ const Conteudo: React.FC = () => {
                     options={listaDisciplinas}
                     placeholder="Selecione o componente curricular"
                     onChange={onChangeDisciplinas}
-                    disabled={desabilitarDisciplina && turmaSelecionada.turma}
+                    disabled={desabilitarDisciplina}
                   />
                 </Form.Item>
               </Col>
@@ -257,7 +273,7 @@ const Conteudo: React.FC = () => {
                     options={listaProficiencia}
                     placeholder="Selecione a proficiência"
                     onChange={onChangeProficiencia}
-                    disabled={desabilitarDisciplina && turmaSelecionada.turma}
+                    disabled={desabilitarDisciplina}
                   />
                 </Form.Item>
               </Col>
