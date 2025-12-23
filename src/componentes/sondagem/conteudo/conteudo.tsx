@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card, Form, Select, Row, Col } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
 import MockDadosTabelaDinamica from "~/mocks/MockDadosTabelaDinamica.json";
@@ -6,11 +6,16 @@ import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
+import Alerta from "~/componentes/biblioteca/Alerta";
 
 const Conteudo: React.FC = () => {
   //const [exibirLoader, setExibirLoader] = useState(false);
 
   const usuario = useSelector((store: any) => store.usuario);
+  const turmaSelecionada = usuario?.turmaSelecionada;
+  const turma = turmaSelecionada ? turmaSelecionada.id : 0;
+  const modalidade = usuario?.turmaSelecionada?.modalidade;
+  const ano = usuario?.turmaSelecionada?.ano;
   console.log("Usuario no conteudo:", usuario);
 
   const [listaDisciplinas, setListaDisciplinas] = useState<
@@ -27,15 +32,24 @@ const Conteudo: React.FC = () => {
 
   const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
 
-  const ano = "1";
+  const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
 
-  useEffect(() => {
-    //TODO: validar modalidade e ano antes de obter disciplinas!
-    obterDisciplinas();
-  }, []);
+  const verificarModalidadeTurma = useCallback(() => {
+    if (modalidade === "3") {
+      if (ano === "1") {
+        return true;
+      }
+    }
+    if (modalidade === "5") {
+      if (ano === "1" || ano === "2" || ano === "3") {
+        return true;
+      }
+    }
+    return false;
+  }, [modalidade, ano]);
 
   const obterDisciplinas = async () => {
     // const disciplinas = await ServicoDisciplina.obterDisciplinasPorTurma(
@@ -52,6 +66,22 @@ const Conteudo: React.FC = () => {
       setListaDisciplinas([]);
     }
   };
+
+  useEffect(() => {
+    if (modalidade && ano) {
+      const valido = verificarModalidadeTurma();
+      setModalidadeAnoValidos(valido);
+      if (valido && turma !== 0) {
+        obterDisciplinas();
+      } else {
+        setListaDisciplinas([]);
+        formFiltro.resetFields();
+        setDesabilitarDisciplina(true);
+        setDadosLista(null);
+        // setModoEdicao(false);
+      }
+    }
+  }, [modalidade, ano, turma, verificarModalidadeTurma, obterDisciplinas]);
 
   const onChangeDisciplinas = async (disciplinaId: any) => {
     if (disciplinaId) {
@@ -91,7 +121,30 @@ const Conteudo: React.FC = () => {
   };
 
   const salvarDadosSondagem = () => {
-    console.log("Salvar dados de sondagem");
+    const dadosFormulario = formListaDinamica.getFieldsValue();
+
+    const dadosParaSalvar = dadoslista?.estudantes.map(
+      (estudante, estudanteIndex) => {
+        const respostas = estudante.coluna.map((coluna, colunaIndex) => ({
+          nomeColuna: coluna.descricaoColuna,
+          respostaId:
+            dadosFormulario[`respostaId_${estudanteIndex}_${colunaIndex}`] ||
+            null,
+          respostaSelecionada:
+            dadosFormulario[`resposta_${estudanteIndex}_${colunaIndex}`] ||
+            null,
+        }));
+
+        return {
+          numeroEstudante: estudante.numero,
+          nomeEstudante: estudante.nome,
+          lp: dadosFormulario[`lp_${estudanteIndex}`] || false,
+          respostas,
+        };
+      }
+    );
+
+    console.log("Dados organizados para salvar:", dadosParaSalvar);
   };
 
   const CancelarCadastroSondagem = () => {
@@ -104,10 +157,41 @@ const Conteudo: React.FC = () => {
 
   return (
     <>
+      <div className="grupoAlertas">
+        {!turmaSelecionada?.turma ? (
+          <Row gutter={16} className="p-0">
+            <Alerta
+              alerta={{
+                tipo: "warning",
+                id: "AlertaPrincipal",
+                mensagem: "Você precisa escolher uma turma.",
+                estiloTitulo: { fontSize: "18px" },
+              }}
+              className="mb-2 larguraAlerta"
+            />
+          </Row>
+        ) : null}
+        {!modalidadeAnoValidos ? (
+          <Row gutter={16} className="p-0">
+            <Alerta
+              alerta={{
+                tipo: "warning",
+                id: "SegundoAlerta",
+                mensagem:
+                  'Só existe sondagem para modalidade "Ensino Fundamental" do 1° a 3° ano e "Educação de Jovens Adultos" do 1° ano.',
+                estiloTitulo: { fontSize: "18px" },
+              }}
+              className="mb-2 larguraAlerta"
+            />
+          </Row>
+        ) : null}
+      </div>
+
       <div className="linhaTituloBotao">
         <div className="tituloSondagem">Sondagem</div>
         <div>
           <Button
+            id="sondagem-button-voltar"
             className="sondagemBotaoEstilo"
             onClick={() => {
               voltarSondagem();
@@ -116,6 +200,7 @@ const Conteudo: React.FC = () => {
           ></Button>
 
           <Button
+            id="sondagem-button-cancelar"
             className="sondagemBotaoEstilo"
             onClick={() => {
               CancelarCadastroSondagem();
@@ -125,6 +210,7 @@ const Conteudo: React.FC = () => {
           </Button>
 
           <Button
+            id="sondagem-button-salvar"
             className="sondagemBotaoEstilo"
             onClick={() => {
               salvarDadosSondagem();
@@ -152,10 +238,11 @@ const Conteudo: React.FC = () => {
                   className="labelSelectSondagem"
                 >
                   <Select
+                    id="sondagem-select-componente-curricular"
                     options={listaDisciplinas}
                     placeholder="Selecione o componente curricular"
                     onChange={onChangeDisciplinas}
-                    disabled={desabilitarDisciplina}
+                    disabled={desabilitarDisciplina && turmaSelecionada.turma}
                   />
                 </Form.Item>
               </Col>
@@ -166,10 +253,11 @@ const Conteudo: React.FC = () => {
                   className="labelSelectSondagem"
                 >
                   <Select
+                    id="sondagem-select-proficiencia"
                     options={listaProficiencia}
                     placeholder="Selecione a proficiência"
                     onChange={onChangeProficiencia}
-                    disabled={desabilitarDisciplina}
+                    disabled={desabilitarDisciplina && turmaSelecionada.turma}
                   />
                 </Form.Item>
               </Col>

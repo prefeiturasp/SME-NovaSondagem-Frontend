@@ -43,7 +43,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
       if (!selectedValue || !props.options)
         return { bg: "#FFFFFF", text: "#000000" };
 
-      // Inicializar com valores padrão para evitar erro de "usado antes de ser atribuído"
       let cores: string[] = [
         "#FF3131",
         "#FFDE59",
@@ -122,7 +121,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
               ];
               break;
             default:
-              // Se não for ano 1, 2 ou 3, usar cores padrão
               cores = ["#E0E0E0", "#BDBDBD", "#9E9E9E", "#757575"];
               textColors = ["#42474A", "#42474A", "#FFFFFF", "#FFFFFF"];
           }
@@ -139,7 +137,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
           cores = ["#7ED957", "#FFDE59", "#F18888"];
           textColors = ["#42474A", "#42474A", "#42474A"];
           break;
-        // Não precisa de default aqui pois já inicializamos as variáveis no início
       }
 
       const index = props.options.findIndex(
@@ -164,7 +161,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
     }
   };
 
-  // Define cor inicial quando o componente monta ou value muda
   useEffect(() => {
     if (value) {
       const colors = getColorByValue(value);
@@ -173,7 +169,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
     }
   }, [value, getColorByValue, tipoQuestao, anoTurma, props.id]);
 
-  // Gera um ID único para este componente se não tiver
   const uniqueId =
     props.id || `select-${Math.random().toString(36).substr(2, 9)}`;
 

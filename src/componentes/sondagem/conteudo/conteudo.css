@@ -33,7 +33,6 @@
   font-family: Roboto;
   font-weight: 700;
   color: #08659a;
-  padding: 1em;
   border: 1px solid #08659a;
   border-radius: 4px;
   margin-left: 1em;
@@ -53,4 +52,12 @@
   font-weight: 700;
   font-size: 20px;
   color: #42474a;
+}
+
+.grupoAlertas {
+  margin: 1em 0.5em;
+}
+
+.larguraAlerta {
+  width: 100%;
 }
