@@ -1,5 +1,26 @@
 import '@testing-library/jest-dom';
 
+// Suprimir warnings específicos do React/Ant Design em testes
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args: any[]) => {
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('Warning: An update to') ||
+       args[0].includes('inside a test was not wrapped in act') ||
+       args[0].includes('The above error occurred') ||
+       args[0].includes('Consider adding an error boundary'))
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});
+
 Object.defineProperty(globalThis, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({
