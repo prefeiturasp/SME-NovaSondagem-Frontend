@@ -12,36 +12,48 @@
         {
           "descricaoColuna": "1° ciclo",
           "PeriodoBimestreAtivo": true,
-          "opcaoResposta": [
+           "opcaoResposta": [
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -54,36 +66,48 @@
         {
           "descricaoColuna": "2° ciclo",
           "PeriodoBimestreAtivo": false,
-          "opcaoResposta": [
+           "opcaoResposta": [
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -96,36 +120,48 @@
         {
           "descricaoColuna": "3° ciclo",
           "PeriodoBimestreAtivo": false,
-          "opcaoResposta": [
+           "opcaoResposta": [
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -138,36 +174,48 @@
         {
           "descricaoColuna": "4° ciclo",
           "PeriodoBimestreAtivo": false,
-          "opcaoResposta": [
+           "opcaoResposta": [
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -180,36 +228,48 @@
         {
           "descricaoColuna": "5° ciclo",
           "PeriodoBimestreAtivo": false,
-          "opcaoResposta": [
+           "opcaoResposta": [
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -236,32 +296,44 @@
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -278,32 +350,44 @@
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -320,32 +404,44 @@
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -362,32 +458,44 @@
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
@@ -404,32 +512,44 @@
             {
               "id": 1,
               "orden": 1,
-              "descricaoOpcao": "PS"
+              "descricaoOpcao": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
               "orden": 2,
-              "descricaoOpcao": "SSV"
+              "descricaoOpcao": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A"
             },
             {
               "id": 3,
               "orden": 3,
-              "descricaoOpcao": "SCV"
+              "descricaoOpcao": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
               "orden": 4,
-              "descricaoOpcao": "SA"
+              "descricaoOpcao": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
               "orden": 5,
-              "descricaoOpcao": "A"
+              "descricaoOpcao": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
               "orden": 6,
-              "descricaoOpcao": "Sem preenchimento"
+              "descricaoOpcao": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff"
             }
           ],
           "resposta": [
