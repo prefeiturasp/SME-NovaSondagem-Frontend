@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card, Form, Select, Row, Col } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
-import MockDadosTabelaDinamica from "~/mocks/MockDadosTabelaDinamica.json";
+import MockDadosTabelaDinamica from "../../../mocks/MockDadosTabelaDinamica.json";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import Alerta from "~/componentes/biblioteca/Alerta";
+import Alerta from "../../../componentes/biblioteca/Alerta";
 
 const Conteudo: React.FC = () => {
   //const [exibirLoader, setExibirLoader] = useState(false);

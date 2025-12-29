@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import SemAcesso from "./paginas/sem-acesso/SemAcesso";
-import Autenticacao from "./paginas/autenticacao/autenticacao";
 import Home from "./paginas/home/home";
 import type { RootState } from "./types/redux";
 import { useSelector } from "react-redux";
@@ -25,7 +24,6 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
 
 const AppRoutes: React.FC = () => (
   <Routes>
-    <Route path="/validar" element={<Autenticacao />} />
     <Route path="/sem-acesso" element={<SemAcesso />} />
     <Route
       path="/"

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Checkbox, Form, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { FileTextOutlined, TeamOutlined, EyeOutlined } from "@ant-design/icons";
-import SelectColorido from "@/componentes/sondagem/selectColorido";
+import SelectColorido from "../selectColorido";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
 import "./sondagemListaDinamica.css";
 
@@ -46,20 +46,7 @@ const SondagemListaDinamica: React.FC<
     }
   }, [opcoesCarregadas, dados, formListaDinamica]);
 
-  const handleSelectChange = (
-    estudanteIndex: number,
-    colunaIndex: number,
-    value: number
-  ) => {
-    console.log(
-      `Estudante ${estudanteIndex}, Coluna ${colunaIndex}, Novo valor: ${value}`
-    );
-  };
-
-  const handleCheckboxChange = (estudanteIndex: number, checked: boolean) => {
-    console.log(`Estudante ${estudanteIndex}, LP: ${checked}`);
-  };
-
+  
   const columns: ColumnsType<Estudante> = [];
   const columnsDinamicas: ColumnsType<Estudante> = [];
 
@@ -80,9 +67,7 @@ const SondagemListaDinamica: React.FC<
           valuePropName="checked"
           style={{ margin: 0 }}
         >
-          <Checkbox
-            onChange={(e) => handleCheckboxChange(index, e.target.checked)}
-          />
+          <Checkbox />
         </Form.Item>
       ),
     });
@@ -190,9 +175,6 @@ const SondagemListaDinamica: React.FC<
                 <SelectColorido
                   id={`select_${estudanteIndex}_${colunaIndex}`}
                   options={options}
-                  onChange={(value) =>
-                    handleSelectChange(estudanteIndex, colunaIndex, value)
-                  }
                   placeholder="Selecione"
                   disabled={isDisabled}
                   style={{ width: "100%" }}
