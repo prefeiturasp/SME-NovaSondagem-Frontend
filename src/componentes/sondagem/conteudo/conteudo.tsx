@@ -9,8 +9,6 @@ import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
 
 const Conteudo: React.FC = () => {
-  //const [exibirLoader, setExibirLoader] = useState(false);
-
   const usuario = useSelector((store: any) => store.usuario);
   const turmaSelecionada = usuario?.turmaSelecionada;
   const turma = turmaSelecionada ? turmaSelecionada.id : 0;
@@ -52,9 +50,6 @@ const Conteudo: React.FC = () => {
   }, [modalidade, ano]);
 
   const obterDisciplinas = useCallback(async () => {
-    // const disciplinas = await ServicoDisciplina.obterDisciplinasPorTurma(
-    //   turmaId
-    // );
     formFiltro.resetFields();
     const disciplinas = MockDisciplina();
 
@@ -103,7 +98,6 @@ const Conteudo: React.FC = () => {
     if (disciplinaId) {
       const valorSelecionado = formFiltro.getFieldValue("disciplinaId");
       console.log("ID:", valorSelecionado);
-      // await buscarDados(valorSelecionado);
 
       const listaProficiencia = MockProficiencia();
       if (listaProficiencia?.data?.length > 0) {
@@ -124,15 +118,10 @@ const Conteudo: React.FC = () => {
 
   const buscarDadosLista = async () => {
     try {
-      //setExibirLoader(true);
-      //TODO: Chamar API para buscar os dados da lista
-
       const dadosMock = MockDadosTabelaDinamica;
       setDadosLista(dadosMock);
     } catch (error) {
-      // Tratar erro caso necessário
     } finally {
-      //setExibirLoader(false);
     }
   };
 

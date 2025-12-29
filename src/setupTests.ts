@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 
-// Suprimir warnings específicos do React/Ant Design em testes
 const originalError = console.error;
 beforeAll(() => {
   console.error = (...args: any[]) => {
@@ -35,7 +34,6 @@ Object.defineProperty(globalThis, 'matchMedia', {
   })),
 });
 
-// Mock import.meta.env para testes com Vite
 interface GlobalWithImport {
   import: {
     meta: {

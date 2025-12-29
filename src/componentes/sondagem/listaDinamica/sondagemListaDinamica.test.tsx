@@ -4,7 +4,6 @@ import { Form } from "antd";
 import SondagemListaDinamica from "./sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 
-// Mock do SelectColorido
 jest.mock("@/componentes/sondagem/selectColorido", () => {
   return function SelectColorido({
     id,
@@ -294,7 +293,7 @@ describe("SondagemListaDinamica", () => {
 
     it("não deve renderizar tags quando estudante não tem PAP, AEE ou Acessibilidade", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      // Maria Santos não tem nenhuma tag
+
       const mariaSantos = screen.getByText("2 - Maria Santos");
       const parent = mariaSantos.closest("div");
       const tags = parent?.querySelectorAll(".ant-tag");
@@ -401,7 +400,6 @@ describe("SondagemListaDinamica", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
 
       await waitFor(() => {
-        // O primeiro estudante tem uma resposta selecionada (opcaoRespostaId: 2)
         const hiddenInput = document.querySelector(
           'input[id="respostaId_0_0"]'
         ) as HTMLInputElement;

@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import federation from "@originjs/vite-plugin-federation";
 import path from "path";
 
-// https://vite.dev/config/
 export default defineConfig({
   resolve: {
     alias: {
@@ -47,18 +46,6 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           if (req.url?.includes("remoteEntry.js")) {
-            console.log(
-              "═══════════════════════════════════════════════════════"
-            );
-            console.log("📥 [REMOTE SERVER] remoteEntry.js requisitado!");
-            console.log("    Referer:", req.headers.referer || "unknown");
-            console.log("    Host:", req.headers.host);
-            console.log("    Content-Type será: application/javascript");
-            console.log(
-              "═══════════════════════════════════════════════════════"
-            );
-
-            // Define o Content-Type correto para módulos ES
             res.setHeader("Content-Type", "application/javascript");
             res.setHeader("Access-Control-Allow-Origin", "*");
           }

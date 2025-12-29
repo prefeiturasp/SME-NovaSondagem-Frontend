@@ -191,7 +191,6 @@ describe("mockStore", () => {
       expect(store.getState()).toBeDefined();
       expect(store.dispatch).toBeDefined();
 
-      // Simula uso em componente
       const estadoParaComponente = store.getState();
       expect(estadoParaComponente.usuario.logado).toBe(false);
     });
