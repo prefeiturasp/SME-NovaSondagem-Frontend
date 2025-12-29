@@ -1,13 +1,11 @@
-import Cabecalho from "../../componentes/sondagem/cabecalho/cabecalho";
+import React from "react";
 import Conteudo from "../../componentes/sondagem/conteudo/conteudo";
-import Rodape from "../../componentes/sondagem/rodape/rodape";
+import "./home.css";
 
 const Home: React.FC = () => {
   return (
-    <div>
-      <Cabecalho />
+    <div className="classtudo">
       <Conteudo />
-      <Rodape />
     </div>
   );
 };
