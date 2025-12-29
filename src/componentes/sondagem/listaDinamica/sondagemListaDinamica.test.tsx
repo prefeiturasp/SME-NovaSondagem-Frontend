@@ -45,9 +45,27 @@ const mockDadosEscrita: DadosTabelaDinamica = {
           descricaoColuna: "1° ciclo",
           PeriodoBimestreAtivo: true,
           opcaoResposta: [
-            { id: 1, orden: 1, descricaoOpcao: "PS" },
-            { id: 2, orden: 2, descricaoOpcao: "SSV" },
-            { id: 3, orden: 3, descricaoOpcao: "SCV" },
+            {
+              id: 1,
+              orden: 1,
+              descricaoOpcao: "PS",
+              corFundo: "#FF3131",
+              corTexto: "#FFFFFF",
+            },
+            {
+              id: 2,
+              orden: 2,
+              descricaoOpcao: "SSV",
+              corFundo: "#FFDE59",
+              corTexto: "#42474A",
+            },
+            {
+              id: 3,
+              orden: 3,
+              descricaoOpcao: "SCV",
+              corFundo: "#FF914D",
+              corTexto: "#FFFFFF",
+            },
           ],
           resposta: [{ id: 1, opcaoRespostaId: 2 }],
         },
@@ -55,8 +73,20 @@ const mockDadosEscrita: DadosTabelaDinamica = {
           descricaoColuna: "2° ciclo",
           PeriodoBimestreAtivo: false,
           opcaoResposta: [
-            { id: 4, orden: 1, descricaoOpcao: "A" },
-            { id: 5, orden: 2, descricaoOpcao: "B" },
+            {
+              id: 4,
+              orden: 1,
+              descricaoOpcao: "A",
+              corFundo: "#00BF63",
+              corTexto: "#FFFFFF",
+            },
+            {
+              id: 5,
+              orden: 2,
+              descricaoOpcao: "B",
+              corFundo: "#5170FF",
+              corTexto: "#FFFFFF",
+            },
           ],
           resposta: [],
         },
@@ -74,15 +104,35 @@ const mockDadosEscrita: DadosTabelaDinamica = {
           descricaoColuna: "1° ciclo",
           PeriodoBimestreAtivo: true,
           opcaoResposta: [
-            { id: 1, orden: 1, descricaoOpcao: "PS" },
-            { id: 2, orden: 2, descricaoOpcao: "SSV" },
+            {
+              id: 1,
+              orden: 1,
+              descricaoOpcao: "PS",
+              corFundo: "#FF3131",
+              corTexto: "#FFFFFF",
+            },
+            {
+              id: 2,
+              orden: 2,
+              descricaoOpcao: "SSV",
+              corFundo: "#FFDE59",
+              corTexto: "#42474A",
+            },
           ],
           resposta: [],
         },
         {
           descricaoColuna: "2° ciclo",
           PeriodoBimestreAtivo: true,
-          opcaoResposta: [{ id: 4, orden: 1, descricaoOpcao: "A" }],
+          opcaoResposta: [
+            {
+              id: 4,
+              orden: 1,
+              descricaoOpcao: "A",
+              corFundo: "#00BF63",
+              corTexto: "#FFFFFF",
+            },
+          ],
           resposta: [],
         },
       ],
@@ -104,7 +154,15 @@ const mockDadosReescrita: DadosTabelaDinamica = {
         {
           descricaoColuna: "Avaliação 1",
           PeriodoBimestreAtivo: true,
-          opcaoResposta: [{ id: 10, orden: 1, descricaoOpcao: "Opção 1" }],
+          opcaoResposta: [
+            {
+              id: 10,
+              orden: 1,
+              descricaoOpcao: "Opção 1",
+              corFundo: "#5170FF",
+              corTexto: "#FFFFFF",
+            },
+          ],
           resposta: [],
         },
       ],
@@ -126,7 +184,15 @@ const mockDadosProducao: DadosTabelaDinamica = {
         {
           descricaoColuna: "Produção 1",
           PeriodoBimestreAtivo: true,
-          opcaoResposta: [{ id: 20, orden: 1, descricaoOpcao: "Nível 1" }],
+          opcaoResposta: [
+            {
+              id: 20,
+              orden: 1,
+              descricaoOpcao: "Nível 1",
+              corFundo: "#00BF63",
+              corTexto: "#FFFFFF",
+            },
+          ],
           resposta: [],
         },
       ],
@@ -148,7 +214,15 @@ const mockDadosLeitura: DadosTabelaDinamica = {
         {
           descricaoColuna: "Leitura 1",
           PeriodoBimestreAtivo: true,
-          opcaoResposta: [{ id: 30, orden: 1, descricaoOpcao: "Nível A" }],
+          opcaoResposta: [
+            {
+              id: 30,
+              orden: 1,
+              descricaoOpcao: "Nível A",
+              corFundo: "#7ED957",
+              corTexto: "#363636",
+            },
+          ],
           resposta: [],
         },
       ],
@@ -170,7 +244,15 @@ const mockDadosOutro: DadosTabelaDinamica = {
         {
           descricaoColuna: "Avaliação",
           PeriodoBimestreAtivo: true,
-          opcaoResposta: [{ id: 40, orden: 1, descricaoOpcao: "Item 1" }],
+          opcaoResposta: [
+            {
+              id: 40,
+              orden: 1,
+              descricaoOpcao: "Item 1",
+              corFundo: "#FFDE59",
+              corTexto: "#42474A",
+            },
+          ],
           resposta: [],
         },
       ],
@@ -180,19 +262,12 @@ const mockDadosOutro: DadosTabelaDinamica = {
 
 const WrapperComponent = ({
   dados,
-  anoTurma = "2023",
 }: {
   dados: DadosTabelaDinamica | null;
   anoTurma?: string;
 }) => {
   const [form] = Form.useForm();
-  return (
-    <SondagemListaDinamica
-      dados={dados}
-      formListaDinamica={form}
-      anoTurma={anoTurma}
-    />
-  );
+  return <SondagemListaDinamica dados={dados} formListaDinamica={form} />;
 };
 
 describe("SondagemListaDinamica", () => {

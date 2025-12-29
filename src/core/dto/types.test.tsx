@@ -13,6 +13,8 @@ describe("Types - Interfaces", () => {
         id: 1,
         orden: 1,
         descricaoOpcao: "Sim",
+        corFundo: "#00BF63",
+        corTexto: "#FFFFFF",
       };
 
       expect(opcaoResposta).toBeDefined();
@@ -26,11 +28,15 @@ describe("Types - Interfaces", () => {
         id: 2,
         orden: 2,
         descricaoOpcao: "Não",
+        corFundo: "#FF3131",
+        corTexto: "#FFFFFF",
       };
 
       expect(opcaoResposta).toHaveProperty("id");
       expect(opcaoResposta).toHaveProperty("orden");
       expect(opcaoResposta).toHaveProperty("descricaoOpcao");
+      expect(opcaoResposta).toHaveProperty("corFundo");
+      expect(opcaoResposta).toHaveProperty("corTexto");
     });
 
     it("deve aceitar diferentes valores numéricos", () => {
@@ -38,6 +44,8 @@ describe("Types - Interfaces", () => {
         id: 999,
         orden: 0,
         descricaoOpcao: "Descrição longa com vários caracteres",
+        corFundo: "#5170FF",
+        corTexto: "#FFFFFF",
       };
 
       expect(opcaoResposta.id).toBe(999);
@@ -114,8 +122,20 @@ describe("Types - Interfaces", () => {
         descricaoColuna: "Matemática",
         PeriodoBimestreAtivo: true,
         opcaoResposta: [
-          { id: 1, orden: 1, descricaoOpcao: "Sim" },
-          { id: 2, orden: 2, descricaoOpcao: "Não" },
+          {
+            id: 1,
+            orden: 1,
+            descricaoOpcao: "Sim",
+            corFundo: "#00BF63",
+            corTexto: "#FFFFFF",
+          },
+          {
+            id: 2,
+            orden: 2,
+            descricaoOpcao: "Não",
+            corFundo: "#FF3131",
+            corTexto: "#FFFFFF",
+          },
         ],
         resposta: [],
       };
@@ -196,13 +216,29 @@ describe("Types - Interfaces", () => {
           {
             descricaoColuna: "Leitura",
             PeriodoBimestreAtivo: true,
-            opcaoResposta: [{ id: 1, orden: 1, descricaoOpcao: "Sim" }],
+            opcaoResposta: [
+              {
+                id: 1,
+                orden: 1,
+                descricaoOpcao: "Sim",
+                corFundo: "#00BF63",
+                corTexto: "#FFFFFF",
+              },
+            ],
             resposta: [{ id: 1, opcaoRespostaId: 1 }],
           },
           {
             descricaoColuna: "Escrita",
             PeriodoBimestreAtivo: false,
-            opcaoResposta: [{ id: 2, orden: 2, descricaoOpcao: "Não" }],
+            opcaoResposta: [
+              {
+                id: 2,
+                orden: 2,
+                descricaoOpcao: "Não",
+                corFundo: "#FF3131",
+                corTexto: "#FFFFFF",
+              },
+            ],
             resposta: [],
           },
         ],
@@ -299,9 +335,27 @@ describe("Types - Interfaces", () => {
                 descricaoColuna: "Leitura",
                 PeriodoBimestreAtivo: true,
                 opcaoResposta: [
-                  { id: 1, orden: 1, descricaoOpcao: "Pré-silábico" },
-                  { id: 2, orden: 2, descricaoOpcao: "Silábico" },
-                  { id: 3, orden: 3, descricaoOpcao: "Alfabético" },
+                  {
+                    id: 1,
+                    orden: 1,
+                    descricaoOpcao: "Pré-silábico",
+                    corFundo: "#FF3131",
+                    corTexto: "#FFFFFF",
+                  },
+                  {
+                    id: 2,
+                    orden: 2,
+                    descricaoOpcao: "Silábico",
+                    corFundo: "#FFDE59",
+                    corTexto: "#42474A",
+                  },
+                  {
+                    id: 3,
+                    orden: 3,
+                    descricaoOpcao: "Alfabético",
+                    corFundo: "#00BF63",
+                    corTexto: "#FFFFFF",
+                  },
                 ],
                 resposta: [{ id: 1, opcaoRespostaId: 3 }],
               },
@@ -338,6 +392,8 @@ describe("Types - Interfaces", () => {
         id: 1,
         orden: 1,
         descricaoOpcao: "Sim",
+        corFundo: "#00BF63",
+        corTexto: "#FFFFFF",
       };
 
       const resposta1: Resposta = {
@@ -374,9 +430,27 @@ describe("Types - Interfaces", () => {
 
     it("deve manter referências corretas entre resposta e opção", () => {
       const opcoes: OpcaoResposta[] = [
-        { id: 1, orden: 1, descricaoOpcao: "Opção 1" },
-        { id: 2, orden: 2, descricaoOpcao: "Opção 2" },
-        { id: 3, orden: 3, descricaoOpcao: "Opção 3" },
+        {
+          id: 1,
+          orden: 1,
+          descricaoOpcao: "Opção 1",
+          corFundo: "#FF3131",
+          corTexto: "#FFFFFF",
+        },
+        {
+          id: 2,
+          orden: 2,
+          descricaoOpcao: "Opção 2",
+          corFundo: "#FFDE59",
+          corTexto: "#42474A",
+        },
+        {
+          id: 3,
+          orden: 3,
+          descricaoOpcao: "Opção 3",
+          corFundo: "#00BF63",
+          corTexto: "#FFFFFF",
+        },
       ];
 
       const respostas: Resposta[] = [

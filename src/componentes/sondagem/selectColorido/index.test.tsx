@@ -123,13 +123,7 @@ describe("SelectColorido", () => {
     it("deve atualizar cores ao mudar valor", async () => {
       const handleChange = jest.fn();
       const { container } = render(
-        <SelectColorido
-          options={mockOptions}
-          onChange={handleChange}
-          tipoQuestao="escrita"
-          anoTurma="1"
-          open
-        />
+        <SelectColorido options={mockOptions} onChange={handleChange} open />
       );
 
       const option = screen.getByText("Opção 1");
@@ -145,12 +139,7 @@ describe("SelectColorido", () => {
   describe("Cores por tipo de questão - escrita", () => {
     it("deve aplicar cores para escrita ano 1", () => {
       const { container } = render(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="escrita"
-          anoTurma="1"
-        />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");
@@ -159,12 +148,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cores para escrita ano 2", () => {
       const { container } = render(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="escrita"
-          anoTurma="2"
-        />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");
@@ -173,12 +157,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cores para escrita ano 3", () => {
       const { container } = render(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="escrita"
-          anoTurma="3"
-        />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");
@@ -187,12 +166,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cores padrão para escrita com ano desconhecido", () => {
       const { container } = render(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="escrita"
-          anoTurma="99"
-        />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");
@@ -203,7 +177,7 @@ describe("SelectColorido", () => {
   describe("Cores por tipo de questão - leitura", () => {
     it("deve aplicar cores específicas para leitura", () => {
       const { container } = render(
-        <SelectColorido options={mockOptions} value={1} tipoQuestao="leitura" />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");
@@ -212,11 +186,11 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cores corretas para diferentes índices em leitura", () => {
       const { container: container1 } = render(
-        <SelectColorido options={mockOptions} value={1} tipoQuestao="leitura" />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const { container: container2 } = render(
-        <SelectColorido options={mockOptions} value={2} tipoQuestao="leitura" />
+        <SelectColorido options={mockOptions} value={2} />
       );
 
       const styleTag1 = container1.querySelector("style");
@@ -230,7 +204,7 @@ describe("SelectColorido", () => {
   describe("Cores por tipo de questão - numeros", () => {
     it("deve aplicar cores específicas para numeros", () => {
       const { container } = render(
-        <SelectColorido options={mockOptions} value={1} tipoQuestao="numeros" />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");
@@ -241,11 +215,7 @@ describe("SelectColorido", () => {
   describe("Cores por tipo de questão - mapeamento", () => {
     it("deve aplicar cores específicas para mapeamento", () => {
       const { container } = render(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="mapeamento"
-        />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");
@@ -283,15 +253,13 @@ describe("SelectColorido", () => {
   describe("useEffect - atualização de cores", () => {
     it("deve atualizar cores quando value muda", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptions} value={1} tipoQuestao="leitura" />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       let styleTag = container.querySelector("style");
       const firstColor = styleTag?.innerHTML;
 
-      rerender(
-        <SelectColorido options={mockOptions} value={2} tipoQuestao="leitura" />
-      );
+      rerender(<SelectColorido options={mockOptions} value={2} />);
 
       await waitFor(() => {
         styleTag = container.querySelector("style");
@@ -302,12 +270,10 @@ describe("SelectColorido", () => {
 
     it("deve atualizar cores quando tipoQuestao muda", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptions} value={1} tipoQuestao="leitura" />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
-      rerender(
-        <SelectColorido options={mockOptions} value={1} tipoQuestao="numeros" />
-      );
+      rerender(<SelectColorido options={mockOptions} value={1} />);
 
       await waitFor(() => {
         const styleTag = container.querySelector("style");
@@ -317,22 +283,10 @@ describe("SelectColorido", () => {
 
     it("deve atualizar cores quando anoTurma muda", async () => {
       const { container, rerender } = render(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="escrita"
-          anoTurma="1"
-        />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
-      rerender(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="escrita"
-          anoTurma="2"
-        />
-      );
+      rerender(<SelectColorido options={mockOptions} value={1} />);
 
       await waitFor(() => {
         const styleTag = container.querySelector("style");
@@ -420,7 +374,7 @@ describe("SelectColorido", () => {
       }));
 
       const { container } = render(
-        <SelectColorido options={manyOptions} value={7} tipoQuestao="leitura" />
+        <SelectColorido options={manyOptions} value={7} />
       );
 
       const styleTag = container.querySelector("style");
@@ -431,11 +385,7 @@ describe("SelectColorido", () => {
   describe("Tipos de questão específicos", () => {
     it("deve suportar tipoQuestao reescrita", () => {
       const { container } = render(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="reescrita"
-        />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");
@@ -444,11 +394,7 @@ describe("SelectColorido", () => {
 
     it("deve suportar tipoQuestao producao", () => {
       const { container } = render(
-        <SelectColorido
-          options={mockOptions}
-          value={1}
-          tipoQuestao="producao"
-        />
+        <SelectColorido options={mockOptions} value={1} />
       );
 
       const styleTag = container.querySelector("style");

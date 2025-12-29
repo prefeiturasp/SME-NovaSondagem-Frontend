@@ -11,8 +11,8 @@ interface ListaSondagemEscritaProps {
 }
 
 const SondagemListaDinamica: React.FC<
-  ListaSondagemEscritaProps & { formListaDinamica: any; anoTurma: string }
-> = ({ dados, formListaDinamica, anoTurma }) => {
+  ListaSondagemEscritaProps & { formListaDinamica: any }
+> = ({ dados, formListaDinamica }) => {
   const mostrarColunaLP = dados?.questao === "escrita";
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
 
@@ -46,7 +46,6 @@ const SondagemListaDinamica: React.FC<
     }
   }, [opcoesCarregadas, dados, formListaDinamica]);
 
-  
   const columns: ColumnsType<Estudante> = [];
   const columnsDinamicas: ColumnsType<Estudante> = [];
 
@@ -152,6 +151,8 @@ const SondagemListaDinamica: React.FC<
             .map((opcao) => ({
               label: opcao.descricaoOpcao,
               value: opcao.id,
+              corFundo: opcao.corFundo,
+              corTexto: opcao.corTexto,
             }));
 
           const isDisabled = !colunaEstudante.PeriodoBimestreAtivo;
@@ -181,16 +182,6 @@ const SondagemListaDinamica: React.FC<
                   getPopupContainer={() => document.body}
                   dropdownStyle={{ zIndex: 10000 }}
                   placement="bottomLeft"
-                  tipoQuestao={
-                    dados?.questao as
-                      | "escrita"
-                      | "reescrita"
-                      | "producao"
-                      | "leitura"
-                      | "numeros"
-                      | "mapeamento"
-                  }
-                  anoTurma={anoTurma}
                 />
               </Form.Item>
             </>

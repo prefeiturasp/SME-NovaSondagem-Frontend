@@ -2,6 +2,8 @@ export interface OpcaoResposta {
   id: number;
   orden: number;
   descricaoOpcao: string;
+  corFundo: string;
+  corTexto: string;
 }
 
 export interface Resposta {

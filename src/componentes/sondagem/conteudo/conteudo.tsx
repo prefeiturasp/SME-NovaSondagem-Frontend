@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card, Form, Select, Row, Col } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
 import MockDadosTabelaDinamica from "../../../mocks/MockDadosTabelaDinamica.json";
+import MockDadosTabelaDinamica2 from "../../../mocks/MockDadosTabelaDinamica2.json";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -12,8 +13,9 @@ const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
   const turmaSelecionada = usuario?.turmaSelecionada;
   const turma = turmaSelecionada ? turmaSelecionada.id : 0;
-  const modalidade = usuario?.turmaSelecionada?.modalidade;
-  const ano = usuario?.turmaSelecionada?.ano;
+  let modalidade; //usuario?.turmaSelecionada?.modalidade;
+  modalidade = "5";
+  const ano = "1"; //usuario?.turmaSelecionada?.ano;
   console.log("Usuario no conteudo:", usuario);
 
   const [listaDisciplinas, setListaDisciplinas] = useState<
@@ -110,15 +112,26 @@ const Conteudo: React.FC = () => {
 
   const onChangeProficiencia = async (proficienciaId: any) => {
     if (proficienciaId) {
-      const valorSelecionado = formFiltro.getFieldValue("proficienciaId");
-      console.log("ID proficiencia:", valorSelecionado);
-      await buscarDadosLista();
+      if (proficienciaId === 1) {
+        await buscarDadosLista();
+      } else if (proficienciaId === 2) {
+        await buscarDadosLista2();
+      }
     }
   };
 
   const buscarDadosLista = async () => {
     try {
       const dadosMock = MockDadosTabelaDinamica;
+      setDadosLista(dadosMock);
+    } catch (error) {
+    } finally {
+    }
+  };
+
+  const buscarDadosLista2 = async () => {
+    try {
+      const dadosMock = MockDadosTabelaDinamica2;
       setDadosLista(dadosMock);
     } catch (error) {
     } finally {
@@ -238,7 +251,7 @@ const Conteudo: React.FC = () => {
             <Row gutter={16}>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
-                  name="componenteCurricular"
+                  name="disciplinaId"
                   label="Componente Curricular"
                   className="labelSelectSondagem"
                 >
@@ -253,7 +266,7 @@ const Conteudo: React.FC = () => {
               </Col>
               <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                 <Form.Item
-                  name="proficiencia"
+                  name="proficienciaId"
                   label="Proficiência"
                   className="labelSelectSondagem"
                 >
@@ -272,7 +285,6 @@ const Conteudo: React.FC = () => {
         <SondagemListaDinamica
           dados={dadoslista}
           formListaDinamica={formListaDinamica}
-          anoTurma={ano}
         />
       </Card>
     </>
