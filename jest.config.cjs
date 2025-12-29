@@ -52,13 +52,13 @@ module.exports = {
 
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
-    "!src/**/*.d.ts", // ignora types
-    "!src/main.tsx", // ignora entrada da aplicação
-    "!src/App.tsx", // ignora arquivo estrutural
-    "!src/AppRoutes.tsx", // ignora roteamento
-    "!src/vite-env.d.ts", // ignora env types
-    "!src/config.ts", // ignora config com import.meta
-    "!__mocks__/**/*", // ignora mocks
+    "!src/**/*.d.ts",
+    "!src/main.tsx",
+    "!src/App.tsx",
+    "!src/AppRoutes.tsx",
+    "!src/vite-env.d.ts",
+    "!src/config.ts",
+    "!__mocks__/**/*",
   ],
 
   coveragePathIgnorePatterns: [

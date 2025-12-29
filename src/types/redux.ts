@@ -1,10 +1,3 @@
-/**
- * Tipos do Redux que correspondem ao projeto pai (host).
- * O remote NÃO cria seu próprio store - apenas define os tipos
- * para que o TypeScript funcione corretamente com useSelector.
- * O Provider e store vêm do projeto pai.
- */
-
 export interface UsuarioState {
   rf: string;
   token: string;
@@ -40,9 +33,6 @@ export interface NavegacaoState {
   [key: string]: any;
 }
 
-/**
- * RootState que corresponde à estrutura do Redux do host
- */
 export interface RootState {
   usuario: UsuarioState;
   filtro: FiltroState;

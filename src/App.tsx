@@ -2,7 +2,6 @@ import React from "react";
 import { Provider } from "react-redux";
 import { ConfigProvider } from "antd";
 import { BrowserRouter as Router } from "react-router-dom";
-import "./main.css";
 import AppRoutes from "./AppRoutes";
 import { createMockStore } from "./mocks/mockStore";
 
@@ -19,4 +18,3 @@ const App: React.FC = () => (
 );
 
 export default App;
-

@@ -7,7 +7,6 @@ jest.mock("./config", () => ({
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-// Mock do axios.create para retornar uma instância mockada
 mockedAxios.create.mockReturnValue(mockedAxios as unknown as ReturnType<typeof axios.create>);
 
 import { servicos } from "./servicos";
