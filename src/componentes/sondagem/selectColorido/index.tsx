@@ -27,7 +27,10 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
 
   const filterOption = (input: string, option?: DefaultOptionType) => {
     const optionValue = option?.value?.toString()?.toLowerCase();
-    const description = String(option?.label ?? "").toLowerCase();
+    const label = option?.label;
+    const description = (
+      typeof label === "string" ? label : String(label ?? "")
+    ).toLowerCase();
 
     const hasValue =
       !!optionValue && optionValue?.indexOf(input?.toLowerCase()) >= 0;
