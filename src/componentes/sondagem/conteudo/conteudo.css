@@ -2,7 +2,7 @@
 
 .textoSondagemEstilo {
   font-size: 14px;
-  font-family: Roboto;
+  font-family: Roboto, sans-serif;
   font-weight: 400;
   color: #42474a;
   margin-bottom: 1.5em;
@@ -11,7 +11,7 @@
 .labelSelectSondagem label {
   font-weight: 700;
   font-size: 14px !important;
-  font-family: Roboto;
+  font-family: Roboto, sans-serif;
   color: #595959;
 }
 
@@ -30,7 +30,7 @@
 
 .sondagemBotaoEstilo {
   font-size: 14px;
-  font-family: Roboto;
+  font-family: Roboto, sans-serif;
   font-weight: 700;
   color: #08659a;
   border: 1px solid #08659a;
@@ -48,7 +48,7 @@
 }
 
 .tituloSondagem {
-  font-family: Roboto;
+  font-family: Roboto, sans-serif;
   font-weight: 700;
   font-size: 20px;
   color: #42474a;

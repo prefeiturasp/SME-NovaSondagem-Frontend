@@ -9,7 +9,7 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const isAuthenticated = useSelector(
-    (state: RootState) => state.usuario?.logado || false
+    (state: RootState) => state.usuario?.logado ?? false
   );
   const [isLoading, setIsLoading] = useState(true);
 
