@@ -46,7 +46,6 @@ const SondagemListaDinamica: React.FC<
     }
   }, [opcoesCarregadas, dados, formListaDinamica]);
 
-  
   const columns: ColumnsType<Estudante> = [];
   const columnsDinamicas: ColumnsType<Estudante> = [];
 
@@ -147,12 +146,13 @@ const SondagemListaDinamica: React.FC<
         width: 150,
         render: (_, record, estudanteIndex) => {
           const colunaEstudante = record.coluna[colunaIndex];
-          const options = colunaEstudante.opcaoResposta
-            .sort((a, b) => a.orden - b.orden)
-            .map((opcao) => ({
-              label: opcao.descricaoOpcao,
-              value: opcao.id,
-            }));
+          const opcoesOrdenadas = [...colunaEstudante.opcaoResposta].sort(
+            (a, b) => a.orden - b.orden
+          );
+          const options = opcoesOrdenadas.map((opcao) => ({
+            label: opcao.descricaoOpcao,
+            value: opcao.id,
+          }));
 
           const isDisabled = !colunaEstudante.PeriodoBimestreAtivo;
 
@@ -179,7 +179,6 @@ const SondagemListaDinamica: React.FC<
                   disabled={isDisabled}
                   style={{ width: "100%" }}
                   getPopupContainer={() => document.body}
-                  dropdownStyle={{ zIndex: 10000 }}
                   placement="bottomLeft"
                   tipoQuestao={
                     dados?.questao as
@@ -204,7 +203,7 @@ const SondagemListaDinamica: React.FC<
     });
   }
 
-  if (!dados || !dados.estudantes || dados.estudantes.length === 0) {
+  if (!dados?.estudantes?.length) {
     return (
       <div style={{ padding: "20px", textAlign: "center" }}>
         <p>Nenhum dado disponível para exibir.</p>

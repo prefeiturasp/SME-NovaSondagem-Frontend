@@ -27,7 +27,7 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
 
   const filterOption = (input: string, option?: DefaultOptionType) => {
     const optionValue = option?.value?.toString()?.toLowerCase();
-    const description = option?.label?.toString()?.toLowerCase();
+    const description = String(option?.label ?? "").toLowerCase();
 
     const hasValue =
       !!optionValue && optionValue?.indexOf(input?.toLowerCase()) >= 0;
@@ -81,25 +81,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
               ];
               break;
             case "2":
-              cores = [
-                "#FF3131",
-                "#FFDE59",
-                "#FF914D",
-                "#D9D2E9",
-                "#D0C2EF",
-                "#C3B0EB",
-                "#AF92ED",
-              ];
-              textColors = [
-                "#FFFFFF",
-                "#42474A",
-                "#FFFFFF",
-                "#42474A",
-                "#42474A",
-                "#42474A",
-                "#FFFFFF",
-              ];
-              break;
             case "3":
               cores = [
                 "#FF3131",
@@ -170,7 +151,7 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
   }, [value, getColorByValue, tipoQuestao, anoTurma, props.id]);
 
   const uniqueId =
-    props.id || `select-${Math.random().toString(36).substr(2, 9)}`;
+    props.id ?? `select-${Math.random().toString(36).substring(2, 11)}`;
 
   return (
     <>
@@ -216,7 +197,7 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
         onChange={handleChange}
         {...props}
         className={`select-colorido select-colorido-${uniqueId} ${
-          props.className || ""
+          props.className ?? ""
         }`}
       />
     </>
