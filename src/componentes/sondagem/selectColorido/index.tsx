@@ -1,7 +1,8 @@
 import { Empty, Select as SelectAnt } from "antd";
 import type { SelectProps } from "antd";
 import type { DefaultOptionType } from "antd/es/select";
-import React, { useCallback, useEffect, useState } from "react";
+import { nanoid } from "nanoid";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.css";
 
 interface SelectColoridoProps extends SelectProps {
@@ -24,6 +25,7 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
 }) => {
   const [backgroundColor, setBackgroundColor] = useState<string>("#FFFFFF");
   const [textColor, setTextColor] = useState<string>("#000000");
+  const uniqueId = useMemo(() => props.id ?? `select-${nanoid(9)}`, [props.id]);
 
   const filterOption = (input: string, option?: DefaultOptionType) => {
     const optionValue = option?.value?.toString()?.toLowerCase();
@@ -150,9 +152,6 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
       setTextColor(colors.text);
     }
   }, [value, getColorByValue, tipoQuestao, anoTurma, props.id]);
-
-  const uniqueId =
-    props.id ?? `select-${Math.random().toString(36).substring(2, 11)}`;
 
   return (
     <>
