@@ -24,7 +24,7 @@ const Conteudo: React.FC = () => {
     Array<{ value: number; label: string }>
   >([]);
 
-  const [dadoslista, setDadosLista] = useState<DadosTabelaDinamica | null>(
+  const [dadosLista, setDadosLista] = useState<DadosTabelaDinamica | null>(
     null
   );
 
@@ -117,33 +117,29 @@ const Conteudo: React.FC = () => {
   };
 
   const buscarDadosLista = async () => {
-    try {
-      const dadosMock = MockDadosTabelaDinamica;
-      setDadosLista(dadosMock);
-    } catch (error) {
-    } finally {
-    }
+    const dadosMock = MockDadosTabelaDinamica;
+    setDadosLista(dadosMock);
   };
 
   const salvarDadosSondagem = () => {
     const dadosFormulario = formListaDinamica.getFieldsValue();
 
-    const dadosParaSalvar = dadoslista?.estudantes.map(
+    const dadosParaSalvar = dadosLista?.estudantes.map(
       (estudante, estudanteIndex) => {
         const respostas = estudante.coluna.map((coluna, colunaIndex) => ({
           nomeColuna: coluna.descricaoColuna,
           respostaId:
-            dadosFormulario[`respostaId_${estudanteIndex}_${colunaIndex}`] ||
+            dadosFormulario[`respostaId_${estudanteIndex}_${colunaIndex}`] ??
             null,
           respostaSelecionada:
-            dadosFormulario[`resposta_${estudanteIndex}_${colunaIndex}`] ||
+            dadosFormulario[`resposta_${estudanteIndex}_${colunaIndex}`] ??
             null,
         }));
 
         return {
           numeroEstudante: estudante.numero,
           nomeEstudante: estudante.nome,
-          lp: dadosFormulario[`lp_${estudanteIndex}`] || false,
+          lp: dadosFormulario[`lp_${estudanteIndex}`] ?? false,
           respostas,
         };
       }
@@ -270,7 +266,7 @@ const Conteudo: React.FC = () => {
           </Form>
         </div>
         <SondagemListaDinamica
-          dados={dadoslista}
+          dados={dadosLista}
           formListaDinamica={formListaDinamica}
           anoTurma={ano}
         />

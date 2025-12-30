@@ -33,7 +33,7 @@ const Alerta: React.FC<AlertProps> = (props) => {
   return (
     <div
       className={`alert alert-${tipo} alert-dismissible fade show text-center ${
-        className || ""
+        className ?? ""
       }`}
       role="alert"
       style={marginBottom ? { marginBottom } : {}}
