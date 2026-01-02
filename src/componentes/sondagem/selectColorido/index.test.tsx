@@ -1,6 +1,11 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SelectColorido from "./index";
+import { nanoid } from "nanoid";
+
+jest.mock("nanoid", () => ({
+  nanoid: jest.fn(),
+}));
 
 describe("SelectColorido", () => {
   const mockOptions = [
@@ -9,8 +14,15 @@ describe("SelectColorido", () => {
     { value: 3, label: "Opção 3" },
   ];
 
+  let nanoidCounter = 0;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    nanoidCounter = 0;
+    (nanoid as jest.Mock).mockImplementation(() => {
+      nanoidCounter += 1;
+      return `mock-id-${nanoidCounter}`;
+    });
   });
 
   describe("Renderização básica", () => {
@@ -42,9 +54,15 @@ describe("SelectColorido", () => {
         <SelectColorido options={mockOptions} />
       );
 
-      const select1 = container1.querySelector(".ant-select");
-      const select2 = container2.querySelector(".ant-select");
+      const select1 = container1.querySelector(
+        ".select-colorido-select-mock-id-1"
+      );
+      const select2 = container2.querySelector(
+        ".select-colorido-select-mock-id-2"
+      );
 
+      expect(select1).toBeInTheDocument();
+      expect(select2).toBeInTheDocument();
       expect(select1?.className).not.toEqual(select2?.className);
     });
 

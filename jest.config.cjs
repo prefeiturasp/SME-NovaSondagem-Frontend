@@ -45,7 +45,7 @@ module.exports = {
   },
 
   transformIgnorePatterns: [
-    "node_modules/(?!(antd|@ant-design|@rc-component|rc-.*|@babel|@ctrl)/)",
+    "node_modules/(?!(antd|@ant-design|@rc-component|rc-.*|@babel|@ctrl|nanoid)/)",
   ],
 
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
