@@ -7,7 +7,7 @@
       "idEstudante": 12345,
       "nome": "João Silva",
       "pap": true,
-      "aee": true,
+      "aee": false,
       "acessibilidade": true,
       "coluna": [
         {
