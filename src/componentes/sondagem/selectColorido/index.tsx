@@ -5,20 +5,9 @@ import { nanoid } from "nanoid";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.css";
 
-interface SelectColoridoProps extends SelectProps {
-  tipoQuestao?:
-    | "escrita"
-    | "reescrita"
-    | "producao"
-    | "leitura"
-    | "numeros"
-    | "mapeamento";
-  anoTurma?: string;
-}
+interface SelectColoridoProps extends SelectProps {}
 
 const SelectColorido: React.FC<SelectColoridoProps> = ({
-  tipoQuestao,
-  anoTurma,
   value,
   onChange,
   ...props
@@ -46,94 +35,25 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
       if (!selectedValue || !props.options)
         return { bg: "#FFFFFF", text: "#000000" };
 
-      let cores: string[] = [
-        "#FF3131",
-        "#FFDE59",
-        "#FF914D",
-        "#5170FF",
-        "#00BF63",
-        "#FFFFFF",
-      ];
-      let textColors: string[] = [
-        "#FFFFFF",
-        "#42474A",
-        "#FFFFFF",
-        "#FFFFFF",
-        "#FFFFFF",
-        "#42474A",
-      ];
-      switch (tipoQuestao) {
-        case "escrita":
-          switch (anoTurma) {
-            case "1":
-              cores = [
-                "#FF3131",
-                "#FFDE59",
-                "#FF914D",
-                "#5170FF",
-                "#00BF63",
-                "#FFFFFF",
-              ];
-              textColors = [
-                "#FFFFFF",
-                "#42474A",
-                "#FFFFFF",
-                "#FFFFFF",
-                "#FFFFFF",
-                "#42474A",
-              ];
-              break;
-            case "2":
-            case "3":
-              cores = [
-                "#FF3131",
-                "#FFDE59",
-                "#FF914D",
-                "#D9D2E9",
-                "#D0C2EF",
-                "#C3B0EB",
-                "#AF92ED",
-              ];
-              textColors = [
-                "#FFFFFF",
-                "#42474A",
-                "#FFFFFF",
-                "#42474A",
-                "#42474A",
-                "#42474A",
-                "#FFFFFF",
-              ];
-              break;
-            default:
-              cores = ["#E0E0E0", "#BDBDBD", "#9E9E9E", "#757575"];
-              textColors = ["#42474A", "#42474A", "#FFFFFF", "#FFFFFF"];
-          }
-          break;
-        case "leitura":
-          cores = ["#7ED957", "#FFDE59", "#F18888"];
-          textColors = ["#363636", "#363636", "#FFFFFF"];
-          break;
-        case "numeros":
-          cores = ["#D9EEFA", "#BBE0F6", "#8ED5FF", "#38B6FF"];
-          textColors = ["#42474A", "#42474A", "#42474A", "#42474A"];
-          break;
-        case "mapeamento":
-          cores = ["#7ED957", "#FFDE59", "#F18888"];
-          textColors = ["#42474A", "#42474A", "#42474A"];
-          break;
-      }
-
-      const index = props.options.findIndex(
+      const selectedOption = props.options.find(
         (opt: any) => opt.value === selectedValue
       );
-      return index >= 0
-        ? {
-            bg: cores[index % cores.length],
-            text: textColors[index % textColors.length],
-          }
-        : { bg: "#FFFFFF", text: "#000000" };
+
+      if (
+        selectedOption &&
+        selectedOption.corFundo &&
+        selectedOption.corTexto
+      ) {
+        return {
+          bg: selectedOption.corFundo,
+          text: selectedOption.corTexto,
+        };
+      }
+
+      // Fallback caso não encontre as cores
+      return { bg: "#FFFFFF", text: "#000000" };
     },
-    [props.options, tipoQuestao, anoTurma]
+    [props.options]
   );
 
   const handleChange = (newValue: any, option: any) => {
@@ -151,7 +71,7 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
       setBackgroundColor(colors.bg);
       setTextColor(colors.text);
     }
-  }, [value, getColorByValue, tipoQuestao, anoTurma, props.id]);
+  }, [value, getColorByValue, props.id]);
 
   return (
     <>
