@@ -2,82 +2,142 @@ import { Empty, Select as SelectAnt } from "antd";
 import type { SelectProps } from "antd";
 import type { DefaultOptionType } from "antd/es/select";
 import { nanoid } from "nanoid";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import "./index.css";
 
-interface SelectColoridoProps extends SelectProps {}
+interface SelectColoridoProps extends SelectProps {
+  onOpenChange?: (open: boolean) => void;
+}
 
-const SelectColorido: React.FC<SelectColoridoProps> = ({
-  value,
-  onChange,
-  ...props
-}) => {
-  const [backgroundColor, setBackgroundColor] = useState<string>("#FFFFFF");
-  const [textColor, setTextColor] = useState<string>("#000000");
-  const uniqueId = useMemo(() => props.id ?? `select-${nanoid(9)}`, [props.id]);
+const SelectColorido = forwardRef<any, SelectColoridoProps>(
+  ({ value, onChange, onOpenChange, ...props }, ref) => {
+    const [backgroundColor, setBackgroundColor] = useState<string>("#FFFFFF");
+    const [textColor, setTextColor] = useState<string>("#000000");
+    const [isOpen, setIsOpen] = useState(false);
+    const selectRef = useRef<any>(null);
+    const uniqueId = useMemo(
+      () => props.id ?? `select-${nanoid(9)}`,
+      [props.id]
+    );
 
-  const filterOption = (input: string, option?: DefaultOptionType) => {
-    const optionValue = option?.value?.toString()?.toLowerCase();
-    const label = option?.label;
-    const description = (typeof label === "string" ? label : "").toLowerCase();
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        if (selectRef.current) {
+          selectRef.current.focus();
+        }
+      },
+      blur: () => {
+        if (selectRef.current) {
+          selectRef.current.blur();
+        }
+      },
+    }));
 
-    const hasValue =
-      !!optionValue && optionValue?.indexOf(input?.toLowerCase()) >= 0;
-    const hasDesc =
-      !!description &&
-      description?.toLowerCase().indexOf(input?.toLowerCase()) >= 0;
+    const filterOption = (input: string, option?: DefaultOptionType) => {
+      const optionValue = option?.value?.toString()?.toLowerCase();
+      const label = option?.label;
+      const description = (
+        typeof label === "string" ? label : ""
+      ).toLowerCase();
 
-    return hasValue || hasDesc;
-  };
+      const hasValue =
+        !!optionValue && optionValue?.indexOf(input?.toLowerCase()) >= 0;
+      const hasDesc =
+        !!description &&
+        description?.toLowerCase().indexOf(input?.toLowerCase()) >= 0;
 
-  const getColorByValue = useCallback(
-    (selectedValue: any): { bg: string; text: string } => {
-      if (!selectedValue || !props.options)
+      return hasValue || hasDesc;
+    };
+
+    const getColorByValue = useCallback(
+      (selectedValue: any): { bg: string; text: string } => {
+        if (!selectedValue || !props.options)
+          return { bg: "#FFFFFF", text: "#000000" };
+
+        const selectedOption = props.options.find(
+          (opt: any) => opt.value === selectedValue
+        );
+
+        if (
+          selectedOption &&
+          selectedOption.corFundo &&
+          selectedOption.corTexto
+        ) {
+          return {
+            bg: selectedOption.corFundo,
+            text: selectedOption.corTexto,
+          };
+        }
+
+        // Fallback caso não encontre as cores
         return { bg: "#FFFFFF", text: "#000000" };
+      },
+      [props.options]
+    );
 
-      const selectedOption = props.options.find(
-        (opt: any) => opt.value === selectedValue
-      );
-
-      if (
-        selectedOption &&
-        selectedOption.corFundo &&
-        selectedOption.corTexto
-      ) {
-        return {
-          bg: selectedOption.corFundo,
-          text: selectedOption.corTexto,
-        };
-      }
-
-      // Fallback caso não encontre as cores
-      return { bg: "#FFFFFF", text: "#000000" };
-    },
-    [props.options]
-  );
-
-  const handleChange = (newValue: any, option: any) => {
-    const colors = getColorByValue(newValue);
-    setBackgroundColor(colors.bg);
-    setTextColor(colors.text);
-    if (onChange) {
-      onChange(newValue, option);
-    }
-  };
-
-  useEffect(() => {
-    if (value) {
-      const colors = getColorByValue(value);
+    const handleChange = (newValue: any, option: any) => {
+      const colors = getColorByValue(newValue);
       setBackgroundColor(colors.bg);
       setTextColor(colors.text);
-    }
-  }, [value, getColorByValue, props.id]);
+      if (onChange) {
+        onChange(newValue, option);
+      }
+    };
 
-  return (
-    <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
+    const handleOpenChange = (open: boolean) => {
+      setIsOpen(open);
+      if (onOpenChange) {
+        onOpenChange(open);
+      }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (isOpen && /^[0-9]$/.test(e.key)) {
+        e.preventDefault();
+        const numero = parseInt(e.key);
+        const opcaoEncontrada = props.options?.find(
+          (opt: any) => opt.ordem === numero
+        );
+        if (opcaoEncontrada && onChange) {
+          onChange(opcaoEncontrada.value, opcaoEncontrada);
+          setIsOpen(false);
+          if (onOpenChange) {
+            onOpenChange(false);
+          }
+        }
+        return;
+      }
+
+      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !isOpen) {
+        e.stopPropagation();
+      }
+
+      if (props.onKeyDown) {
+        props.onKeyDown(e as any);
+      }
+    };
+
+    useEffect(() => {
+      if (value) {
+        const colors = getColorByValue(value);
+        setBackgroundColor(colors.bg);
+        setTextColor(colors.text);
+      }
+    }, [value, getColorByValue, props.id]);
+
+    return (
+      <>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
         /* Ant Design v5 - Estrutura atualizada */
         .ant-select.select-colorido-${uniqueId} .ant-select-selector {
           background-color: ${backgroundColor} !important;
@@ -100,28 +160,34 @@ const SelectColorido: React.FC<SelectColoridoProps> = ({
           background-color: ${backgroundColor} !important;
         }
       `,
-        }}
-      />
-      <SelectAnt
-        notFoundContent={
-          <Empty
-            description="Sem dados"
-            className="ant-empty-small"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
-        }
-        showSearch
-        filterOption={filterOption}
-        getPopupContainer={(trigger) => trigger.parentElement}
-        value={value}
-        onChange={handleChange}
-        {...props}
-        className={`select-colorido select-colorido-${uniqueId} ${
-          props.className ?? ""
-        }`}
-      />
-    </>
-  );
-};
+          }}
+        />
+        <SelectAnt
+          ref={selectRef}
+          notFoundContent={
+            <Empty
+              description="Sem dados"
+              className="ant-empty-small"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          }
+          showSearch
+          filterOption={filterOption}
+          getPopupContainer={(trigger) => trigger.parentElement}
+          value={value}
+          onChange={handleChange}
+          onOpenChange={handleOpenChange}
+          onKeyDown={handleKeyDown}
+          {...props}
+          className={`select-colorido select-colorido-${uniqueId} ${
+            props.className ?? ""
+          }`}
+        />
+      </>
+    );
+  }
+);
+
+SelectColorido.displayName = "SelectColorido";
 
 export default SelectColorido;

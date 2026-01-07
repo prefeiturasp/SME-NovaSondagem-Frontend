@@ -12,7 +12,7 @@ describe("Types - Interfaces de Sondagem", () => {
       override?: Partial<OpcaoResposta>
     ): OpcaoResposta => ({
       id: 1,
-      orden: 1,
+      ordem: 1,
       descricaoOpcao: "Pré-silábico",
       corFundo: "#FF5733",
       corTexto: "#FFFFFF",
@@ -24,7 +24,7 @@ describe("Types - Interfaces de Sondagem", () => {
 
       expect(opcao).toMatchObject({
         id: expect.any(Number),
-        orden: expect.any(Number),
+        ordem: expect.any(Number),
         descricaoOpcao: expect.any(String),
         corFundo: expect.any(String),
         corTexto: expect.any(String),
@@ -53,12 +53,12 @@ describe("Types - Interfaces de Sondagem", () => {
       niveis.forEach((nivel, index) => {
         const opcao = criarOpcaoResposta({
           id: index + 1,
-          orden: index + 1,
+          ordem: index + 1,
           descricaoOpcao: nivel,
         });
 
         expect(opcao.descricaoOpcao).toBe(nivel);
-        expect(opcao.orden).toBe(index + 1);
+        expect(opcao.ordem).toBe(index + 1);
       });
     });
   });
@@ -119,14 +119,14 @@ describe("Types - Interfaces de Sondagem", () => {
       const opcoes: OpcaoResposta[] = [
         {
           id: 1,
-          orden: 1,
+          ordem: 1,
           descricaoOpcao: "Pré-silábico",
           corFundo: "#FF0000",
           corTexto: "#FFFFFF",
         },
         {
           id: 2,
-          orden: 2,
+          ordem: 2,
           descricaoOpcao: "Alfabético",
           corFundo: "#00FF00",
           corTexto: "#000000",
@@ -282,35 +282,35 @@ describe("Types - Interfaces de Sondagem", () => {
       const opcoesResposta: OpcaoResposta[] = [
         {
           id: 1,
-          orden: 1,
+          ordem: 1,
           descricaoOpcao: "Pré-silábico",
           corFundo: "#FF6B6B",
           corTexto: "#FFFFFF",
         },
         {
           id: 2,
-          orden: 2,
+          ordem: 2,
           descricaoOpcao: "Silábico sem valor",
           corFundo: "#FFD93D",
           corTexto: "#000000",
         },
         {
           id: 3,
-          orden: 3,
+          ordem: 3,
           descricaoOpcao: "Silábico com valor",
           corFundo: "#6BCB77",
           corTexto: "#FFFFFF",
         },
         {
           id: 4,
-          orden: 4,
+          ordem: 4,
           descricaoOpcao: "Silábico-alfabético",
           corFundo: "#4D96FF",
           corTexto: "#FFFFFF",
         },
         {
           id: 5,
-          orden: 5,
+          ordem: 5,
           descricaoOpcao: "Alfabético",
           corFundo: "#9B59B6",
           corTexto: "#FFFFFF",
@@ -418,14 +418,14 @@ describe("Types - Interfaces de Sondagem", () => {
       const opcoes: OpcaoResposta[] = [
         {
           id: 10,
-          orden: 1,
+          ordem: 1,
           descricaoOpcao: "Nível 1",
           corFundo: "#000000",
           corTexto: "#FFFFFF",
         },
         {
           id: 20,
-          orden: 2,
+          ordem: 2,
           descricaoOpcao: "Nível 2",
           corFundo: "#FFFFFF",
           corTexto: "#000000",
@@ -440,7 +440,7 @@ describe("Types - Interfaces de Sondagem", () => {
 
       expect(opcaoSelecionada).toBeDefined();
       expect(opcaoSelecionada?.descricaoOpcao).toBe("Nível 2");
-      expect(opcaoSelecionada?.orden).toBe(2);
+      expect(opcaoSelecionada?.ordem).toBe(2);
     });
   });
 });

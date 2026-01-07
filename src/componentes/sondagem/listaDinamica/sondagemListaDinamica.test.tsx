@@ -47,21 +47,21 @@ const mockDadosEscrita: DadosTabelaDinamica = {
           opcaoResposta: [
             {
               id: 1,
-              orden: 1,
+              ordem: 1,
               descricaoOpcao: "PS",
               corFundo: "#FF0000",
               corTexto: "#FFFFFF",
             },
             {
               id: 2,
-              orden: 2,
+              ordem: 2,
               descricaoOpcao: "SSV",
               corFundo: "#00FF00",
               corTexto: "#000000",
             },
             {
               id: 3,
-              orden: 3,
+              ordem: 3,
               descricaoOpcao: "SCV",
               corFundo: "#0000FF",
               corTexto: "#FFFFFF",
@@ -75,14 +75,14 @@ const mockDadosEscrita: DadosTabelaDinamica = {
           opcaoResposta: [
             {
               id: 4,
-              orden: 1,
+              ordem: 1,
               descricaoOpcao: "A",
               corFundo: "#FFFF00",
               corTexto: "#000000",
             },
             {
               id: 5,
-              orden: 2,
+              ordem: 2,
               descricaoOpcao: "B",
               corFundo: "#FF00FF",
               corTexto: "#FFFFFF",
@@ -106,14 +106,14 @@ const mockDadosEscrita: DadosTabelaDinamica = {
           opcaoResposta: [
             {
               id: 1,
-              orden: 1,
+              ordem: 1,
               descricaoOpcao: "PS",
               corFundo: "#FF0000",
               corTexto: "#FFFFFF",
             },
             {
               id: 2,
-              orden: 2,
+              ordem: 2,
               descricaoOpcao: "SSV",
               corFundo: "#00FF00",
               corTexto: "#000000",
@@ -127,7 +127,7 @@ const mockDadosEscrita: DadosTabelaDinamica = {
           opcaoResposta: [
             {
               id: 4,
-              orden: 1,
+              ordem: 1,
               descricaoOpcao: "A",
               corFundo: "#FFFF00",
               corTexto: "#000000",
@@ -157,7 +157,7 @@ const mockDadosReescrita: DadosTabelaDinamica = {
           opcaoResposta: [
             {
               id: 10,
-              orden: 1,
+              ordem: 1,
               descricaoOpcao: "Opção 1",
               corFundo: "#00FFFF",
               corTexto: "#000000",
@@ -187,7 +187,7 @@ const mockDadosProducao: DadosTabelaDinamica = {
           opcaoResposta: [
             {
               id: 20,
-              orden: 1,
+              ordem: 1,
               descricaoOpcao: "Nível 1",
               corFundo: "#FFA500",
               corTexto: "#000000",
@@ -217,7 +217,7 @@ const mockDadosLeitura: DadosTabelaDinamica = {
           opcaoResposta: [
             {
               id: 30,
-              orden: 1,
+              ordem: 1,
               descricaoOpcao: "Nível A",
               corFundo: "#800080",
               corTexto: "#FFFFFF",
@@ -247,7 +247,7 @@ const mockDadosOutro: DadosTabelaDinamica = {
           opcaoResposta: [
             {
               id: 40,
-              orden: 1,
+              ordem: 1,
               descricaoOpcao: "Item 1",
               corFundo: "#808080",
               corTexto: "#FFFFFF",
@@ -435,7 +435,7 @@ describe("SondagemListaDinamica", () => {
       expect(select_0_0).not.toBeDisabled();
     });
 
-    it("deve renderizar opções ordenadas corretamente", () => {
+    it("deve renderizar opções ordemadas corretamente", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
       const select = screen.getByTestId("select_0_0") as HTMLSelectElement;
       const options = Array.from(select.options).map((opt) => opt.text);

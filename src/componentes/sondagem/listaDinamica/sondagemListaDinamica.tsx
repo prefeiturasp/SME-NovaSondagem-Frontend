@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Checkbox, Form, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { FileTextOutlined, TeamOutlined, EyeOutlined } from "@ant-design/icons";
@@ -15,6 +15,18 @@ const SondagemListaDinamica: React.FC<
 > = ({ dados, formListaDinamica }) => {
   const mostrarColunaLP = dados?.questao === "escrita";
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
+  const selectRefs = useRef<Map<string, any>>(new Map());
+  const [selectOpenStates, setSelectOpenStates] = useState<
+    Map<string, boolean>
+  >(new Map());
+
+  const setSelectRef = useCallback((key: string, ref: any) => {
+    if (ref) {
+      selectRefs.current.set(key, ref);
+    } else {
+      selectRefs.current.delete(key);
+    }
+  }, []);
 
   useEffect(() => {
     if (dados?.estudantes && dados.estudantes.length > 0) {
@@ -45,6 +57,91 @@ const SondagemListaDinamica: React.FC<
       formListaDinamica.setFieldsValue(initialValues);
     }
   }, [opcoesCarregadas, dados, formListaDinamica]);
+
+  const getTotalColumns = useCallback(() => {
+    return dados?.estudantes?.[0]?.coluna?.length || 0;
+  }, [dados]);
+
+  const isSelectOpen = useCallback(
+    (row: number, col: number) => {
+      const key = `${row}_${col}`;
+      return selectOpenStates.get(key) || false;
+    },
+    [selectOpenStates]
+  );
+
+  const moveFocus = useCallback(
+    (newRow: number, newCol: number) => {
+      if (!dados?.estudantes) return;
+
+      const totalRows = dados.estudantes.length;
+      const totalCols = getTotalColumns();
+
+      if (newRow < 0 || newRow >= totalRows) return;
+      if (newCol < 0 || newCol >= totalCols) return;
+
+      const targetKey = `${newRow}_${newCol}`;
+      const targetRef = selectRefs.current.get(targetKey);
+
+      if (targetRef && targetRef.focus) {
+        setTimeout(() => targetRef.focus(), 0);
+      }
+    },
+    [dados, getTotalColumns]
+  );
+
+  const handleKeyNavigation = useCallback(
+    (e: React.KeyboardEvent, row: number, col: number) => {
+      const totalCols = getTotalColumns();
+      const isOpen = isSelectOpen(row, col);
+
+      if (e.key === "Tab") {
+        e.preventDefault();
+        if (e.shiftKey) {
+          const prevCol = col === 0 ? totalCols - 1 : col - 1;
+          moveFocus(row, prevCol);
+        } else {
+          const nextCol = (col + 1) % totalCols;
+          moveFocus(row, nextCol);
+        }
+      } else if (e.key === "ArrowDown") {
+        if (isOpen) {
+          return;
+        }
+        e.preventDefault();
+        moveFocus(row + 1, col);
+      } else if (e.key === "ArrowUp") {
+        if (isOpen) {
+          return;
+        }
+        e.preventDefault();
+        moveFocus(row - 1, col);
+      }
+    },
+    [getTotalColumns, isSelectOpen, moveFocus]
+  );
+
+  const handleSelectOpen = useCallback(
+    (row: number, col: number, open: boolean) => {
+      setSelectOpenStates((prev) => {
+        const newMap = new Map(prev);
+        const key = `${row}_${col}`;
+        newMap.set(key, open);
+        return newMap;
+      });
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (opcoesCarregadas && dados?.estudantes && dados.estudantes.length > 0) {
+      const firstKey = "0_0";
+      const firstRef = selectRefs.current.get(firstKey);
+      if (firstRef && firstRef.focus) {
+        setTimeout(() => firstRef.focus(), 100);
+      }
+    }
+  }, [opcoesCarregadas, dados]);
 
   const columns: ColumnsType<Estudante> = [];
   const columnsDinamicas: ColumnsType<Estudante> = [];
@@ -147,7 +244,7 @@ const SondagemListaDinamica: React.FC<
         render: (_, record, estudanteIndex) => {
           const colunaEstudante = record.coluna[colunaIndex];
           const opcoesOrdenadas = [...colunaEstudante.opcaoResposta].sort(
-            (a, b) => a.orden - b.orden
+            (a, b) => a.ordem - b.ordem
           );
           const options = opcoesOrdenadas.map((opcao) => ({
             label: opcao.descricaoOpcao,
@@ -182,6 +279,15 @@ const SondagemListaDinamica: React.FC<
                   style={{ width: "100%" }}
                   getPopupContainer={() => document.body}
                   placement="bottomLeft"
+                  ref={(ref: any) =>
+                    setSelectRef(`${estudanteIndex}_${colunaIndex}`, ref)
+                  }
+                  onKeyDown={(e: React.KeyboardEvent) =>
+                    handleKeyNavigation(e, estudanteIndex, colunaIndex)
+                  }
+                  onOpenChange={(open: boolean) =>
+                    handleSelectOpen(estudanteIndex, colunaIndex, open)
+                  }
                 />
               </Form.Item>
             </>

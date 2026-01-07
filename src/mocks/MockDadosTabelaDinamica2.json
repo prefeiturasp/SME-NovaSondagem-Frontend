@@ -15,21 +15,21 @@
           "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "Adequada",
               "corFundo": "#7ED957",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "Inadequada",
               "corFundo": "#FFDE59",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "Não resolveu",
               "corFundo": "#F18888",
               "corTexto": "#FFFFFF"

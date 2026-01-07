@@ -12,45 +12,45 @@
         {
           "descricaoColuna": "1° ciclo",
           "PeriodoBimestreAtivo": true,
-           "opcaoResposta": [
+          "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -65,46 +65,46 @@
         },
         {
           "descricaoColuna": "2° ciclo",
-          "PeriodoBimestreAtivo": false,
-           "opcaoResposta": [
+          "PeriodoBimestreAtivo": true,
+          "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -119,46 +119,46 @@
         },
         {
           "descricaoColuna": "3° ciclo",
-          "PeriodoBimestreAtivo": false,
-           "opcaoResposta": [
+          "PeriodoBimestreAtivo": true,
+          "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -174,45 +174,45 @@
         {
           "descricaoColuna": "4° ciclo",
           "PeriodoBimestreAtivo": false,
-           "opcaoResposta": [
+          "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -228,45 +228,45 @@
         {
           "descricaoColuna": "5° ciclo",
           "PeriodoBimestreAtivo": false,
-           "opcaoResposta": [
+          "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -295,42 +295,42 @@
           "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -345,46 +345,46 @@
         },
         {
           "descricaoColuna": "2° ciclo",
-          "PeriodoBimestreAtivo": false,
+          "PeriodoBimestreAtivo": true,
           "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -399,46 +399,46 @@
         },
         {
           "descricaoColuna": "3° ciclo",
-          "PeriodoBimestreAtivo": false,
+          "PeriodoBimestreAtivo": true,
           "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -457,42 +457,42 @@
           "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
@@ -511,42 +511,42 @@
           "opcaoResposta": [
             {
               "id": 1,
-              "orden": 1,
+              "ordem": 1,
               "descricaoOpcao": "PS",
               "corFundo": "#FF3131",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 2,
-              "orden": 2,
+              "ordem": 2,
               "descricaoOpcao": "SSV",
               "corFundo": "#FFDE59",
               "corTexto": "#42474A"
             },
             {
               "id": 3,
-              "orden": 3,
+              "ordem": 3,
               "descricaoOpcao": "SCV",
               "corFundo": "#FF914D",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 4,
-              "orden": 4,
+              "ordem": 4,
               "descricaoOpcao": "SA",
               "corFundo": "#5170FF",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 5,
-              "orden": 5,
+              "ordem": 5,
               "descricaoOpcao": "A",
               "corFundo": "#00BF63",
               "corTexto": "#FFFFFF"
             },
             {
               "id": 6,
-              "orden": 6,
+              "ordem": 6,
               "descricaoOpcao": "Sem preenchimento",
               "corFundo": "#FFFFFF",
               "corTexto": "#3a4246ff"
