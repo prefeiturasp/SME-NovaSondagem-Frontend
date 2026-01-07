@@ -8,6 +8,8 @@ import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
+import type { LegendasProps } from "~/core/dto/legendaProps";
+import Legendas from "../legendas/legendas";
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
@@ -28,6 +30,10 @@ const Conteudo: React.FC = () => {
   >([]);
 
   const [dadosLista, setDadosLista] = useState<DadosTabelaDinamica | null>(
+    null
+  );
+
+  const [dadosLegenda, setDadosLegenda] = useState<LegendasProps[] | null>(
     null
   );
 
@@ -123,12 +129,28 @@ const Conteudo: React.FC = () => {
 
   const buscarDadosLista = async () => {
     const dadosMock = MockDadosTabelaDinamica;
+    const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
+      (legenda) => ({
+        corFundo: legenda.corFundo,
+        descricaoLegenda: legenda.descricaoLegenda,
+        textoLegenda: legenda.descricaoOpcao,
+      })
+    );
+    setDadosLegenda(dadosLegenda);
     setDadosLista(dadosMock);
   };
 
   const buscarDadosLista2 = async () => {
     try {
       const dadosMock = MockDadosTabelaDinamica2;
+      const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
+        (legenda) => ({
+          corFundo: legenda.corFundo,
+          descricaoLegenda: legenda.descricaoLegenda,
+          textoLegenda: legenda.descricaoOpcao,
+        })
+      );
+      setDadosLegenda(dadosLegenda);
       setDadosLista(dadosMock);
     } catch (error) {
     } finally {
@@ -283,6 +305,7 @@ const Conteudo: React.FC = () => {
           dados={dadosLista}
           formListaDinamica={formListaDinamica}
         />
+        <Legendas data={dadosLegenda || []} />
       </Card>
     </>
   );

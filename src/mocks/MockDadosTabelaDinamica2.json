@@ -18,21 +18,24 @@
               "ordem": 1,
               "descricaoOpcao": "Adequada",
               "corFundo": "#7ED957",
-              "corTexto": "#FFFFFF"
+              "corTexto": "#FFFFFF",
+              "descricaoLegenda": "Hipótese pré-silábica"
             },
             {
               "id": 2,
               "ordem": 2,
               "descricaoOpcao": "Inadequada",
               "corFundo": "#FFDE59",
-              "corTexto": "#FFFFFF"
+              "corTexto": "#FFFFFF",
+              "descricaoLegenda": "Hipótese pré-silábica"
             },
             {
               "id": 3,
               "ordem": 3,
               "descricaoOpcao": "Não resolveu",
               "corFundo": "#F18888",
-              "corTexto": "#FFFFFF"
+              "corTexto": "#FFFFFF",
+              "descricaoLegenda": "Hipótese pré-silábica"
             }
           ],
           "resposta": [

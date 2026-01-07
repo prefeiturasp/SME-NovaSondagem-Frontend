@@ -4,6 +4,7 @@ export interface OpcaoResposta {
   descricaoOpcao: string;
   corFundo: string;
   corTexto: string;
+  descricaoLegenda: string;
 }
 
 export interface Resposta {

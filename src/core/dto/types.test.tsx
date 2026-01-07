@@ -16,6 +16,7 @@ describe("Types - Interfaces de Sondagem", () => {
       descricaoOpcao: "Pré-silábico",
       corFundo: "#FF5733",
       corTexto: "#FFFFFF",
+      descricaoLegenda: "Nível inicial",
       ...override,
     });
 
@@ -123,6 +124,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Pré-silábico",
           corFundo: "#FF0000",
           corTexto: "#FFFFFF",
+          descricaoLegenda: "Nível inicial",
         },
         {
           id: 2,
@@ -130,6 +132,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Alfabético",
           corFundo: "#00FF00",
           corTexto: "#000000",
+          descricaoLegenda: "Alfabetizado",
         },
       ];
 
@@ -286,6 +289,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Pré-silábico",
           corFundo: "#FF6B6B",
           corTexto: "#FFFFFF",
+          descricaoLegenda: "Nível inicial de alfabetização",
         },
         {
           id: 2,
@@ -293,6 +297,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Silábico sem valor",
           corFundo: "#FFD93D",
           corTexto: "#000000",
+          descricaoLegenda: "Escrita silábica sem correspondência sonora",
         },
         {
           id: 3,
@@ -300,6 +305,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Silábico com valor",
           corFundo: "#6BCB77",
           corTexto: "#FFFFFF",
+          descricaoLegenda: "Escrita silábica com correspondência sonora",
         },
         {
           id: 4,
@@ -307,6 +313,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Silábico-alfabético",
           corFundo: "#4D96FF",
           corTexto: "#FFFFFF",
+          descricaoLegenda: "Transição entre hipóteses",
         },
         {
           id: 5,
@@ -314,6 +321,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Alfabético",
           corFundo: "#9B59B6",
           corTexto: "#FFFFFF",
+          descricaoLegenda: "Totalmente alfabetizado",
         },
       ];
 
@@ -422,6 +430,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Nível 1",
           corFundo: "#000000",
           corTexto: "#FFFFFF",
+          descricaoLegenda: "Primeiro nível",
         },
         {
           id: 20,
@@ -429,6 +438,7 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoOpcao: "Nível 2",
           corFundo: "#FFFFFF",
           corTexto: "#000000",
+          descricaoLegenda: "Segundo nível",
         },
       ];
 
