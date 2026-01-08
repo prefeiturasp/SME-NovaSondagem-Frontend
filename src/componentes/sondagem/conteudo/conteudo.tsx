@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
+//import NovaSondagemServico from "../../../core/servico/servico";
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
@@ -78,20 +79,23 @@ const Conteudo: React.FC = () => {
   }, [formFiltro]);
 
   useEffect(() => {
-    setDadosLista(null);
-    setDesabilitarDisciplina(true);
-    if (modalidade && ano) {
-      const valido = verificarModalidadeTurma();
-      setModalidadeAnoValidos(valido);
+    const executar = async () => {
+      setDadosLista(null);
+      setDesabilitarDisciplina(true);
+      if (modalidade && ano) {
+        const valido = await verificarModalidadeTurma();
+        setModalidadeAnoValidos(valido);
 
-      if (valido && turma !== 0) {
-        obterDisciplinas();
+        if (valido && turma !== 0) {
+          obterDisciplinas();
+        } else {
+          resetando();
+        }
       } else {
         resetando();
       }
-    } else {
-      resetando();
-    }
+    };
+    executar();
   }, [
     modalidade,
     ano,
@@ -189,6 +193,21 @@ const Conteudo: React.FC = () => {
   const voltarSondagem = () => {
     console.log("Voltar para a tela anterior");
   };
+
+  // Exemplo de uso do serviço NovaSondagemServico
+  // const testarAPI = useCallback(async () => {
+  //   try {
+  //     const resposta = await NovaSondagemServico.get("Ciclo", {
+  //       headers: { "X-Token-Principal": usuario?.token },
+  //     });
+  //   } catch (error: any) {
+  //     console.error("ERRO:", error.message);
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   testarAPI();
+  // }, []);
 
   return (
     <>
