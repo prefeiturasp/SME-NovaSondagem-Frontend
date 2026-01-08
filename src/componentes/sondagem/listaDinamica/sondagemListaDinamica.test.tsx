@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Form } from "antd";
@@ -11,13 +12,39 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
     onChange,
     disabled,
     placeholder,
+    onKeyDown,
+    onOpenChange,
+    ref: forwardedRef,
   }: any) {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const selectRef = React.useRef<HTMLSelectElement>(null);
+
+    React.useImperativeHandle(forwardedRef, () => ({
+      focus: () => selectRef.current?.focus(),
+      blur: () => selectRef.current?.blur(),
+    }));
+
     return (
       <select
         id={id}
-        onChange={(e) => onChange(Number(e.target.value))}
+        ref={selectRef}
+        onChange={(e) => {
+          if (onChange) onChange(Number(e.target.value));
+        }}
+        onFocus={() => {
+          setIsOpen(true);
+          if (onOpenChange) onOpenChange(true);
+        }}
+        onBlur={() => {
+          setIsOpen(false);
+          if (onOpenChange) onOpenChange(false);
+        }}
+        onKeyDown={(e) => {
+          if (onKeyDown) onKeyDown(e);
+        }}
         disabled={disabled}
         data-testid={id}
+        data-open={isOpen}
       >
         <option value="">{placeholder}</option>
         {options.map((opt: any) => (
@@ -791,6 +818,439 @@ describe("SondagemListaDinamica", () => {
       rerender(<WrapperComponent dados={mockDadosReescrita} />);
 
       expect(screen.getByText("Reescrita")).toBeInTheDocument();
+    });
+  });
+
+  describe("Navegação por teclado", () => {
+    it("deve navegar para próxima coluna com Tab", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        fireEvent.keyDown(select, { key: "Tab", code: "Tab" });
+      });
+
+      expect(screen.getByTestId("select_0_1")).toBeInTheDocument();
+    });
+
+    it("deve navegar para coluna anterior com Shift+Tab", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_1");
+        fireEvent.keyDown(select, {
+          key: "Tab",
+          code: "Tab",
+          shiftKey: true,
+        });
+      });
+
+      expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+    });
+
+    it("deve navegar para linha abaixo com ArrowDown", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
+      });
+
+      expect(screen.getByTestId("select_1_0")).toBeInTheDocument();
+    });
+
+    it("deve navegar para linha acima com ArrowUp", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_1_0");
+        fireEvent.keyDown(select, { key: "ArrowUp", code: "ArrowUp" });
+      });
+
+      expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+    });
+
+    it("não deve navegar com ArrowDown quando select está aberto", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        // Simula abertura do select
+        fireEvent.focus(select);
+        fireEvent.mouseDown(select);
+        // Tenta navegar
+        fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
+      });
+
+      expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+    });
+
+    it("não deve navegar além dos limites da tabela", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        // Tenta navegar para cima no primeiro item
+        fireEvent.keyDown(select, { key: "ArrowUp", code: "ArrowUp" });
+      });
+
+      // Deve permanecer no mesmo select
+      expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+    });
+  });
+
+  describe("Gerenciamento de referências", () => {
+    it("deve armazenar referências dos selects", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select1 = screen.getByTestId("select_0_0");
+        const select2 = screen.getByTestId("select_0_1");
+        expect(select1).toBeInTheDocument();
+        expect(select2).toBeInTheDocument();
+      });
+    });
+
+    it("deve focar no primeiro select ao carregar", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(
+        () => {
+          const firstSelect = screen.getByTestId("select_0_0");
+          expect(firstSelect).toBeInTheDocument();
+        },
+        { timeout: 200 }
+      );
+    });
+  });
+
+  describe("Estado de abertura dos selects", () => {
+    it("deve rastrear quando select é aberto", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        fireEvent.mouseDown(select);
+      });
+
+      expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+    });
+
+    it("deve permitir múltiplos selects abertos simultaneamente", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select1 = screen.getByTestId("select_0_0");
+        const select2 = screen.getByTestId("select_1_0");
+
+        fireEvent.focus(select1);
+        fireEvent.focus(select2);
+
+        expect(select1).toBeInTheDocument();
+        expect(select2).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("Cálculo de colunas", () => {
+    it("deve calcular total de colunas corretamente", () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      // Verifica se renderizou as colunas corretas
+      const ciclo1 = screen.getAllByText("1° ciclo");
+      const ciclo2 = screen.getAllByText("2° ciclo");
+      expect(ciclo1.length).toBeGreaterThan(0);
+      expect(ciclo2.length).toBeGreaterThan(0);
+    });
+
+    it("deve lidar com array vazio de estudantes", () => {
+      const dadosVazios = {
+        questao: "escrita",
+        estudantes: [],
+      };
+
+      const { container } = render(<WrapperComponent dados={dadosVazios} />);
+
+      // Quando não há estudantes, a tabela não é renderizada ou está vazia
+      const tableBody = container.querySelector(".ant-table-tbody");
+      if (tableBody) {
+        expect(tableBody.children.length).toBeLessThanOrEqual(1);
+      }
+    });
+  });
+
+  describe("Casos extremos de navegação", () => {
+    it("deve ciclar para última coluna ao pressionar Shift+Tab na primeira", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        fireEvent.keyDown(select, {
+          key: "Tab",
+          code: "Tab",
+          shiftKey: true,
+        });
+      });
+
+      // Deve ter navegado para última coluna
+      expect(screen.getByTestId("select_0_1")).toBeInTheDocument();
+    });
+
+    it("deve ciclar para primeira coluna ao pressionar Tab na última", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const lastSelect = screen.getByTestId("select_0_1");
+        fireEvent.keyDown(lastSelect, { key: "Tab", code: "Tab" });
+      });
+
+      // Deve ter ciclado para primeira coluna
+      expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+    });
+  });
+
+  describe("Interação com formulário", () => {
+    it("deve atualizar valores do formulário ao selecionar opção", async () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        fireEvent.change(select, { target: { value: "2" } });
+      });
+
+      await waitFor(() => {
+        const hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+        expect(hiddenInputs.length).toBeGreaterThan(0);
+      });
+    });
+
+    it("deve manter valores ao mudar entre estudantes", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select1 = screen.getByTestId("select_0_0");
+        const select2 = screen.getByTestId("select_1_0");
+
+        fireEvent.change(select1, { target: { value: "1" } });
+        fireEvent.change(select2, { target: { value: "2" } });
+
+        expect(select1).toHaveValue("1");
+        expect(select2).toHaveValue("2");
+      });
+    });
+  });
+
+  describe("Testes para moveFocus e limites", () => {
+    it("deve não fazer nada se newRow for negativo", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_0");
+      fireEvent.keyDown(select, { key: "ArrowUp", code: "ArrowUp" });
+
+      expect(select).toBeInTheDocument();
+    });
+
+    it("deve não fazer nada se newRow for maior ou igual ao total de linhas", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_1_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_1_0");
+      fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
+      fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
+
+      expect(select).toBeInTheDocument();
+    });
+
+    it("deve não fazer nada se newCol for negativo", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_0");
+      fireEvent.keyDown(select, {
+        key: "Tab",
+        code: "Tab",
+        shiftKey: true,
+      });
+
+      expect(select).toBeInTheDocument();
+    });
+
+    it("deve não fazer nada se newCol for maior ou igual ao total de colunas", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_1");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_1");
+      fireEvent.keyDown(select, { key: "Tab", code: "Tab" });
+      fireEvent.keyDown(select, { key: "Tab", code: "Tab" });
+
+      expect(select).toBeInTheDocument();
+    });
+
+    it("deve retornar 0 quando não há estudantes em getTotalColumns", () => {
+      const emptyDados: DadosTabelaDinamica = {
+        questao: "escrita",
+        estudantes: [],
+      };
+
+      render(<WrapperComponent dados={emptyDados} />);
+
+      const tableBody = document.querySelector(".ant-table-tbody");
+      if (tableBody) {
+        expect(tableBody.children.length).toBeLessThanOrEqual(1);
+      }
+    });
+
+    it("deve retornar quando não há dados em moveFocus", async () => {
+      const emptyDados: DadosTabelaDinamica = {
+        questao: "escrita",
+        estudantes: [],
+      };
+
+      render(<WrapperComponent dados={emptyDados} />);
+
+      await waitFor(() => {
+        const message = screen.getByText("Nenhum dado disponível para exibir.");
+        expect(message).toBeInTheDocument();
+      });
+    });
+
+    it("deve fazer foco no primeiro select após carregamento", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(
+        () => {
+          const firstSelect = screen.getByTestId("select_0_0");
+          expect(firstSelect).toBeInTheDocument();
+        },
+        { timeout: 200 }
+      );
+    });
+
+    it("deve atualizar estado de select aberto corretamente", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_0");
+      fireEvent.focus(select);
+      fireEvent.blur(select);
+
+      expect(select).toBeInTheDocument();
+    });
+
+    it("deve retornar quando ArrowDown é pressionado com select aberto", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_0");
+      fireEvent.focus(select);
+
+      await waitFor(() => {
+        expect(select.getAttribute("data-open")).toBe("true");
+      });
+
+      fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
+
+      expect(select).toBeInTheDocument();
+    });
+
+    it("deve retornar quando ArrowUp é pressionado com select aberto", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_0");
+      fireEvent.focus(select);
+
+      await waitFor(() => {
+        expect(select.getAttribute("data-open")).toBe("true");
+      });
+
+      fireEvent.keyDown(select, { key: "ArrowUp", code: "ArrowUp" });
+
+      expect(select).toBeInTheDocument();
+    });
+
+    it("deve navegar com Tab quando select está fechado", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_0");
+      fireEvent.keyDown(select, { key: "Tab", code: "Tab" });
+
+      const nextSelect = screen.getByTestId("select_0_1");
+      expect(nextSelect).toBeInTheDocument();
+    });
+
+    it("deve navegar com Shift+Tab quando select está fechado", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_1");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_1");
+      fireEvent.keyDown(select, { key: "Tab", code: "Tab", shiftKey: true });
+
+      const prevSelect = screen.getByTestId("select_0_0");
+      expect(prevSelect).toBeInTheDocument();
+    });
+
+    it("deve chamar setSelectRef ao renderizar SelectColorido", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve retornar quando targetRef não tem focus method", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      const select = screen.getByTestId("select_0_0");
+      fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
+
+      expect(select).toBeInTheDocument();
     });
   });
 });

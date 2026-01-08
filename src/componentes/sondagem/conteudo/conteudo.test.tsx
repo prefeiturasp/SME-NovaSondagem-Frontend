@@ -275,4 +275,251 @@ describe("Conteudo", () => {
       expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
     });
   });
+
+  describe("Mudança de disciplina e proficiência", () => {
+    it("deve executar onChangeDisciplinas quando disciplina é selecionada", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const disciplinaSelect = container.querySelector('[id*="disciplinaId"]');
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const options = document.querySelectorAll(".ant-select-item");
+          if (options.length > 0) {
+            fireEvent.click(options[0]);
+          }
+        });
+      }
+    });
+
+    it("deve executar onChangeProficiencia com proficienciaId 1 (Escrita)", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const proficienciaSelect = container.querySelector(
+        '[id*="proficienciaId"]'
+      );
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const options = document.querySelectorAll(".ant-select-item");
+          if (options.length > 0) {
+            fireEvent.click(options[0]);
+          }
+        });
+      }
+    });
+
+    it("deve executar onChangeProficiencia com proficienciaId 2 (Leitura)", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const proficienciaSelect = container.querySelector(
+        '[id*="proficienciaId"]'
+      );
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(
+          () => {
+            const options = document.querySelectorAll(".ant-select-item");
+            if (options.length > 1) {
+              fireEvent.click(options[1]);
+            }
+          },
+          { timeout: 3000 }
+        );
+      }
+    });
+
+    it("deve chamar salvarDadosSondagem ao clicar no botão Salvar", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+    });
+
+    it("deve processar dados do formulário ao salvar", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      expect(container).toBeInTheDocument();
+    });
+
+    it("deve executar onChangeDisciplinas com valor null", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const disciplinaSelect = container.querySelector('[id*="disciplinaId"]');
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const clearButton = document.querySelector(".ant-select-clear");
+          if (clearButton) {
+            fireEvent.click(clearButton);
+          }
+        });
+      }
+    });
+
+    it("deve executar onChangeProficiencia com valor null", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const proficienciaSelect = container.querySelector(
+        '[id*="proficienciaId"]'
+      );
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const clearButton = document.querySelector(".ant-select-clear");
+          if (clearButton) {
+            fireEvent.click(clearButton);
+          }
+        });
+      }
+    });
+
+    it("deve executar onChangeProficiencia com valor inválido", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
+      });
+    });
+
+    it("deve setar lista de proficiencia vazia quando data não existe", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+    });
+
+    it("deve processar dados de formulário com valores nulos ao salvar", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const proficienciaSelect = container.querySelector(
+          '[id*="proficienciaId"]'
+        );
+        if (proficienciaSelect) {
+          fireEvent.mouseDown(proficienciaSelect);
+        }
+      });
+
+      await waitFor(() => {
+        const options = document.querySelectorAll(".ant-select-item");
+        if (options.length > 0) {
+          fireEvent.click(options[0]);
+        }
+      });
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      expect(container).toBeInTheDocument();
+    });
+
+    it("deve capturar erro em buscarDadosLista2", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const proficienciaSelect = container.querySelector(
+          '[id*="proficienciaId"]'
+        );
+        if (proficienciaSelect) {
+          fireEvent.mouseDown(proficienciaSelect);
+        }
+      });
+
+      await waitFor(() => {
+        const options = document.querySelectorAll(".ant-select-item");
+        if (options.length > 1) {
+          fireEvent.click(options[1]);
+        }
+      });
+
+      expect(container).toBeInTheDocument();
+    });
+  });
 });

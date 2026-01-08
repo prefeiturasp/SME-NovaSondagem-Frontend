@@ -2,12 +2,14 @@ import axios from "axios";
 
 jest.mock("axios");
 jest.mock("./config", () => ({
-  getApiUrl: jest.fn(() => "http://localhost:3000")
+  getApiUrl: jest.fn(() => "http://localhost:3000"),
 }));
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-mockedAxios.create.mockReturnValue(mockedAxios as unknown as ReturnType<typeof axios.create>);
+mockedAxios.create.mockReturnValue(
+  mockedAxios as unknown as ReturnType<typeof axios.create>
+);
 
 import { servicos } from "./servicos";
 
@@ -27,9 +29,9 @@ describe("API", () => {
         },
         removeItem(key: string): void {
           delete store[key];
-        }
+        },
       },
-      configurable: true
+      configurable: true,
     });
 
     jest.spyOn(console, "error").mockImplementation(() => {});
@@ -39,7 +41,7 @@ describe("API", () => {
     globalThis.localStorage.setItem("authToken", "abc123");
 
     mockedAxios.get.mockResolvedValue({
-      data: { success: true }
+      data: { success: true },
     });
 
     await servicos.get("/test");
@@ -51,7 +53,7 @@ describe("API", () => {
     globalThis.localStorage.removeItem("authToken");
 
     mockedAxios.get.mockResolvedValue({
-      data: { success: true }
+      data: { success: true },
     });
 
     await servicos.get("/test");
@@ -61,7 +63,7 @@ describe("API", () => {
 
   test("interceptor de erro loga erro no console", async () => {
     const erroMock = new Error("Request failed") as Error & {
-      response: { status: number; data: string }
+      response: { status: number; data: string };
     };
     erroMock.response = { status: 500, data: "Internal Server Error" };
 
@@ -76,7 +78,7 @@ describe("API", () => {
 
   test("get retorna data", async () => {
     mockedAxios.get.mockResolvedValue({
-      data: { ok: true }
+      data: { ok: true },
     });
 
     const result = await servicos.get("/a");
@@ -87,7 +89,7 @@ describe("API", () => {
 
   test("post retorna data", async () => {
     mockedAxios.post.mockResolvedValue({
-      data: { criado: true }
+      data: { criado: true },
     });
 
     const body = { nome: "Teste" };
@@ -100,7 +102,7 @@ describe("API", () => {
 
   test("put retorna data", async () => {
     mockedAxios.put.mockResolvedValue({
-      data: { atualizado: true }
+      data: { atualizado: true },
     });
 
     const body = { valor: 10 };
@@ -113,12 +115,69 @@ describe("API", () => {
 
   test("delete retorna data", async () => {
     mockedAxios.delete.mockResolvedValue({
-      data: { removido: true }
+      data: { removido: true },
     });
 
     const result = await servicos.delete("/d");
 
     expect(mockedAxios.delete).toHaveBeenCalledWith("/d");
     expect(result).toEqual({ removido: true });
+  });
+
+  test("interceptor de request rejeita erro corretamente", async () => {
+    const requestError = new Error("Request config error");
+
+    mockedAxios.get.mockRejectedValue(requestError);
+
+    await expect(servicos.get("/test")).rejects.toThrow("Request config error");
+  });
+
+  test("interceptor de response rejeita erro corretamente", async () => {
+    const responseError = new Error("Response error");
+
+    mockedAxios.get.mockRejectedValue(responseError);
+
+    await expect(servicos.get("/test")).rejects.toThrow("Response error");
+  });
+
+  test("post rejeita erro corretamente", async () => {
+    const postError = new Error("Post error");
+
+    mockedAxios.post.mockRejectedValue(postError);
+
+    await expect(servicos.post("/test", { data: "test" })).rejects.toThrow(
+      "Post error"
+    );
+  });
+
+  test("put rejeita erro corretamente", async () => {
+    const putError = new Error("Put error");
+
+    mockedAxios.put.mockRejectedValue(putError);
+
+    await expect(servicos.put("/test", { data: "test" })).rejects.toThrow(
+      "Put error"
+    );
+  });
+
+  test("delete rejeita erro corretamente", async () => {
+    const deleteError = new Error("Delete error");
+
+    mockedAxios.delete.mockRejectedValue(deleteError);
+
+    await expect(servicos.delete("/test")).rejects.toThrow("Delete error");
+  });
+
+  test("get com params", async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: { filtered: true },
+    });
+
+    const params = { page: 1, limit: 10 };
+
+    const result = await servicos.get("/users", params);
+
+    expect(mockedAxios.get).toHaveBeenCalledWith("/users", { params });
+    expect(result).toEqual({ filtered: true });
   });
 });

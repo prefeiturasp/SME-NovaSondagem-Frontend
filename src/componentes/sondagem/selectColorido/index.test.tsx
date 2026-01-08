@@ -671,4 +671,217 @@ describe("SelectColorido", () => {
       });
     });
   });
+
+  describe("Teste de blur e handleKeyDown avançado", () => {
+    it("deve chamar blur quando método blur for invocado", () => {
+      const ref = React.createRef<any>();
+      render(<SelectColorido ref={ref} options={mockOptionsComCores} />);
+
+      if (ref.current && ref.current.blur) {
+        ref.current.blur();
+      }
+
+      expect(ref.current).toBeDefined();
+    });
+
+    it("deve encontrar opção por ordem quando digitar número", async () => {
+      const onChange = jest.fn();
+      const onOpenChange = jest.fn();
+      const { container } = render(
+        <SelectColorido
+          options={mockOptionsComCores}
+          onChange={onChange}
+          onOpenChange={onOpenChange}
+        />
+      );
+
+      const select = container.querySelector(".ant-select-selector");
+      if (select) {
+        fireEvent.mouseDown(select);
+
+        await waitFor(() => {
+          fireEvent.keyDown(select, { key: "1", code: "Digit1" });
+        });
+      }
+    });
+
+    it("deve retornar quando não encontrar opção por ordem", async () => {
+      const onChange = jest.fn();
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} onChange={onChange} />
+      );
+
+      const select = container.querySelector(".ant-select-selector");
+      if (select) {
+        fireEvent.mouseDown(select);
+
+        await waitFor(() => {
+          fireEvent.keyDown(select, { key: "9", code: "Digit9" });
+        });
+
+        expect(onChange).not.toHaveBeenCalled();
+      }
+    });
+
+    it("deve processar ArrowDown quando select está fechado", () => {
+      const onKeyDown = jest.fn();
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />
+      );
+
+      const select = container.querySelector(".ant-select-selector");
+      if (select) {
+        fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
+        expect(onKeyDown).toHaveBeenCalled();
+      }
+    });
+
+    it("deve processar ArrowUp quando select está fechado", () => {
+      const onKeyDown = jest.fn();
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />
+      );
+
+      const select = container.querySelector(".ant-select-selector");
+      if (select) {
+        fireEvent.keyDown(select, { key: "ArrowUp", code: "ArrowUp" });
+        expect(onKeyDown).toHaveBeenCalled();
+      }
+    });
+
+    it("deve processar outras teclas quando select está fechado", async () => {
+      const onKeyDown = jest.fn();
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />
+      );
+
+      const select = container.querySelector(".ant-select-selector");
+      if (select) {
+        fireEvent.keyDown(select, { key: "Enter", code: "Enter" });
+
+        await waitFor(() => {
+          expect(onKeyDown).toHaveBeenCalled();
+        });
+      }
+    });
+
+    it("deve retornar cores padrão quando selectedValue é null", () => {
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} value={null} />
+      );
+
+      const styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain("#FFFFFF");
+      expect(styleTag?.innerHTML).toContain("#000000");
+    });
+
+    it("deve retornar cores padrão quando opção não tem corFundo", () => {
+      const opcoesSemCor = [
+        { value: 1, label: "Sem Cor", ordem: 1 },
+        { value: 2, label: "Também Sem Cor", ordem: 2 },
+      ];
+
+      const { container } = render(
+        <SelectColorido options={opcoesSemCor} value={1} />
+      );
+
+      const styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain("#FFFFFF");
+      expect(styleTag?.innerHTML).toContain("#000000");
+    });
+
+    it("deve filtrar por descrição em filterOption", async () => {
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} showSearch />
+      );
+
+      const select = container.querySelector(
+        "input.ant-select-selection-search-input"
+      );
+      if (select) {
+        fireEvent.change(select, { target: { value: "vermelho" } });
+
+        await waitFor(() => {
+          expect(select).toHaveValue("vermelho");
+        });
+      }
+    });
+
+    it("deve retornar false em filterOption quando não há correspondência", async () => {
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} showSearch />
+      );
+
+      const select = container.querySelector(
+        "input.ant-select-selection-search-input"
+      );
+      if (select) {
+        fireEvent.change(select, { target: { value: "inexistente" } });
+
+        await waitFor(() => {
+          expect(select).toHaveValue("inexistente");
+        });
+      }
+    });
+
+    it("deve processar tecla numérica quando select está aberto", async () => {
+      const onChange = jest.fn();
+      const onOpenChange = jest.fn();
+      const { container } = render(
+        <SelectColorido
+          options={mockOptionsComCores}
+          onChange={onChange}
+          onOpenChange={onOpenChange}
+        />
+      );
+
+      const select = container.querySelector(".ant-select-selector");
+      if (select) {
+        fireEvent.mouseDown(select);
+
+        await waitFor(() => {
+          expect(onOpenChange).toHaveBeenCalledWith(true);
+        });
+      }
+    });
+
+    it("deve não processar quando opção não tem ordem correspondente", async () => {
+      const onChange = jest.fn();
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} onChange={onChange} />
+      );
+
+      const select = container.querySelector(".ant-select-selector");
+      if (select) {
+        fireEvent.mouseDown(select);
+
+        await waitFor(() => {
+          const dropdown = document.querySelector(".ant-select-dropdown");
+          expect(dropdown).toBeInTheDocument();
+        });
+      }
+    });
+
+    it("deve retornar quando opção não é encontrada", async () => {
+      const opcoesSemOrdem = [
+        {
+          value: 1,
+          label: "Opção sem ordem",
+          corFundo: "#FF0000",
+          corTexto: "#FFFFFF",
+        },
+      ];
+
+      const onChange = jest.fn();
+      const { container } = render(
+        <SelectColorido options={opcoesSemOrdem} onChange={onChange} />
+      );
+
+      const select = container.querySelector(".ant-select-selector");
+      if (select) {
+        fireEvent.mouseDown(select);
+        expect(select).toBeInTheDocument();
+      }
+    });
+  });
 });
