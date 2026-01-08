@@ -1,0 +1,22 @@
+.tabela-legendas.tabela-legendas.ant-table.ant-table-small.ant-table-bordered {
+  border: 1px solid #f0f0f0 !important;
+}
+
+.tabela-legendas.tabela-legendas.ant-table.ant-table-small.ant-table-bordered
+  .ant-table-cell {
+  border-color: #f0f0f0 !important;
+}
+
+.tabela-legendas.tabela-legendas.ant-table.ant-table-small.ant-table-bordered
+  .ant-table-tbody
+  > tr
+  > td {
+  border-color: #f0f0f0 !important;
+}
+
+.tabela-legendas.tabela-legendas.ant-table.ant-table-small.ant-table-bordered
+  .ant-table-thead
+  > tr
+  > th {
+  border-color: #f0f0f0 !important;
+}

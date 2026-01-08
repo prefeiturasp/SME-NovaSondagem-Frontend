@@ -1,6 +1,7 @@
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { LegendasProps } from "~/core/dto/legendaProps";
+import "./legendas.css";
 
 const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
   const columns: ColumnsType<LegendasProps> = [
@@ -44,6 +45,8 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
         pagination={false}
         showHeader={false}
         size="small"
+        bordered
+        className="tabela-legendas"
       />
     </div>
   );
