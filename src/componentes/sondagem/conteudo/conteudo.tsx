@@ -8,17 +8,15 @@ import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
-import type { LegendasProps } from "~/core/dto/legendaProps";
+import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
   const turmaSelecionada = usuario?.turmaSelecionada;
   const turma = turmaSelecionada ? turmaSelecionada.id : 0;
-  //const modalidade = usuario?.turmaSelecionada?.modalidade;
-  const modalidade = "5";
-  //const ano = usuario?.turmaSelecionada?.ano;
-  const ano = "1";
+  const modalidade = usuario?.turmaSelecionada?.modalidade;
+  const ano = usuario?.turmaSelecionada?.ano;
   console.log("Usuario no conteudo:", usuario);
 
   const [listaDisciplinas, setListaDisciplinas] = useState<
@@ -45,11 +43,11 @@ const Conteudo: React.FC = () => {
   const [formListaDinamica] = Form.useForm();
 
   const verificarModalidadeTurma = useCallback(() => {
-    // if (modalidade === "3") {
-    //   if (ano === "1") {
-    //     return true;
-    //   }
-    // }
+    if (modalidade === "3") {
+      if (ano === "1") {
+        return true;
+      }
+    }
     if (modalidade === "5") {
       if (ano === "1" || ano === "2" || ano === "3") {
         return true;

@@ -1,6 +1,6 @@
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { LegendasProps } from "~/core/dto/legendaProps";
+import type { LegendasProps } from "../../../core/dto/legendaProps";
 import "./legendas.css";
 
 const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {

@@ -361,21 +361,29 @@ describe("SondagemListaDinamica", () => {
 
   describe("Tags de estudante", () => {
     it("deve renderizar tag PAP quando estudante tem PAP", () => {
-      render(<WrapperComponent dados={mockDadosEscrita} />);
-      const papTags = screen.getAllByText("PAP");
-      expect(papTags.length).toBeGreaterThan(0);
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const papSvgs = container.querySelectorAll('svg[viewBox="0 0 49 21"]');
+      expect(papSvgs.length).toBeGreaterThan(0);
     });
 
     it("deve renderizar tag AEE quando estudante tem AEE", () => {
-      render(<WrapperComponent dados={mockDadosEscrita} />);
-      const aeeTags = screen.getAllByText("AEE");
-      expect(aeeTags.length).toBeGreaterThan(0);
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const aeeSvgs = container.querySelectorAll('svg[viewBox="0 0 48 19"]');
+      expect(aeeSvgs.length).toBeGreaterThan(0);
     });
 
     it("deve renderizar tag Acessibilidade quando estudante tem acessibilidade", () => {
-      render(<WrapperComponent dados={mockDadosEscrita} />);
-      const acessibilidadeTags = screen.getAllByText("Acessibilidade");
-      expect(acessibilidadeTags.length).toBeGreaterThan(0);
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const acessibilidadeSvgs = container.querySelectorAll(
+        'svg[viewBox="0 0 20 18"]'
+      );
+      expect(acessibilidadeSvgs.length).toBeGreaterThan(0);
     });
 
     it("não deve renderizar tags quando estudante não tem PAP, AEE ou Acessibilidade", () => {
@@ -592,6 +600,197 @@ describe("SondagemListaDinamica", () => {
     it("deve definir width de 50% para coluna estudante quando não mostra LP", () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
       expect(screen.getAllByText("Estudante")[0]).toBeInTheDocument();
+    });
+  });
+
+  describe("Validação de estrutura HTML", () => {
+    it("deve renderizar estrutura de tabela correta", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const table = container.querySelector(".ant-table");
+      expect(table).toBeInTheDocument();
+    });
+
+    it("deve renderizar colgroup com colunas corretas", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const colgroup = container.querySelector("colgroup");
+      expect(colgroup).toBeInTheDocument();
+    });
+
+    it("deve renderizar thead com estrutura de cabeçalho", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const thead = container.querySelector("thead");
+      expect(thead).toBeInTheDocument();
+    });
+
+    it("deve renderizar tbody com dados dos estudantes", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const tbody = container.querySelector("tbody");
+      expect(tbody).toBeInTheDocument();
+    });
+  });
+
+  describe("Renderização de SVG logos", () => {
+    it("deve renderizar SVG do LogoPAP com viewBox correto", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const papSvg = container.querySelector('svg[viewBox="0 0 49 21"]');
+      expect(papSvg).toBeInTheDocument();
+    });
+
+    it("deve renderizar SVG do LogoAEE com viewBox correto", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const aeeSvg = container.querySelector('svg[viewBox="0 0 48 19"]');
+      expect(aeeSvg).toBeInTheDocument();
+    });
+
+    it("deve renderizar SVG do LogoAcessibilidade com viewBox correto", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const acessibilidadeSvg = container.querySelector(
+        'svg[viewBox="0 0 20 18"]'
+      );
+      expect(acessibilidadeSvg).toBeInTheDocument();
+    });
+  });
+
+  describe("Comportamento de scroll", () => {
+    it("deve aplicar estilo de scroll na tabela", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const scrollContainer = container.querySelector(".ant-table-body");
+      expect(scrollContainer).toBeInTheDocument();
+    });
+
+    it("deve ter configuração de scroll y", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const tableWrapper = container.querySelector(".ant-table-wrapper");
+      expect(tableWrapper).toBeInTheDocument();
+    });
+  });
+
+  describe("Estados dos campos", () => {
+    it("deve inicializar campos habilitados quando periodo ativo", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).not.toBeDisabled();
+      });
+    });
+
+    it("deve manter campos desabilitados quando periodo inativo", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_1");
+        expect(select).toBeDisabled();
+      });
+    });
+  });
+
+  describe("Respostas pré-selecionadas", () => {
+    it("deve aplicar resposta existente ao carregar", async () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+
+      await waitFor(() => {
+        const hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+        expect(hiddenInputs.length).toBeGreaterThan(0);
+      });
+    });
+
+    it("deve atualizar resposta ao selecionar nova opção", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        fireEvent.change(select, { target: { value: "3" } });
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("select_0_0")).toHaveValue("3");
+      });
+    });
+  });
+
+  describe("Checkbox LP (Língua Portuguesa)", () => {
+    it("deve renderizar checkbox LP quando estudante tem lp=true", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      expect(checkboxes.length).toBeGreaterThan(0);
+    });
+
+    it("deve marcar checkbox quando estudante tem lp=true", async () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+
+      await waitFor(() => {
+        const checkbox = container.querySelector(
+          'input[type="checkbox"]'
+        ) as HTMLInputElement;
+        expect(checkbox?.checked).toBe(true);
+      });
+    });
+  });
+
+  describe("Múltiplos estudantes", () => {
+    it("deve renderizar todos os estudantes fornecidos", () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+      expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
+      expect(screen.getByText("2 - Maria Santos")).toBeInTheDocument();
+    });
+
+    it("deve criar um select para cada estudante por ciclo", () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+      const select1 = screen.getByTestId("select_0_0");
+      const select2 = screen.getByTestId("select_1_0");
+      expect(select1).toBeInTheDocument();
+      expect(select2).toBeInTheDocument();
+    });
+  });
+
+  describe("Performance e otimização", () => {
+    it("deve lidar com múltiplas mudanças de valor rapidamente", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      const select = screen.getByTestId("select_0_0");
+
+      fireEvent.change(select, { target: { value: "1" } });
+      fireEvent.change(select, { target: { value: "2" } });
+      fireEvent.change(select, { target: { value: "3" } });
+
+      await waitFor(() => {
+        expect(select).toHaveValue("3");
+      });
+    });
+
+    it("deve rerenderizar eficientemente ao mudar dados", () => {
+      const { rerender } = render(
+        <WrapperComponent dados={mockDadosEscrita} />
+      );
+
+      rerender(<WrapperComponent dados={mockDadosReescrita} />);
+
+      expect(screen.getByText("Reescrita")).toBeInTheDocument();
     });
   });
 });

@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SelectColorido from "./index";
@@ -478,6 +479,196 @@ describe("SelectColorido", () => {
       expect(
         container.querySelector(".select-colorido-sondagem-escrita")
       ).toBeInTheDocument();
+    });
+  });
+
+  describe("forwardRef e useImperativeHandle", () => {
+    it("deve expor método focus através da ref", () => {
+      const ref = React.createRef<any>();
+      render(<SelectColorido ref={ref} options={mockOptionsComCores} />);
+
+      expect(ref.current).toBeDefined();
+      expect(typeof ref.current.focus).toBe("function");
+    });
+
+    it("deve expor método blur através da ref", () => {
+      const ref = React.createRef<any>();
+      render(<SelectColorido ref={ref} options={mockOptionsComCores} />);
+
+      expect(ref.current).toBeDefined();
+      expect(typeof ref.current.blur).toBe("function");
+    });
+
+    it("deve chamar focus do select interno quando ref.focus é chamado", () => {
+      const ref = React.createRef<any>();
+      render(<SelectColorido ref={ref} options={mockOptionsComCores} />);
+
+      expect(() => ref.current.focus()).not.toThrow();
+    });
+  });
+
+  describe("getColorByValue", () => {
+    it("deve retornar cores padrão quando selectedValue é null", () => {
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} value={null} />
+      );
+
+      const styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain("#FFFFFF");
+      expect(styleTag?.innerHTML).toContain("#000000");
+    });
+
+    it("deve retornar cores padrão quando options é undefined", () => {
+      const { container } = render(
+        <SelectColorido options={undefined} value={1} />
+      );
+
+      const styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain("#FFFFFF");
+    });
+
+    it("deve retornar cores corretas quando opção tem corFundo e corTexto", () => {
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} value={2} />
+      );
+
+      const styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain(CORES.VERDE.corFundo);
+      expect(styleTag?.innerHTML).toContain(CORES.VERDE.corTexto);
+    });
+  });
+
+  describe("handleKeyDown e teclas numéricas", () => {
+    it("deve renderizar select com opções que têm ordem", () => {
+      const optionsWithOrdem = [
+        {
+          value: 1,
+          label: "Opção 1",
+          ordem: 1,
+          corFundo: "#FF0000",
+          corTexto: "#FFFFFF",
+        },
+        {
+          value: 2,
+          label: "Opção 2",
+          ordem: 2,
+          corFundo: "#00FF00",
+          corTexto: "#000000",
+        },
+      ];
+
+      render(<SelectColorido options={optionsWithOrdem} />);
+
+      const select = screen.getByRole("combobox");
+      expect(select).toBeInTheDocument();
+    });
+
+    it("deve aceitar prop onKeyDown", () => {
+      const handleKeyDown = jest.fn();
+      render(
+        <SelectColorido
+          options={mockOptionsComCores}
+          onKeyDown={handleKeyDown}
+        />
+      );
+
+      const select = screen.getByRole("combobox");
+      fireEvent.keyDown(select, { key: "Enter" });
+
+      expect(handleKeyDown).toHaveBeenCalled();
+    });
+  });
+
+  describe("Empty state", () => {
+    it("deve renderizar Empty component quando não há dados", async () => {
+      render(<SelectColorido options={[]} />);
+
+      const select = screen.getByRole("combobox");
+      fireEvent.mouseDown(select);
+
+      await waitFor(() => {
+        expect(screen.getByText("Sem dados")).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("displayName", () => {
+    it("deve ter displayName definido", () => {
+      expect(SelectColorido.displayName).toBe("SelectColorido");
+    });
+  });
+
+  describe("Estilos CSS dinâmicos", () => {
+    it("deve incluir estilos para disabled state", () => {
+      const { container } = render(
+        <SelectColorido
+          options={mockOptionsComCores}
+          value={1}
+          disabled={true}
+        />
+      );
+
+      const styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain("ant-select-disabled");
+      expect(styleTag?.innerHTML).toContain("opacity: 0.6");
+    });
+
+    it("deve incluir estilos para arrow icon", () => {
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} value={1} />
+      );
+
+      const styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain("ant-select-arrow");
+      expect(styleTag?.innerHTML).toContain("anticon");
+    });
+
+    it("deve aplicar font-weight nos textos", () => {
+      const { container } = render(
+        <SelectColorido options={mockOptionsComCores} value={1} />
+      );
+
+      const styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain("font-weight: 500");
+    });
+  });
+
+  describe("Integração completa", () => {
+    it("deve atualizar cores quando value muda externamente", async () => {
+      const { container, rerender } = render(
+        <SelectColorido options={mockOptionsComCores} value={1} />
+      );
+
+      let styleTag = container.querySelector("style");
+      expect(styleTag?.innerHTML).toContain(CORES.VERMELHO.corFundo);
+
+      rerender(<SelectColorido options={mockOptionsComCores} value={3} />);
+
+      await waitFor(() => {
+        styleTag = container.querySelector("style");
+        expect(styleTag?.innerHTML).toContain(CORES.AZUL.corFundo);
+      });
+    });
+
+    it("deve manter funcionalidade ao trocar options", async () => {
+      const { rerender } = render(
+        <SelectColorido options={mockOptionsComCores} value={1} />
+      );
+
+      const newOptions = [
+        {
+          value: 10,
+          label: "Nova Opção",
+          corFundo: "#000000",
+          corTexto: "#FFFFFF",
+        },
+      ];
+
+      rerender(<SelectColorido options={newOptions} value={10} />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("combobox")).toBeInTheDocument();
+      });
     });
   });
 });
