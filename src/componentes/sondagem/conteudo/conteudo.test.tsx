@@ -116,15 +116,18 @@ describe("Conteudo", () => {
     ];
 
     casosValidos.forEach(({ modalidade, ano, descricao }) => {
-      it(`não deve exibir alerta para ${descricao}`, () => {
+      it(`não deve exibir alerta para ${descricao}`, async () => {
         const store = createMockStoreWithUser({
           logado: true,
-          turmaSelecionada: criarTurma({ modalidade, ano }),
+          turmaSelecionada: criarTurma({ modalidade, ano, turma: "1A", id: 1 }),
         });
         renderWithProvider(<Conteudo />, store);
-        expect(
-          screen.queryByText(MENSAGENS.MODALIDADE_INVALIDA)
-        ).not.toBeInTheDocument();
+
+        await waitFor(() => {
+          expect(
+            screen.queryByText(MENSAGENS.MODALIDADE_INVALIDA)
+          ).not.toBeInTheDocument();
+        });
       });
     });
   });

@@ -58,6 +58,7 @@ module.exports = {
     "!src/AppRoutes.tsx",
     "!src/vite-env.d.ts",
     "!src/config.ts",
+    "!src/core/servico/api.tsx",
     "!__mocks__/**/*",
   ],
 
@@ -66,6 +67,7 @@ module.exports = {
     "<rootDir>/src/main.tsx",
     "<rootDir>/src/App.tsx",
     "<rootDir>/src/config.ts",
+    "<rootDir>/src/core/servico/api.tsx",
     "<rootDir>/jest.config.cjs",
   ],
 
