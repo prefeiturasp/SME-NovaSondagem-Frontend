@@ -10,14 +10,16 @@ import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
-//import NovaSondagemServico from "../../../core/servico/servico";
+import NovaSondagemServico from "../../../core/servico/servico";
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
   const turmaSelecionada = usuario?.turmaSelecionada;
   const turma = turmaSelecionada ? turmaSelecionada.id : 0;
-  const modalidade = usuario?.turmaSelecionada?.modalidade;
-  const ano = usuario?.turmaSelecionada?.ano;
+  // const modalidade = usuario?.turmaSelecionada?.modalidade;
+  // const ano = usuario?.turmaSelecionada?.ano;
+  const modalidade = "5";
+  const ano = "1";
   console.log("Usuario no conteudo:", usuario);
 
   const [listaDisciplinas, setListaDisciplinas] = useState<
@@ -37,6 +39,14 @@ const Conteudo: React.FC = () => {
   );
 
   const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
+  const [desabilitarProficiencia, setDesabilitarProficiencia] = useState(true);
+
+  const [disciplinaSelecionada, setDisciplinaSelecionada] = useState<
+    number | null
+  >(null);
+  const [proficienciaSelecionada, setProficienciaSelecionada] = useState<
+    number | null
+  >(null);
 
   const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
 
@@ -44,11 +54,11 @@ const Conteudo: React.FC = () => {
   const [formListaDinamica] = Form.useForm();
 
   const verificarModalidadeTurma = useCallback(() => {
-    if (modalidade === "3") {
-      if (ano === "1") {
-        return true;
-      }
-    }
+    // if (modalidade === "3") {
+    //   if (ano === "1") {
+    //     return true;
+    //   }
+    // }
     if (modalidade === "5") {
       if (ano === "1" || ano === "2" || ano === "3") {
         return true;
@@ -58,15 +68,52 @@ const Conteudo: React.FC = () => {
   }, [modalidade, ano]);
 
   const obterDisciplinas = useCallback(async () => {
-    formFiltro.resetFields();
-    const disciplinas = MockDisciplina();
+    try {
+      const resposta = await NovaSondagemServico.get("/ComponenteCurricular", {
+        headers: { "X-Token-Principal": usuario?.token },
+      });
 
-    if (disciplinas?.data?.length > 0) {
-      setDesabilitarDisciplina(false);
-      setListaDisciplinas(disciplinas.data);
-    } else {
-      setDesabilitarDisciplina(true);
-      setListaDisciplinas([]);
+      if (resposta?.data?.length > 0) {
+        setDesabilitarDisciplina(false);
+        // Mapear dados da API para o formato do Select (value, label)
+        const dadosMapeados = resposta.data.map((item: any) => ({
+          value: item.id,
+          label: item.nome,
+        }));
+        setListaDisciplinas(dadosMapeados);
+      } else {
+        setDesabilitarDisciplina(true);
+        setListaDisciplinas([]);
+      }
+    } catch (error: any) {
+      console.error("ERRO:", error.message);
+    }
+  }, [formFiltro]);
+
+  const obterProficiencia = useCallback(async () => {
+    // Limpar apenas o campo de proficiência, não todo o formulário
+    formFiltro.setFieldValue("proficienciaId", null);
+    setProficienciaSelecionada(null);
+
+    try {
+      const resposta = await NovaSondagemServico.get("/Proficiencia", {
+        headers: { "X-Token-Principal": usuario?.token },
+      });
+
+      if (resposta?.data?.length > 0) {
+        setDesabilitarProficiencia(false);
+        // Mapear dados da API para o formato do Select (value, label)
+        const dadosMapeados = resposta.data.map((item: any) => ({
+          value: item.id,
+          label: item.nome,
+        }));
+        setListaProficiencia(dadosMapeados);
+      } else {
+        setDesabilitarProficiencia(true);
+        setListaProficiencia([]);
+      }
+    } catch (error: any) {
+      console.error("ERRO:", error.message);
     }
   }, [formFiltro]);
 
@@ -74,6 +121,7 @@ const Conteudo: React.FC = () => {
     formFiltro.resetFields();
     setListaDisciplinas([]);
     setDesabilitarDisciplina(true);
+    setDesabilitarProficiencia(true);
     setDadosLista(null);
     setModalidadeAnoValidos(false);
   }, [formFiltro]);
@@ -82,6 +130,7 @@ const Conteudo: React.FC = () => {
     const executar = async () => {
       setDadosLista(null);
       setDesabilitarDisciplina(true);
+      setDesabilitarProficiencia(true);
       if (modalidade && ano) {
         const valido = await verificarModalidadeTurma();
         setModalidadeAnoValidos(valido);
@@ -105,25 +154,21 @@ const Conteudo: React.FC = () => {
     resetando,
   ]);
 
-  const onChangeDisciplinas = async (disciplinaId: any) => {
+  const onChangeDisciplinas = async (disciplinaId: number) => {
     if (disciplinaId) {
-      const valorSelecionado = formFiltro.getFieldValue("disciplinaId");
-      console.log("ID:", valorSelecionado);
-
-      const listaProficiencia = MockProficiencia();
-      if (listaProficiencia?.data?.length > 0) {
-        setListaProficiencia(listaProficiencia.data);
-      } else {
-        setListaProficiencia([]);
-      }
+      setDisciplinaSelecionada(disciplinaId);
+      console.log("Disciplina ID selecionado:", disciplinaSelecionada);
+      await obterProficiencia();
     }
   };
 
-  const onChangeProficiencia = async (proficienciaId: any) => {
+  const onChangeProficiencia = async (proficienciaId: number) => {
     if (proficienciaId) {
-      if (proficienciaId === 1) {
+      setProficienciaSelecionada(proficienciaId);
+      console.log("Proficiência ID selecionado:", proficienciaSelecionada);
+      if (proficienciaId === 4) {
         await buscarDadosLista();
-      } else if (proficienciaId === 2) {
+      } else if (proficienciaId === 5) {
         await buscarDadosLista2();
       }
     }
@@ -194,10 +239,32 @@ const Conteudo: React.FC = () => {
     console.log("Voltar para a tela anterior");
   };
 
-  // Exemplo de uso do serviço NovaSondagemServico
+  //Exemplo de uso do serviço NovaSondagemServico
   // const testarAPI = useCallback(async () => {
   //   try {
   //     const resposta = await NovaSondagemServico.get("Ciclo", {
+  //       headers: { "X-Token-Principal": usuario?.token },
+  //       params: {
+  //         componenteCurricular: usuario?.unidadeSelecionada?.id || 0,
+  //         ano: usuario?.turmaSelecionada?.ano || "",
+  //       },
+  //     });
+  //   } catch (error: any) {
+  //     console.error("ERRO:", error.message);
+  //   }
+  // }, []);
+
+  // const data = {
+  //   idEstudante: 123,
+  //   respostas: [
+  //     { idPergunta: 1, resposta: "Resposta 1" },
+  //     { idPergunta: 2, resposta: "Resposta 2" },
+  //   ],
+  // };
+
+  // const testarAPIPost = useCallback(async () => {
+  //   try {
+  //     const resposta = await NovaSondagemServico.post("Ciclo", data, {
   //       headers: { "X-Token-Principal": usuario?.token },
   //     });
   //   } catch (error: any) {
@@ -207,6 +274,7 @@ const Conteudo: React.FC = () => {
 
   // useEffect(() => {
   //   testarAPI();
+  //   testarAPIPost();
   // }, []);
 
   return (
@@ -311,7 +379,7 @@ const Conteudo: React.FC = () => {
                     options={listaProficiencia}
                     placeholder="Selecione a proficiência"
                     onChange={onChangeProficiencia}
-                    disabled={desabilitarDisciplina}
+                    disabled={desabilitarProficiencia}
                   />
                 </Form.Item>
               </Col>
@@ -329,24 +397,24 @@ const Conteudo: React.FC = () => {
 };
 export default Conteudo;
 
-const MockDisciplina = () => {
-  const disciplina = {
-    data: [
-      { value: 1, label: "Língua Portuguesa" },
-      { value: 2, label: "Matemática" },
-    ],
-  };
+// const MockDisciplina = () => {
+//   const disciplina = {
+//     data: [
+//       { value: 1, label: "Língua Portuguesa" },
+//       { value: 2, label: "Matemática" },
+//     ],
+//   };
 
-  return disciplina;
-};
+//   return disciplina;
+// };
 
-const MockProficiencia = () => {
-  const proficiencia = {
-    data: [
-      { value: 1, label: "Escrita" },
-      { value: 2, label: "Leitura" },
-    ],
-  };
+// const MockProficiencia = () => {
+//   const proficiencia = {
+//     data: [
+//       { value: 1, label: "Escrita" },
+//       { value: 2, label: "Leitura" },
+//     ],
+//   };
 
-  return proficiencia;
-};
+//   return proficiencia;
+// };
