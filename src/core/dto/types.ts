@@ -9,7 +9,7 @@ export interface OpcaoResposta {
 
 export interface Resposta {
   id: number;
-  opcaoRespostaId: number;
+  opcaoRespostaId: number | null;
 }
 
 export interface Coluna {

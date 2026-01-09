@@ -84,9 +84,14 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
     );
 
     const handleChange = (newValue: any, option: any) => {
-      const colors = getColorByValue(newValue);
-      setBackgroundColor(colors.bg);
-      setTextColor(colors.text);
+      if (newValue === null || newValue === undefined) {
+        setBackgroundColor("#FFFFFF");
+        setTextColor("#000000");
+      } else {
+        const colors = getColorByValue(newValue);
+        setBackgroundColor(colors.bg);
+        setTextColor(colors.text);
+      }
       if (onChange) {
         onChange(newValue, option);
       }
@@ -152,6 +157,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           color: ${textColor} !important;
         }
         .ant-select.select-colorido-${uniqueId} .ant-select-arrow,
+        .ant-select.select-colorido-${uniqueId} .ant-select-clear,
         .ant-select.select-colorido-${uniqueId} .anticon {
           color: ${textColor} !important;
         }
@@ -172,6 +178,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
             />
           }
           showSearch
+          allowClear
           filterOption={filterOption}
           getPopupContainer={(trigger) => trigger.parentElement}
           value={value}
