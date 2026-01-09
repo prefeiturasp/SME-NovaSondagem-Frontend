@@ -77,7 +77,6 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           };
         }
 
-        // Fallback caso não encontre as cores
         return { bg: "#FFFFFF", text: "#000000" };
       },
       [props.options]
@@ -143,7 +142,6 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         <style
           dangerouslySetInnerHTML={{
             __html: `
-        /* Ant Design v5 - Estrutura atualizada */
         .ant-select.select-colorido-${uniqueId} .ant-select-selector {
           background-color: ${backgroundColor} !important;
           border-color: ${backgroundColor} !important;
@@ -156,10 +154,23 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         .ant-select.select-colorido-${uniqueId} .ant-select-selection-search-input {
           color: ${textColor} !important;
         }
-        .ant-select.select-colorido-${uniqueId} .ant-select-arrow,
-        .ant-select.select-colorido-${uniqueId} .ant-select-clear,
-        .ant-select.select-colorido-${uniqueId} .anticon {
+        .ant-select.select-colorido-${uniqueId} .ant-select-arrow {
           color: ${textColor} !important;
+        }        
+        .ant-select.select-colorido-${uniqueId} .ant-select-clear {
+          top: 45% !important;
+          width: 20px !important;
+          inset-inline-end: 8px !important;
+          background: ${backgroundColor} !important;
+          color: ${textColor} !important;
+          border-radius: 4px !important;
+          opacity: 1 !important;
+        }
+        .ant-select.select-colorido-${uniqueId} .ant-select-clear:hover {
+          opacity: 0.8 !important;
+        }
+        .ant-select.select-colorido-${uniqueId} .ant-select-clear .anticon {
+          color: inherit !important;
         }
         .ant-select.select-colorido-${uniqueId}.ant-select-disabled .ant-select-selector {
           opacity: 0.6 !important;
