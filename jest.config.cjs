@@ -68,6 +68,7 @@ module.exports = {
     "<rootDir>/src/App.tsx",
     "<rootDir>/src/config.ts",
     "<rootDir>/src/core/servico/api.tsx",
+    "<rootDir>/src/core/servico/servico.tsx",
     "<rootDir>/jest.config.cjs",
   ],
 

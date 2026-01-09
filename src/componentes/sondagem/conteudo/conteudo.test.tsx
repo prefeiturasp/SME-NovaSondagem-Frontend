@@ -4,6 +4,8 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import Conteudo from "./conteudo";
 
+jest.mock("../../../core/servico/servico");
+
 // Constantes
 const MENSAGENS = {
   TITULO: "Sondagem",
