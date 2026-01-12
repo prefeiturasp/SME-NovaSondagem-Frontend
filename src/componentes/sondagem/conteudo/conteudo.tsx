@@ -41,13 +41,6 @@ const Conteudo: React.FC = () => {
   const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
   const [desabilitarProficiencia, setDesabilitarProficiencia] = useState(true);
 
-  const [disciplinaSelecionada, setDisciplinaSelecionada] = useState<
-    number | null
-  >(null);
-  const [proficienciaSelecionada, setProficienciaSelecionada] = useState<
-    number | null
-  >(null);
-
   const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
 
   const [formFiltro] = Form.useForm();
@@ -75,7 +68,6 @@ const Conteudo: React.FC = () => {
 
       if (resposta?.data?.length > 0) {
         setDesabilitarDisciplina(false);
-        // Mapear dados da API para o formato do Select (value, label)
         const dadosMapeados = resposta.data.map((item: any) => ({
           value: item.id,
           label: item.nome,
@@ -90,32 +82,35 @@ const Conteudo: React.FC = () => {
     }
   }, [formFiltro]);
 
-  const obterProficiencia = useCallback(async () => {
-    // Limpar apenas o campo de proficiência, não todo o formulário
-    formFiltro.setFieldValue("proficienciaId", null);
-    setProficienciaSelecionada(null);
+  const obterProficiencia = useCallback(
+    async (idDisciplina: number) => {
+      formFiltro.setFieldValue("proficienciaId", null);
 
-    try {
-      const resposta = await NovaSondagemServico.get("/Proficiencia", {
-        headers: { "X-Token-Principal": usuario?.token },
-      });
+      try {
+        const resposta = await NovaSondagemServico.get(
+          `/Proficiencia/componente-curricular/${idDisciplina}`,
+          {
+            headers: { "X-Token-Principal": usuario?.token },
+          }
+        );
 
-      if (resposta?.data?.length > 0) {
-        setDesabilitarProficiencia(false);
-        // Mapear dados da API para o formato do Select (value, label)
-        const dadosMapeados = resposta.data.map((item: any) => ({
-          value: item.id,
-          label: item.nome,
-        }));
-        setListaProficiencia(dadosMapeados);
-      } else {
-        setDesabilitarProficiencia(true);
-        setListaProficiencia([]);
+        if (resposta?.data?.length > 0) {
+          setDesabilitarProficiencia(false);
+          const dadosMapeados = resposta.data.map((item: any) => ({
+            value: item.id,
+            label: item.nome,
+          }));
+          setListaProficiencia(dadosMapeados);
+        } else {
+          setDesabilitarProficiencia(true);
+          setListaProficiencia([]);
+        }
+      } catch (error: any) {
+        console.error("ERRO:", error.message);
       }
-    } catch (error: any) {
-      console.error("ERRO:", error.message);
-    }
-  }, [formFiltro]);
+    },
+    [formFiltro, usuario?.token]
+  );
 
   const resetando = useCallback(() => {
     formFiltro.resetFields();
@@ -156,16 +151,14 @@ const Conteudo: React.FC = () => {
 
   const onChangeDisciplinas = async (disciplinaId: number) => {
     if (disciplinaId) {
-      setDisciplinaSelecionada(disciplinaId);
-      console.log("Disciplina ID selecionado:", disciplinaSelecionada);
-      await obterProficiencia();
+      console.log("Disciplina ID selecionado:", disciplinaId);
+      await obterProficiencia(disciplinaId);
     }
   };
 
   const onChangeProficiencia = async (proficienciaId: number) => {
     if (proficienciaId) {
-      setProficienciaSelecionada(proficienciaId);
-      console.log("Proficiência ID selecionado:", proficienciaSelecionada);
+      console.log("Proficiência ID selecionado:", proficienciaId);
       if (proficienciaId === 4) {
         await buscarDadosLista();
       } else if (proficienciaId === 5) {
