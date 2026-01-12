@@ -47,7 +47,7 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
         size="small"
         bordered
         className="tabela-legendas"
-        rowKey={(_, index) => `legenda-${index}`}
+        rowKey={(record) => `legenda-${record.corFundo}-${record.textoLegenda}`}
       />
     </div>
   );

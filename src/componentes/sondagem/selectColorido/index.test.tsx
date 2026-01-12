@@ -104,15 +104,21 @@ describe("SelectColorido", () => {
   });
 
   describe("Empty state", () => {
-    it("deve exibir mensagem 'Sem dados' quando não há opções", () => {
+    it("deve exibir mensagem 'Sem dados' quando não há opções", async () => {
       render(<SelectColorido options={[]} open />);
-      expect(screen.getByText("Sem dados")).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.getByText("Sem dados")).toBeInTheDocument();
+      });
     });
 
-    it("deve renderizar Empty component do Ant Design", () => {
-      const { container } = render(<SelectColorido options={[]} open />);
-      const empty = container.querySelector(".ant-empty");
-      expect(empty).toBeInTheDocument();
+    it("deve renderizar Empty component do Ant Design", async () => {
+      render(<SelectColorido options={[]} open />);
+
+      await waitFor(() => {
+        const empty = document.querySelector(".ant-empty");
+        expect(empty).toBeInTheDocument();
+      });
     });
   });
 
