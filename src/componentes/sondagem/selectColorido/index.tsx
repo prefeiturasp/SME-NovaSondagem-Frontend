@@ -191,12 +191,11 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           showSearch
           allowClear
           filterOption={filterOption}
-          getPopupContainer={(trigger) => trigger.parentElement}
+          {...props}
           value={value}
           onChange={handleChange}
           onOpenChange={handleOpenChange}
           onKeyDown={handleKeyDown}
-          {...props}
           className={`select-colorido select-colorido-${uniqueId} ${
             props.className ?? ""
           }`}
