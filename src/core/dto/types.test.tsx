@@ -371,11 +371,11 @@ describe("Types - Interfaces de Sondagem", () => {
       const resposta2Bim: Resposta = { id: 2, opcaoRespostaId: 3 };
       const resposta3Bim: Resposta = { id: 3, opcaoRespostaId: 5 };
 
-      expect(resposta2Bim.opcaoRespostaId).toBeGreaterThan(
-        resposta1Bim.opcaoRespostaId
+      expect(resposta2Bim.opcaoRespostaId!).toBeGreaterThan(
+        resposta1Bim.opcaoRespostaId!
       );
-      expect(resposta3Bim.opcaoRespostaId).toBeGreaterThan(
-        resposta2Bim.opcaoRespostaId
+      expect(resposta3Bim.opcaoRespostaId!).toBeGreaterThan(
+        resposta2Bim.opcaoRespostaId!
       );
     });
 
