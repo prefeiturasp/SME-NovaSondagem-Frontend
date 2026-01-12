@@ -14,7 +14,7 @@ export const Auditoria: React.FC<Auditoria> = ({ linhas }) => {
         <div className="historico-title">Histórico de alterações</div>
 
         {linhas.map((linha, index) => (
-          <div key={index} className="historico-linha">
+          <div key={`auditoria-${index}-${linha}`} className="historico-linha">
             {linha}
           </div>
         ))}
