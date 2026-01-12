@@ -85,6 +85,7 @@ const Conteudo: React.FC = () => {
         setListaDisciplinas([]);
       }
     } catch (error: any) {
+      console.error("Erro ao obter disciplinas:", error);
       message.error("Erro ao carregar dados da disciplina.");
     }
   }, [formFiltro]);
@@ -113,6 +114,7 @@ const Conteudo: React.FC = () => {
           setListaProficiencia([]);
         }
       } catch (error: any) {
+        console.error("Erro ao obter proficiência:", error);
         message.error("Erro ao carregar dados da proficiencia.");
       }
     },
@@ -187,6 +189,8 @@ const Conteudo: React.FC = () => {
       setDadosLegenda(dadosLegenda);
       setDadosLista(dadosMock);
     } catch (error: any) {
+      console.error("Erro ao buscar dados da lista 2:", error);
+      console.error("Erro ao buscar dados da lista:", error);
       message.error("Erro ao carregar dados da sondagem. Tente novamente.");
     }
   };
@@ -204,6 +208,7 @@ const Conteudo: React.FC = () => {
       setDadosLegenda(dadosLegenda);
       setDadosLista(dadosMock);
     } catch (error: any) {
+      console.error("Erro ao buscar dados da lista 2:", error);
       message.error("Erro ao carregar dados da sondagem. Tente novamente.");
     }
   };
@@ -254,7 +259,7 @@ const Conteudo: React.FC = () => {
   };
 
   const voltarSondagem = () => {
-    window.location.href = "/";
+    globalThis.location.href = "/";
   };
 
   return (
