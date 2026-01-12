@@ -11,6 +11,7 @@ import Alerta from "../../../componentes/biblioteca/Alerta";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
 import NovaSondagemServico from "../../../core/servico/servico";
+import { Auditoria } from "../auditoria/auditoria";
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
@@ -370,6 +371,12 @@ const Conteudo: React.FC = () => {
           formListaDinamica={formListaDinamica}
         />
         <Legendas data={dadosLegenda || []} />
+
+        <Auditoria
+          linhas={[
+            "INSERIDO por ANNE ALICE FERREIRA DE PAULA (9350276) em 07/02/2025 07:22:24",
+          ]}
+        />
       </Card>
     </>
   );
