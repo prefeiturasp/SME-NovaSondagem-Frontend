@@ -66,11 +66,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           (opt: any) => opt.value === selectedValue
         );
 
-        if (
-          selectedOption &&
-          selectedOption.corFundo &&
-          selectedOption.corTexto
-        ) {
+        if (selectedOption?.corFundo && selectedOption?.corTexto) {
           return {
             bg: selectedOption.corFundo,
             text: selectedOption.corTexto,
@@ -104,9 +100,9 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (isOpen && /^[0-9]$/.test(e.key)) {
+      if (isOpen && /^\d$/.test(e.key)) {
         e.preventDefault();
-        const numero = parseInt(e.key);
+        const numero = Number.parseInt(e.key);
         const opcaoEncontrada = props.options?.find(
           (opt: any) => opt.ordem === numero
         );
