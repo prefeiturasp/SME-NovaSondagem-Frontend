@@ -4,8 +4,9 @@ import type {
   AxiosResponse,
   AxiosInstance,
 } from "axios";
+import { getApiUrl } from "../../config";
 
-const baseURL = `${import.meta.env.VITE_NOVA_SONDAGEM_API}`;
+const baseURL = getApiUrl();
 
 interface TokenResponse {
   apiAToken: string;

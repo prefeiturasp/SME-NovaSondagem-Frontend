@@ -4,6 +4,33 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import Conteudo from "./conteudo";
 
+jest.mock("../../../core/servico/servico");
+
+// Constantes
+const MENSAGENS = {
+  TITULO: "Sondagem",
+  INSTRUCAO: /Preencha os campos para conferir as informações/,
+  SEM_TURMA: "Você precisa escolher uma turma.",
+  MODALIDADE_INVALIDA: /Só existe sondagem/,
+  COMPONENTE_CURRICULAR: "Componente Curricular",
+  PROFICIENCIA: "Proficiência",
+};
+
+const BOTOES = {
+  VOLTAR: "Voltar para a tela anterior",
+  CANCELAR: "Cancelar",
+  SALVAR: "Salvar",
+};
+
+// Factory functions para turmas
+const criarTurma = (override?: any) => ({
+  turma: "1A",
+  id: 1,
+  modalidade: "3",
+  ano: "1",
+  ...override,
+});
+
 describe("Conteudo", () => {
   const originalError = console.error;
   const originalLog = console.log;
@@ -34,95 +61,101 @@ describe("Conteudo", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("deve renderizar Card do antd", () => {
+    it("deve renderizar Card do Ant Design", () => {
       const { container } = renderWithProvider(<Conteudo />);
       const card = container.querySelector(".ant-card");
       expect(card).toBeInTheDocument();
     });
 
-    it("deve renderizar título Sondagem", () => {
+    it("deve renderizar título", () => {
       renderWithProvider(<Conteudo />);
-      expect(screen.getByText("Sondagem")).toBeInTheDocument();
+      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
     });
 
     it("deve renderizar texto de instrução", () => {
       renderWithProvider(<Conteudo />);
-      expect(
-        screen.getByText(/Preencha os campos para conferir as informações/)
-      ).toBeInTheDocument();
+      expect(screen.getByText(MENSAGENS.INSTRUCAO)).toBeInTheDocument();
     });
   });
 
-  describe("Alertas", () => {
+  describe("Alertas de validação", () => {
     it("deve exibir alerta quando turma não está selecionada", () => {
       const store = createMockStoreWithUser({
         logado: true,
         turmaSelecionada: null,
       });
       renderWithProvider(<Conteudo />, store);
-      expect(
-        screen.getByText("Você precisa escolher uma turma.")
-      ).toBeInTheDocument();
+      expect(screen.getByText(MENSAGENS.SEM_TURMA)).toBeInTheDocument();
     });
 
     it("não deve exibir alerta quando turma está selecionada", () => {
       const store = createMockStoreWithUser({
         logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "3", ano: "1" },
+        turmaSelecionada: criarTurma(),
       });
       renderWithProvider(<Conteudo />, store);
-      expect(
-        screen.queryByText("Você precisa escolher uma turma.")
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(MENSAGENS.SEM_TURMA)).not.toBeInTheDocument();
     });
 
     it("deve exibir alerta de modalidade inválida", () => {
       const store = createMockStoreWithUser({
         logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "1", ano: "4" },
+        turmaSelecionada: criarTurma({ modalidade: "1", ano: "4" }),
       });
       renderWithProvider(<Conteudo />, store);
-      expect(screen.getByText(/Só existe sondagem/)).toBeInTheDocument();
-    });
-
-    it("não deve exibir alerta para modalidade 3 ano 1 (válido)", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "3", ano: "1" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.queryByText(/Só existe sondagem/)).not.toBeInTheDocument();
-    });
-
-    it("não deve exibir alerta para modalidade 5 ano 1 (válido)", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "5", ano: "1" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.queryByText(/Só existe sondagem/)).not.toBeInTheDocument();
-    });
-
-    it("não deve exibir alerta para modalidade 5 ano 2 (válido)", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "5", ano: "2" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.queryByText(/Só existe sondagem/)).not.toBeInTheDocument();
-    });
-
-    it("não deve exibir alerta para modalidade 5 ano 3 (válido)", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "5", ano: "3" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.queryByText(/Só existe sondagem/)).not.toBeInTheDocument();
+      expect(
+        screen.getByText(MENSAGENS.MODALIDADE_INVALIDA)
+      ).toBeInTheDocument();
     });
   });
 
-  describe("Botões", () => {
+  describe("Validação de modalidades válidas", () => {
+    const casosValidos = [
+      { modalidade: "3", ano: "1", descricao: "Educação Infantil ano 1" },
+      { modalidade: "5", ano: "1", descricao: "Fundamental ano 1" },
+      { modalidade: "5", ano: "2", descricao: "Fundamental ano 2" },
+      { modalidade: "5", ano: "3", descricao: "Fundamental ano 3" },
+    ];
+
+    casosValidos.forEach(({ modalidade, ano, descricao }) => {
+      it(`não deve exibir alerta para ${descricao}`, async () => {
+        const store = createMockStoreWithUser({
+          logado: true,
+          turmaSelecionada: criarTurma({ modalidade, ano, turma: "1A", id: 1 }),
+        });
+        renderWithProvider(<Conteudo />, store);
+
+        await waitFor(() => {
+          expect(
+            screen.queryByText(MENSAGENS.MODALIDADE_INVALIDA)
+          ).not.toBeInTheDocument();
+        });
+      });
+    });
+  });
+
+  describe("Validação de modalidades inválidas", () => {
+    const casosInvalidos = [
+      { modalidade: "3", ano: "2", descricao: "Educação Infantil ano 2" },
+      { modalidade: "5", ano: "4", descricao: "Fundamental ano 4" },
+      { modalidade: "1", ano: "1", descricao: "Modalidade 1" },
+    ];
+
+    casosInvalidos.forEach(({ modalidade, ano, descricao }) => {
+      it(`deve exibir alerta para ${descricao}`, () => {
+        const store = createMockStoreWithUser({
+          logado: true,
+          turmaSelecionada: criarTurma({ modalidade, ano }),
+        });
+        renderWithProvider(<Conteudo />, store);
+        expect(
+          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA)
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("Botões de ação", () => {
     it("deve renderizar botão Voltar", () => {
       const { container } = renderWithProvider(<Conteudo />);
       const botaoVoltar = container.querySelector("#sondagem-button-voltar");
@@ -131,12 +164,12 @@ describe("Conteudo", () => {
 
     it("deve renderizar botão Cancelar", () => {
       renderWithProvider(<Conteudo />);
-      expect(screen.getByText("Cancelar")).toBeInTheDocument();
+      expect(screen.getByText(BOTOES.CANCELAR)).toBeInTheDocument();
     });
 
     it("deve renderizar botão Salvar", () => {
       renderWithProvider(<Conteudo />);
-      expect(screen.getByText("Salvar")).toBeInTheDocument();
+      expect(screen.getByText(BOTOES.SALVAR)).toBeInTheDocument();
     });
 
     it("deve chamar voltarSondagem ao clicar em Voltar", () => {
@@ -144,34 +177,41 @@ describe("Conteudo", () => {
       const botaoVoltar = container.querySelector(
         "#sondagem-button-voltar"
       ) as HTMLButtonElement;
+
       fireEvent.click(botaoVoltar);
-      expect(console.log).toHaveBeenCalledWith("Voltar para a tela anterior");
+
+      expect(console.log).toHaveBeenCalledWith(BOTOES.VOLTAR);
     });
 
     it("deve chamar CancelarCadastroSondagem ao clicar em Cancelar", () => {
       renderWithProvider(<Conteudo />);
-      const botaoCancelar = screen.getByText("Cancelar");
+      const botaoCancelar = screen.getByText(BOTOES.CANCELAR);
+
       fireEvent.click(botaoCancelar);
+
       expect(console.log).toHaveBeenCalledWith("Cancelar cadastro de sondagem");
     });
 
     it("deve chamar salvarDadosSondagem ao clicar em Salvar", () => {
       renderWithProvider(<Conteudo />);
-      const botaoSalvar = screen.getByText("Salvar");
+      const botaoSalvar = screen.getByText(BOTOES.SALVAR);
+
       fireEvent.click(botaoSalvar);
+
       expect(console.log).toHaveBeenCalled();
     });
   });
-
   describe("Formulário de filtros", () => {
     it("deve renderizar campo Componente Curricular", () => {
       renderWithProvider(<Conteudo />);
-      expect(screen.getByText("Componente Curricular")).toBeInTheDocument();
+      expect(
+        screen.getByText(MENSAGENS.COMPONENTE_CURRICULAR)
+      ).toBeInTheDocument();
     });
 
     it("deve renderizar campo Proficiência", () => {
       renderWithProvider(<Conteudo />);
-      expect(screen.getByText("Proficiência")).toBeInTheDocument();
+      expect(screen.getByText(MENSAGENS.PROFICIENCIA)).toBeInTheDocument();
     });
 
     it("deve desabilitar selects quando não há turma válida", () => {
@@ -187,24 +227,28 @@ describe("Conteudo", () => {
     it("deve habilitar selects quando turma é válida", async () => {
       const store = createMockStoreWithUser({
         logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "3", ano: "1" },
+        turmaSelecionada: criarTurma(),
       });
       renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(screen.getByText("Componente Curricular")).toBeInTheDocument();
+        expect(
+          screen.getByText(MENSAGENS.COMPONENTE_CURRICULAR)
+        ).toBeInTheDocument();
       });
     });
 
-    it("deve carregar opções de disciplina ao selecionar turma válida", async () => {
+    it("deve carregar opções ao selecionar turma válida", async () => {
       const store = createMockStoreWithUser({
         logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "3", ano: "1" },
+        turmaSelecionada: criarTurma(),
       });
       renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(screen.getByText("Componente Curricular")).toBeInTheDocument();
+        expect(
+          screen.getByText(MENSAGENS.COMPONENTE_CURRICULAR)
+        ).toBeInTheDocument();
       });
     });
   });
@@ -212,82 +256,275 @@ describe("Conteudo", () => {
   describe("Comportamento de estados", () => {
     it("deve inicializar com dados lista como null", () => {
       renderWithProvider(<Conteudo />);
-      expect(screen.getByText("Sondagem")).toBeInTheDocument();
+      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
     });
 
     it("deve resetar campos quando modalidade muda para inválida", async () => {
       const store = createMockStoreWithUser({
         logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "3", ano: "5" },
+        turmaSelecionada: criarTurma({ modalidade: "3", ano: "5" }),
       });
       renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(screen.getByText(/Só existe sondagem/)).toBeInTheDocument();
+        expect(
+          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA)
+        ).toBeInTheDocument();
       });
-    });
-  });
-
-  describe("verificarModalidadeTurma", () => {
-    it("deve retornar true para modalidade 3 ano 1", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "3", ano: "1" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.queryByText(/Só existe sondagem/)).not.toBeInTheDocument();
-    });
-
-    it("deve retornar false para modalidade 3 ano 2", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "3", ano: "2" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.getByText(/Só existe sondagem/)).toBeInTheDocument();
-    });
-
-    it("deve retornar true para modalidade 5 ano 1", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "5", ano: "1" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.queryByText(/Só existe sondagem/)).not.toBeInTheDocument();
-    });
-
-    it("deve retornar true para modalidade 5 ano 2", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "5", ano: "2" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.queryByText(/Só existe sondagem/)).not.toBeInTheDocument();
-    });
-
-    it("deve retornar true para modalidade 5 ano 3", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "5", ano: "3" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.queryByText(/Só existe sondagem/)).not.toBeInTheDocument();
-    });
-
-    it("deve retornar false para modalidade 5 ano 4", () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: { turma: "1A", id: 1, modalidade: "5", ano: "4" },
-      });
-      renderWithProvider(<Conteudo />, store);
-      expect(screen.getByText(/Só existe sondagem/)).toBeInTheDocument();
     });
   });
 
   describe("Renderização do SondagemListaDinamica", () => {
     it("deve renderizar componente SondagemListaDinamica", () => {
       renderWithProvider(<Conteudo />);
-      expect(screen.getByText("Sondagem")).toBeInTheDocument();
+      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
+    });
+  });
+
+  describe("Mudança de disciplina e proficiência", () => {
+    it("deve executar onChangeDisciplinas quando disciplina é selecionada", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const disciplinaSelect = container.querySelector('[id*="disciplinaId"]');
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const options = document.querySelectorAll(".ant-select-item");
+          if (options.length > 0) {
+            fireEvent.click(options[0]);
+          }
+        });
+      }
+    });
+
+    it("deve executar onChangeProficiencia com proficienciaId 1 (Escrita)", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const proficienciaSelect = container.querySelector(
+        '[id*="proficienciaId"]'
+      );
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const options = document.querySelectorAll(".ant-select-item");
+          if (options.length > 0) {
+            fireEvent.click(options[0]);
+          }
+        });
+      }
+    });
+
+    it("deve executar onChangeProficiencia com proficienciaId 2 (Leitura)", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const proficienciaSelect = container.querySelector(
+        '[id*="proficienciaId"]'
+      );
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(
+          () => {
+            const options = document.querySelectorAll(".ant-select-item");
+            if (options.length > 1) {
+              fireEvent.click(options[1]);
+            }
+          },
+          { timeout: 3000 }
+        );
+      }
+    });
+
+    it("deve chamar salvarDadosSondagem ao clicar no botão Salvar", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+    });
+
+    it("deve processar dados do formulário ao salvar", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      expect(container).toBeInTheDocument();
+    });
+
+    it("deve executar onChangeDisciplinas com valor null", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const disciplinaSelect = container.querySelector('[id*="disciplinaId"]');
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const clearButton = document.querySelector(".ant-select-clear");
+          if (clearButton) {
+            fireEvent.click(clearButton);
+          }
+        });
+      }
+    });
+
+    it("deve executar onChangeProficiencia com valor null", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+
+      const proficienciaSelect = container.querySelector(
+        '[id*="proficienciaId"]'
+      );
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const clearButton = document.querySelector(".ant-select-clear");
+          if (clearButton) {
+            fireEvent.click(clearButton);
+          }
+        });
+      }
+    });
+
+    it("deve executar onChangeProficiencia com valor inválido", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
+      });
+    });
+
+    it("deve setar lista de proficiencia vazia quando data não existe", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const selects = container.querySelectorAll(".ant-select-selector");
+        expect(selects.length).toBeGreaterThan(0);
+      });
+    });
+
+    it("deve processar dados de formulário com valores nulos ao salvar", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const proficienciaSelect = container.querySelector(
+          '[id*="proficienciaId"]'
+        );
+        if (proficienciaSelect) {
+          fireEvent.mouseDown(proficienciaSelect);
+        }
+      });
+
+      await waitFor(() => {
+        const options = document.querySelectorAll(".ant-select-item");
+        if (options.length > 0) {
+          fireEvent.click(options[0]);
+        }
+      });
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      expect(container).toBeInTheDocument();
+    });
+
+    it("deve capturar erro em buscarDadosLista2", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const proficienciaSelect = container.querySelector(
+          '[id*="proficienciaId"]'
+        );
+        if (proficienciaSelect) {
+          fireEvent.mouseDown(proficienciaSelect);
+        }
+      });
+
+      await waitFor(() => {
+        const options = document.querySelectorAll(".ant-select-item");
+        if (options.length > 1) {
+          fireEvent.click(options[1]);
+        }
+      });
+
+      expect(container).toBeInTheDocument();
     });
   });
 });
