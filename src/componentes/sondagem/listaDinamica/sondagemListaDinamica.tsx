@@ -172,7 +172,7 @@ const SondagemListaDinamica: React.FC<
       const targetKey = `${newRow}_${newCol}`;
       const targetRef = selectRefs.current.get(targetKey);
 
-      if (targetRef && targetRef.focus) {
+      if (targetRef?.focus) {
         setTimeout(() => targetRef.focus(), 0);
       }
     },
@@ -226,7 +226,7 @@ const SondagemListaDinamica: React.FC<
     if (opcoesCarregadas && dados?.estudantes && dados.estudantes.length > 0) {
       const firstKey = "0_0";
       const firstRef = selectRefs.current.get(firstKey);
-      if (firstRef && firstRef.focus) {
+      if (firstRef?.focus) {
         setTimeout(() => firstRef.focus(), 100);
       }
     }

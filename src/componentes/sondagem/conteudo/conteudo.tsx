@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Button, Card, Form, Select, Row, Col } from "antd";
+import { Button, Card, Form, Select, Row, Col, message } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
 import MockDadosTabelaDinamica from "../../../mocks/MockDadosTabelaDinamica.json";
 import MockDadosTabelaDinamica2 from "../../../mocks/MockDadosTabelaDinamica2.json";
@@ -40,6 +40,13 @@ const Conteudo: React.FC = () => {
   const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
   const [desabilitarProficiencia, setDesabilitarProficiencia] = useState(true);
 
+  const [disciplinaSelecionada, setDisciplinaSelecionada] = useState<
+    number | null
+  >(null);
+  const [proficienciaSelecionada, setProficienciaSelecionada] = useState<
+    number | null
+  >(null);
+
   const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
 
   const [formFiltro] = Form.useForm();
@@ -77,7 +84,7 @@ const Conteudo: React.FC = () => {
         setListaDisciplinas([]);
       }
     } catch (error: any) {
-      console.error("ERRO:", error.message);
+      message.error("Erro ao carregar dados da disciplina.");
     }
   }, [formFiltro]);
 
@@ -105,7 +112,7 @@ const Conteudo: React.FC = () => {
           setListaProficiencia([]);
         }
       } catch (error: any) {
-        console.error("ERRO:", error.message);
+        message.error("Erro ao carregar dados da proficiencia.");
       }
     },
     [formFiltro, usuario?.token]
@@ -126,7 +133,7 @@ const Conteudo: React.FC = () => {
       setDesabilitarDisciplina(true);
       setDesabilitarProficiencia(true);
       if (modalidade && ano) {
-        const valido = await verificarModalidadeTurma();
+        const valido = verificarModalidadeTurma();
         setModalidadeAnoValidos(valido);
 
         if (valido && turma !== 0) {
@@ -150,14 +157,14 @@ const Conteudo: React.FC = () => {
 
   const onChangeDisciplinas = async (disciplinaId: number) => {
     if (disciplinaId) {
-      console.log("Disciplina ID selecionado:", disciplinaId);
+      setDisciplinaSelecionada(disciplinaId);
       await obterProficiencia(disciplinaId);
     }
   };
 
   const onChangeProficiencia = async (proficienciaId: number) => {
     if (proficienciaId) {
-      console.log("Proficiência ID selecionado:", proficienciaId);
+      setProficienciaSelecionada(proficienciaId);
       if (proficienciaId === 4) {
         await buscarDadosLista();
       } else if (proficienciaId === 5) {
@@ -167,16 +174,20 @@ const Conteudo: React.FC = () => {
   };
 
   const buscarDadosLista = async () => {
-    const dadosMock = MockDadosTabelaDinamica;
-    const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
-      (legenda) => ({
-        corFundo: legenda.corFundo,
-        descricaoLegenda: legenda.descricaoLegenda,
-        textoLegenda: legenda.descricaoOpcao,
-      })
-    );
-    setDadosLegenda(dadosLegenda);
-    setDadosLista(dadosMock);
+    try {
+      const dadosMock = MockDadosTabelaDinamica;
+      const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
+        (legenda) => ({
+          corFundo: legenda.corFundo,
+          descricaoLegenda: legenda.descricaoLegenda,
+          textoLegenda: legenda.descricaoOpcao,
+        })
+      );
+      setDadosLegenda(dadosLegenda);
+      setDadosLista(dadosMock);
+    } catch (error: any) {
+      message.error("Erro ao carregar dados da sondagem. Tente novamente.");
+    }
   };
 
   const buscarDadosLista2 = async () => {
@@ -191,8 +202,8 @@ const Conteudo: React.FC = () => {
       );
       setDadosLegenda(dadosLegenda);
       setDadosLista(dadosMock);
-    } catch (error) {
-    } finally {
+    } catch (error: any) {
+      message.error("Erro ao carregar dados da sondagem. Tente novamente.");
     }
   };
 
@@ -223,51 +234,27 @@ const Conteudo: React.FC = () => {
     console.log("Dados organizados para salvar:", dadosParaSalvar);
   };
 
-  const CancelarCadastroSondagem = () => {
-    console.log("Cancelar cadastro de sondagem");
+  const CancelarCadastroSondagem = async () => {
+    if (proficienciaSelecionada) {
+      console.log("Recarregando sondagem com os parâmetros:", {
+        modalidade,
+        ano,
+        componenteCurricular: disciplinaSelecionada,
+        proficiencia: proficienciaSelecionada,
+        turmaId: turma,
+      });
+
+      if (proficienciaSelecionada === 4) {
+        await buscarDadosLista();
+      } else if (proficienciaSelecionada === 5) {
+        await buscarDadosLista2();
+      }
+    }
   };
 
   const voltarSondagem = () => {
-    console.log("Voltar para a tela anterior");
+    window.location.href = "/";
   };
-
-  //Exemplo de uso do serviço NovaSondagemServico
-  // const testarAPI = useCallback(async () => {
-  //   try {
-  //     const resposta = await NovaSondagemServico.get("Ciclo", {
-  //       headers: { "X-Token-Principal": usuario?.token },
-  //       params: {
-  //         componenteCurricular: usuario?.unidadeSelecionada?.id || 0,
-  //         ano: usuario?.turmaSelecionada?.ano || "",
-  //       },
-  //     });
-  //   } catch (error: any) {
-  //     console.error("ERRO:", error.message);
-  //   }
-  // }, []);
-
-  // const data = {
-  //   idEstudante: 123,
-  //   respostas: [
-  //     { idPergunta: 1, resposta: "Resposta 1" },
-  //     { idPergunta: 2, resposta: "Resposta 2" },
-  //   ],
-  // };
-
-  // const testarAPIPost = useCallback(async () => {
-  //   try {
-  //     const resposta = await NovaSondagemServico.post("Ciclo", data, {
-  //       headers: { "X-Token-Principal": usuario?.token },
-  //     });
-  //   } catch (error: any) {
-  //     console.error("ERRO:", error.message);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   testarAPI();
-  //   testarAPIPost();
-  // }, []);
 
   return (
     <>
@@ -388,25 +375,3 @@ const Conteudo: React.FC = () => {
   );
 };
 export default Conteudo;
-
-// const MockDisciplina = () => {
-//   const disciplina = {
-//     data: [
-//       { value: 1, label: "Língua Portuguesa" },
-//       { value: 2, label: "Matemática" },
-//     ],
-//   };
-
-//   return disciplina;
-// };
-
-// const MockProficiencia = () => {
-//   const proficiencia = {
-//     data: [
-//       { value: 1, label: "Escrita" },
-//       { value: 2, label: "Leitura" },
-//     ],
-//   };
-
-//   return proficiencia;
-// };
