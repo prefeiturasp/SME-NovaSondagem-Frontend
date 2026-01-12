@@ -61,17 +61,19 @@ apiNovaSondagem.interceptors.request.use(
     delete config.headers["X-Token-Principal"];
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    throw error;
+  }
 );
 
 apiNovaSondagem.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: any) => {
-    if (axios.isCancel(error)) return Promise.reject(error);
+    if (axios.isCancel(error)) throw error;
     if (error.response?.status === 401) {
       localStorage.removeItem(TOKEN_KEY);
     }
-    return Promise.reject(error);
+    throw error;
   }
 );
 
