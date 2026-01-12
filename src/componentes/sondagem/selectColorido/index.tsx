@@ -18,7 +18,7 @@ interface SelectColoridoProps extends SelectProps {
 }
 
 const SelectColorido = forwardRef<any, SelectColoridoProps>(
-  ({ value, onChange, onOpenChange, ...props }, ref) => {
+  ({ value, onChange, onOpenChange, onKeyDown, ...props }, ref) => {
     const [backgroundColor, setBackgroundColor] = useState<string>("#FFFFFF");
     const [textColor, setTextColor] = useState<string>("#000000");
     const [isOpen, setIsOpen] = useState(false);
@@ -124,8 +124,8 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         e.stopPropagation();
       }
 
-      if (props.onKeyDown) {
-        props.onKeyDown(e as any);
+      if (onKeyDown) {
+        onKeyDown(e as any);
       }
     };
 
@@ -191,12 +191,11 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           showSearch
           allowClear
           filterOption={filterOption}
-          getPopupContainer={(trigger) => trigger.parentElement}
+          {...props}
           value={value}
           onChange={handleChange}
           onOpenChange={handleOpenChange}
           onKeyDown={handleKeyDown}
-          {...props}
           className={`select-colorido select-colorido-${uniqueId} ${
             props.className ?? ""
           }`}
