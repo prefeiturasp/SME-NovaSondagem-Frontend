@@ -1,12 +1,15 @@
 export interface OpcaoResposta {
   id: number;
-  orden: number;
+  ordem: number;
   descricaoOpcao: string;
+  corFundo: string;
+  corTexto: string;
+  descricaoLegenda: string;
 }
 
 export interface Resposta {
   id: number;
-  opcaoRespostaId: number;
+  opcaoRespostaId: number | null;
 }
 
 export interface Coluna {

@@ -6,386 +6,451 @@ import type {
   DadosTabelaDinamica,
 } from "./types";
 
-describe("Types - Interfaces", () => {
+describe("Types - Interfaces de Sondagem", () => {
   describe("OpcaoResposta", () => {
-    it("deve criar uma OpcaoResposta válida", () => {
-      const opcaoResposta: OpcaoResposta = {
-        id: 1,
-        orden: 1,
-        descricaoOpcao: "Sim",
-      };
-
-      expect(opcaoResposta).toBeDefined();
-      expect(opcaoResposta.id).toBe(1);
-      expect(opcaoResposta.orden).toBe(1);
-      expect(opcaoResposta.descricaoOpcao).toBe("Sim");
+    const criarOpcaoResposta = (
+      override?: Partial<OpcaoResposta>
+    ): OpcaoResposta => ({
+      id: 1,
+      ordem: 1,
+      descricaoOpcao: "Pré-silábico",
+      corFundo: "#FF5733",
+      corTexto: "#FFFFFF",
+      descricaoLegenda: "Nível inicial",
+      ...override,
     });
 
-    it("deve ter todas as propriedades obrigatórias", () => {
-      const opcaoResposta: OpcaoResposta = {
-        id: 2,
-        orden: 2,
-        descricaoOpcao: "Não",
-      };
+    it("deve conter todas as propriedades obrigatórias", () => {
+      const opcao = criarOpcaoResposta();
 
-      expect(opcaoResposta).toHaveProperty("id");
-      expect(opcaoResposta).toHaveProperty("orden");
-      expect(opcaoResposta).toHaveProperty("descricaoOpcao");
+      expect(opcao).toMatchObject({
+        id: expect.any(Number),
+        ordem: expect.any(Number),
+        descricaoOpcao: expect.any(String),
+        corFundo: expect.any(String),
+        corTexto: expect.any(String),
+      });
     });
 
-    it("deve aceitar diferentes valores numéricos", () => {
-      const opcaoResposta: OpcaoResposta = {
-        id: 999,
-        orden: 0,
-        descricaoOpcao: "Descrição longa com vários caracteres",
-      };
+    it("deve criar opção com cores customizadas", () => {
+      const opcao = criarOpcaoResposta({
+        corFundo: "#00FF00",
+        corTexto: "#000000",
+      });
 
-      expect(opcaoResposta.id).toBe(999);
-      expect(opcaoResposta.orden).toBe(0);
-      expect(typeof opcaoResposta.descricaoOpcao).toBe("string");
+      expect(opcao.corFundo).toBe("#00FF00");
+      expect(opcao.corTexto).toBe("#000000");
+    });
+
+    it("deve aceitar diferentes níveis de alfabetização", () => {
+      const niveis = [
+        "Pré-silábico",
+        "Silábico sem valor",
+        "Silábico com valor",
+        "Silábico-alfabético",
+        "Alfabético",
+      ];
+
+      niveis.forEach((nivel, index) => {
+        const opcao = criarOpcaoResposta({
+          id: index + 1,
+          ordem: index + 1,
+          descricaoOpcao: nivel,
+        });
+
+        expect(opcao.descricaoOpcao).toBe(nivel);
+        expect(opcao.ordem).toBe(index + 1);
+      });
     });
   });
 
   describe("Resposta", () => {
-    it("deve criar uma Resposta válida", () => {
-      const resposta: Resposta = {
-        id: 1,
-        opcaoRespostaId: 5,
-      };
-
-      expect(resposta).toBeDefined();
-      expect(resposta.id).toBe(1);
-      expect(resposta.opcaoRespostaId).toBe(5);
+    const criarResposta = (override?: Partial<Resposta>): Resposta => ({
+      id: 1,
+      opcaoRespostaId: 1,
+      ...override,
     });
 
-    it("deve ter todas as propriedades obrigatórias", () => {
-      const resposta: Resposta = {
-        id: 10,
-        opcaoRespostaId: 20,
-      };
+    it("deve conter propriedades obrigatórias", () => {
+      const resposta = criarResposta();
 
-      expect(resposta).toHaveProperty("id");
-      expect(resposta).toHaveProperty("opcaoRespostaId");
+      expect(resposta).toMatchObject({
+        id: expect.any(Number),
+        opcaoRespostaId: expect.any(Number),
+      });
     });
 
-    it("deve aceitar valores numéricos diferentes", () => {
-      const resposta: Resposta = {
-        id: 0,
-        opcaoRespostaId: 0,
-      };
+    it("deve referenciar corretamente a opção de resposta", () => {
+      const opcaoId = 5;
+      const resposta = criarResposta({ opcaoRespostaId: opcaoId });
 
-      expect(typeof resposta.id).toBe("number");
-      expect(typeof resposta.opcaoRespostaId).toBe("number");
+      expect(resposta.opcaoRespostaId).toBe(opcaoId);
     });
   });
 
   describe("Coluna", () => {
-    it("deve criar uma Coluna válida", () => {
-      const coluna: Coluna = {
-        descricaoColuna: "Leitura",
-        PeriodoBimestreAtivo: true,
-        opcaoResposta: [],
-        resposta: [],
-      };
-
-      expect(coluna).toBeDefined();
-      expect(coluna.descricaoColuna).toBe("Leitura");
-      expect(coluna.PeriodoBimestreAtivo).toBe(true);
-      expect(Array.isArray(coluna.opcaoResposta)).toBe(true);
-      expect(Array.isArray(coluna.resposta)).toBe(true);
+    const criarColuna = (override?: Partial<Coluna>): Coluna => ({
+      descricaoColuna: "1º Bimestre",
+      PeriodoBimestreAtivo: true,
+      opcaoResposta: [],
+      resposta: [],
+      ...override,
     });
 
-    it("deve ter todas as propriedades obrigatórias", () => {
-      const coluna: Coluna = {
-        descricaoColuna: "Escrita",
-        PeriodoBimestreAtivo: false,
-        opcaoResposta: [],
-        resposta: [],
-      };
+    it("deve conter todas as propriedades obrigatórias", () => {
+      const coluna = criarColuna();
 
-      expect(coluna).toHaveProperty("descricaoColuna");
-      expect(coluna).toHaveProperty("PeriodoBimestreAtivo");
-      expect(coluna).toHaveProperty("opcaoResposta");
-      expect(coluna).toHaveProperty("resposta");
+      expect(coluna).toMatchObject({
+        descricaoColuna: expect.any(String),
+        PeriodoBimestreAtivo: expect.any(Boolean),
+        opcaoResposta: expect.any(Array),
+        resposta: expect.any(Array),
+      });
     });
 
-    it("deve aceitar arrays com opções de resposta", () => {
-      const coluna: Coluna = {
-        descricaoColuna: "Matemática",
-        PeriodoBimestreAtivo: true,
-        opcaoResposta: [
-          { id: 1, orden: 1, descricaoOpcao: "Sim" },
-          { id: 2, orden: 2, descricaoOpcao: "Não" },
-        ],
-        resposta: [],
-      };
+    it("deve gerenciar bimestre ativo e inativo", () => {
+      const colunaAtiva = criarColuna({ PeriodoBimestreAtivo: true });
+      const colunaInativa = criarColuna({ PeriodoBimestreAtivo: false });
+
+      expect(colunaAtiva.PeriodoBimestreAtivo).toBe(true);
+      expect(colunaInativa.PeriodoBimestreAtivo).toBe(false);
+    });
+
+    it("deve armazenar múltiplas opções de resposta", () => {
+      const opcoes: OpcaoResposta[] = [
+        {
+          id: 1,
+          ordem: 1,
+          descricaoOpcao: "Pré-silábico",
+          corFundo: "#FF0000",
+          corTexto: "#FFFFFF",
+          descricaoLegenda: "Nível inicial",
+        },
+        {
+          id: 2,
+          ordem: 2,
+          descricaoOpcao: "Alfabético",
+          corFundo: "#00FF00",
+          corTexto: "#000000",
+          descricaoLegenda: "Alfabetizado",
+        },
+      ];
+
+      const coluna = criarColuna({ opcaoResposta: opcoes });
 
       expect(coluna.opcaoResposta).toHaveLength(2);
-      expect(coluna.opcaoResposta[0].descricaoOpcao).toBe("Sim");
-      expect(coluna.opcaoResposta[1].descricaoOpcao).toBe("Não");
+      expect(coluna.opcaoResposta[0].descricaoOpcao).toBe("Pré-silábico");
+      expect(coluna.opcaoResposta[1].descricaoOpcao).toBe("Alfabético");
     });
 
-    it("deve aceitar arrays com respostas", () => {
-      const coluna: Coluna = {
-        descricaoColuna: "Ciências",
-        PeriodoBimestreAtivo: false,
-        opcaoResposta: [],
-        resposta: [
-          { id: 1, opcaoRespostaId: 1 },
-          { id: 2, opcaoRespostaId: 2 },
-        ],
-      };
+    it("deve permitir múltiplas respostas por coluna", () => {
+      const respostas: Resposta[] = [
+        { id: 1, opcaoRespostaId: 1 },
+        { id: 2, opcaoRespostaId: 3 },
+      ];
+
+      const coluna = criarColuna({ resposta: respostas });
 
       expect(coluna.resposta).toHaveLength(2);
-      expect(coluna.resposta[0].id).toBe(1);
-      expect(coluna.resposta[1].opcaoRespostaId).toBe(2);
     });
   });
 
   describe("Estudante", () => {
-    it("deve criar um Estudante válido", () => {
-      const estudante: Estudante = {
-        lp: true,
-        numero: 1,
-        nome: "João Silva",
-        pap: false,
-        aee: false,
-        acessibilidade: false,
-        coluna: [],
-      };
-
-      expect(estudante).toBeDefined();
-      expect(estudante.lp).toBe(true);
-      expect(estudante.numero).toBe(1);
-      expect(estudante.nome).toBe("João Silva");
-      expect(estudante.pap).toBe(false);
-      expect(estudante.aee).toBe(false);
-      expect(estudante.acessibilidade).toBe(false);
-      expect(Array.isArray(estudante.coluna)).toBe(true);
+    const criarEstudante = (override?: Partial<Estudante>): Estudante => ({
+      lp: false,
+      numero: 1,
+      nome: "João Silva",
+      pap: false,
+      aee: false,
+      acessibilidade: false,
+      coluna: [],
+      ...override,
     });
 
-    it("deve ter todas as propriedades obrigatórias", () => {
-      const estudante: Estudante = {
-        lp: false,
-        numero: 2,
-        nome: "Maria Santos",
-        pap: true,
+    it("deve conter todas as propriedades obrigatórias", () => {
+      const estudante = criarEstudante();
+
+      expect(estudante).toMatchObject({
+        lp: expect.any(Boolean),
+        numero: expect.any(Number),
+        nome: expect.any(String),
+        pap: expect.any(Boolean),
+        aee: expect.any(Boolean),
+        acessibilidade: expect.any(Boolean),
+        coluna: expect.any(Array),
+      });
+    });
+
+    it("deve identificar estudante com necessidades especiais", () => {
+      const estudanteComNecessidades = criarEstudante({
         aee: true,
         acessibilidade: true,
-        coluna: [],
-      };
+        pap: true,
+      });
 
-      expect(estudante).toHaveProperty("lp");
-      expect(estudante).toHaveProperty("numero");
-      expect(estudante).toHaveProperty("nome");
-      expect(estudante).toHaveProperty("pap");
-      expect(estudante).toHaveProperty("aee");
-      expect(estudante).toHaveProperty("acessibilidade");
-      expect(estudante).toHaveProperty("coluna");
+      expect(estudanteComNecessidades.aee).toBe(true);
+      expect(estudanteComNecessidades.acessibilidade).toBe(true);
+      expect(estudanteComNecessidades.pap).toBe(true);
     });
 
-    it("deve aceitar múltiplas colunas", () => {
-      const estudante: Estudante = {
-        lp: true,
-        numero: 3,
-        nome: "Pedro Oliveira",
-        pap: false,
-        aee: false,
-        acessibilidade: false,
-        coluna: [
-          {
-            descricaoColuna: "Leitura",
-            PeriodoBimestreAtivo: true,
-            opcaoResposta: [{ id: 1, orden: 1, descricaoOpcao: "Sim" }],
-            resposta: [{ id: 1, opcaoRespostaId: 1 }],
-          },
-          {
-            descricaoColuna: "Escrita",
-            PeriodoBimestreAtivo: false,
-            opcaoResposta: [{ id: 2, orden: 2, descricaoOpcao: "Não" }],
-            resposta: [],
-          },
-        ],
-      };
+    it("deve identificar estudante de língua portuguesa", () => {
+      const estudanteLP = criarEstudante({ lp: true });
+      const estudanteEstrangeiro = criarEstudante({ lp: false });
+
+      expect(estudanteLP.lp).toBe(true);
+      expect(estudanteEstrangeiro.lp).toBe(false);
+    });
+
+    it("deve armazenar avaliações de múltiplos bimestres", () => {
+      const colunas: Coluna[] = [
+        {
+          descricaoColuna: "1º Bimestre",
+          PeriodoBimestreAtivo: false,
+          opcaoResposta: [],
+          resposta: [{ id: 1, opcaoRespostaId: 1 }],
+        },
+        {
+          descricaoColuna: "2º Bimestre",
+          PeriodoBimestreAtivo: true,
+          opcaoResposta: [],
+          resposta: [{ id: 2, opcaoRespostaId: 2 }],
+        },
+      ];
+
+      const estudante = criarEstudante({ coluna: colunas });
 
       expect(estudante.coluna).toHaveLength(2);
-      expect(estudante.coluna[0].descricaoColuna).toBe("Leitura");
-      expect(estudante.coluna[1].descricaoColuna).toBe("Escrita");
-    });
-
-    it("deve validar tipos booleanos corretamente", () => {
-      const estudante: Estudante = {
-        lp: true,
-        numero: 4,
-        nome: "Ana Costa",
-        pap: true,
-        aee: true,
-        acessibilidade: true,
-        coluna: [],
-      };
-
-      expect(typeof estudante.lp).toBe("boolean");
-      expect(typeof estudante.pap).toBe("boolean");
-      expect(typeof estudante.aee).toBe("boolean");
-      expect(typeof estudante.acessibilidade).toBe("boolean");
+      expect(estudante.coluna[0].descricaoColuna).toBe("1º Bimestre");
+      expect(estudante.coluna[1].PeriodoBimestreAtivo).toBe(true);
     });
   });
 
   describe("DadosTabelaDinamica", () => {
-    it("deve criar DadosTabelaDinamica válidos", () => {
-      const dados: DadosTabelaDinamica = {
-        questao: "Qual é a questão?",
-        estudantes: [],
-      };
+    const criarDadosTabelaDinamica = (
+      override?: Partial<DadosTabelaDinamica>
+    ): DadosTabelaDinamica => ({
+      questao: "Qual hipótese de escrita o estudante apresenta?",
+      estudantes: [],
+      ...override,
+    });
 
-      expect(dados).toBeDefined();
-      expect(dados.questao).toBe("Qual é a questão?");
+    it("deve conter todas as propriedades obrigatórias", () => {
+      const dados = criarDadosTabelaDinamica();
+
+      expect(dados).toMatchObject({
+        questao: expect.any(String),
+        estudantes: expect.any(Array),
+      });
+    });
+
+    it("deve gerenciar lista vazia de estudantes", () => {
+      const dados = criarDadosTabelaDinamica({ estudantes: [] });
+
+      expect(dados.estudantes).toHaveLength(0);
       expect(Array.isArray(dados.estudantes)).toBe(true);
     });
 
-    it("deve ter todas as propriedades obrigatórias", () => {
-      const dados: DadosTabelaDinamica = {
-        questao: "Questão teste",
-        estudantes: [],
-      };
+    it("deve gerenciar múltiplos estudantes", () => {
+      const estudantes: Estudante[] = [
+        {
+          lp: true,
+          numero: 1,
+          nome: "Ana Silva",
+          pap: false,
+          aee: false,
+          acessibilidade: false,
+          coluna: [],
+        },
+        {
+          lp: true,
+          numero: 2,
+          nome: "Carlos Souza",
+          pap: true,
+          aee: false,
+          acessibilidade: false,
+          coluna: [],
+        },
+      ];
 
-      expect(dados).toHaveProperty("questao");
-      expect(dados).toHaveProperty("estudantes");
-    });
-
-    it("deve aceitar lista de estudantes", () => {
-      const dados: DadosTabelaDinamica = {
-        questao: "Avaliação de leitura",
-        estudantes: [
-          {
-            lp: true,
-            numero: 1,
-            nome: "João Silva",
-            pap: false,
-            aee: false,
-            acessibilidade: false,
-            coluna: [],
-          },
-          {
-            lp: false,
-            numero: 2,
-            nome: "Maria Santos",
-            pap: true,
-            aee: false,
-            acessibilidade: false,
-            coluna: [],
-          },
-        ],
-      };
+      const dados = criarDadosTabelaDinamica({ estudantes });
 
       expect(dados.estudantes).toHaveLength(2);
-      expect(dados.estudantes[0].nome).toBe("João Silva");
-      expect(dados.estudantes[1].nome).toBe("Maria Santos");
-    });
-
-    it("deve criar estrutura completa com todos os níveis", () => {
-      const dados: DadosTabelaDinamica = {
-        questao: "Sondagem completa",
-        estudantes: [
-          {
-            lp: true,
-            numero: 1,
-            nome: "Carlos Eduardo",
-            pap: false,
-            aee: false,
-            acessibilidade: true,
-            coluna: [
-              {
-                descricaoColuna: "Leitura",
-                PeriodoBimestreAtivo: true,
-                opcaoResposta: [
-                  { id: 1, orden: 1, descricaoOpcao: "Pré-silábico" },
-                  { id: 2, orden: 2, descricaoOpcao: "Silábico" },
-                  { id: 3, orden: 3, descricaoOpcao: "Alfabético" },
-                ],
-                resposta: [{ id: 1, opcaoRespostaId: 3 }],
-              },
-            ],
-          },
-        ],
-      };
-
-      expect(dados).toBeDefined();
-      expect(dados.questao).toBe("Sondagem completa");
-      expect(dados.estudantes).toHaveLength(1);
-      expect(dados.estudantes[0].coluna).toHaveLength(1);
-      expect(dados.estudantes[0].coluna[0].opcaoResposta).toHaveLength(3);
-      expect(dados.estudantes[0].coluna[0].resposta).toHaveLength(1);
-      expect(
-        dados.estudantes[0].coluna[0].opcaoResposta[2].descricaoOpcao
-      ).toBe("Alfabético");
-    });
-
-    it("deve validar estrutura vazia", () => {
-      const dados: DadosTabelaDinamica = {
-        questao: "",
-        estudantes: [],
-      };
-
-      expect(dados.questao).toBe("");
-      expect(dados.estudantes).toHaveLength(0);
+      expect(dados.estudantes[0].nome).toBe("Ana Silva");
+      expect(dados.estudantes[1].pap).toBe(true);
     });
   });
 
-  describe("Integração entre interfaces", () => {
-    it("deve criar estrutura completa integrada", () => {
-      const opcao1: OpcaoResposta = {
-        id: 1,
-        orden: 1,
-        descricaoOpcao: "Sim",
+  describe("Integração - Cenários Completos", () => {
+    it("deve representar uma sondagem completa de alfabetização", () => {
+      const opcoesResposta: OpcaoResposta[] = [
+        {
+          id: 1,
+          ordem: 1,
+          descricaoOpcao: "Pré-silábico",
+          corFundo: "#FF6B6B",
+          corTexto: "#FFFFFF",
+          descricaoLegenda: "Nível inicial de alfabetização",
+        },
+        {
+          id: 2,
+          ordem: 2,
+          descricaoOpcao: "Silábico sem valor",
+          corFundo: "#FFD93D",
+          corTexto: "#000000",
+          descricaoLegenda: "Escrita silábica sem correspondência sonora",
+        },
+        {
+          id: 3,
+          ordem: 3,
+          descricaoOpcao: "Silábico com valor",
+          corFundo: "#6BCB77",
+          corTexto: "#FFFFFF",
+          descricaoLegenda: "Escrita silábica com correspondência sonora",
+        },
+        {
+          id: 4,
+          ordem: 4,
+          descricaoOpcao: "Silábico-alfabético",
+          corFundo: "#4D96FF",
+          corTexto: "#FFFFFF",
+          descricaoLegenda: "Transição entre hipóteses",
+        },
+        {
+          id: 5,
+          ordem: 5,
+          descricaoOpcao: "Alfabético",
+          corFundo: "#9B59B6",
+          corTexto: "#FFFFFF",
+          descricaoLegenda: "Totalmente alfabetizado",
+        },
+      ];
+
+      const coluna1Bimestre: Coluna = {
+        descricaoColuna: "1º Bimestre",
+        PeriodoBimestreAtivo: false,
+        opcaoResposta: opcoesResposta,
+        resposta: [{ id: 1, opcaoRespostaId: 1 }],
       };
 
-      const resposta1: Resposta = {
-        id: 1,
-        opcaoRespostaId: opcao1.id,
-      };
-
-      const coluna1: Coluna = {
-        descricaoColuna: "Avaliação",
+      const coluna2Bimestre: Coluna = {
+        descricaoColuna: "2º Bimestre",
         PeriodoBimestreAtivo: true,
-        opcaoResposta: [opcao1],
-        resposta: [resposta1],
+        opcaoResposta: opcoesResposta,
+        resposta: [{ id: 2, opcaoRespostaId: 3 }],
       };
 
-      const estudante1: Estudante = {
+      const estudante: Estudante = {
         lp: true,
         numero: 1,
-        nome: "Teste Integração",
+        nome: "Maria Eduarda",
         pap: false,
         aee: false,
         acessibilidade: false,
-        coluna: [coluna1],
+        coluna: [coluna1Bimestre, coluna2Bimestre],
       };
 
       const dados: DadosTabelaDinamica = {
-        questao: "Teste de integração",
-        estudantes: [estudante1],
+        questao: "Qual hipótese de escrita o estudante apresenta?",
+        estudantes: [estudante],
       };
 
-      expect(dados.estudantes[0].coluna[0].opcaoResposta[0].id).toBe(
-        dados.estudantes[0].coluna[0].resposta[0].opcaoRespostaId
+      expect(dados.questao).toBe(
+        "Qual hipótese de escrita o estudante apresenta?"
+      );
+      expect(dados.estudantes).toHaveLength(1);
+      expect(dados.estudantes[0].nome).toBe("Maria Eduarda");
+      expect(dados.estudantes[0].coluna).toHaveLength(2);
+      expect(dados.estudantes[0].coluna[0].opcaoResposta).toHaveLength(5);
+      expect(dados.estudantes[0].coluna[0].resposta[0].opcaoRespostaId).toBe(1);
+      expect(dados.estudantes[0].coluna[1].resposta[0].opcaoRespostaId).toBe(3);
+      expect(dados.estudantes[0].coluna[1].PeriodoBimestreAtivo).toBe(true);
+    });
+
+    it("deve validar progressão do estudante entre bimestres", () => {
+      const resposta1Bim: Resposta = { id: 1, opcaoRespostaId: 1 };
+      const resposta2Bim: Resposta = { id: 2, opcaoRespostaId: 3 };
+      const resposta3Bim: Resposta = { id: 3, opcaoRespostaId: 5 };
+
+      expect(resposta2Bim.opcaoRespostaId!).toBeGreaterThan(
+        resposta1Bim.opcaoRespostaId!
+      );
+      expect(resposta3Bim.opcaoRespostaId!).toBeGreaterThan(
+        resposta2Bim.opcaoRespostaId!
       );
     });
 
-    it("deve manter referências corretas entre resposta e opção", () => {
+    it("deve permitir turma com estudantes diversos", () => {
+      const estudantes: Estudante[] = [
+        {
+          lp: true,
+          numero: 1,
+          nome: "João Pedro",
+          pap: false,
+          aee: false,
+          acessibilidade: false,
+          coluna: [],
+        },
+        {
+          lp: false,
+          numero: 2,
+          nome: "Yuki Tanaka",
+          pap: false,
+          aee: false,
+          acessibilidade: false,
+          coluna: [],
+        },
+        {
+          lp: true,
+          numero: 3,
+          nome: "Lucas Oliveira",
+          pap: true,
+          aee: true,
+          acessibilidade: true,
+          coluna: [],
+        },
+      ];
+
+      const dados: DadosTabelaDinamica = {
+        questao: "Sondagem de leitura",
+        estudantes,
+      };
+
+      expect(dados.estudantes).toHaveLength(3);
+      expect(dados.estudantes[0].lp).toBe(true);
+      expect(dados.estudantes[1].lp).toBe(false);
+      expect(dados.estudantes[2].aee).toBe(true);
+      expect(dados.estudantes[2].pap).toBe(true);
+    });
+
+    it("deve validar relação entre opcaoResposta e resposta", () => {
       const opcoes: OpcaoResposta[] = [
-        { id: 1, orden: 1, descricaoOpcao: "Opção 1" },
-        { id: 2, orden: 2, descricaoOpcao: "Opção 2" },
-        { id: 3, orden: 3, descricaoOpcao: "Opção 3" },
+        {
+          id: 10,
+          ordem: 1,
+          descricaoOpcao: "Nível 1",
+          corFundo: "#000000",
+          corTexto: "#FFFFFF",
+          descricaoLegenda: "Primeiro nível",
+        },
+        {
+          id: 20,
+          ordem: 2,
+          descricaoOpcao: "Nível 2",
+          corFundo: "#FFFFFF",
+          corTexto: "#000000",
+          descricaoLegenda: "Segundo nível",
+        },
       ];
 
-      const respostas: Resposta[] = [
-        { id: 1, opcaoRespostaId: 2 },
-        { id: 2, opcaoRespostaId: 3 },
-      ];
+      const resposta: Resposta = { id: 1, opcaoRespostaId: 20 };
 
-      expect(respostas[0].opcaoRespostaId).toBe(opcoes[1].id);
-      expect(respostas[1].opcaoRespostaId).toBe(opcoes[2].id);
+      const opcaoSelecionada = opcoes.find(
+        (op) => op.id === resposta.opcaoRespostaId
+      );
+
+      expect(opcaoSelecionada).toBeDefined();
+      expect(opcaoSelecionada?.descricaoOpcao).toBe("Nível 2");
+      expect(opcaoSelecionada?.ordem).toBe(2);
     });
   });
 });
