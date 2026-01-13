@@ -111,10 +111,10 @@ describe("Conteudo", () => {
 
   describe("Validação de modalidades válidas", () => {
     const casosValidos = [
-      { modalidade: "3", ano: "1", descricao: "Educação Infantil ano 1" },
-      { modalidade: "5", ano: "1", descricao: "Fundamental ano 1" },
-      { modalidade: "5", ano: "2", descricao: "Fundamental ano 2" },
-      { modalidade: "5", ano: "3", descricao: "Fundamental ano 3" },
+      { modalidade: 3, ano: "1", descricao: "Educação Infantil ano 1" },
+      { modalidade: 5, ano: "1", descricao: "Fundamental ano 1" },
+      { modalidade: 5, ano: "2", descricao: "Fundamental ano 2" },
+      { modalidade: 5, ano: "3", descricao: "Fundamental ano 3" },
     ];
 
     casosValidos.forEach(({ modalidade, ano, descricao }) => {
