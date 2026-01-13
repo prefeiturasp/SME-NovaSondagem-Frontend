@@ -54,12 +54,12 @@ const Conteudo: React.FC = () => {
   const [formListaDinamica] = Form.useForm();
 
   const verificarModalidadeTurma = useCallback(() => {
-    if (modalidade === "3") {
+    if (modalidade === 3) {
       if (ano === "1") {
         return true;
       }
     }
-    if (modalidade === "5") {
+    if (modalidade === 5) {
       if (ano === "1" || ano === "2" || ano === "3") {
         return true;
       }
