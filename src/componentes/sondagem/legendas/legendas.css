@@ -23,9 +23,7 @@
 
 .tabela-legendas .ant-table-cell {
   text-align: left !important;
-}
-
-.tabela-legendas .ant-table-cell {
+  border-width: 1px !important;
   border: 1px solid #f0f0f0 !important;
 }
 
@@ -40,9 +38,5 @@
 .tabela-legendas .ant-table,
 .tabela-legendas .ant-table-container,
 .tabela-legendas .ant-table-content table {
-  border-width: 1px !important;
-}
-
-.tabela-legendas .ant-table-cell {
   border-width: 1px !important;
 }
