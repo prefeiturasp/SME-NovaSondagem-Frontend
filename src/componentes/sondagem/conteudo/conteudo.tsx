@@ -215,35 +215,67 @@ const Conteudo: React.FC = () => {
     }
   };
 
-  const salvarDadosSondagem = () => {
+  const gerarDados = useCallback(() => {
     const dadosFormulario = formListaDinamica.getFieldsValue();
 
     const dadosParaSalvar = dadosLista?.estudantes.map(
       (estudante, estudanteIndex) => {
-        const respostas = estudante.coluna.map((coluna, colunaIndex) => ({
-          nomeColuna: coluna.descricaoColuna,
-          respostaId:
-            dadosFormulario[`respostaId_${estudanteIndex}_${colunaIndex}`] ??
-            null,
-          respostaSelecionada:
-            dadosFormulario[`resposta_${estudanteIndex}_${colunaIndex}`] ??
-            null,
-        }));
+        const respostas = estudante.coluna.map((_, colunaIndex) => {
+          const respostaId =
+            dadosFormulario[`respostaId_${estudanteIndex}_${colunaIndex}`];
+          const opcaoRespostaId =
+            dadosFormulario[`resposta_${estudanteIndex}_${colunaIndex}`];
+
+          return {
+            id: respostaId ?? 0,
+            opcaoRespostaId: opcaoRespostaId ?? null,
+          };
+        });
 
         return {
-          numeroEstudante: estudante.numeroAlunoChamada,
+          codigo: estudante.codigo,
+          numeroAlunoChamada: estudante.numeroAlunoChamada,
           nomeEstudante: estudante.nome,
           linguaPortuguesaSegundaLingua:
             dadosFormulario[
               `linguaPortuguesaSegundaLingua_${estudanteIndex}`
-            ] ?? false,
-          respostas,
+            ] ?? estudante.linguaPortuguesaSegundaLingua,
+          respostas: estudante.coluna.map((coluna, colunaIndex) => ({
+            bimestreId: coluna.idCiclo,
+            questaoId: respostas[colunaIndex].id,
+            opcaoRespostaId: respostas[colunaIndex].opcaoRespostaId,
+          })),
         };
       }
     );
 
-    console.log("Dados organizados para salvar:", dadosParaSalvar);
-  };
+    return dadosParaSalvar;
+  }, [dadosLista, formListaDinamica]);
+
+  const salvarDadosSondagem = useCallback(async () => {
+    const dadosParaSalvar = gerarDados();
+
+    const data = {
+      sondagemId: dadosLista?.sondagemId,
+      alunos: dadosParaSalvar,
+    };
+    console.log("Dados para salvar:", data);
+    try {
+      const resposta = await NovaSondagemServico.post("Sondagem", data, {
+        headers: { "X-Token-Principal": usuario?.token },
+      });
+
+      if (resposta.status === 200) {
+        message.success("Sondagem salva com sucesso!");
+      }
+    } catch (error: any) {
+      console.error("ERRO:", error);
+      message.error(
+        error.response?.data?.message ||
+          "Erro ao salvar a sondagem. Tente novamente."
+      );
+    }
+  }, [usuario?.token, gerarDados]);
 
   const CancelarCadastroSondagem = async () => {
     if (proficienciaSelecionada && disciplinaSelecionada) {
