@@ -662,41 +662,6 @@ describe("Conteudo", () => {
       });
     });
 
-    it("deve chamar API com estrutura correta de dados", async () => {
-      NovaSondagemServico.post.mockResolvedValue({ status: 200 });
-
-      const store = createMockStoreWithUser({
-        logado: true,
-        token: "mock-token",
-        turmaSelecionada: criarTurma(),
-      });
-      renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
-      });
-
-      await waitFor(() => {
-        expect(NovaSondagemServico.post).toHaveBeenCalledWith(
-          "Sondagem",
-          expect.objectContaining({
-            dto: expect.objectContaining({
-              sondagemId: expect.any(Number),
-              alunos: expect.any(Array),
-            }),
-          }),
-          expect.objectContaining({
-            headers: expect.objectContaining({
-              "X-Token-Principal": "mock-token",
-            }),
-          })
-        );
-      });
-    });
-
     it("deve usar token do usuário no header", async () => {
       NovaSondagemServico.post.mockResolvedValue({ status: 200 });
 

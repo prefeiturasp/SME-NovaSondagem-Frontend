@@ -180,6 +180,7 @@ const mockDadosEscrita: DadosTabelaDinamica = {
       ],
     },
   ],
+  questaoId: 0,
 };
 
 const mockDadosReescrita: DadosTabelaDinamica = {
@@ -214,6 +215,7 @@ const mockDadosReescrita: DadosTabelaDinamica = {
       ],
     },
   ],
+  questaoId: 0,
 };
 
 const WrapperComponent = ({
@@ -257,6 +259,7 @@ describe("SondagemListaDinamica", () => {
         tituloTabelaRespostas: "Sistema de escrita",
         estudantes: [],
         sondagemId: 0,
+        questaoId: 0,
       };
       render(<WrapperComponent dados={dadosVazios} />);
       expect(
@@ -904,6 +907,7 @@ describe("SondagemListaDinamica", () => {
         sondagemId: 0,
         tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       const { container } = render(<WrapperComponent dados={dadosVazios} />);
@@ -1047,6 +1051,7 @@ describe("SondagemListaDinamica", () => {
         sondagemId: 0,
         tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       render(<WrapperComponent dados={emptyDados} />);
@@ -1062,6 +1067,7 @@ describe("SondagemListaDinamica", () => {
         sondagemId: 0,
         tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       render(<WrapperComponent dados={emptyDados} />);
