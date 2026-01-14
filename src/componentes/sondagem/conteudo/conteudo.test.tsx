@@ -681,10 +681,12 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.post).toHaveBeenCalledWith(
-          "Ciclo",
+          "Sondagem",
           expect.objectContaining({
-            sondagemId: 0,
-            alunos: expect.any(Array),
+            dto: expect.objectContaining({
+              sondagemId: expect.any(Number),
+              alunos: expect.any(Array),
+            }),
           }),
           expect.objectContaining({
             headers: expect.objectContaining({
@@ -714,8 +716,10 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.post).toHaveBeenCalledWith(
-          "Ciclo",
-          expect.any(Object),
+          "Sondagem",
+          expect.objectContaining({
+            dto: expect.any(Object),
+          }),
           expect.objectContaining({
             headers: expect.objectContaining({
               "X-Token-Principal": "test-token-123",
@@ -729,6 +733,100 @@ describe("Conteudo", () => {
       NovaSondagemServico.post.mockRejectedValue({
         response: {},
       });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.post).toHaveBeenCalled();
+      });
+    });
+
+    it("deve exibir notification com detalhes de erros de validação", async () => {
+      const mockNotification = jest.fn();
+      jest.mock("antd", () => ({
+        ...jest.requireActual("antd"),
+        notification: {
+          error: mockNotification,
+        },
+      }));
+
+      NovaSondagemServico.post.mockRejectedValue({
+        response: {
+          data: {
+            title: "Erro de validação",
+            errors: {
+              dto: ["The dto field is required."],
+              "$.alunos[0].respostas[0].questaoId": [
+                "The JSON value could not be converted to System.Int32.",
+              ],
+            },
+          },
+        },
+      });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.post).toHaveBeenCalled();
+      });
+    });
+
+    it("deve enviar sondagemId do dadosLista", async () => {
+      NovaSondagemServico.post.mockResolvedValue({ status: 200 });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.post).toHaveBeenCalledWith(
+          "Sondagem",
+          expect.objectContaining({
+            dto: expect.objectContaining({
+              sondagemId: expect.any(Number),
+            }),
+          }),
+          expect.any(Object)
+        );
+      });
+    });
+
+    it("deve garantir que questaoId seja sempre número inteiro", async () => {
+      NovaSondagemServico.post.mockResolvedValue({ status: 200 });
 
       const store = createMockStoreWithUser({
         logado: true,

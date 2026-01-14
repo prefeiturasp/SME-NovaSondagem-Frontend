@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Button, Card, Form, Select, Row, Col, message } from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  Select,
+  Row,
+  Col,
+  message,
+  notification,
+} from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
@@ -242,7 +251,7 @@ const Conteudo: React.FC = () => {
             ] ?? estudante.linguaPortuguesaSegundaLingua,
           respostas: estudante.coluna.map((coluna, colunaIndex) => ({
             bimestreId: coluna.idCiclo,
-            questaoId: respostas[colunaIndex].id,
+            questaoId: dadosLista?.questaoId ?? 0,
             opcaoRespostaId: respostas[colunaIndex].opcaoRespostaId,
           })),
         };
@@ -256,8 +265,10 @@ const Conteudo: React.FC = () => {
     const dadosParaSalvar = gerarDados();
 
     const data = {
-      sondagemId: dadosLista?.sondagemId,
-      alunos: dadosParaSalvar,
+      dto: {
+        sondagemId: dadosLista?.sondagemId ?? 0,
+        alunos: dadosParaSalvar,
+      },
     };
     console.log("Dados para salvar:", data);
     try {
@@ -270,10 +281,27 @@ const Conteudo: React.FC = () => {
       }
     } catch (error: any) {
       console.error("ERRO:", error);
-      message.error(
+
+      const errorMessage =
+        error.response?.data?.title ||
         error.response?.data?.message ||
-          "Erro ao salvar a sondagem. Tente novamente."
-      );
+        "Erro ao salvar a sondagem. Tente novamente.";
+
+      const errorDetails = error.response?.data?.errors
+        ? Object.entries(error.response.data.errors)
+            .map(
+              ([key, value]: [string, any]) =>
+                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`
+            )
+            .join("\n")
+        : null;
+
+      notification.error({
+        message: "Erro ao salvar sondagem",
+        description: errorDetails || errorMessage,
+        duration: 5,
+        placement: "topRight",
+      });
     }
   }, [usuario?.token, gerarDados]);
 
