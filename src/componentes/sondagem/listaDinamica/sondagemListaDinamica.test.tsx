@@ -58,6 +58,7 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
 });
 
 const mockDadosEscrita: DadosTabelaDinamica = {
+  sondagemId: 1,
   tituloTabelaRespostas: "Sistema de escrita",
   estudantes: [
     {
@@ -179,9 +180,11 @@ const mockDadosEscrita: DadosTabelaDinamica = {
       ],
     },
   ],
+  questaoId: 0,
 };
 
 const mockDadosReescrita: DadosTabelaDinamica = {
+  sondagemId: 2,
   tituloTabelaRespostas: "reescrita",
   estudantes: [
     {
@@ -212,6 +215,7 @@ const mockDadosReescrita: DadosTabelaDinamica = {
       ],
     },
   ],
+  questaoId: 0,
 };
 
 const WrapperComponent = ({
@@ -254,6 +258,8 @@ describe("SondagemListaDinamica", () => {
       const dadosVazios: DadosTabelaDinamica = {
         tituloTabelaRespostas: "Sistema de escrita",
         estudantes: [],
+        sondagemId: 0,
+        questaoId: 0,
       };
       render(<WrapperComponent dados={dadosVazios} />);
       expect(
@@ -898,8 +904,10 @@ describe("SondagemListaDinamica", () => {
 
     it("deve lidar com array vazio de estudantes", () => {
       const dadosVazios = {
+        sondagemId: 0,
         tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       const { container } = render(<WrapperComponent dados={dadosVazios} />);
@@ -1040,8 +1048,10 @@ describe("SondagemListaDinamica", () => {
 
     it("deve retornar 0 quando não há estudantes em getTotalColumns", () => {
       const emptyDados: DadosTabelaDinamica = {
+        sondagemId: 0,
         tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       render(<WrapperComponent dados={emptyDados} />);
@@ -1054,8 +1064,10 @@ describe("SondagemListaDinamica", () => {
 
     it("deve retornar quando não há dados em moveFocus", async () => {
       const emptyDados: DadosTabelaDinamica = {
+        sondagemId: 0,
         tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       render(<WrapperComponent dados={emptyDados} />);
