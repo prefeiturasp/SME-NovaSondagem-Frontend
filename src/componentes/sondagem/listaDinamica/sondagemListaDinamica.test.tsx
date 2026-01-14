@@ -788,7 +788,9 @@ describe("SondagemListaDinamica", () => {
         const checkbox = container.querySelector(
           'input[type="checkbox"]'
         ) as HTMLInputElement;
-        expect(checkbox?.checked).toBe(true);
+
+        expect(checkbox).toBeInTheDocument();
+        expect(checkbox.checked).toBe(true);
       });
     });
   });
@@ -824,14 +826,24 @@ describe("SondagemListaDinamica", () => {
       });
     });
 
-    it("deve rerenderizar eficientemente ao mudar dados", () => {
+    it("deve rerenderizar eficientemente ao mudar dados", async () => {
       const { rerender } = render(
         <WrapperComponent dados={mockDadosEscrita} />
       );
 
-      rerender(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
 
-      expect(screen.getByText("Reescrita")).toBeInTheDocument();
+      rerender(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
+        expect(
+          screen.queryByText("LP como 2ª língua?")
+        ).not.toBeInTheDocument();
+      });
     });
   });
 
