@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card, Form, Select, Row, Col, message } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
-// import MockDadosTabelaDinamica from "../../../mocks/MockDadosTabelaDinamica.json";
-// import MockDadosTabelaDinamica2 from "../../../mocks/MockDadosTabelaDinamica2.json";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -54,16 +52,17 @@ const Conteudo: React.FC = () => {
   const [formListaDinamica] = Form.useForm();
 
   const verificarModalidadeTurma = useCallback(() => {
-    if (modalidade === "3") {
-      if (ano === "1") {
-        return true;
-      }
+    const modStr = String(modalidade);
+    const anoStr = String(ano);
+
+    if (modStr === "3") {
+      return anoStr === "1";
     }
-    if (modalidade === "5") {
-      if (ano === "1" || ano === "2" || ano === "3") {
-        return true;
-      }
+
+    if (modStr === "5") {
+      return ["1", "2", "3"].includes(anoStr);
     }
+
     return false;
   }, [modalidade, ano]);
 
