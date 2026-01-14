@@ -265,8 +265,10 @@ const Conteudo: React.FC = () => {
     const dadosParaSalvar = gerarDados();
 
     const data = {
-      sondagemId: dadosLista?.sondagemId ?? 0,
-      alunos: dadosParaSalvar,
+      dto: {
+        sondagemId: dadosLista?.sondagemId ?? 0,
+        alunos: dadosParaSalvar,
+      },
     };
     console.log("Dados para salvar:", data);
     try {
