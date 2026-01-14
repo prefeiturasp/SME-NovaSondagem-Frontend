@@ -22,9 +22,10 @@ const TOKEN_KEY = "nova_sondagem_token";
 const apiNovaSondagem = axios.create({ baseURL }) as CustomAxiosInstance;
 
 const autenticar = async (tokenPrincipal: string): Promise<string> => {
+  console.log("****TOKENPRINCIPAL*****", tokenPrincipal)
   const response = await axios.post<TokenResponse>(
     `${baseURL}/Autenticacao`,
-    tokenPrincipal,
+    JSON.stringify(tokenPrincipal),
     {
       headers: {
         "Content-Type": "application/json",
