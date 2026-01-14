@@ -1,10 +1,10 @@
 export interface OpcaoResposta {
   id: number;
   ordem: number;
-  descricaoOpcao: string;
+  descricaoOpcaoResposta: string;
   corFundo: string;
   corTexto: string;
-  descricaoLegenda: string;
+  legenda: string;
 }
 
 export interface Resposta {
@@ -13,23 +13,25 @@ export interface Resposta {
 }
 
 export interface Coluna {
+  idCiclo: number;
   descricaoColuna: string;
-  PeriodoBimestreAtivo: boolean;
+  periodoBimestreAtivo: boolean;
   opcaoResposta: OpcaoResposta[];
   resposta: Resposta[];
 }
 
 export interface Estudante {
-  lp: boolean;
-  numero: number;
+  linguaPortuguesaSegundaLingua: boolean;
+  numeroAlunoChamada: number;
   nome: string;
   pap: boolean;
   aee: boolean;
-  acessibilidade: boolean;
+  possuiDeficiencia: boolean;
   coluna: Coluna[];
+  codigo: number;
 }
 
 export interface DadosTabelaDinamica {
-  questao: string;
+  tituloTabelaRespostas: string;
   estudantes: Estudante[];
 }
