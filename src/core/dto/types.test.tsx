@@ -242,6 +242,7 @@ describe("Types - Interfaces de Sondagem", () => {
     const criarDadosTabelaDinamica = (
       override?: Partial<DadosTabelaDinamica>
     ): DadosTabelaDinamica => ({
+      sondagemId: 0,
       tituloTabelaRespostas: "Qual hipótese de escrita o estudante apresenta?",
       estudantes: [],
       ...override,
@@ -251,9 +252,17 @@ describe("Types - Interfaces de Sondagem", () => {
       const dados = criarDadosTabelaDinamica();
 
       expect(dados).toMatchObject({
+        sondagemId: expect.any(Number),
         tituloTabelaRespostas: expect.any(String),
         estudantes: expect.any(Array),
       });
+    });
+
+    it("deve conter sondagemId válido", () => {
+      const dados = criarDadosTabelaDinamica({ sondagemId: 123 });
+
+      expect(dados.sondagemId).toBe(123);
+      expect(typeof dados.sondagemId).toBe("number");
     });
 
     it("deve gerenciar lista vazia de estudantes", () => {
@@ -287,8 +296,9 @@ describe("Types - Interfaces de Sondagem", () => {
         },
       ];
 
-      const dados = criarDadosTabelaDinamica({ estudantes });
+      const dados = criarDadosTabelaDinamica({ sondagemId: 456, estudantes });
 
+      expect(dados.sondagemId).toBe(456);
       expect(dados.estudantes).toHaveLength(2);
       expect(dados.estudantes[0].nome).toBe("Ana Silva");
       expect(dados.estudantes[1].pap).toBe(true);
@@ -368,11 +378,13 @@ describe("Types - Interfaces de Sondagem", () => {
       };
 
       const dados: DadosTabelaDinamica = {
+        sondagemId: 789,
         tituloTabelaRespostas:
           "Qual hipótese de escrita o estudante apresenta?",
         estudantes: [estudante],
       };
 
+      expect(dados.sondagemId).toBe(789);
       expect(dados.tituloTabelaRespostas).toBe(
         "Qual hipótese de escrita o estudante apresenta?"
       );
@@ -433,10 +445,12 @@ describe("Types - Interfaces de Sondagem", () => {
       ];
 
       const dados: DadosTabelaDinamica = {
+        sondagemId: 999,
         tituloTabelaRespostas: "Sondagem de leitura",
         estudantes,
       };
 
+      expect(dados.sondagemId).toBe(999);
       expect(dados.estudantes).toHaveLength(3);
       expect(dados.estudantes[0].linguaPortuguesaSegundaLingua).toBe(true);
       expect(dados.estudantes[1].linguaPortuguesaSegundaLingua).toBe(false);

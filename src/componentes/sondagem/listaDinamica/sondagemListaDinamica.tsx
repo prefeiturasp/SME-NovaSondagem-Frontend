@@ -128,7 +128,7 @@ const SondagemListaDinamica: React.FC<
       const initialValues: any = {};
 
       dados.estudantes.forEach((estudante, estudanteIndex) => {
-        initialValues[`lp_${estudanteIndex}`] =
+        initialValues[`linguaPortuguesaSegundaLingua_${estudanteIndex}`] =
           estudante.linguaPortuguesaSegundaLingua;
 
         estudante.coluna.forEach((coluna, colunaIndex) => {
@@ -249,7 +249,7 @@ const SondagemListaDinamica: React.FC<
       fixed: "left",
       render: (_, _record, index) => (
         <Form.Item
-          name={`lp_${index}`}
+          name={`linguaPortuguesaSegundaLingua_${index}`}
           valuePropName="checked"
           style={{ margin: 0 }}
         >
