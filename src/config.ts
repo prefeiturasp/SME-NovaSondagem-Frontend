@@ -1,3 +1,11 @@
 export const getApiUrl = (): string => {
-  return import.meta.env.VITE_NOVA_SONDAGEM_API ?? "http://localhost:3000";
+  if ((window as any).__ENV__?.VITE_NOVA_SONDAGEM_API) {
+    return (window as any).__ENV__.VITE_NOVA_SONDAGEM_API;
+  }
+
+  if (import.meta.env.VITE_NOVA_SONDAGEM_API) {
+    return import.meta.env.VITE_NOVA_SONDAGEM_API;
+  }
+
+  return "http://localhost:3000";
 };

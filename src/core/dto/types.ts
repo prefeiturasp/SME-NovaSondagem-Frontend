@@ -32,6 +32,8 @@ export interface Estudante {
 }
 
 export interface DadosTabelaDinamica {
+  sondagemId: number;
   tituloTabelaRespostas: string;
   estudantes: Estudante[];
+  questaoId: number;
 }
