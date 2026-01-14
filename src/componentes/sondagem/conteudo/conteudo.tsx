@@ -281,8 +281,8 @@ const Conteudo: React.FC = () => {
       console.error("ERRO:", error);
 
       const errorMessage =
-        error.response?.data?.title ||
-        error.response?.data?.message ||
+        error.response?.data?.title ??
+        error.response?.data?.message ??
         "Erro ao salvar a sondagem. Tente novamente.";
 
       const errorDetails = error.response?.data?.errors
@@ -296,7 +296,7 @@ const Conteudo: React.FC = () => {
 
       notification.error({
         message: "Erro ao salvar sondagem",
-        description: errorDetails || errorMessage,
+        description: errorDetails ?? errorMessage,
         duration: 5,
         placement: "topRight",
       });
