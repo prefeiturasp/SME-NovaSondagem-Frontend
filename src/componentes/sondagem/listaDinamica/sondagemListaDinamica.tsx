@@ -149,7 +149,7 @@ const SondagemListaDinamica: React.FC<
   }, [opcoesCarregadas, dados, formListaDinamica]);
 
   const getTotalColumns = useCallback(() => {
-    return dados?.estudantes?.[0]?.coluna?.length || 0;
+    return dados?.estudantes?.[0]?.coluna?.length ?? 0;
   }, [dados]);
 
   const isSelectOpen = useCallback(
