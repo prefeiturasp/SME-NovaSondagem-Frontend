@@ -1,4 +1,5 @@
 export const getApiUrl = (): string => {
+  console.log('__ENV__:', (window as any).__ENV__);
   if ((window as any).__ENV__?.VITE_NOVA_SONDAGEM_API) {
     return (window as any).__ENV__.VITE_NOVA_SONDAGEM_API;
   }
