@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card, Form, Select, Row, Col, message } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
-// import MockDadosTabelaDinamica from "../../../mocks/MockDadosTabelaDinamica.json";
-// import MockDadosTabelaDinamica2 from "../../../mocks/MockDadosTabelaDinamica2.json";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -176,11 +174,6 @@ const Conteudo: React.FC = () => {
         disciplinaSelecionada,
         proficienciaId
       );
-      // if (proficienciaId === 4) {
-      //   await buscarDadosLista();
-      // } else if (proficienciaId === 5) {
-      //   await buscarDadosLista2();
-      // }
     }
   };
 
@@ -221,43 +214,6 @@ const Conteudo: React.FC = () => {
       message.error("Erro ao carregar dados da sondagem. Tente novamente.");
     }
   };
-
-  // const buscarDadosLista = async () => {
-  //   try {
-  //     const dadosMock = MockDadosTabelaDinamica;
-  //     const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
-  //       (legenda) => ({
-  //         corFundo: legenda.corFundo,
-  //         descricaoLegenda: legenda.descricaoLegenda,
-  //         textoLegenda: legenda.descricaoOpcao,
-  //       })
-  //     );
-  //     setDadosLegenda(dadosLegenda);
-  //     setDadosLista(dadosMock);
-  //   } catch (error: any) {
-  //     console.error("Erro ao buscar dados da lista 2:", error);
-  //     console.error("Erro ao buscar dados da lista:", error);
-  //     message.error("Erro ao carregar dados da sondagem. Tente novamente.");
-  //   }
-  // };
-
-  // const buscarDadosLista2 = async () => {
-  //   try {
-  //     const dadosMock = MockDadosTabelaDinamica2;
-  //     const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
-  //       (legenda) => ({
-  //         corFundo: legenda.corFundo,
-  //         descricaoLegenda: legenda.descricaoLegenda,
-  //         textoLegenda: legenda.descricaoOpcao,
-  //       })
-  //     );
-  //     setDadosLegenda(dadosLegenda);
-  //     setDadosLista(dadosMock);
-  //   } catch (error: any) {
-  //     console.error("Erro ao buscar dados da lista 2:", error);
-  //     message.error("Erro ao carregar dados da sondagem. Tente novamente.");
-  //   }
-  // };
 
   const salvarDadosSondagem = () => {
     const dadosFormulario = formListaDinamica.getFieldsValue();
