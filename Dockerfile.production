@@ -1,0 +1,59 @@
+############################
+# 1️⃣ Stage de build
+############################
+FROM node:22-alpine AS build
+
+WORKDIR /app
+
+# Copia apenas arquivos necessários para instalar dependências
+COPY package.json package-lock.json ./
+
+# Instala dependências de forma reproduzível
+RUN npm ci
+
+# Copia o código-fonte
+COPY . .
+
+# Build de produção
+RUN npm run build
+
+
+############################
+# 2️⃣ Stage de runtime
+############################
+FROM node:22-alpine AS runtime
+
+# Variáveis de ambiente seguras
+ENV NODE_ENV=production
+
+WORKDIR /app
+
+# Cria usuário não-root
+RUN addgroup -S appgroup \
+ && adduser -S appuser -G appgroup
+
+ # envsubst + serve
+RUN apk add --no-cache gettext \
+ && npm install -g serve \
+ && npm cache clean --force
+
+# Instala apenas servidor estático (sem deps de build)
+RUN npm install -g serve \
+ && npm cache clean --force
+
+# Copia apenas o build final
+COPY --from=build /app/dist ./dist
+
+# Script de startup
+COPY startup.sh /startup.sh
+RUN chmod +x /startup.sh \
+ && chown -R appuser:appgroup /app /startup.sh
+
+# Usa usuário não-root
+USER appuser
+
+# Porta da aplicação
+EXPOSE 3000
+
+ENTRYPOINT ["/startup.sh"]
+CMD ["serve", "-s", "dist", "-l", "3000", "--no-request-logging"]
