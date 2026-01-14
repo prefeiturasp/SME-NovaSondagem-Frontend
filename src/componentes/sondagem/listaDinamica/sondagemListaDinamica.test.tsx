@@ -58,66 +58,69 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
 });
 
 const mockDadosEscrita: DadosTabelaDinamica = {
-  questao: "escrita",
+  tituloTabelaRespostas: "escrita",
   estudantes: [
     {
-      lp: true,
-      numero: 1,
+      linguaPortuguesaSegundaLingua: true,
+      numeroAlunoChamada: 1,
       nome: "João Silva",
       pap: true,
       aee: true,
-      acessibilidade: true,
+      possuiDeficiencia: true,
+      codigo: 100001,
       coluna: [
         {
+          idCiclo: 1,
           descricaoColuna: "1° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 1,
               ordem: 1,
-              descricaoOpcao: "PS",
+              descricaoOpcaoResposta: "PS",
               corFundo: "#FF0000",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Pré-silábico",
+              legenda: "Pré-silábico",
             },
             {
               id: 2,
               ordem: 2,
-              descricaoOpcao: "SSV",
+              descricaoOpcaoResposta: "SSV",
               corFundo: "#00FF00",
               corTexto: "#000000",
-              descricaoLegenda: "Silábico sem valor",
+              legenda: "Silábico sem valor",
             },
             {
               id: 3,
               ordem: 3,
-              descricaoOpcao: "SCV",
+              descricaoOpcaoResposta: "SCV",
               corFundo: "#0000FF",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Silábico com valor",
+              legenda: "Silábico com valor",
             },
           ],
           resposta: [{ id: 1, opcaoRespostaId: 2 }],
         },
         {
+          idCiclo: 2,
           descricaoColuna: "2° ciclo",
-          PeriodoBimestreAtivo: false,
+          periodoBimestreAtivo: false,
           opcaoResposta: [
             {
               id: 4,
               ordem: 1,
-              descricaoOpcao: "A",
+              descricaoOpcaoResposta: "A",
               corFundo: "#FFFF00",
               corTexto: "#000000",
-              descricaoLegenda: "Alfabético",
+              legenda: "Alfabético",
             },
             {
               id: 5,
               ordem: 2,
-              descricaoOpcao: "B",
+              descricaoOpcaoResposta: "B",
               corFundo: "#FF00FF",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Nível B",
+              legenda: "Nível B",
             },
           ],
           resposta: [],
@@ -125,47 +128,50 @@ const mockDadosEscrita: DadosTabelaDinamica = {
       ],
     },
     {
-      lp: false,
-      numero: 2,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 2,
       nome: "Maria Santos",
       pap: false,
       aee: false,
-      acessibilidade: false,
+      possuiDeficiencia: false,
+      codigo: 100002,
       coluna: [
         {
+          idCiclo: 1,
           descricaoColuna: "1° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 1,
               ordem: 1,
-              descricaoOpcao: "PS",
+              descricaoOpcaoResposta: "PS",
               corFundo: "#FF0000",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Pré-silábico",
+              legenda: "Pré-silábico",
             },
             {
               id: 2,
               ordem: 2,
-              descricaoOpcao: "SSV",
+              descricaoOpcaoResposta: "SSV",
               corFundo: "#00FF00",
               corTexto: "#000000",
-              descricaoLegenda: "Silábico sem valor",
+              legenda: "Silábico sem valor",
             },
           ],
           resposta: [],
         },
         {
+          idCiclo: 2,
           descricaoColuna: "2° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 4,
               ordem: 1,
-              descricaoOpcao: "A",
+              descricaoOpcaoResposta: "A",
               corFundo: "#FFFF00",
               corTexto: "#000000",
-              descricaoLegenda: "Alfabético",
+              legenda: "Alfabético",
             },
           ],
           resposta: [],
@@ -176,27 +182,29 @@ const mockDadosEscrita: DadosTabelaDinamica = {
 };
 
 const mockDadosReescrita: DadosTabelaDinamica = {
-  questao: "reescrita",
+  tituloTabelaRespostas: "reescrita",
   estudantes: [
     {
-      lp: false,
-      numero: 1,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 1,
       nome: "Carlos Lima",
       pap: false,
       aee: true,
-      acessibilidade: false,
+      possuiDeficiencia: false,
+      codigo: 100003,
       coluna: [
         {
+          idCiclo: 3,
           descricaoColuna: "Avaliação 1",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 10,
               ordem: 1,
-              descricaoOpcao: "Opção 1",
+              descricaoOpcaoResposta: "Opção 1",
               corFundo: "#00FFFF",
               corTexto: "#000000",
-              descricaoLegenda: "Primeira opção",
+              legenda: "Primeira opção",
             },
           ],
           resposta: [],
@@ -207,27 +215,29 @@ const mockDadosReescrita: DadosTabelaDinamica = {
 };
 
 const mockDadosProducao: DadosTabelaDinamica = {
-  questao: "producao",
+  tituloTabelaRespostas: "producao",
   estudantes: [
     {
-      lp: false,
-      numero: 3,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 3,
       nome: "Ana Costa",
       pap: false,
       aee: false,
-      acessibilidade: true,
+      possuiDeficiencia: true,
+      codigo: 100004,
       coluna: [
         {
+          idCiclo: 4,
           descricaoColuna: "Produção 1",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 20,
               ordem: 1,
-              descricaoOpcao: "Nível 1",
+              descricaoOpcaoResposta: "Nível 1",
               corFundo: "#FFA500",
               corTexto: "#000000",
-              descricaoLegenda: "Primeiro nível de produção",
+              legenda: "Primeiro nível de produção",
             },
           ],
           resposta: [],
@@ -238,27 +248,29 @@ const mockDadosProducao: DadosTabelaDinamica = {
 };
 
 const mockDadosLeitura: DadosTabelaDinamica = {
-  questao: "leitura",
+  tituloTabelaRespostas: "leitura",
   estudantes: [
     {
-      lp: false,
-      numero: 4,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 4,
       nome: "Pedro Oliveira",
       pap: true,
       aee: false,
-      acessibilidade: false,
+      possuiDeficiencia: false,
+      codigo: 100005,
       coluna: [
         {
+          idCiclo: 5,
           descricaoColuna: "Leitura 1",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 30,
               ordem: 1,
-              descricaoOpcao: "Nível A",
+              descricaoOpcaoResposta: "Nível A",
               corFundo: "#800080",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Nível A de leitura",
+              legenda: "Nível A de leitura",
             },
           ],
           resposta: [],
@@ -269,27 +281,29 @@ const mockDadosLeitura: DadosTabelaDinamica = {
 };
 
 const mockDadosOutro: DadosTabelaDinamica = {
-  questao: "outro",
+  tituloTabelaRespostas: "outro",
   estudantes: [
     {
-      lp: false,
-      numero: 5,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 5,
       nome: "Lucia Ferreira",
       pap: false,
       aee: false,
-      acessibilidade: false,
+      possuiDeficiencia: false,
+      codigo: 100006,
       coluna: [
         {
+          idCiclo: 6,
           descricaoColuna: "Avaliação",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 40,
               ordem: 1,
-              descricaoOpcao: "Item 1",
+              descricaoOpcaoResposta: "Item 1",
               corFundo: "#808080",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Primeiro item",
+              legenda: "Primeiro item",
             },
           ],
           resposta: [],
@@ -337,7 +351,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar mensagem quando estudantes está vazio", () => {
       const dadosVazios: DadosTabelaDinamica = {
-        questao: "escrita",
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
       };
       render(<WrapperComponent dados={dadosVazios} />);
@@ -965,7 +979,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve lidar com array vazio de estudantes", () => {
       const dadosVazios = {
-        questao: "escrita",
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
       };
 
@@ -1107,7 +1121,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve retornar 0 quando não há estudantes em getTotalColumns", () => {
       const emptyDados: DadosTabelaDinamica = {
-        questao: "escrita",
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
       };
 
@@ -1121,7 +1135,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve retornar quando não há dados em moveFocus", async () => {
       const emptyDados: DadosTabelaDinamica = {
-        questao: "escrita",
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
       };
 

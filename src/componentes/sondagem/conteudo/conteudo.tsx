@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card, Form, Select, Row, Col, message } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
-import MockDadosTabelaDinamica from "../../../mocks/MockDadosTabelaDinamica.json";
-import MockDadosTabelaDinamica2 from "../../../mocks/MockDadosTabelaDinamica2.json";
+// import MockDadosTabelaDinamica from "../../../mocks/MockDadosTabelaDinamica.json";
+// import MockDadosTabelaDinamica2 from "../../../mocks/MockDadosTabelaDinamica2.json";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -16,7 +16,7 @@ import { Auditoria } from "../auditoria/auditoria";
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
   const turmaSelecionada = usuario?.turmaSelecionada;
-  const turma = turmaSelecionada ? turmaSelecionada.id : 0;
+  const turma = turmaSelecionada ? turmaSelecionada.turma : 0;
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const ano = usuario?.turmaSelecionada?.ano;
 
@@ -54,12 +54,12 @@ const Conteudo: React.FC = () => {
   const [formListaDinamica] = Form.useForm();
 
   const verificarModalidadeTurma = useCallback(() => {
-    if (modalidade === 3) {
+    if (modalidade === "3") {
       if (ano === "1") {
         return true;
       }
     }
-    if (modalidade === 5) {
+    if (modalidade === "5") {
       if (ano === "1" || ano === "2" || ano === "3") {
         return true;
       }
@@ -161,33 +161,59 @@ const Conteudo: React.FC = () => {
   const onChangeDisciplinas = async (disciplinaId: number) => {
     if (disciplinaId) {
       setDisciplinaSelecionada(disciplinaId);
+      setProficienciaSelecionada(null);
+      setDadosLista(null);
+      setDadosLegenda(null);
       await obterProficiencia(disciplinaId);
     }
   };
 
   const onChangeProficiencia = async (proficienciaId: number) => {
-    if (proficienciaId) {
+    if (proficienciaId && disciplinaSelecionada) {
       setProficienciaSelecionada(proficienciaId);
-      if (proficienciaId === 4) {
-        await buscarDadosLista();
-      } else if (proficienciaId === 5) {
-        await buscarDadosLista2();
-      }
+      await buscarDadosListaDoBancoDeDados(
+        disciplinaSelecionada,
+        proficienciaId
+      );
+      // if (proficienciaId === 4) {
+      //   await buscarDadosLista();
+      // } else if (proficienciaId === 5) {
+      //   await buscarDadosLista2();
+      // }
     }
   };
 
-  const buscarDadosLista = async () => {
+  const buscarDadosListaDoBancoDeDados = async (
+    componenteCurricularId?: number,
+    proficienciaId?: number
+  ) => {
+    const disciplinaId = componenteCurricularId ?? disciplinaSelecionada;
+    const profId = proficienciaId ?? proficienciaSelecionada;
+
     try {
-      const dadosMock = MockDadosTabelaDinamica;
-      const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
-        (legenda) => ({
-          corFundo: legenda.corFundo,
-          descricaoLegenda: legenda.descricaoLegenda,
-          textoLegenda: legenda.descricaoOpcao,
-        })
-      );
+      const resposta = await NovaSondagemServico.get("/Questionario", {
+        headers: { "X-Token-Principal": usuario?.token },
+        params: {
+          TurmaId: turma,
+          ProficienciaId: profId,
+          ComponenteCurricularId: disciplinaId,
+          Modalidade: modalidade,
+          Ano: ano,
+        },
+      });
+
+      console.log("Resposta do questionario:", resposta);
+
+      const dadosLegenda =
+        resposta.data.estudantes[0].coluna[0].opcaoResposta.map(
+          (legenda: any) => ({
+            corFundo: legenda.corFundo,
+            descricaoLegenda: legenda.descricaoOpcaoResposta,
+            textoLegenda: legenda.legenda,
+          })
+        );
       setDadosLegenda(dadosLegenda);
-      setDadosLista(dadosMock);
+      setDadosLista(resposta.data);
     } catch (error: any) {
       console.error("Erro ao buscar dados da lista 2:", error);
       console.error("Erro ao buscar dados da lista:", error);
@@ -195,23 +221,42 @@ const Conteudo: React.FC = () => {
     }
   };
 
-  const buscarDadosLista2 = async () => {
-    try {
-      const dadosMock = MockDadosTabelaDinamica2;
-      const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
-        (legenda) => ({
-          corFundo: legenda.corFundo,
-          descricaoLegenda: legenda.descricaoLegenda,
-          textoLegenda: legenda.descricaoOpcao,
-        })
-      );
-      setDadosLegenda(dadosLegenda);
-      setDadosLista(dadosMock);
-    } catch (error: any) {
-      console.error("Erro ao buscar dados da lista 2:", error);
-      message.error("Erro ao carregar dados da sondagem. Tente novamente.");
-    }
-  };
+  // const buscarDadosLista = async () => {
+  //   try {
+  //     const dadosMock = MockDadosTabelaDinamica;
+  //     const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
+  //       (legenda) => ({
+  //         corFundo: legenda.corFundo,
+  //         descricaoLegenda: legenda.descricaoLegenda,
+  //         textoLegenda: legenda.descricaoOpcao,
+  //       })
+  //     );
+  //     setDadosLegenda(dadosLegenda);
+  //     setDadosLista(dadosMock);
+  //   } catch (error: any) {
+  //     console.error("Erro ao buscar dados da lista 2:", error);
+  //     console.error("Erro ao buscar dados da lista:", error);
+  //     message.error("Erro ao carregar dados da sondagem. Tente novamente.");
+  //   }
+  // };
+
+  // const buscarDadosLista2 = async () => {
+  //   try {
+  //     const dadosMock = MockDadosTabelaDinamica2;
+  //     const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
+  //       (legenda) => ({
+  //         corFundo: legenda.corFundo,
+  //         descricaoLegenda: legenda.descricaoLegenda,
+  //         textoLegenda: legenda.descricaoOpcao,
+  //       })
+  //     );
+  //     setDadosLegenda(dadosLegenda);
+  //     setDadosLista(dadosMock);
+  //   } catch (error: any) {
+  //     console.error("Erro ao buscar dados da lista 2:", error);
+  //     message.error("Erro ao carregar dados da sondagem. Tente novamente.");
+  //   }
+  // };
 
   const salvarDadosSondagem = () => {
     const dadosFormulario = formListaDinamica.getFieldsValue();
@@ -229,9 +274,12 @@ const Conteudo: React.FC = () => {
         }));
 
         return {
-          numeroEstudante: estudante.numero,
+          numeroEstudante: estudante.numeroAlunoChamada,
           nomeEstudante: estudante.nome,
-          lp: dadosFormulario[`lp_${estudanteIndex}`] ?? false,
+          linguaPortuguesaSegundaLingua:
+            dadosFormulario[
+              `linguaPortuguesaSegundaLingua_${estudanteIndex}`
+            ] ?? false,
           respostas,
         };
       }
@@ -241,7 +289,7 @@ const Conteudo: React.FC = () => {
   };
 
   const CancelarCadastroSondagem = async () => {
-    if (proficienciaSelecionada) {
+    if (proficienciaSelecionada && disciplinaSelecionada) {
       console.log("Recarregando sondagem com os parâmetros:", {
         modalidade,
         ano,
@@ -250,11 +298,10 @@ const Conteudo: React.FC = () => {
         turmaId: turma,
       });
 
-      if (proficienciaSelecionada === 4) {
-        await buscarDadosLista();
-      } else if (proficienciaSelecionada === 5) {
-        await buscarDadosLista2();
-      }
+      await buscarDadosListaDoBancoDeDados(
+        disciplinaSelecionada,
+        proficienciaSelecionada
+      );
     }
   };
 
