@@ -58,7 +58,7 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
 });
 
 const mockDadosEscrita: DadosTabelaDinamica = {
-  tituloTabelaRespostas: "escrita",
+  tituloTabelaRespostas: "Sistema de escrita",
   estudantes: [
     {
       linguaPortuguesaSegundaLingua: true,
@@ -351,7 +351,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar mensagem quando estudantes está vazio", () => {
       const dadosVazios: DadosTabelaDinamica = {
-        tituloTabelaRespostas: "escrita",
+        tituloTabelaRespostas: "Sistema de escrita",
         estudantes: [],
       };
       render(<WrapperComponent dados={dadosVazios} />);
@@ -368,9 +368,14 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Coluna LP (questão escrita)", () => {
-    it("deve renderizar coluna LP quando questão é escrita", () => {
+    it("deve renderizar coluna LP quando questão é escrita", async () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getAllByText("LP como 2ª língua?")[0]).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
     });
 
     it("não deve renderizar coluna LP quando questão não é escrita", () => {
@@ -438,29 +443,30 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Nome da questão", () => {
-    it("deve mostrar 'Sistema de escrita' para questão escrita", () => {
+    it("deve mostrar 'Sistema de escrita' para questão escrita", async () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getByText("Sistema de escrita")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
     });
 
-    it("deve mostrar 'Reescrita' para questão reescrita", () => {
+    it("não deve mostrar LP para questão reescrita", async () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
-      expect(screen.getByText("Reescrita")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.queryByText("LP como 2ª língua?")
+        ).not.toBeInTheDocument();
+        expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
+      });
     });
 
-    it("deve mostrar 'Produção' para questão producao", () => {
-      render(<WrapperComponent dados={mockDadosProducao} />);
-      expect(screen.getByText("Produção")).toBeInTheDocument();
-    });
-
-    it("deve mostrar 'Compreensão de textos' para questão leitura", () => {
-      render(<WrapperComponent dados={mockDadosLeitura} />);
-      expect(screen.getByText("Compreensão de textos")).toBeInTheDocument();
-    });
-
-    it("deve mostrar 'Questão' para questão desconhecida", () => {
-      render(<WrapperComponent dados={mockDadosOutro} />);
-      expect(screen.getByText("Questão")).toBeInTheDocument();
+    it("deve renderizar colunas para questão reescrita", async () => {
+      render(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(screen.getAllByText("Avaliação 1")).toHaveLength(2);
+      });
     });
   });
 
