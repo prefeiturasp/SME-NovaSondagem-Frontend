@@ -193,7 +193,6 @@ describe("Conteudo", () => {
 
       fireEvent.click(botaoCancelar);
 
-      // Botão executado sem erros
       expect(botaoCancelar).toBeInTheDocument();
     });
 
@@ -203,7 +202,6 @@ describe("Conteudo", () => {
 
       fireEvent.click(botaoSalvar);
 
-      // Botão executado sem erros
       expect(botaoSalvar).toBeInTheDocument();
     });
   });
