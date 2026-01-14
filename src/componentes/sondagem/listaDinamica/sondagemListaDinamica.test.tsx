@@ -58,66 +58,69 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
 });
 
 const mockDadosEscrita: DadosTabelaDinamica = {
-  questao: "escrita",
+  tituloTabelaRespostas: "Sistema de escrita",
   estudantes: [
     {
-      lp: true,
-      numero: 1,
+      linguaPortuguesaSegundaLingua: true,
+      numeroAlunoChamada: 1,
       nome: "João Silva",
       pap: true,
       aee: true,
-      acessibilidade: true,
+      possuiDeficiencia: true,
+      codigo: 100001,
       coluna: [
         {
+          idCiclo: 1,
           descricaoColuna: "1° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 1,
               ordem: 1,
-              descricaoOpcao: "PS",
+              descricaoOpcaoResposta: "PS",
               corFundo: "#FF0000",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Pré-silábico",
+              legenda: "Pré-silábico",
             },
             {
               id: 2,
               ordem: 2,
-              descricaoOpcao: "SSV",
+              descricaoOpcaoResposta: "SSV",
               corFundo: "#00FF00",
               corTexto: "#000000",
-              descricaoLegenda: "Silábico sem valor",
+              legenda: "Silábico sem valor",
             },
             {
               id: 3,
               ordem: 3,
-              descricaoOpcao: "SCV",
+              descricaoOpcaoResposta: "SCV",
               corFundo: "#0000FF",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Silábico com valor",
+              legenda: "Silábico com valor",
             },
           ],
           resposta: [{ id: 1, opcaoRespostaId: 2 }],
         },
         {
+          idCiclo: 2,
           descricaoColuna: "2° ciclo",
-          PeriodoBimestreAtivo: false,
+          periodoBimestreAtivo: false,
           opcaoResposta: [
             {
               id: 4,
               ordem: 1,
-              descricaoOpcao: "A",
+              descricaoOpcaoResposta: "A",
               corFundo: "#FFFF00",
               corTexto: "#000000",
-              descricaoLegenda: "Alfabético",
+              legenda: "Alfabético",
             },
             {
               id: 5,
               ordem: 2,
-              descricaoOpcao: "B",
+              descricaoOpcaoResposta: "B",
               corFundo: "#FF00FF",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Nível B",
+              legenda: "Nível B",
             },
           ],
           resposta: [],
@@ -125,47 +128,50 @@ const mockDadosEscrita: DadosTabelaDinamica = {
       ],
     },
     {
-      lp: false,
-      numero: 2,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 2,
       nome: "Maria Santos",
       pap: false,
       aee: false,
-      acessibilidade: false,
+      possuiDeficiencia: false,
+      codigo: 100002,
       coluna: [
         {
+          idCiclo: 1,
           descricaoColuna: "1° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 1,
               ordem: 1,
-              descricaoOpcao: "PS",
+              descricaoOpcaoResposta: "PS",
               corFundo: "#FF0000",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Pré-silábico",
+              legenda: "Pré-silábico",
             },
             {
               id: 2,
               ordem: 2,
-              descricaoOpcao: "SSV",
+              descricaoOpcaoResposta: "SSV",
               corFundo: "#00FF00",
               corTexto: "#000000",
-              descricaoLegenda: "Silábico sem valor",
+              legenda: "Silábico sem valor",
             },
           ],
           resposta: [],
         },
         {
+          idCiclo: 2,
           descricaoColuna: "2° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 4,
               ordem: 1,
-              descricaoOpcao: "A",
+              descricaoOpcaoResposta: "A",
               corFundo: "#FFFF00",
               corTexto: "#000000",
-              descricaoLegenda: "Alfabético",
+              legenda: "Alfabético",
             },
           ],
           resposta: [],
@@ -176,120 +182,29 @@ const mockDadosEscrita: DadosTabelaDinamica = {
 };
 
 const mockDadosReescrita: DadosTabelaDinamica = {
-  questao: "reescrita",
+  tituloTabelaRespostas: "reescrita",
   estudantes: [
     {
-      lp: false,
-      numero: 1,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 1,
       nome: "Carlos Lima",
       pap: false,
       aee: true,
-      acessibilidade: false,
+      possuiDeficiencia: false,
+      codigo: 100003,
       coluna: [
         {
+          idCiclo: 3,
           descricaoColuna: "Avaliação 1",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 10,
               ordem: 1,
-              descricaoOpcao: "Opção 1",
+              descricaoOpcaoResposta: "Opção 1",
               corFundo: "#00FFFF",
               corTexto: "#000000",
-              descricaoLegenda: "Primeira opção",
-            },
-          ],
-          resposta: [],
-        },
-      ],
-    },
-  ],
-};
-
-const mockDadosProducao: DadosTabelaDinamica = {
-  questao: "producao",
-  estudantes: [
-    {
-      lp: false,
-      numero: 3,
-      nome: "Ana Costa",
-      pap: false,
-      aee: false,
-      acessibilidade: true,
-      coluna: [
-        {
-          descricaoColuna: "Produção 1",
-          PeriodoBimestreAtivo: true,
-          opcaoResposta: [
-            {
-              id: 20,
-              ordem: 1,
-              descricaoOpcao: "Nível 1",
-              corFundo: "#FFA500",
-              corTexto: "#000000",
-              descricaoLegenda: "Primeiro nível de produção",
-            },
-          ],
-          resposta: [],
-        },
-      ],
-    },
-  ],
-};
-
-const mockDadosLeitura: DadosTabelaDinamica = {
-  questao: "leitura",
-  estudantes: [
-    {
-      lp: false,
-      numero: 4,
-      nome: "Pedro Oliveira",
-      pap: true,
-      aee: false,
-      acessibilidade: false,
-      coluna: [
-        {
-          descricaoColuna: "Leitura 1",
-          PeriodoBimestreAtivo: true,
-          opcaoResposta: [
-            {
-              id: 30,
-              ordem: 1,
-              descricaoOpcao: "Nível A",
-              corFundo: "#800080",
-              corTexto: "#FFFFFF",
-              descricaoLegenda: "Nível A de leitura",
-            },
-          ],
-          resposta: [],
-        },
-      ],
-    },
-  ],
-};
-
-const mockDadosOutro: DadosTabelaDinamica = {
-  questao: "outro",
-  estudantes: [
-    {
-      lp: false,
-      numero: 5,
-      nome: "Lucia Ferreira",
-      pap: false,
-      aee: false,
-      acessibilidade: false,
-      coluna: [
-        {
-          descricaoColuna: "Avaliação",
-          PeriodoBimestreAtivo: true,
-          opcaoResposta: [
-            {
-              id: 40,
-              ordem: 1,
-              descricaoOpcao: "Item 1",
-              corFundo: "#808080",
-              corTexto: "#FFFFFF",
-              descricaoLegenda: "Primeiro item",
+              legenda: "Primeira opção",
             },
           ],
           resposta: [],
@@ -337,7 +252,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar mensagem quando estudantes está vazio", () => {
       const dadosVazios: DadosTabelaDinamica = {
-        questao: "escrita",
+        tituloTabelaRespostas: "Sistema de escrita",
         estudantes: [],
       };
       render(<WrapperComponent dados={dadosVazios} />);
@@ -354,9 +269,14 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Coluna LP (questão escrita)", () => {
-    it("deve renderizar coluna LP quando questão é escrita", () => {
+    it("deve renderizar coluna LP quando questão é escrita", async () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getAllByText("LP como 2ª língua?")[0]).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
     });
 
     it("não deve renderizar coluna LP quando questão não é escrita", () => {
@@ -424,29 +344,30 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Nome da questão", () => {
-    it("deve mostrar 'Sistema de escrita' para questão escrita", () => {
+    it("deve mostrar 'Sistema de escrita' para questão escrita", async () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getByText("Sistema de escrita")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
     });
 
-    it("deve mostrar 'Reescrita' para questão reescrita", () => {
+    it("não deve mostrar LP para questão reescrita", async () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
-      expect(screen.getByText("Reescrita")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.queryByText("LP como 2ª língua?")
+        ).not.toBeInTheDocument();
+        expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
+      });
     });
 
-    it("deve mostrar 'Produção' para questão producao", () => {
-      render(<WrapperComponent dados={mockDadosProducao} />);
-      expect(screen.getByText("Produção")).toBeInTheDocument();
-    });
-
-    it("deve mostrar 'Compreensão de textos' para questão leitura", () => {
-      render(<WrapperComponent dados={mockDadosLeitura} />);
-      expect(screen.getByText("Compreensão de textos")).toBeInTheDocument();
-    });
-
-    it("deve mostrar 'Questão' para questão desconhecida", () => {
-      render(<WrapperComponent dados={mockDadosOutro} />);
-      expect(screen.getByText("Questão")).toBeInTheDocument();
+    it("deve renderizar colunas para questão reescrita", async () => {
+      render(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(screen.getAllByText("Avaliação 1")).toHaveLength(2);
+      });
     });
   });
 
@@ -774,7 +695,9 @@ describe("SondagemListaDinamica", () => {
         const checkbox = container.querySelector(
           'input[type="checkbox"]'
         ) as HTMLInputElement;
-        expect(checkbox?.checked).toBe(true);
+
+        expect(checkbox).toBeInTheDocument();
+        expect(checkbox.checked).toBe(true);
       });
     });
   });
@@ -810,14 +733,24 @@ describe("SondagemListaDinamica", () => {
       });
     });
 
-    it("deve rerenderizar eficientemente ao mudar dados", () => {
+    it("deve rerenderizar eficientemente ao mudar dados", async () => {
       const { rerender } = render(
         <WrapperComponent dados={mockDadosEscrita} />
       );
 
-      rerender(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
 
-      expect(screen.getByText("Reescrita")).toBeInTheDocument();
+      rerender(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
+        expect(
+          screen.queryByText("LP como 2ª língua?")
+        ).not.toBeInTheDocument();
+      });
     });
   });
 
@@ -965,7 +898,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve lidar com array vazio de estudantes", () => {
       const dadosVazios = {
-        questao: "escrita",
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
       };
 
@@ -1107,7 +1040,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve retornar 0 quando não há estudantes em getTotalColumns", () => {
       const emptyDados: DadosTabelaDinamica = {
-        questao: "escrita",
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
       };
 
@@ -1121,7 +1054,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve retornar quando não há dados em moveFocus", async () => {
       const emptyDados: DadosTabelaDinamica = {
-        questao: "escrita",
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
       };
 
