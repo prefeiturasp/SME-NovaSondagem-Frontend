@@ -548,12 +548,12 @@ describe("SondagemListaDinamica", () => {
   describe("Width das colunas", () => {
     it("deve definir width de 40% para coluna estudante quando mostra LP", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getAllByText("Estudante")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Estudantes")[0]).toBeInTheDocument();
     });
 
     it("deve definir width de 50% para coluna estudante quando não mostra LP", () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
-      expect(screen.getAllByText("Estudante")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Estudantes")[0]).toBeInTheDocument();
     });
   });
 
