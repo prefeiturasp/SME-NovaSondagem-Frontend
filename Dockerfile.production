@@ -56,4 +56,4 @@ USER appuser
 EXPOSE 3000
 
 ENTRYPOINT ["/startup.sh"]
-CMD ["serve", "-s", "dist", "-l", "3000", "--no-request-logging"]
+CMD ["serve", "-s", "dist", "-l", "3000", "--cors", "--no-request-logging"]
