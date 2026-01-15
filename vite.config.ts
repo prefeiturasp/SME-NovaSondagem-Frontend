@@ -12,11 +12,11 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    cors: false,
+    cors: true,
   },
   preview: {
     port: 5173,
-    cors: false,
+    cors: true,
   },
   plugins: [
     react(),
