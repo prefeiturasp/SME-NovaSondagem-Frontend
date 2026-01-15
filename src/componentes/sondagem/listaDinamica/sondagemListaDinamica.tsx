@@ -260,7 +260,7 @@ const SondagemListaDinamica: React.FC<
   }
 
   columns.push({
-    title: "Estudante",
+    title: "Estudantes",
     key: "estudante",
     width: mostrarColunaLP ? "40%" : "50%",
     fixed: "left",
