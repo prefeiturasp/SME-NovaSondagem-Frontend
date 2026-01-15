@@ -681,7 +681,8 @@ describe("Conteudo", () => {
         expect(NovaSondagemServico.post).toHaveBeenCalledWith(
           "Sondagem",
           expect.objectContaining({
-            dto: expect.any(Object),
+            sondagemId: expect.any(Number),
+            alunos: expect.any(Array),
           }),
           expect.objectContaining({
             headers: expect.objectContaining({
@@ -779,9 +780,8 @@ describe("Conteudo", () => {
         expect(NovaSondagemServico.post).toHaveBeenCalledWith(
           "Sondagem",
           expect.objectContaining({
-            dto: expect.objectContaining({
-              sondagemId: expect.any(Number),
-            }),
+            sondagemId: expect.any(Number),
+            alunos: expect.any(Array),
           }),
           expect.any(Object)
         );

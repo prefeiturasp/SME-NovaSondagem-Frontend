@@ -225,6 +225,9 @@ const Conteudo: React.FC = () => {
   };
 
   const gerarDados = useCallback(() => {
+    if (!dadosLista?.estudantes?.length) {
+      return [];
+    }
     const dadosFormulario = formListaDinamica.getFieldsValue();
 
     const dadosParaSalvar = dadosLista?.estudantes.map(
@@ -265,10 +268,8 @@ const Conteudo: React.FC = () => {
     const dadosParaSalvar = gerarDados();
 
     const data = {
-      dto: {
-        sondagemId: dadosLista?.sondagemId ?? 0,
-        alunos: dadosParaSalvar,
-      },
+      sondagemId: dadosLista?.sondagemId ?? 0,
+      alunos: dadosParaSalvar,
     };
     console.log("Dados para salvar:", data);
     try {
