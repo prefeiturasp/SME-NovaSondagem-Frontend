@@ -7,5 +7,5 @@ export const getApiUrl = (): string => {
     return import.meta.env.VITE_NOVA_SONDAGEM_API;
   }
 
-  return window.__ENV__!.VITE_NOVA_SONDAGEM_API!;
+  throw new Error("VITE_NOVA_SONDAGEM_API não definida")
 };

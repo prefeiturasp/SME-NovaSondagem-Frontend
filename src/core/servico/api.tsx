@@ -6,7 +6,6 @@ import type {
 } from "axios";
 import { getApiUrl } from "../../config";
 
-export const getBaseURL = () => getApiUrl();
 const baseURL = getApiUrl();
 
 interface TokenResponse {
@@ -20,7 +19,7 @@ interface CustomAxiosInstance extends AxiosInstance {
 let CancelToken = axios.CancelToken.source();
 const TOKEN_KEY = "nova_sondagem_token";
 
-const apiNovaSondagem = axios.create({ baseURL: getApiUrl(), }) as CustomAxiosInstance;
+const apiNovaSondagem = axios.create({ baseURL }) as CustomAxiosInstance;
 
 const autenticar = async (tokenPrincipal: string): Promise<string> => {
   console.log("****TOKENPRINCIPAL*****", tokenPrincipal)
