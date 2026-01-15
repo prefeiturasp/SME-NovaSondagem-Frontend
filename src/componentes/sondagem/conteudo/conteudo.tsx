@@ -277,6 +277,9 @@ const Conteudo: React.FC = () => {
   };
 
   const gerarDados = useCallback(() => {
+    if (!dadosLista?.estudantes?.length) {
+      return [];
+    }
     const dadosFormulario = formListaDinamica.getFieldsValue();
 
     const dadosParaSalvar = dadosLista?.estudantes.map(
