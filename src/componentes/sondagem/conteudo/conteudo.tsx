@@ -8,6 +8,7 @@ import {
   Col,
   message,
   notification,
+  Spin,
 } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
@@ -56,6 +57,7 @@ const Conteudo: React.FC = () => {
   >(null);
 
   const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
@@ -132,17 +134,28 @@ const Conteudo: React.FC = () => {
   const resetando = useCallback(() => {
     formFiltro.resetFields();
     setListaDisciplinas([]);
+    setListaProficiencia([]);
     setDesabilitarDisciplina(true);
     setDesabilitarProficiencia(true);
     setDadosLista(null);
+    setDadosLegenda(null);
+    setDisciplinaSelecionada(null);
+    setProficienciaSelecionada(null);
     setModalidadeAnoValidos(false);
   }, [formFiltro]);
 
   useEffect(() => {
     const executar = async () => {
+      // Limpa os filtros de disciplina e proficiência quando a turma muda
+      formFiltro.resetFields(["disciplinaId", "proficienciaId"]);
+      setDisciplinaSelecionada(null);
+      setProficienciaSelecionada(null);
+      setListaProficiencia([]);
       setDadosLista(null);
+      setDadosLegenda(null);
       setDesabilitarDisciplina(true);
       setDesabilitarProficiencia(true);
+
       if (modalidade && ano) {
         const valido = verificarModalidadeTurma();
         setModalidadeAnoValidos(valido);
@@ -164,6 +177,7 @@ const Conteudo: React.FC = () => {
     verificarModalidadeTurma,
     obterDisciplinas,
     resetando,
+    formFiltro,
   ]);
 
   const onChangeDisciplinas = async (disciplinaId: number) => {
@@ -179,12 +193,30 @@ const Conteudo: React.FC = () => {
   const onChangeProficiencia = async (proficienciaId: number) => {
     if (proficienciaId && disciplinaSelecionada) {
       setProficienciaSelecionada(proficienciaId);
-      await buscarDadosListaDoBancoDeDados(
-        disciplinaSelecionada,
-        proficienciaId
-      );
     }
   };
+
+  useEffect(() => {
+    const executarBusca = async () => {
+      // Só busca se disciplina E proficiência estiverem selecionadas
+      if (
+        proficienciaSelecionada &&
+        disciplinaSelecionada &&
+        turma !== 0 &&
+        modalidade &&
+        ano
+      ) {
+        setLoading(true);
+        await buscarDadosListaDoBancoDeDados(
+          disciplinaSelecionada,
+          proficienciaSelecionada
+        );
+        setLoading(false);
+      }
+    };
+
+    executarBusca();
+  }, [disciplinaSelecionada, proficienciaSelecionada]);
 
   const buscarDadosListaDoBancoDeDados = async (
     componenteCurricularId?: number,
@@ -218,9 +250,29 @@ const Conteudo: React.FC = () => {
       setDadosLegenda(dadosLegenda);
       setDadosLista(resposta.data);
     } catch (error: any) {
-      console.error("Erro ao buscar dados da lista 2:", error);
       console.error("Erro ao buscar dados da lista:", error);
-      message.error("Erro ao carregar dados da sondagem. Tente novamente.");
+      console.log("Status do erro:", error.response?.status);
+      console.log("Error code:", error.code);
+
+      if (error.response?.status === 404) {
+        notification.warning({
+          message: "Questões não encontradas",
+          description:
+            "Por favor, cadastre as questões para esta turma antes de continuar.",
+          duration: 5,
+          placement: "topRight",
+        });
+      } else if (error.code === "ERR_NETWORK" || !error.response) {
+        notification.error({
+          message: "Erro de conexão",
+          description:
+            "Não foi possível conectar ao servidor. Verifique sua conexão ou tente novamente mais tarde.",
+          duration: 5,
+          placement: "topRight",
+        });
+      } else {
+        message.error("Erro ao carregar dados da sondagem. Tente novamente.");
+      }
     }
   };
 
@@ -436,10 +488,12 @@ const Conteudo: React.FC = () => {
             </Row>
           </Form>
         </div>
-        <SondagemListaDinamica
-          dados={dadosLista}
-          formListaDinamica={formListaDinamica}
-        />
+        <Spin spinning={loading} tip="Carregando dados...">
+          <SondagemListaDinamica
+            dados={dadosLista}
+            formListaDinamica={formListaDinamica}
+          />
+        </Spin>
         <Legendas data={dadosLegenda || []} />
 
         <Auditoria

@@ -3,8 +3,24 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import Conteudo from "./conteudo";
+import NovaSondagemServico from "../../../core/servico/servico";
+import { message, notification } from "antd";
 
 jest.mock("../../../core/servico/servico");
+jest.mock("antd", () => {
+  const actual = jest.requireActual("antd");
+  return {
+    ...actual,
+    message: {
+      success: jest.fn(),
+      error: jest.fn(),
+    },
+    notification: {
+      error: jest.fn(),
+      warning: jest.fn(),
+    },
+  };
+});
 
 // Constantes
 const MENSAGENS = {
@@ -20,6 +36,49 @@ const BOTOES = {
   VOLTAR: "Voltar para a tela anterior",
   CANCELAR: "Cancelar",
   SALVAR: "Salvar",
+};
+
+// Mock de dados
+const mockDisciplinas = [
+  { id: 1, nome: "Português" },
+  { id: 2, nome: "Matemática" },
+];
+
+const mockProficiencias = [
+  { id: 1, nome: "Escrita" },
+  { id: 2, nome: "Leitura" },
+];
+
+const mockQuestionario = {
+  sondagemId: 1,
+  questaoId: 10,
+  estudantes: [
+    {
+      codigo: "123456",
+      numeroAlunoChamada: 1,
+      nome: "João Silva",
+      linguaPortuguesaSegundaLingua: false,
+      coluna: [
+        {
+          idCiclo: 1,
+          opcaoResposta: [
+            {
+              id: 1,
+              legenda: "A",
+              descricaoOpcaoResposta: "Acertou",
+              corFundo: "#00FF00",
+            },
+            {
+              id: 2,
+              legenda: "E",
+              descricaoOpcaoResposta: "Errou",
+              corFundo: "#FF0000",
+            },
+          ],
+        },
+      ],
+    },
+  ],
 };
 
 // Factory functions para turmas
@@ -43,6 +102,12 @@ describe("Conteudo", () => {
   afterAll(() => {
     console.error = originalError;
     console.log = originalLog;
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (NovaSondagemServico.get as jest.Mock).mockReset();
+    (NovaSondagemServico.post as jest.Mock).mockReset();
   });
 
   const createMockStoreWithUser = (usuario: any) => {
@@ -76,6 +141,11 @@ describe("Conteudo", () => {
       renderWithProvider(<Conteudo />);
       expect(screen.getByText(MENSAGENS.INSTRUCAO)).toBeInTheDocument();
     });
+
+    it("deve renderizar componente SondagemListaDinamica", () => {
+      renderWithProvider(<Conteudo />);
+      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
+    });
   });
 
   describe("Alertas de validação", () => {
@@ -88,11 +158,17 @@ describe("Conteudo", () => {
       expect(screen.getByText(MENSAGENS.SEM_TURMA)).toBeInTheDocument();
     });
 
-    it("não deve exibir alerta quando turma está selecionada", () => {
+    it("não deve exibir alerta quando turma está selecionada e modalidade válida", () => {
       const store = createMockStoreWithUser({
         logado: true,
+        token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
+
+      (NovaSondagemServico.get as jest.Mock).mockResolvedValue({
+        data: mockDisciplinas,
+      });
+
       renderWithProvider(<Conteudo />, store);
       expect(screen.queryByText(MENSAGENS.SEM_TURMA)).not.toBeInTheDocument();
     });
@@ -111,16 +187,21 @@ describe("Conteudo", () => {
 
   describe("Validação de modalidades válidas", () => {
     const casosValidos = [
-      { modalidade: 3, ano: "1", descricao: "Educação Infantil ano 1" },
-      { modalidade: 5, ano: "1", descricao: "Fundamental ano 1" },
-      { modalidade: 5, ano: "2", descricao: "Fundamental ano 2" },
-      { modalidade: 5, ano: "3", descricao: "Fundamental ano 3" },
+      { modalidade: "3", ano: "1", descricao: "Educação Infantil ano 1" },
+      { modalidade: "5", ano: "1", descricao: "Fundamental ano 1" },
+      { modalidade: "5", ano: "2", descricao: "Fundamental ano 2" },
+      { modalidade: "5", ano: "3", descricao: "Fundamental ano 3" },
     ];
 
     casosValidos.forEach(({ modalidade, ano, descricao }) => {
       it(`não deve exibir alerta para ${descricao}`, async () => {
+        (NovaSondagemServico.get as jest.Mock).mockResolvedValue({
+          data: mockDisciplinas,
+        });
+
         const store = createMockStoreWithUser({
           logado: true,
+          token: "mock-token",
           turmaSelecionada: criarTurma({ modalidade, ano, turma: "1A", id: 1 }),
         });
         renderWithProvider(<Conteudo />, store);
@@ -172,13 +253,12 @@ describe("Conteudo", () => {
       expect(screen.getByText(BOTOES.SALVAR)).toBeInTheDocument();
     });
 
-    it("deve chamar voltarSondagem ao clicar em Voltar", () => {
+    it("deve navegar para home ao clicar em Voltar", () => {
       const { container } = renderWithProvider(<Conteudo />);
       const botaoVoltar = container.querySelector(
         "#sondagem-button-voltar"
       ) as HTMLButtonElement;
 
-      // Mockar globalThis.location.href
       delete (globalThis as any).location;
       (globalThis as any).location = { href: "" };
 
@@ -187,22 +267,31 @@ describe("Conteudo", () => {
       expect((globalThis as any).location.href).toBe("/");
     });
 
-    it("deve chamar CancelarCadastroSondagem ao clicar em Cancelar", () => {
-      renderWithProvider(<Conteudo />);
-      const botaoCancelar = screen.getByText(BOTOES.CANCELAR);
+    it("deve recarregar dados ao clicar em Cancelar com disciplina e proficiência selecionadas", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
 
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const botaoCancelar = screen.getByText(BOTOES.CANCELAR);
       fireEvent.click(botaoCancelar);
 
       expect(botaoCancelar).toBeInTheDocument();
-    });
-
-    it("deve chamar salvarDadosSondagem ao clicar em Salvar", () => {
-      renderWithProvider(<Conteudo />);
-      const botaoSalvar = screen.getByText(BOTOES.SALVAR);
-
-      fireEvent.click(botaoSalvar);
-
-      expect(botaoSalvar).toBeInTheDocument();
     });
   });
   describe("Formulário de filtros", () => {
@@ -228,417 +317,410 @@ describe("Conteudo", () => {
       expect(selects.length).toBeGreaterThan(0);
     });
 
-    it("deve habilitar selects quando turma é válida", async () => {
+    it("deve carregar disciplinas quando turma é válida", async () => {
+      (NovaSondagemServico.get as jest.Mock).mockResolvedValue({
+        data: mockDisciplinas,
+      });
+
       const store = createMockStoreWithUser({
         logado: true,
+        token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
       renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(MENSAGENS.COMPONENTE_CURRICULAR)
-        ).toBeInTheDocument();
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.objectContaining({
+            headers: { "X-Token-Principal": "mock-token" },
+          })
+        );
       });
     });
 
-    it("deve carregar opções ao selecionar turma válida", async () => {
+    it("deve tratar erro ao carregar disciplinas", async () => {
+      (NovaSondagemServico.get as jest.Mock).mockRejectedValue(
+        new Error("Erro ao buscar")
+      );
+
       const store = createMockStoreWithUser({
         logado: true,
+        token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
+
       renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(MENSAGENS.COMPONENTE_CURRICULAR)
-        ).toBeInTheDocument();
+        expect(message.error).toHaveBeenCalledWith(
+          "Erro ao carregar dados da disciplina."
+        );
       });
     });
-  });
 
-  describe("Comportamento de estados", () => {
-    it("deve inicializar com dados lista como null", () => {
-      renderWithProvider(<Conteudo />);
-      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
-    });
+    it("deve carregar proficiências ao selecionar disciplina", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias });
 
-    it("deve resetar campos quando modalidade muda para inválida", async () => {
       const store = createMockStoreWithUser({
         logado: true,
-        turmaSelecionada: criarTurma({ modalidade: "3", ano: "5" }),
-      });
-      renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA)
-        ).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe("Renderização do SondagemListaDinamica", () => {
-    it("deve renderizar componente SondagemListaDinamica", () => {
-      renderWithProvider(<Conteudo />);
-      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
-    });
-  });
-
-  describe("Mudança de disciplina e proficiência", () => {
-    it("deve executar onChangeDisciplinas quando disciplina é selecionada", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
+        token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
+
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        const selects = container.querySelectorAll(".ant-select-selector");
-        expect(selects.length).toBeGreaterThan(0);
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
       });
 
-      const disciplinaSelect = container.querySelector('[id*="disciplinaId"]');
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+
+        await waitFor(() => {
+          expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+            "/Proficiencia/componente-curricular/1",
+            expect.objectContaining({
+              headers: { "X-Token-Principal": "mock-token" },
+            })
+          );
+        });
+      }
+    });
+
+    it("deve tratar erro ao carregar proficiências", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockRejectedValueOnce(new Error("Erro ao buscar proficiências"));
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+
+        await waitFor(() => {
+          expect(message.error).toHaveBeenCalledWith(
+            "Erro ao carregar dados da proficiencia."
+          );
+        });
+      }
+    });
+  });
+
+  describe("Busca de questionário", () => {
+    it("deve buscar questionário quando disciplina e proficiência são selecionadas", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
+      });
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.objectContaining({
+            params: expect.objectContaining({
+              TurmaId: "1A",
+              ProficienciaId: 1,
+              ComponenteCurricularId: 1,
+              Modalidade: "3",
+              Ano: "1",
+            }),
+          })
+        );
+      });
+    });
+
+    it("deve exibir notificação de warning para erro 404", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockRejectedValueOnce({
+          response: { status: 404 },
+        });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
       if (disciplinaSelect) {
         fireEvent.mouseDown(disciplinaSelect);
         await waitFor(() => {
-          const options = document.querySelectorAll(".ant-select-item");
-          if (options.length > 0) {
-            fireEvent.click(options[0]);
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
           }
         });
       }
-    });
-
-    it("deve executar onChangeProficiencia com proficienciaId 1 (Escrita)", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: criarTurma(),
-      });
-      const { container } = renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const selects = container.querySelectorAll(".ant-select-selector");
-        expect(selects.length).toBeGreaterThan(0);
-      });
 
       const proficienciaSelect = container.querySelector(
-        '[id*="proficienciaId"]'
+        "#sondagem-select-proficiencia"
       );
+
       if (proficienciaSelect) {
         fireEvent.mouseDown(proficienciaSelect);
         await waitFor(() => {
-          const options = document.querySelectorAll(".ant-select-item");
-          if (options.length > 0) {
-            fireEvent.click(options[0]);
+          const option = document.querySelector(
+            '[title="Escrita"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
           }
         });
       }
-    });
-
-    it("deve executar onChangeProficiencia com proficienciaId 2 (Leitura)", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: criarTurma(),
-      });
-      const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        const selects = container.querySelectorAll(".ant-select-selector");
-        expect(selects.length).toBeGreaterThan(0);
-      });
-
-      const proficienciaSelect = container.querySelector(
-        '[id*="proficienciaId"]'
-      );
-      if (proficienciaSelect) {
-        fireEvent.mouseDown(proficienciaSelect);
-        await waitFor(
-          () => {
-            const options = document.querySelectorAll(".ant-select-item");
-            if (options.length > 1) {
-              fireEvent.click(options[1]);
-            }
-          },
-          { timeout: 3000 }
+        expect(notification.warning).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: "Questões não encontradas",
+          })
         );
-      }
-    });
-
-    it("deve chamar salvarDadosSondagem ao clicar no botão Salvar", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: criarTurma(),
-      });
-      renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
       });
     });
 
-    it("deve processar dados do formulário ao salvar", async () => {
+    it("deve exibir notificação de erro para problema de rede", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockRejectedValueOnce({
+          code: "ERR_NETWORK",
+        });
+
       const store = createMockStoreWithUser({
         logado: true,
+        token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
+
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
       });
 
-      expect(container).toBeInTheDocument();
-    });
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
 
-    it("deve executar onChangeDisciplinas com valor null", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: criarTurma(),
-      });
-      const { container } = renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const selects = container.querySelectorAll(".ant-select-selector");
-        expect(selects.length).toBeGreaterThan(0);
-      });
-
-      const disciplinaSelect = container.querySelector('[id*="disciplinaId"]');
       if (disciplinaSelect) {
         fireEvent.mouseDown(disciplinaSelect);
         await waitFor(() => {
-          const clearButton = document.querySelector(".ant-select-clear");
-          if (clearButton) {
-            fireEvent.click(clearButton);
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
           }
         });
       }
-    });
-
-    it("deve executar onChangeProficiencia com valor null", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: criarTurma(),
-      });
-      const { container } = renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const selects = container.querySelectorAll(".ant-select-selector");
-        expect(selects.length).toBeGreaterThan(0);
-      });
 
       const proficienciaSelect = container.querySelector(
-        '[id*="proficienciaId"]'
+        "#sondagem-select-proficiencia"
       );
+
       if (proficienciaSelect) {
         fireEvent.mouseDown(proficienciaSelect);
         await waitFor(() => {
-          const clearButton = document.querySelector(".ant-select-clear");
-          if (clearButton) {
-            fireEvent.click(clearButton);
+          const option = document.querySelector(
+            '[title="Escrita"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
           }
         });
       }
-    });
-
-    it("deve executar onChangeProficiencia com valor inválido", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: criarTurma(),
-      });
-      renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
-      });
-    });
-
-    it("deve setar lista de proficiencia vazia quando data não existe", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: criarTurma(),
-      });
-      const { container } = renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const selects = container.querySelectorAll(".ant-select-selector");
-        expect(selects.length).toBeGreaterThan(0);
-      });
-    });
-
-    it("deve processar dados de formulário com valores nulos ao salvar", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        turmaSelecionada: criarTurma(),
-      });
-      const { container } = renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const proficienciaSelect = container.querySelector(
-          '[id*="proficienciaId"]'
+        expect(notification.error).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: "Erro de conexão",
+          })
         );
-        if (proficienciaSelect) {
-          fireEvent.mouseDown(proficienciaSelect);
-        }
       });
-
-      await waitFor(() => {
-        const options = document.querySelectorAll(".ant-select-item");
-        if (options.length > 0) {
-          fireEvent.click(options[0]);
-        }
-      });
-
-      await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
-      });
-
-      expect(container).toBeInTheDocument();
     });
 
-    it("deve capturar erro em buscarDadosLista2", async () => {
+    it("deve exibir message error para erros genéricos", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockRejectedValueOnce({
+          response: { status: 500 },
+        });
+
       const store = createMockStoreWithUser({
         logado: true,
+        token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
+
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        const proficienciaSelect = container.querySelector(
-          '[id*="proficienciaId"]'
-        );
-        if (proficienciaSelect) {
-          fireEvent.mouseDown(proficienciaSelect);
-        }
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
       });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
 
       await waitFor(() => {
-        const options = document.querySelectorAll(".ant-select-item");
-        if (options.length > 1) {
-          fireEvent.click(options[1]);
-        }
+        expect(message.error).toHaveBeenCalledWith(
+          "Erro ao carregar dados da sondagem. Tente novamente."
+        );
       });
-
-      expect(container).toBeInTheDocument();
     });
   });
 
-  describe("Método gerarDados", () => {
-    it("deve gerar dados corretamente com valores do formulário", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        token: "mock-token",
-        turmaSelecionada: criarTurma(),
-      });
-      renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
-      });
-
-      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
-    });
-
-    it("deve usar valores padrão quando formulário não tem valores", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        token: "mock-token",
-        turmaSelecionada: criarTurma(),
-      });
-      renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
-      });
-
-      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
-    });
-
-    it("deve gerar respostas com estrutura correta", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        token: "mock-token",
-        turmaSelecionada: criarTurma(),
-      });
-      renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
-      });
-
-      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
-    });
-
-    it("deve incluir propriedades corretas do estudante", async () => {
-      const store = createMockStoreWithUser({
-        logado: true,
-        token: "mock-token",
-        turmaSelecionada: criarTurma(),
-      });
-      renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
-      });
-
-      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
-    });
-  });
-
-  describe("Método salvarDadosSondagem atualizado", () => {
-    const NovaSondagemServico =
-      require("../../../core/servico/servico").default;
-
-    beforeEach(() => {
-      NovaSondagemServico.post = jest.fn();
-    });
-
+  describe("Método salvarDadosSondagem", () => {
     it("deve exibir mensagem de sucesso quando retornar status 200", async () => {
-      NovaSondagemServico.post.mockResolvedValue({ status: 200 });
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
 
-      const store = createMockStoreWithUser({
-        logado: true,
-        token: "mock-token",
-        turmaSelecionada: criarTurma(),
-      });
-      renderWithProvider(<Conteudo />, store);
-
-      await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
-        }
-      });
-
-      await waitFor(() => {
-        expect(NovaSondagemServico.post).toHaveBeenCalled();
-      });
-    });
-
-    it("deve exibir mensagem de erro quando falhar", async () => {
-      NovaSondagemServico.post.mockRejectedValue({
-        response: { data: { message: "Erro ao salvar" } },
+      (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
+        status: 200,
       });
 
       const store = createMockStoreWithUser({
@@ -646,30 +728,63 @@ describe("Conteudo", () => {
         token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
-      renderWithProvider(<Conteudo />, store);
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      // Aguarda carregar disciplinas
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      // Seleciona disciplina
+      const selectDisciplina = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+      if (selectDisciplina) {
+        fireEvent.mouseDown(selectDisciplina);
+      }
 
       await waitFor(() => {
-        const salvarButton = screen.queryByText(BOTOES.SALVAR);
-        if (salvarButton) {
-          fireEvent.click(salvarButton);
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
         }
       });
 
+      // Aguarda carregar proficiências
       await waitFor(() => {
-        expect(NovaSondagemServico.post).toHaveBeenCalled();
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
       });
-    });
 
-    it("deve usar token do usuário no header", async () => {
-      NovaSondagemServico.post.mockResolvedValue({ status: 200 });
+      // Seleciona proficiência
+      const selectProficiencia = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+      if (selectProficiencia) {
+        fireEvent.mouseDown(selectProficiencia);
+      }
 
-      const store = createMockStoreWithUser({
-        logado: true,
-        token: "test-token-123",
-        turmaSelecionada: criarTurma(),
+      await waitFor(() => {
+        const option = screen.queryByText("Leitura") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
       });
-      renderWithProvider(<Conteudo />, store);
 
+      // Aguarda carregar questionário
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object)
+        );
+      });
+
+      // Clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -685,17 +800,32 @@ describe("Conteudo", () => {
             alunos: expect.any(Array),
           }),
           expect.objectContaining({
-            headers: expect.objectContaining({
-              "X-Token-Principal": "test-token-123",
-            }),
+            headers: {
+              "X-Token-Principal": "mock-token",
+            },
           })
+        );
+      });
+
+      await waitFor(() => {
+        expect(message.success).toHaveBeenCalledWith(
+          "Sondagem salva com sucesso!"
         );
       });
     });
 
-    it("deve exibir mensagem de erro genérica quando não há message na resposta", async () => {
-      NovaSondagemServico.post.mockRejectedValue({
-        response: {},
+    it("deve exibir mensagem de erro quando falhar", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
+
+      (NovaSondagemServico.post as jest.Mock).mockRejectedValue({
+        response: {
+          data: {
+            message: "Erro ao salvar",
+          },
+        },
       });
 
       const store = createMockStoreWithUser({
@@ -703,8 +833,59 @@ describe("Conteudo", () => {
         token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
-      renderWithProvider(<Conteudo />, store);
+      const { container } = renderWithProvider(<Conteudo />, store);
 
+      // Carrega dados primeiro
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const selectDisciplina = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+      if (selectDisciplina) {
+        fireEvent.mouseDown(selectDisciplina);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
+      });
+
+      const selectProficiencia = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+      if (selectProficiencia) {
+        fireEvent.mouseDown(selectProficiencia);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Leitura") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object)
+        );
+      });
+
+      // Agora clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -713,20 +894,190 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.post).toHaveBeenCalled();
+        expect(notification.error).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: "Erro ao salvar sondagem",
+            description: "Erro ao salvar",
+          })
+        );
+      });
+    });
+
+    it("deve usar token do usuário no header", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
+
+      (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
+        status: 200,
+      });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "test-token-123",
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      // Carrega dados primeiro
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const selectDisciplina = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+      if (selectDisciplina) {
+        fireEvent.mouseDown(selectDisciplina);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
+      });
+
+      const selectProficiencia = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+      if (selectProficiencia) {
+        fireEvent.mouseDown(selectProficiencia);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Leitura") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object)
+        );
+      });
+
+      // Agora clica em salvar
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.post).toHaveBeenCalledWith(
+          "Sondagem",
+          expect.any(Object),
+          expect.objectContaining({
+            headers: {
+              "X-Token-Principal": "test-token-123",
+            },
+          })
+        );
+      });
+    });
+
+    it("deve exibir mensagem de erro genérica quando não há message na resposta", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
+
+      (NovaSondagemServico.post as jest.Mock).mockRejectedValue({
+        response: {},
+      });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      // Carrega dados primeiro
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const selectDisciplina = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+      if (selectDisciplina) {
+        fireEvent.mouseDown(selectDisciplina);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
+      });
+
+      const selectProficiencia = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+      if (selectProficiencia) {
+        fireEvent.mouseDown(selectProficiencia);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Leitura") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object)
+        );
+      });
+
+      // Agora clica em salvar
+      await waitFor(() => {
+        const salvarButton = screen.queryByText(BOTOES.SALVAR);
+        if (salvarButton) {
+          fireEvent.click(salvarButton);
+        }
+      });
+
+      await waitFor(() => {
+        expect(notification.error).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: "Erro ao salvar sondagem",
+            description: "Erro ao salvar a sondagem. Tente novamente.",
+          })
+        );
       });
     });
 
     it("deve exibir notification com detalhes de erros de validação", async () => {
-      const mockNotification = jest.fn();
-      jest.mock("antd", () => ({
-        ...jest.requireActual("antd"),
-        notification: {
-          error: mockNotification,
-        },
-      }));
-
-      NovaSondagemServico.post.mockRejectedValue({
+      (NovaSondagemServico.post as jest.Mock).mockRejectedValue({
         response: {
           data: {
             title: "Erro de validação",
@@ -745,8 +1096,64 @@ describe("Conteudo", () => {
         token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
-      renderWithProvider(<Conteudo />, store);
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
 
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      // Carrega dados primeiro
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const selectDisciplina = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+      if (selectDisciplina) {
+        fireEvent.mouseDown(selectDisciplina);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
+      });
+
+      const selectProficiencia = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+      if (selectProficiencia) {
+        fireEvent.mouseDown(selectProficiencia);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Leitura") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object)
+        );
+      });
+
+      // Agora clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -755,20 +1162,83 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.post).toHaveBeenCalled();
+        expect(notification.error).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: "Erro ao salvar sondagem",
+            description: expect.stringContaining("dto"),
+          })
+        );
       });
     });
 
     it("deve enviar sondagemId do dadosLista", async () => {
-      NovaSondagemServico.post.mockResolvedValue({ status: 200 });
+      (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
+        status: 200,
+      });
 
       const store = createMockStoreWithUser({
         logado: true,
         token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
-      renderWithProvider(<Conteudo />, store);
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
 
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      // Carrega dados primeiro
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const selectDisciplina = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+      if (selectDisciplina) {
+        fireEvent.mouseDown(selectDisciplina);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
+      });
+
+      const selectProficiencia = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+      if (selectProficiencia) {
+        fireEvent.mouseDown(selectProficiencia);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Leitura") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object)
+        );
+      });
+
+      // Agora clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -781,23 +1251,84 @@ describe("Conteudo", () => {
           "Sondagem",
           expect.objectContaining({
             sondagemId: expect.any(Number),
-            alunos: expect.any(Array),
           }),
           expect.any(Object)
         );
       });
     });
 
-    it("deve garantir que questaoId seja sempre número inteiro", async () => {
-      NovaSondagemServico.post.mockResolvedValue({ status: 200 });
+    it("deve garantir que alunos sejam incluídos no payload", async () => {
+      (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
+        status: 200,
+      });
 
       const store = createMockStoreWithUser({
         logado: true,
         token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
-      renderWithProvider(<Conteudo />, store);
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
 
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      // Aguarda carregar disciplinas
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      // Seleciona disciplina
+      const selectDisciplina = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+      if (selectDisciplina) {
+        fireEvent.mouseDown(selectDisciplina);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      // Aguarda carregar proficiências
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
+      });
+
+      // Seleciona proficiência
+      const selectProficiencia = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+      if (selectProficiencia) {
+        fireEvent.mouseDown(selectProficiencia);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Leitura") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      // Aguarda carregar questionário
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object)
+        );
+      });
+
+      // Clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -806,8 +1337,362 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.post).toHaveBeenCalled();
+        expect(NovaSondagemServico.post).toHaveBeenCalledWith(
+          "Sondagem",
+          expect.objectContaining({
+            alunos: expect.any(Array),
+          }),
+          expect.any(Object)
+        );
       });
+    });
+  });
+
+  describe("Comportamento de estados e reset", () => {
+    it("deve inicializar com dados lista como null", () => {
+      renderWithProvider(<Conteudo />);
+      expect(screen.getByText(MENSAGENS.TITULO)).toBeInTheDocument();
+    });
+
+    it("deve resetar MENSAGENS quando modalidade muda para inválida", async () => {
+      const store = createMockStoreWithUser({
+        logado: true,
+        turmaSelecionada: criarTurma({ modalidade: "3", ano: "5" }),
+      });
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA)
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("deve resetar proficiência ao mudar disciplina", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object)
+        );
+      });
+    });
+
+    it("deve limpar dados ao desabilitar disciplina", async () => {
+      (NovaSondagemServico.get as jest.Mock).mockResolvedValue({
+        data: [],
+      });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe("Limpeza de filtros ao mudar turma", () => {
+    it("deve limpar disciplina e proficiência quando turma mudar", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias });
+
+      const initialStore = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma({ turma: "1A", id: 1 }),
+      });
+
+      const { rerender, container } = renderWithProvider(
+        <Conteudo />,
+        initialStore
+      );
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      // Muda a turma
+      (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({
+        data: mockDisciplinas,
+      });
+
+      const newStore = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma({ turma: "2B", id: 2 }),
+      });
+
+      rerender(
+        <Provider store={newStore}>
+          <Conteudo />
+        </Provider>
+      );
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledTimes(3);
+      });
+    });
+
+    it("deve carregar nova lista de disciplinas ao mudar turma", async () => {
+      (NovaSondagemServico.get as jest.Mock).mockResolvedValue({
+        data: mockDisciplinas,
+      });
+
+      const initialStore = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma({ turma: "1A", id: 1 }),
+      });
+
+      const { rerender } = renderWithProvider(<Conteudo />, initialStore);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const newStore = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma({ turma: "2B", id: 2 }),
+      });
+
+      rerender(
+        <Provider store={newStore}>
+          <Conteudo />
+        </Provider>
+      );
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    it("não deve buscar questionário automaticamente ao mudar turma", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockDisciplinas });
+
+      const initialStore = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma({ turma: "1A", id: 1 }),
+      });
+
+      const { rerender } = renderWithProvider(<Conteudo />, initialStore);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const newStore = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma({ turma: "2B", id: 2 }),
+      });
+
+      rerender(
+        <Provider store={newStore}>
+          <Conteudo />
+        </Provider>
+      );
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).not.toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object)
+        );
+      });
+    });
+  });
+
+  describe("Busca de dados somente após seleção completa", () => {
+    it("deve buscar dados apenas quando disciplina E proficiência estiverem selecionadas", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      // Seleciona disciplina - NÃO deve buscar questionário ainda
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      // Verifica que o questionário NÃO foi buscado ainda
+      await waitFor(() => {
+        const questionarioCalls = (
+          NovaSondagemServico.get as jest.Mock
+        ).mock.calls.filter((call) => call[0] === "/Questionario");
+        expect(questionarioCalls.length).toBe(0);
+      });
+
+      // Seleciona proficiência - AGORA deve buscar questionário
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia"
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      // Agora sim, deve ter buscado o questionário
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.objectContaining({
+            params: expect.objectContaining({
+              TurmaId: "1A",
+              ComponenteCurricularId: 1,
+              ProficienciaId: 1,
+            }),
+          })
+        );
+      });
+    });
+
+    it("não deve buscar dados se apenas disciplina estiver selecionada", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object)
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular"
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]'
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      // Aguarda um pouco para garantir que não foi feita nenhuma chamada
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Verifica que o questionário NÃO foi buscado
+      const questionarioCalls = (
+        NovaSondagemServico.get as jest.Mock
+      ).mock.calls.filter((call) => call[0] === "/Questionario");
+      expect(questionarioCalls.length).toBe(0);
     });
   });
 });
