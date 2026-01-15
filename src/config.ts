@@ -1,17 +1,11 @@
-declare global {
-  interface Window {
-    __ENV__?: {
-      VITE_NOVA_SONDAGEM_API?: string;
-    };
-  }
-}
-
 export const getApiUrl = (): string => {
-  const api = window.__ENV__?.VITE_NOVA_SONDAGEM_API;
-
-  if (!api) {
-    throw new Error("VITE_NOVA_SONDAGEM_API não definida em env.js");
+  if ((window as any).__ENV__?.VITE_NOVA_SONDAGEM_API) {
+    return (window as any).__ENV__.VITE_NOVA_SONDAGEM_API;
   }
 
-  return api;
+  if (import.meta.env.VITE_NOVA_SONDAGEM_API) {
+    return import.meta.env.VITE_NOVA_SONDAGEM_API;
+  }
+
+  return "http://localhost:3000";
 };
