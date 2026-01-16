@@ -330,7 +330,13 @@ const Conteudo: React.FC = () => {
       });
 
       if (resposta.status === 200) {
-        message.success("Sondagem salva com sucesso!");
+        notification.success({
+          message: "Sondagem salva com sucesso!",
+          description:
+            "Os dados da sondagem foram salvos e estão disponíveis para consulta.",
+          duration: 5,
+          placement: "topRight",
+        });
       }
     } catch (error: any) {
       console.error("ERRO:", error);

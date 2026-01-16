@@ -16,6 +16,7 @@ jest.mock("antd", () => {
       error: jest.fn(),
     },
     notification: {
+      success: jest.fn(),
       error: jest.fn(),
       warning: jest.fn(),
     },
@@ -808,9 +809,13 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(message.success).toHaveBeenCalledWith(
-          "Sondagem salva com sucesso!"
-        );
+        expect(notification.success).toHaveBeenCalledWith({
+          message: "Sondagem salva com sucesso!",
+          description:
+            "Os dados da sondagem foram salvos e estão disponíveis para consulta.",
+          duration: 5,
+          placement: "topRight",
+        });
       });
     });
 
