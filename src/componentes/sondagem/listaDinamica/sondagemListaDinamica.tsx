@@ -132,10 +132,10 @@ const SondagemListaDinamica: React.FC<
           estudante.linguaPortuguesaSegundaLingua;
 
         estudante.coluna.forEach((coluna, colunaIndex) => {
-          const respostaSelecionada = coluna.resposta?.[0];
+          const respostaSelecionada = coluna.resposta;
 
           initialValues[`resposta_${estudanteIndex}_${colunaIndex}`] =
-            respostaSelecionada
+            respostaSelecionada && respostaSelecionada.opcaoRespostaId !== 0
               ? respostaSelecionada.opcaoRespostaId
               : undefined;
 

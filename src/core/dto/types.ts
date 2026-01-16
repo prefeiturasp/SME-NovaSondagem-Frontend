@@ -17,7 +17,7 @@ export interface Coluna {
   descricaoColuna: string;
   periodoBimestreAtivo: boolean;
   opcaoResposta: OpcaoResposta[];
-  resposta: Resposta[];
+  resposta: Resposta;
 }
 
 export interface Estudante {

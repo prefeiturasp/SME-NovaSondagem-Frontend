@@ -100,7 +100,7 @@ const mockDadosEscrita: DadosTabelaDinamica = {
               legenda: "Silábico com valor",
             },
           ],
-          resposta: [{ id: 1, opcaoRespostaId: 2 }],
+          resposta: { id: 1, opcaoRespostaId: 2 },
         },
         {
           idCiclo: 2,
@@ -124,7 +124,7 @@ const mockDadosEscrita: DadosTabelaDinamica = {
               legenda: "Nível B",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
         },
       ],
     },
@@ -159,7 +159,7 @@ const mockDadosEscrita: DadosTabelaDinamica = {
               legenda: "Silábico sem valor",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
         },
         {
           idCiclo: 2,
@@ -175,7 +175,7 @@ const mockDadosEscrita: DadosTabelaDinamica = {
               legenda: "Alfabético",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
         },
       ],
     },
@@ -210,7 +210,7 @@ const mockDadosReescrita: DadosTabelaDinamica = {
               legenda: "Primeira opção",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
         },
       ],
     },
@@ -1196,6 +1196,144 @@ describe("SondagemListaDinamica", () => {
       fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
 
       expect(select).toBeInTheDocument();
+    });
+  });
+
+  describe("Carregamento de respostas salvas", () => {
+    it("deve renderizar select quando opcaoRespostaId é válido", async () => {
+      const dadosComResposta: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 123, opcaoRespostaId: 2 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComResposta} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve renderizar select quando opcaoRespostaId é 0", async () => {
+      const dadosComRespostaZero: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 0, opcaoRespostaId: 0 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComRespostaZero} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve tratar resposta como objeto direto", async () => {
+      const dadosComResposta: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 456, opcaoRespostaId: 1 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComResposta} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve renderizar múltiplos selects corretamente", async () => {
+      const dadosComMultiplasRespostas: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 101, opcaoRespostaId: 1 },
+              },
+            ],
+          },
+          {
+            ...mockDadosEscrita.estudantes[1],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[1].coluna[0],
+                resposta: { id: 102, opcaoRespostaId: 2 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComMultiplasRespostas} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+        expect(screen.getByTestId("select_1_0")).toBeInTheDocument();
+      });
+
+      // Verifica se os estudantes foram renderizados
+      expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
+      expect(screen.getByText("2 - Maria Santos")).toBeInTheDocument();
+    });
+
+    it("deve renderizar tabela quando resposta é null", async () => {
+      const dadosComRespostaNula: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: null as any,
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComRespostaNula} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      // Verifica que a tabela renderiza mesmo com resposta null
+      expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
     });
   });
 });
