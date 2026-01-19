@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import "./legendas.css";
@@ -25,7 +25,11 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
       render: (_: any, record: LegendasProps) => (
         <span>
           <span style={{ fontWeight: "bold" }}>{record.descricaoLegenda}</span>:{" "}
-          {record.textoLegenda}
+          <Tooltip title={record.textoLegenda}>
+            <span className="legenda-texto-truncado">
+              {record.textoLegenda}
+            </span>
+          </Tooltip>
         </span>
       ),
     },

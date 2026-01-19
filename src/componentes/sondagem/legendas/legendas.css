@@ -40,3 +40,42 @@
 .tabela-legendas .ant-table-content table {
   border-width: 1px !important;
 }
+
+.legenda-texto-truncado {
+  display: inline-block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+@media (min-width: 576px) {
+  .legenda-texto-truncado {
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 768px) {
+  .legenda-texto-truncado {
+    max-width: 550px;
+  }
+}
+
+@media (min-width: 992px) {
+  .legenda-texto-truncado {
+    max-width: 700px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .legenda-texto-truncado {
+    max-width: 900px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .legenda-texto-truncado {
+    max-width: 1100px;
+  }
+}
