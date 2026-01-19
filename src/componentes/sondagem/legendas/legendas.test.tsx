@@ -83,7 +83,7 @@ describe("Legendas", () => {
     it("deve renderizar caixas de cor para cada legenda", () => {
       const { container } = render(<Legendas data={mockData} />);
       const colorBoxes = container.querySelectorAll(
-        'div[style*="background-color"]'
+        'div[style*="background-color"]',
       );
       expect(colorBoxes.length).toBeGreaterThan(0);
     });
@@ -149,7 +149,7 @@ describe("Legendas", () => {
       ];
       render(<Legendas data={longDescriptionData} />);
       expect(
-        screen.getByText(/Esta é uma descrição muito longa/)
+        screen.getByText(/Esta é uma descrição muito longa/),
       ).toBeInTheDocument();
     });
   });
@@ -164,7 +164,7 @@ describe("Legendas", () => {
     it("deve aplicar estilo no cabeçalho da legenda", () => {
       const { container } = render(<Legendas data={mockData} />);
       const header = container.querySelector(
-        'div[style*="background-color"]'
+        'div[style*="background-color"]',
       ) as HTMLElement;
       expect(header).toBeInTheDocument();
       expect(header.textContent).toBe("Legendas");
@@ -173,9 +173,59 @@ describe("Legendas", () => {
     it("deve aplicar fonte em negrito no texto da legenda", () => {
       const { container } = render(<Legendas data={mockData} />);
       const boldTexts = container.querySelectorAll(
-        'span[style*="font-weight"]'
+        'span[style*="font-weight"]',
       );
       expect(boldTexts.length).toBeGreaterThan(0);
+    });
+
+    it("deve aplicar classe legenda-texto-truncado no texto", () => {
+      const { container } = render(<Legendas data={mockData} />);
+      const truncatedTexts = container.querySelectorAll(
+        ".legenda-texto-truncado",
+      );
+      expect(truncatedTexts.length).toBe(mockData.length);
+    });
+  });
+
+  describe("Tooltip para textos longos", () => {
+    it("deve renderizar Tooltip para cada texto de legenda", () => {
+      const { container } = render(<Legendas data={mockData} />);
+      const tooltips = container.querySelectorAll(
+        ".ant-tooltip-disabled-compatible-wrapper, [role='tooltip'], .legenda-texto-truncado",
+      );
+      expect(tooltips.length).toBeGreaterThan(0);
+    });
+
+    it("deve renderizar texto longo com tooltip", () => {
+      const longTextData = [
+        {
+          key: "long-text",
+          corFundo: "#FF0000",
+          textoLegenda:
+            "Este é um texto muito longo que deve ser truncado e mostrado completamente apenas quando o usuário passar o mouse por cima dele",
+          descricaoLegenda: "Texto longo",
+        },
+      ];
+      const { container } = render(<Legendas data={longTextData} />);
+      const truncatedText = container.querySelector(".legenda-texto-truncado");
+      expect(truncatedText).toBeInTheDocument();
+      expect(truncatedText?.textContent).toContain(
+        "Este é um texto muito longo",
+      );
+    });
+
+    it("deve renderizar texto curto normalmente com tooltip", () => {
+      const shortTextData = [
+        {
+          key: "short-text",
+          corFundo: "#00FF00",
+          textoLegenda: "Curto",
+          descricaoLegenda: "Texto curto",
+        },
+      ];
+      render(<Legendas data={shortTextData} />);
+      expect(screen.getByText("Curto")).toBeInTheDocument();
+      expect(screen.getByText(/Texto curto/)).toBeInTheDocument();
     });
   });
 });
