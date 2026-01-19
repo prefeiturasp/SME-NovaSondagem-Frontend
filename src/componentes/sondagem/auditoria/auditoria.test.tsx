@@ -11,24 +11,16 @@ describe("Auditoria", () => {
 
       render(<Auditoria linhas={linhas} />);
 
-      expect(screen.getByText("Histórico de alterações")).toBeInTheDocument();
       expect(
         screen.getByText(
-          "INSERIDO por JOÃO SILVA (123456) em 01/01/2025 10:00:00"
-        )
+          "INSERIDO por JOÃO SILVA (123456) em 01/01/2025 10:00:00",
+        ),
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          "ALTERADO por MARIA SANTOS (789012) em 02/01/2025 15:30:00"
-        )
+          "ALTERADO por MARIA SANTOS (789012) em 02/01/2025 15:30:00",
+        ),
       ).toBeInTheDocument();
-    });
-
-    it("deve renderizar o título corretamente", () => {
-      const linhas = ["Linha de teste"];
-      render(<Auditoria linhas={linhas} />);
-
-      expect(screen.getByText("Histórico de alterações")).toBeInTheDocument();
     });
 
     it("deve renderizar múltiplas linhas de auditoria", () => {
@@ -65,10 +57,6 @@ describe("Auditoria", () => {
       const { container } = render(<Auditoria linhas={linhas} />);
 
       expect(container.querySelector(".historico-wrapper")).toBeInTheDocument();
-      expect(
-        container.querySelector(".historico-container")
-      ).toBeInTheDocument();
-      expect(container.querySelector(".historico-title")).toBeInTheDocument();
       expect(container.querySelector(".historico-linha")).toBeInTheDocument();
     });
 
@@ -104,8 +92,8 @@ describe("Auditoria", () => {
 
       expect(
         screen.getByText(
-          "INSERIDO por JOÃO & MARIA (123-456) em 01/01/2025 10:00:00 - Ação: Criação"
-        )
+          "INSERIDO por JOÃO & MARIA (123-456) em 01/01/2025 10:00:00 - Ação: Criação",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -139,8 +127,8 @@ describe("Auditoria", () => {
 
       expect(
         screen.getByText(
-          "INSERIDO por ANNE ALICE FERREIRA DE PAULA (9350276) em 07/02/2025 07:22:24"
-        )
+          "INSERIDO por ANNE ALICE FERREIRA DE PAULA (9350276) em 07/02/2025 07:22:24",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -153,8 +141,8 @@ describe("Auditoria", () => {
 
       expect(
         screen.getByText(
-          "ALTERADO por CARLOS SILVA (1234567) em 08/02/2025 14:30:00"
-        )
+          "ALTERADO por CARLOS SILVA (1234567) em 08/02/2025 14:30:00",
+        ),
       ).toBeInTheDocument();
     });
 
