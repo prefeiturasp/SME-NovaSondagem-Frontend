@@ -237,7 +237,7 @@ describe("SelectColorido", () => {
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("#FFFFFF");
-      expect(styleTag?.innerHTML).toContain("#42474A");
+      expect(styleTag?.innerHTML).toContain("#000000");
     });
 
     it("deve aplicar cores padrão quando opção não existe", () => {
@@ -793,7 +793,7 @@ describe("SelectColorido", () => {
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("#FFFFFF");
-      expect(styleTag?.innerHTML).toContain("#42474A");
+      expect(styleTag?.innerHTML).toContain("#000000");
     });
 
     it("deve filtrar por descrição em filterOption", async () => {
