@@ -24,8 +24,8 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
       align: "left",
       render: (_: any, record: LegendasProps) => (
         <span>
-          <span style={{ fontWeight: "bold" }}>{record.textoLegenda}</span>:{" "}
-          {record.descricaoLegenda}
+          <span style={{ fontWeight: "bold" }}>{record.descricaoLegenda}</span>:{" "}
+          {record.textoLegenda}
         </span>
       ),
     },
@@ -50,7 +50,9 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
         bordered
         className="tabela-legendas"
         locale={{ emptyText: "Nenhuma legenda cadastrada" }}
-        rowKey={(record) => `legenda-${record.corFundo}-${record.textoLegenda}`}
+        rowKey={(record) =>
+          `legenda-${record.corFundo}-${record.descricaoLegenda}`
+        }
       />
     </div>
   );
