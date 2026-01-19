@@ -181,7 +181,7 @@ describe("Conteudo", () => {
       });
       renderWithProvider(<Conteudo />, store);
       expect(
-        screen.getByText(MENSAGENS.MODALIDADE_INVALIDA)
+        screen.getByText(MENSAGENS.MODALIDADE_INVALIDA),
       ).toBeInTheDocument();
     });
   });
@@ -209,7 +209,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           expect(
-            screen.queryByText(MENSAGENS.MODALIDADE_INVALIDA)
+            screen.queryByText(MENSAGENS.MODALIDADE_INVALIDA),
           ).not.toBeInTheDocument();
         });
       });
@@ -231,7 +231,7 @@ describe("Conteudo", () => {
         });
         renderWithProvider(<Conteudo />, store);
         expect(
-          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA)
+          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA),
         ).toBeInTheDocument();
       });
     });
@@ -257,7 +257,7 @@ describe("Conteudo", () => {
     it("deve navegar para home ao clicar em Voltar", () => {
       const { container } = renderWithProvider(<Conteudo />);
       const botaoVoltar = container.querySelector(
-        "#sondagem-button-voltar"
+        "#sondagem-button-voltar",
       ) as HTMLButtonElement;
 
       delete (globalThis as any).location;
@@ -285,7 +285,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -299,7 +299,7 @@ describe("Conteudo", () => {
     it("deve renderizar campo Componente Curricular", () => {
       renderWithProvider(<Conteudo />);
       expect(
-        screen.getByText(MENSAGENS.COMPONENTE_CURRICULAR)
+        screen.getByText(MENSAGENS.COMPONENTE_CURRICULAR),
       ).toBeInTheDocument();
     });
 
@@ -335,14 +335,14 @@ describe("Conteudo", () => {
           "/ComponenteCurricular",
           expect.objectContaining({
             headers: { "X-Token-Principal": "mock-token" },
-          })
+          }),
         );
       });
     });
 
     it("deve tratar erro ao carregar disciplinas", async () => {
       (NovaSondagemServico.get as jest.Mock).mockRejectedValue(
-        new Error("Erro ao buscar")
+        new Error("Erro ao buscar"),
       );
 
       const store = createMockStoreWithUser({
@@ -355,9 +355,56 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(message.error).toHaveBeenCalledWith(
-          "Erro ao carregar dados da disciplina."
+          "Erro ao carregar dados da disciplina.",
         );
       });
+    });
+
+    it("deve ordenar disciplinas alfabeticamente", async () => {
+      const disciplinasDesordenadas = [
+        { id: 3, nome: "Matemática" },
+        { id: 1, nome: "Artes" },
+        { id: 2, nome: "Português" },
+      ];
+
+      (NovaSondagemServico.get as jest.Mock).mockResolvedValue({
+        data: disciplinasDesordenadas,
+      });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object),
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+
+        await waitFor(() => {
+          const options = document.querySelectorAll(".ant-select-item-option");
+          expect(options.length).toBeGreaterThan(0);
+
+          // Verifica se as opções estão em ordem alfabética
+          const optionTexts = Array.from(options).map(
+            (opt) => opt.textContent || "",
+          );
+          const expectedOrder = ["Artes", "Matemática", "Português"];
+          expect(optionTexts).toEqual(expectedOrder);
+        });
+      }
     });
 
     it("deve carregar proficiências ao selecionar disciplina", async () => {
@@ -376,12 +423,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
@@ -389,7 +436,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -401,7 +448,7 @@ describe("Conteudo", () => {
             "/Proficiencia/componente-curricular/1",
             expect.objectContaining({
               headers: { "X-Token-Principal": "mock-token" },
-            })
+            }),
           );
         });
       }
@@ -425,7 +472,7 @@ describe("Conteudo", () => {
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
@@ -433,7 +480,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -442,7 +489,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           expect(message.error).toHaveBeenCalledWith(
-            "Erro ao carregar dados da proficiencia."
+            "Erro ao carregar dados da proficiencia.",
           );
         });
       }
@@ -467,12 +514,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
@@ -480,7 +527,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -491,12 +538,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const proficienciaSelect = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
 
       if (proficienciaSelect) {
@@ -504,7 +551,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Escrita"]'
+            '[title="Escrita"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -523,7 +570,7 @@ describe("Conteudo", () => {
               Modalidade: "3",
               Ano: "1",
             }),
-          })
+          }),
         );
       });
     });
@@ -547,19 +594,19 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
         fireEvent.mouseDown(disciplinaSelect);
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -568,14 +615,14 @@ describe("Conteudo", () => {
       }
 
       const proficienciaSelect = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
 
       if (proficienciaSelect) {
         fireEvent.mouseDown(proficienciaSelect);
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Escrita"]'
+            '[title="Escrita"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -587,7 +634,7 @@ describe("Conteudo", () => {
         expect(notification.warning).toHaveBeenCalledWith(
           expect.objectContaining({
             message: "Questões não encontradas",
-          })
+          }),
         );
       });
     });
@@ -613,14 +660,14 @@ describe("Conteudo", () => {
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
         fireEvent.mouseDown(disciplinaSelect);
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -629,14 +676,14 @@ describe("Conteudo", () => {
       }
 
       const proficienciaSelect = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
 
       if (proficienciaSelect) {
         fireEvent.mouseDown(proficienciaSelect);
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Escrita"]'
+            '[title="Escrita"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -648,7 +695,7 @@ describe("Conteudo", () => {
         expect(notification.error).toHaveBeenCalledWith(
           expect.objectContaining({
             message: "Erro de conexão",
-          })
+          }),
         );
       });
     });
@@ -674,14 +721,14 @@ describe("Conteudo", () => {
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
         fireEvent.mouseDown(disciplinaSelect);
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -690,14 +737,14 @@ describe("Conteudo", () => {
       }
 
       const proficienciaSelect = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
 
       if (proficienciaSelect) {
         fireEvent.mouseDown(proficienciaSelect);
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Escrita"]'
+            '[title="Escrita"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -707,7 +754,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(message.error).toHaveBeenCalledWith(
-          "Erro ao carregar dados da sondagem. Tente novamente."
+          "Erro ao carregar dados da sondagem. Tente novamente.",
         );
       });
     });
@@ -735,13 +782,13 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       // Seleciona disciplina
       const selectDisciplina = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
       if (selectDisciplina) {
         fireEvent.mouseDown(selectDisciplina);
@@ -758,13 +805,13 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       // Seleciona proficiência
       const selectProficiencia = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
       if (selectProficiencia) {
         fireEvent.mouseDown(selectProficiencia);
@@ -781,7 +828,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -804,7 +851,7 @@ describe("Conteudo", () => {
             headers: {
               "X-Token-Principal": "mock-token",
             },
-          })
+          }),
         );
       });
 
@@ -844,12 +891,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectDisciplina = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
       if (selectDisciplina) {
         fireEvent.mouseDown(selectDisciplina);
@@ -865,12 +912,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectProficiencia = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
       if (selectProficiencia) {
         fireEvent.mouseDown(selectProficiencia);
@@ -886,7 +933,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -903,7 +950,7 @@ describe("Conteudo", () => {
           expect.objectContaining({
             message: "Erro ao salvar sondagem",
             description: "Erro ao salvar",
-          })
+          }),
         );
       });
     });
@@ -929,12 +976,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectDisciplina = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
       if (selectDisciplina) {
         fireEvent.mouseDown(selectDisciplina);
@@ -950,12 +997,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectProficiencia = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
       if (selectProficiencia) {
         fireEvent.mouseDown(selectProficiencia);
@@ -971,7 +1018,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -991,7 +1038,7 @@ describe("Conteudo", () => {
             headers: {
               "X-Token-Principal": "test-token-123",
             },
-          })
+          }),
         );
       });
     });
@@ -1017,12 +1064,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectDisciplina = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
       if (selectDisciplina) {
         fireEvent.mouseDown(selectDisciplina);
@@ -1038,12 +1085,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectProficiencia = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
       if (selectProficiencia) {
         fireEvent.mouseDown(selectProficiencia);
@@ -1059,7 +1106,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -1076,7 +1123,7 @@ describe("Conteudo", () => {
           expect.objectContaining({
             message: "Erro ao salvar sondagem",
             description: "Erro ao salvar a sondagem. Tente novamente.",
-          })
+          }),
         );
       });
     });
@@ -1112,12 +1159,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectDisciplina = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
       if (selectDisciplina) {
         fireEvent.mouseDown(selectDisciplina);
@@ -1133,12 +1180,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectProficiencia = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
       if (selectProficiencia) {
         fireEvent.mouseDown(selectProficiencia);
@@ -1154,7 +1201,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -1171,7 +1218,7 @@ describe("Conteudo", () => {
           expect.objectContaining({
             message: "Erro ao salvar sondagem",
             description: expect.stringContaining("dto"),
-          })
+          }),
         );
       });
     });
@@ -1197,12 +1244,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectDisciplina = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
       if (selectDisciplina) {
         fireEvent.mouseDown(selectDisciplina);
@@ -1218,12 +1265,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const selectProficiencia = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
       if (selectProficiencia) {
         fireEvent.mouseDown(selectProficiencia);
@@ -1239,7 +1286,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -1257,7 +1304,7 @@ describe("Conteudo", () => {
           expect.objectContaining({
             sondagemId: expect.any(Number),
           }),
-          expect.any(Object)
+          expect.any(Object),
         );
       });
     });
@@ -1283,13 +1330,13 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       // Seleciona disciplina
       const selectDisciplina = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
       if (selectDisciplina) {
         fireEvent.mouseDown(selectDisciplina);
@@ -1306,13 +1353,13 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       // Seleciona proficiência
       const selectProficiencia = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
       if (selectProficiencia) {
         fireEvent.mouseDown(selectProficiencia);
@@ -1329,7 +1376,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -1347,7 +1394,7 @@ describe("Conteudo", () => {
           expect.objectContaining({
             alunos: expect.any(Array),
           }),
-          expect.any(Object)
+          expect.any(Object),
         );
       });
     });
@@ -1368,7 +1415,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA)
+          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA),
         ).toBeInTheDocument();
       });
     });
@@ -1391,7 +1438,7 @@ describe("Conteudo", () => {
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
@@ -1399,7 +1446,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -1410,7 +1457,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
     });
@@ -1448,18 +1495,18 @@ describe("Conteudo", () => {
 
       const { rerender, container } = renderWithProvider(
         <Conteudo />,
-        initialStore
+        initialStore,
       );
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
@@ -1467,7 +1514,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -1489,7 +1536,7 @@ describe("Conteudo", () => {
       rerender(
         <Provider store={newStore}>
           <Conteudo />
-        </Provider>
+        </Provider>,
       );
 
       await waitFor(() => {
@@ -1513,7 +1560,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
@@ -1526,7 +1573,7 @@ describe("Conteudo", () => {
       rerender(
         <Provider store={newStore}>
           <Conteudo />
-        </Provider>
+        </Provider>,
       );
 
       await waitFor(() => {
@@ -1560,13 +1607,13 @@ describe("Conteudo", () => {
       rerender(
         <Provider store={newStore}>
           <Conteudo />
-        </Provider>
+        </Provider>,
       );
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).not.toHaveBeenCalledWith(
           "/Questionario",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
     });
@@ -1590,13 +1637,13 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       // Seleciona disciplina - NÃO deve buscar questionário ainda
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
@@ -1604,7 +1651,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -1622,7 +1669,7 @@ describe("Conteudo", () => {
 
       // Seleciona proficiência - AGORA deve buscar questionário
       const proficienciaSelect = container.querySelector(
-        "#sondagem-select-proficiencia"
+        "#sondagem-select-proficiencia",
       );
 
       if (proficienciaSelect) {
@@ -1630,7 +1677,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Escrita"]'
+            '[title="Escrita"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
@@ -1648,7 +1695,7 @@ describe("Conteudo", () => {
               ComponenteCurricularId: 1,
               ProficienciaId: 1,
             }),
-          })
+          }),
         );
       });
     });
@@ -1669,12 +1716,12 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
-          expect.any(Object)
+          expect.any(Object),
         );
       });
 
       const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular"
+        "#sondagem-select-componente-curricular",
       );
 
       if (disciplinaSelect) {
@@ -1682,7 +1729,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           const option = document.querySelector(
-            '[title="Português"]'
+            '[title="Português"]',
           ) as HTMLElement;
           if (option) {
             fireEvent.click(option);
