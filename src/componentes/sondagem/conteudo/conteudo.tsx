@@ -392,7 +392,7 @@ const Conteudo: React.FC = () => {
   return (
     <>
       <div className="grupoAlertas">
-        {!turmaSelecionada?.turma ? (
+        {!turmaSelecionada?.turma && (
           <Row gutter={16} className="p-0">
             <Alerta
               alerta={{
@@ -404,8 +404,8 @@ const Conteudo: React.FC = () => {
               className="mb-2 larguraAlerta"
             />
           </Row>
-        ) : null}
-        {!modalidadeAnoValidos ? (
+        )}
+        {!modalidadeAnoValidos && (
           <Row gutter={16} className="p-0">
             <Alerta
               alerta={{
@@ -418,7 +418,7 @@ const Conteudo: React.FC = () => {
               className="mb-2 larguraAlerta"
             />
           </Row>
-        ) : null}
+        )}
       </div>
 
       <div className="linhaTituloBotao">
