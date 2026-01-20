@@ -49,7 +49,7 @@ describe("SelectColorido", () => {
   describe("Renderização básica", () => {
     it("deve renderizar o select", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} />
+        <SelectColorido options={mockOptionsComCores} />,
       );
       const select = container.querySelector(".ant-select");
       expect(select).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar classe select-colorido", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} />
+        <SelectColorido options={mockOptionsComCores} />,
       );
       const select = container.querySelector(".select-colorido");
       expect(select).toBeInTheDocument();
@@ -68,7 +68,7 @@ describe("SelectColorido", () => {
         <SelectColorido
           options={mockOptionsComCores}
           className="custom-class"
-        />
+        />,
       );
       const select = container.querySelector(".custom-class");
       expect(select).toBeInTheDocument();
@@ -76,17 +76,17 @@ describe("SelectColorido", () => {
 
     it("deve gerar id único quando não fornecido", () => {
       const { container: container1 } = render(
-        <SelectColorido options={mockOptionsComCores} />
+        <SelectColorido options={mockOptionsComCores} />,
       );
       const { container: container2 } = render(
-        <SelectColorido options={mockOptionsComCores} />
+        <SelectColorido options={mockOptionsComCores} />,
       );
 
       const select1 = container1.querySelector(
-        ".select-colorido-select-mock-id-1"
+        ".select-colorido-select-mock-id-1",
       );
       const select2 = container2.querySelector(
-        ".select-colorido-select-mock-id-2"
+        ".select-colorido-select-mock-id-2",
       );
 
       expect(select1).toBeInTheDocument();
@@ -96,7 +96,7 @@ describe("SelectColorido", () => {
 
     it("deve usar id fornecido via props", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} id="custom-id" />
+        <SelectColorido options={mockOptionsComCores} id="custom-id" />,
       );
       const select = container.querySelector(".select-colorido-custom-id");
       expect(select).toBeInTheDocument();
@@ -160,7 +160,7 @@ describe("SelectColorido", () => {
   describe("Cores dinâmicas das opções", () => {
     it("deve aplicar cor de fundo correta ao selecionar opção", async () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -169,7 +169,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cor de texto correta ao selecionar opção", async () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -183,7 +183,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           onChange={handleChange}
           open
-        />
+        />,
       );
 
       const option = screen.getByText("Pré-silábico");
@@ -197,11 +197,11 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cores diferentes para cada opção", () => {
       const { container: container1 } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const { container: container2 } = render(
-        <SelectColorido options={mockOptionsComCores} value={2} />
+        <SelectColorido options={mockOptionsComCores} value={2} />,
       );
 
       const styleTag1 = container1.querySelector("style");
@@ -213,12 +213,12 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cor branca quando não há valor selecionado", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={undefined} />
+        <SelectColorido options={mockOptionsComCores} value={undefined} />,
       );
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("#FFFFFF");
-      expect(styleTag?.innerHTML).toContain("#000000");
+      expect(styleTag?.innerHTML).toContain("#42474A");
     });
 
     it("deve aplicar cor branca quando não há opções", () => {
@@ -232,7 +232,7 @@ describe("SelectColorido", () => {
   describe("Fallback de cores", () => {
     it("deve aplicar cores padrão quando opção não tem corFundo", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsSemCores} value={1} />
+        <SelectColorido options={mockOptionsSemCores} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -242,7 +242,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cores padrão quando opção não existe", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={999} />
+        <SelectColorido options={mockOptionsComCores} value={999} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -257,7 +257,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           onChange={handleChange}
           open
-        />
+        />,
       );
 
       const option = screen.getByText("Pré-silábico");
@@ -275,7 +275,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           onChange={handleChange}
           open
-        />
+        />,
       );
 
       const option = screen.getByText("Alfabético");
@@ -290,7 +290,7 @@ describe("SelectColorido", () => {
   describe("useEffect - atualização de cores", () => {
     it("deve atualizar cores quando value muda", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       let styleTag = container.querySelector("style");
@@ -306,7 +306,7 @@ describe("SelectColorido", () => {
 
     it("deve atualizar cores quando options mudam", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const novasOpcoes = [
@@ -323,11 +323,11 @@ describe("SelectColorido", () => {
 
     it("deve resetar para cores padrão quando value é limpo", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       rerender(
-        <SelectColorido options={mockOptionsComCores} value={undefined} />
+        <SelectColorido options={mockOptionsComCores} value={undefined} />,
       );
 
       await waitFor(() => {
@@ -340,7 +340,7 @@ describe("SelectColorido", () => {
   describe("Estilos inline e tag style", () => {
     it("deve gerar tag style com estilos dinâmicos", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -350,7 +350,7 @@ describe("SelectColorido", () => {
 
     it("deve incluir estilos para estado disabled", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} disabled />
+        <SelectColorido options={mockOptionsComCores} value={1} disabled />,
       );
 
       const styleTag = container.querySelector("style");
@@ -360,7 +360,7 @@ describe("SelectColorido", () => {
 
     it("deve incluir estilos para texto e arrow", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -370,7 +370,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar font-weight 500 no texto selecionado", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -384,7 +384,7 @@ describe("SelectColorido", () => {
         <SelectColorido
           options={mockOptionsComCores}
           placeholder="Selecione uma opção"
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select");
@@ -393,7 +393,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar disabled quando fornecido", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} disabled />
+        <SelectColorido options={mockOptionsComCores} disabled />,
       );
 
       const select = container.querySelector(".ant-select-disabled");
@@ -402,7 +402,7 @@ describe("SelectColorido", () => {
 
     it("deve sempre ter showSearch ativo", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} />
+        <SelectColorido options={mockOptionsComCores} />,
       );
 
       const select = container.querySelector(".ant-select-show-search");
@@ -413,7 +413,7 @@ describe("SelectColorido", () => {
   describe("getPopupContainer", () => {
     it("deve definir getPopupContainer para parentElement", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} />
+        <SelectColorido options={mockOptionsComCores} />,
       );
 
       const select = container.querySelector(".ant-select");
@@ -424,7 +424,7 @@ describe("SelectColorido", () => {
   describe("Integração com formulário", () => {
     it("deve funcionar com value controlado", () => {
       const { rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       rerender(<SelectColorido options={mockOptionsComCores} value={2} />);
@@ -434,11 +434,11 @@ describe("SelectColorido", () => {
 
     it("deve permitir limpeza de valor", () => {
       const { rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       rerender(
-        <SelectColorido options={mockOptionsComCores} value={undefined} />
+        <SelectColorido options={mockOptionsComCores} value={undefined} />,
       );
 
       expect(screen.getByRole("combobox")).toBeInTheDocument();
@@ -476,14 +476,14 @@ describe("SelectColorido", () => {
           onChange={handleChange}
           placeholder="Selecione o nível"
           id="sondagem-escrita"
-        />
+        />,
       );
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("#FF6B6B");
       expect(styleTag?.innerHTML).toContain("#FFFFFF");
       expect(
-        container.querySelector(".select-colorido-sondagem-escrita")
+        container.querySelector(".select-colorido-sondagem-escrita"),
       ).toBeInTheDocument();
     });
   });
@@ -516,17 +516,17 @@ describe("SelectColorido", () => {
   describe("getColorByValue", () => {
     it("deve retornar cores padrão quando selectedValue é null", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={null} />
+        <SelectColorido options={mockOptionsComCores} value={null} />,
       );
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("#FFFFFF");
-      expect(styleTag?.innerHTML).toContain("#000000");
+      expect(styleTag?.innerHTML).toContain("#42474A");
     });
 
     it("deve retornar cores padrão quando options é undefined", () => {
       const { container } = render(
-        <SelectColorido options={undefined} value={1} />
+        <SelectColorido options={undefined} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -535,7 +535,7 @@ describe("SelectColorido", () => {
 
     it("deve retornar cores corretas quando opção tem corFundo e corTexto", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={2} />
+        <SelectColorido options={mockOptionsComCores} value={2} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -575,7 +575,7 @@ describe("SelectColorido", () => {
         <SelectColorido
           options={mockOptionsComCores}
           onKeyDown={handleKeyDown}
-        />
+        />,
       );
 
       const select = screen.getByRole("combobox");
@@ -611,7 +611,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           value={1}
           disabled={true}
-        />
+        />,
       );
 
       const styleTag = container.querySelector("style");
@@ -621,7 +621,7 @@ describe("SelectColorido", () => {
 
     it("deve incluir estilos para arrow icon", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -631,7 +631,7 @@ describe("SelectColorido", () => {
 
     it("deve aplicar font-weight nos textos", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -642,7 +642,7 @@ describe("SelectColorido", () => {
   describe("Integração completa", () => {
     it("deve atualizar cores quando value muda externamente", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       let styleTag = container.querySelector("style");
@@ -658,7 +658,7 @@ describe("SelectColorido", () => {
 
     it("deve manter funcionalidade ao trocar options", async () => {
       const { rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const newOptions = [
@@ -698,7 +698,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           onChange={onChange}
           onOpenChange={onOpenChange}
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -714,7 +714,7 @@ describe("SelectColorido", () => {
     it("deve retornar quando não encontrar opção por ordem", async () => {
       const onChange = jest.fn();
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} onChange={onChange} />
+        <SelectColorido options={mockOptionsComCores} onChange={onChange} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -732,7 +732,7 @@ describe("SelectColorido", () => {
     it("deve processar ArrowDown quando select está fechado", () => {
       const onKeyDown = jest.fn();
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />
+        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -745,7 +745,7 @@ describe("SelectColorido", () => {
     it("deve processar ArrowUp quando select está fechado", () => {
       const onKeyDown = jest.fn();
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />
+        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -758,7 +758,7 @@ describe("SelectColorido", () => {
     it("deve processar outras teclas quando select está fechado", async () => {
       const onKeyDown = jest.fn();
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />
+        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -773,12 +773,12 @@ describe("SelectColorido", () => {
 
     it("deve retornar cores padrão quando selectedValue é null", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} value={null} />
+        <SelectColorido options={mockOptionsComCores} value={null} />,
       );
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("#FFFFFF");
-      expect(styleTag?.innerHTML).toContain("#000000");
+      expect(styleTag?.innerHTML).toContain("#42474A");
     });
 
     it("deve retornar cores padrão quando opção não tem corFundo", () => {
@@ -788,7 +788,7 @@ describe("SelectColorido", () => {
       ];
 
       const { container } = render(
-        <SelectColorido options={opcoesSemCor} value={1} />
+        <SelectColorido options={opcoesSemCor} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -798,11 +798,11 @@ describe("SelectColorido", () => {
 
     it("deve filtrar por descrição em filterOption", async () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} showSearch />
+        <SelectColorido options={mockOptionsComCores} showSearch />,
       );
 
       const select = container.querySelector(
-        "input.ant-select-selection-search-input"
+        "input.ant-select-selection-search-input",
       );
       if (select) {
         fireEvent.change(select, { target: { value: "vermelho" } });
@@ -815,11 +815,11 @@ describe("SelectColorido", () => {
 
     it("deve retornar false em filterOption quando não há correspondência", async () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} showSearch />
+        <SelectColorido options={mockOptionsComCores} showSearch />,
       );
 
       const select = container.querySelector(
-        "input.ant-select-selection-search-input"
+        "input.ant-select-selection-search-input",
       );
       if (select) {
         fireEvent.change(select, { target: { value: "inexistente" } });
@@ -838,7 +838,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           onChange={onChange}
           onOpenChange={onOpenChange}
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -854,7 +854,7 @@ describe("SelectColorido", () => {
     it("deve não processar quando opção não tem ordem correspondente", async () => {
       const onChange = jest.fn();
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} onChange={onChange} />
+        <SelectColorido options={mockOptionsComCores} onChange={onChange} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -880,7 +880,7 @@ describe("SelectColorido", () => {
 
       const onChange = jest.fn();
       const { container } = render(
-        <SelectColorido options={opcoesSemOrdem} onChange={onChange} />
+        <SelectColorido options={opcoesSemOrdem} onChange={onChange} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -898,7 +898,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           value={1}
           allowClear={true}
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select");
@@ -913,7 +913,7 @@ describe("SelectColorido", () => {
           value={1}
           onChange={onChange}
           allowClear={true}
-        />
+        />,
       );
 
       const clearButton = container.querySelector(".ant-select-clear");
@@ -937,7 +937,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           value={1}
           allowClear={true}
-        />
+        />,
       );
 
       const styleTag = container.querySelector("style");
@@ -951,7 +951,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           value={1}
           allowClear={true}
-        />
+        />,
       );
 
       const styleTag = container.querySelector("style");
@@ -962,13 +962,13 @@ describe("SelectColorido", () => {
   describe("Múltiplos selects na mesma página", () => {
     it("deve gerar IDs únicos para múltiplos selects", () => {
       const { container: container1 } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
       const { container: container2 } = render(
-        <SelectColorido options={mockOptionsComCores} value={2} />
+        <SelectColorido options={mockOptionsComCores} value={2} />,
       );
       const { container: container3 } = render(
-        <SelectColorido options={mockOptionsComCores} value={3} />
+        <SelectColorido options={mockOptionsComCores} value={3} />,
       );
 
       const select1 = container1.querySelector(".select-colorido");
@@ -982,10 +982,10 @@ describe("SelectColorido", () => {
 
     it("deve aplicar cores independentes para cada select", () => {
       const { container: container1 } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
       const { container: container2 } = render(
-        <SelectColorido options={mockOptionsComCores} value={3} />
+        <SelectColorido options={mockOptionsComCores} value={3} />,
       );
 
       const style1 = container1.querySelector("style");
@@ -1008,7 +1008,7 @@ describe("SelectColorido", () => {
             value={2}
             id="select-2"
           />
-        </>
+        </>,
       );
 
       const select1 = container.querySelector(".select-colorido-select-1");
@@ -1030,7 +1030,7 @@ describe("SelectColorido", () => {
       }));
 
       const { container } = render(
-        <SelectColorido options={muitasOpcoes} value={50} />
+        <SelectColorido options={muitasOpcoes} value={50} />,
       );
 
       expect(container.querySelector(".select-colorido")).toBeInTheDocument();
@@ -1056,7 +1056,7 @@ describe("SelectColorido", () => {
 
     it("deve lidar com mudanças rápidas de valor", async () => {
       const { rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       for (let i = 2; i <= 5; i++) {
@@ -1083,7 +1083,7 @@ describe("SelectColorido", () => {
 
     it("deve lidar com options undefined", () => {
       const { container } = render(
-        <SelectColorido options={undefined} value={1} />
+        <SelectColorido options={undefined} value={1} />,
       );
 
       expect(container.querySelector(".select-colorido")).toBeInTheDocument();
@@ -1091,7 +1091,7 @@ describe("SelectColorido", () => {
 
     it("deve lidar com options null", () => {
       const { container } = render(
-        <SelectColorido options={null as any} value={1} />
+        <SelectColorido options={null as any} value={1} />,
       );
 
       expect(container.querySelector(".select-colorido")).toBeInTheDocument();
@@ -1103,7 +1103,7 @@ describe("SelectColorido", () => {
       ];
 
       const { container } = render(
-        <SelectColorido options={opcoesSemLabel} value={1} />
+        <SelectColorido options={opcoesSemLabel} value={1} />,
       );
 
       expect(container.querySelector(".select-colorido")).toBeInTheDocument();
@@ -1115,7 +1115,7 @@ describe("SelectColorido", () => {
       ];
 
       const { container } = render(
-        <SelectColorido options={opcoesCoresInvalidas} value={1} />
+        <SelectColorido options={opcoesCoresInvalidas} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -1130,7 +1130,7 @@ describe("SelectColorido", () => {
         <SelectColorido
           options={mockOptionsComCores}
           onOpenChange={onOpenChange}
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -1148,7 +1148,7 @@ describe("SelectColorido", () => {
     it("deve processar Tab para navegação", () => {
       const onKeyDown = jest.fn();
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />
+        <SelectColorido options={mockOptionsComCores} onKeyDown={onKeyDown} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -1177,7 +1177,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           onChange={onChange}
           open
-        />
+        />,
       );
 
       const input = screen.getByRole("combobox");
@@ -1199,7 +1199,7 @@ describe("SelectColorido", () => {
 
       const onChange = jest.fn();
       const { container } = render(
-        <SelectColorido options={opcoesComOrdem} onChange={onChange} />
+        <SelectColorido options={opcoesComOrdem} onChange={onChange} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -1224,7 +1224,7 @@ describe("SelectColorido", () => {
         <SelectColorido
           options={mockOptionsComCores}
           aria-label="Selecione uma opção"
-        />
+        />,
       );
 
       const select = screen.getByRole("combobox");
@@ -1233,7 +1233,7 @@ describe("SelectColorido", () => {
 
     it("deve indicar estado disabled via aria-disabled", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} disabled />
+        <SelectColorido options={mockOptionsComCores} disabled />,
       );
 
       const select = container.querySelector(".ant-select-disabled");
@@ -1251,7 +1251,7 @@ describe("SelectColorido", () => {
       ];
 
       const { container } = render(
-        <SelectColorido options={opcoesComContraste} value={1} />
+        <SelectColorido options={opcoesComContraste} value={1} />,
       );
 
       const styleTag = container.querySelector("style");
@@ -1276,7 +1276,7 @@ describe("SelectColorido", () => {
   describe("Sincronização de estado", () => {
     it("deve sincronizar cores quando props.options mudam", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       const novasOpcoes = [
@@ -1299,7 +1299,7 @@ describe("SelectColorido", () => {
 
     it("deve reagir a mudanças de value em tempo real", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={1} />
+        <SelectColorido options={mockOptionsComCores} value={1} />,
       );
 
       await waitFor(() => {
@@ -1317,7 +1317,7 @@ describe("SelectColorido", () => {
 
     it("deve manter consistência ao alternar entre valores undefined e definidos", async () => {
       const { container, rerender } = render(
-        <SelectColorido options={mockOptionsComCores} value={undefined} />
+        <SelectColorido options={mockOptionsComCores} value={undefined} />,
       );
 
       rerender(<SelectColorido options={mockOptionsComCores} value={1} />);
@@ -1328,7 +1328,7 @@ describe("SelectColorido", () => {
       });
 
       rerender(
-        <SelectColorido options={mockOptionsComCores} value={undefined} />
+        <SelectColorido options={mockOptionsComCores} value={undefined} />,
       );
 
       await waitFor(() => {
@@ -1348,7 +1348,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select");
@@ -1363,7 +1363,7 @@ describe("SelectColorido", () => {
 
     it("deve lidar com onChange null ou undefined", () => {
       const { container } = render(
-        <SelectColorido options={mockOptionsComCores} onChange={undefined} />
+        <SelectColorido options={mockOptionsComCores} onChange={undefined} />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -1380,7 +1380,7 @@ describe("SelectColorido", () => {
         <SelectColorido
           options={mockOptionsComCores}
           onOpenChange={onOpenChange}
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -1441,7 +1441,7 @@ describe("SelectColorido", () => {
           options={opcoesSondagem}
           onChange={onChange}
           placeholder="Selecione o nível"
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select-selector");
@@ -1467,12 +1467,12 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           value={1}
           onChange={onChange}
-        />
+        />,
       );
 
       // Primeira seleção
       expect(container.querySelector("style")?.innerHTML).toContain(
-        CORES.VERMELHO.corFundo
+        CORES.VERMELHO.corFundo,
       );
 
       // Mudança de resposta
@@ -1481,12 +1481,12 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           value={3}
           onChange={onChange}
-        />
+        />,
       );
 
       await waitFor(() => {
         expect(container.querySelector("style")?.innerHTML).toContain(
-          CORES.AZUL.corFundo
+          CORES.AZUL.corFundo,
         );
       });
     });
@@ -1497,7 +1497,7 @@ describe("SelectColorido", () => {
           options={mockOptionsComCores}
           value={1}
           disabled={true}
-        />
+        />,
       );
 
       const select = container.querySelector(".ant-select-disabled");

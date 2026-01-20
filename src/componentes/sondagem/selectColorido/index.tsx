@@ -25,7 +25,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
     const selectRef = useRef<any>(null);
     const uniqueId = useMemo(
       () => props.id ?? `select-${nanoid(9)}`,
-      [props.id]
+      [props.id],
     );
 
     useImperativeHandle(ref, () => ({
@@ -63,7 +63,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           return { bg: "#FFFFFF", text: "#000000" };
 
         const selectedOption = props.options.find(
-          (opt: any) => opt.value === selectedValue
+          (opt: any) => opt.value === selectedValue,
         );
 
         if (selectedOption?.corFundo && selectedOption?.corTexto) {
@@ -75,7 +75,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
 
         return { bg: "#FFFFFF", text: "#000000" };
       },
-      [props.options]
+      [props.options],
     );
 
     const handleChange = (newValue: any, option: any) => {
@@ -104,7 +104,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         e.preventDefault();
         const numero = Number.parseInt(e.key);
         const opcaoEncontrada = props.options?.find(
-          (opt: any) => opt.ordem === numero
+          (opt: any) => opt.ordem === numero,
         );
         if (opcaoEncontrada && onChange) {
           onChange(opcaoEncontrada.value, opcaoEncontrada);
@@ -126,10 +126,13 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
     };
 
     useEffect(() => {
-      if (value) {
+      if (value !== null && value !== undefined) {
         const colors = getColorByValue(value);
         setBackgroundColor(colors.bg);
         setTextColor(colors.text);
+      } else {
+        setBackgroundColor("#FFFFFF");
+        setTextColor("#42474A");
       }
     }, [value, getColorByValue, props.id]);
 
@@ -198,7 +201,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         />
       </>
     );
-  }
+  },
 );
 
 SelectColorido.displayName = "SelectColorido";

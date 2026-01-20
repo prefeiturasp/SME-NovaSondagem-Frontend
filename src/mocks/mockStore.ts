@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-const mockReducer = (state = { usuario: { logado: false } }) => state;
+const initialState = { usuario: { logado: false } };
+const mockReducer = (state = initialState) => state;
 
 export const createMockStore = () =>
   configureStore({

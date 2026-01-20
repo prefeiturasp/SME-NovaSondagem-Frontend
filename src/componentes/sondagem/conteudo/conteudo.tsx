@@ -39,11 +39,11 @@ const Conteudo: React.FC = () => {
   >([]);
 
   const [dadosLista, setDadosLista] = useState<DadosTabelaDinamica | null>(
-    null
+    null,
   );
 
   const [dadosLegenda, setDadosLegenda] = useState<LegendasProps[] | null>(
-    null
+    null,
   );
 
   const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
@@ -85,10 +85,14 @@ const Conteudo: React.FC = () => {
 
       if (resposta?.data?.length > 0) {
         setDesabilitarDisciplina(false);
-        const dadosMapeados = resposta.data.map((item: any) => ({
-          value: item.id,
-          label: item.nome,
-        }));
+        const dadosMapeados = resposta.data
+          .map((item: any) => ({
+            value: item.id,
+            label: item.nome,
+          }))
+          .sort((a: any, b: any) =>
+            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
+          );
         setListaDisciplinas(dadosMapeados);
       } else {
         setDesabilitarDisciplina(true);
@@ -109,7 +113,7 @@ const Conteudo: React.FC = () => {
           `/Proficiencia/componente-curricular/${idDisciplina}`,
           {
             headers: { "X-Token-Principal": usuario?.token },
-          }
+          },
         );
 
         if (resposta?.data?.length > 0) {
@@ -128,7 +132,7 @@ const Conteudo: React.FC = () => {
         message.error("Erro ao carregar dados da proficiencia.");
       }
     },
-    [formFiltro, usuario?.token]
+    [formFiltro, usuario?.token],
   );
 
   const resetando = useCallback(() => {
@@ -209,7 +213,7 @@ const Conteudo: React.FC = () => {
         setLoading(true);
         await buscarDadosListaDoBancoDeDados(
           disciplinaSelecionada,
-          proficienciaSelecionada
+          proficienciaSelecionada,
         );
         setLoading(false);
       }
@@ -220,7 +224,7 @@ const Conteudo: React.FC = () => {
 
   const buscarDadosListaDoBancoDeDados = async (
     componenteCurricularId?: number,
-    proficienciaId?: number
+    proficienciaId?: number,
   ) => {
     const disciplinaId = componenteCurricularId ?? disciplinaSelecionada;
     const profId = proficienciaId ?? proficienciaSelecionada;
@@ -245,7 +249,7 @@ const Conteudo: React.FC = () => {
             corFundo: legenda.corFundo,
             descricaoLegenda: legenda.descricaoOpcaoResposta,
             textoLegenda: legenda.legenda,
-          })
+          }),
         );
       setDadosLegenda(dadosLegenda);
       setDadosLista(resposta.data);
@@ -310,7 +314,7 @@ const Conteudo: React.FC = () => {
             opcaoRespostaId: respostas[colunaIndex].opcaoRespostaId,
           })),
         };
-      }
+      },
     );
 
     return dadosParaSalvar;
@@ -350,7 +354,7 @@ const Conteudo: React.FC = () => {
         ? Object.entries(error.response.data.errors)
             .map(
               ([key, value]: [string, any]) =>
-                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`
+                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
             )
             .join("\n")
         : null;
@@ -376,7 +380,7 @@ const Conteudo: React.FC = () => {
 
       await buscarDadosListaDoBancoDeDados(
         disciplinaSelecionada,
-        proficienciaSelecionada
+        proficienciaSelecionada,
       );
     }
   };
@@ -388,7 +392,7 @@ const Conteudo: React.FC = () => {
   return (
     <>
       <div className="grupoAlertas">
-        {!turmaSelecionada?.turma ? (
+        {!turmaSelecionada?.turma && (
           <Row gutter={16} className="p-0">
             <Alerta
               alerta={{
@@ -400,8 +404,8 @@ const Conteudo: React.FC = () => {
               className="mb-2 larguraAlerta"
             />
           </Row>
-        ) : null}
-        {!modalidadeAnoValidos ? (
+        )}
+        {!modalidadeAnoValidos && (
           <Row gutter={16} className="p-0">
             <Alerta
               alerta={{
@@ -414,7 +418,7 @@ const Conteudo: React.FC = () => {
               className="mb-2 larguraAlerta"
             />
           </Row>
-        ) : null}
+        )}
       </div>
 
       <div className="linhaTituloBotao">

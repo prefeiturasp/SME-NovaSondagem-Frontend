@@ -10,15 +10,11 @@ export const Auditoria: React.FC<Auditoria> = ({ linhas }) => {
 
   return (
     <div className="historico-wrapper">
-      <div className="historico-container">
-        <div className="historico-title">Histórico de alterações</div>
-
-        {linhas.map((linha, index) => (
-          <div key={`auditoria-${index}-${linha}`} className="historico-linha">
-            {linha}
-          </div>
-        ))}
-      </div>
+      {linhas.map((linha, index) => (
+        <div key={`auditoria-${index}-${linha}`} className="historico-linha">
+          {linha}
+        </div>
+      ))}
     </div>
   );
 };
