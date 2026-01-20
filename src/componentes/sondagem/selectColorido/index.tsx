@@ -18,14 +18,14 @@ interface SelectColoridoProps extends SelectProps {
 }
 
 const SelectColorido = forwardRef<any, SelectColoridoProps>(
-  ({ value, onChange, onOpenChange, ...props }, ref) => {
+  ({ value, onChange, onOpenChange, onKeyDown, ...props }, ref) => {
     const [backgroundColor, setBackgroundColor] = useState<string>("#FFFFFF");
     const [textColor, setTextColor] = useState<string>("#000000");
     const [isOpen, setIsOpen] = useState(false);
     const selectRef = useRef<any>(null);
     const uniqueId = useMemo(
       () => props.id ?? `select-${nanoid(9)}`,
-      [props.id]
+      [props.id],
     );
 
     useImperativeHandle(ref, () => ({
@@ -63,14 +63,10 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           return { bg: "#FFFFFF", text: "#000000" };
 
         const selectedOption = props.options.find(
-          (opt: any) => opt.value === selectedValue
+          (opt: any) => opt.value === selectedValue,
         );
 
-        if (
-          selectedOption &&
-          selectedOption.corFundo &&
-          selectedOption.corTexto
-        ) {
+        if (selectedOption?.corFundo && selectedOption?.corTexto) {
           return {
             bg: selectedOption.corFundo,
             text: selectedOption.corTexto,
@@ -79,7 +75,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
 
         return { bg: "#FFFFFF", text: "#000000" };
       },
-      [props.options]
+      [props.options],
     );
 
     const handleChange = (newValue: any, option: any) => {
@@ -104,11 +100,11 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (isOpen && /^[0-9]$/.test(e.key)) {
+      if (isOpen && /^\d$/.test(e.key)) {
         e.preventDefault();
-        const numero = parseInt(e.key);
+        const numero = Number.parseInt(e.key);
         const opcaoEncontrada = props.options?.find(
-          (opt: any) => opt.ordem === numero
+          (opt: any) => opt.ordem === numero,
         );
         if (opcaoEncontrada && onChange) {
           onChange(opcaoEncontrada.value, opcaoEncontrada);
@@ -124,16 +120,19 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         e.stopPropagation();
       }
 
-      if (props.onKeyDown) {
-        props.onKeyDown(e as any);
+      if (onKeyDown) {
+        onKeyDown(e as any);
       }
     };
 
     useEffect(() => {
-      if (value) {
+      if (value !== null && value !== undefined) {
         const colors = getColorByValue(value);
         setBackgroundColor(colors.bg);
         setTextColor(colors.text);
+      } else {
+        setBackgroundColor("#FFFFFF");
+        setTextColor("#42474A");
       }
     }, [value, getColorByValue, props.id]);
 
@@ -191,19 +190,18 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           showSearch
           allowClear
           filterOption={filterOption}
-          getPopupContainer={(trigger) => trigger.parentElement}
+          {...props}
           value={value}
           onChange={handleChange}
           onOpenChange={handleOpenChange}
           onKeyDown={handleKeyDown}
-          {...props}
           className={`select-colorido select-colorido-${uniqueId} ${
             props.className ?? ""
           }`}
         />
       </>
     );
-  }
+  },
 );
 
 SelectColorido.displayName = "SelectColorido";

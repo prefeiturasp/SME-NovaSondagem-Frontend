@@ -1,8 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Button, Card, Form, Select, Row, Col } from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  Select,
+  Row,
+  Col,
+  message,
+  notification,
+  Spin,
+} from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
-import MockDadosTabelaDinamica from "../../../mocks/MockDadosTabelaDinamica.json";
-import MockDadosTabelaDinamica2 from "../../../mocks/MockDadosTabelaDinamica2.json";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -11,15 +19,15 @@ import Alerta from "../../../componentes/biblioteca/Alerta";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
 import NovaSondagemServico from "../../../core/servico/servico";
+import { Auditoria } from "../auditoria/auditoria";
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
   const turmaSelecionada = usuario?.turmaSelecionada;
-  const turma = turmaSelecionada ? turmaSelecionada.id : 0;
-  // const modalidade = usuario?.turmaSelecionada?.modalidade;
-  // const ano = usuario?.turmaSelecionada?.ano;
-  const modalidade = "5";
-  const ano = "1";
+  const turma = turmaSelecionada ? turmaSelecionada.turma : 0;
+  const modalidade = usuario?.turmaSelecionada?.modalidade;
+  const ano = usuario?.turmaSelecionada?.ano;
+
   console.log("Usuario no conteudo:", usuario);
 
   const [listaDisciplinas, setListaDisciplinas] = useState<
@@ -31,11 +39,11 @@ const Conteudo: React.FC = () => {
   >([]);
 
   const [dadosLista, setDadosLista] = useState<DadosTabelaDinamica | null>(
-    null
+    null,
   );
 
   const [dadosLegenda, setDadosLegenda] = useState<LegendasProps[] | null>(
-    null
+    null,
   );
 
   const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
@@ -49,21 +57,23 @@ const Conteudo: React.FC = () => {
   >(null);
 
   const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
 
   const verificarModalidadeTurma = useCallback(() => {
-    // if (modalidade === "3") {
-    //   if (ano === "1") {
-    //     return true;
-    //   }
-    // }
-    if (modalidade === "5") {
-      if (ano === "1" || ano === "2" || ano === "3") {
-        return true;
-      }
+    const modStr = String(modalidade);
+    const anoStr = String(ano);
+
+    if (modStr === "3") {
+      return anoStr === "1";
     }
+
+    if (modStr === "5") {
+      return ["1", "2", "3"].includes(anoStr);
+    }
+
     return false;
   }, [modalidade, ano]);
 
@@ -75,64 +85,83 @@ const Conteudo: React.FC = () => {
 
       if (resposta?.data?.length > 0) {
         setDesabilitarDisciplina(false);
-        // Mapear dados da API para o formato do Select (value, label)
-        const dadosMapeados = resposta.data.map((item: any) => ({
-          value: item.id,
-          label: item.nome,
-        }));
+        const dadosMapeados = resposta.data
+          .map((item: any) => ({
+            value: item.id,
+            label: item.nome,
+          }))
+          .sort((a: any, b: any) =>
+            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
+          );
         setListaDisciplinas(dadosMapeados);
       } else {
         setDesabilitarDisciplina(true);
         setListaDisciplinas([]);
       }
     } catch (error: any) {
-      console.error("ERRO:", error.message);
+      console.error("Erro ao obter disciplinas:", error);
+      message.error("Erro ao carregar dados da disciplina.");
     }
   }, [formFiltro]);
 
-  const obterProficiencia = useCallback(async () => {
-    // Limpar apenas o campo de proficiência, não todo o formulário
-    formFiltro.setFieldValue("proficienciaId", null);
-    setProficienciaSelecionada(null);
+  const obterProficiencia = useCallback(
+    async (idDisciplina: number) => {
+      formFiltro.setFieldValue("proficienciaId", null);
 
-    try {
-      const resposta = await NovaSondagemServico.get("/Proficiencia", {
-        headers: { "X-Token-Principal": usuario?.token },
-      });
+      try {
+        const resposta = await NovaSondagemServico.get(
+          `/Proficiencia/componente-curricular/${idDisciplina}`,
+          {
+            headers: { "X-Token-Principal": usuario?.token },
+          },
+        );
 
-      if (resposta?.data?.length > 0) {
-        setDesabilitarProficiencia(false);
-        // Mapear dados da API para o formato do Select (value, label)
-        const dadosMapeados = resposta.data.map((item: any) => ({
-          value: item.id,
-          label: item.nome,
-        }));
-        setListaProficiencia(dadosMapeados);
-      } else {
-        setDesabilitarProficiencia(true);
-        setListaProficiencia([]);
+        if (resposta?.data?.length > 0) {
+          setDesabilitarProficiencia(false);
+          const dadosMapeados = resposta.data.map((item: any) => ({
+            value: item.id,
+            label: item.nome,
+          }));
+          setListaProficiencia(dadosMapeados);
+        } else {
+          setDesabilitarProficiencia(true);
+          setListaProficiencia([]);
+        }
+      } catch (error: any) {
+        console.error("Erro ao obter proficiência:", error);
+        message.error("Erro ao carregar dados da proficiencia.");
       }
-    } catch (error: any) {
-      console.error("ERRO:", error.message);
-    }
-  }, [formFiltro]);
+    },
+    [formFiltro, usuario?.token],
+  );
 
   const resetando = useCallback(() => {
     formFiltro.resetFields();
     setListaDisciplinas([]);
+    setListaProficiencia([]);
     setDesabilitarDisciplina(true);
     setDesabilitarProficiencia(true);
     setDadosLista(null);
+    setDadosLegenda(null);
+    setDisciplinaSelecionada(null);
+    setProficienciaSelecionada(null);
     setModalidadeAnoValidos(false);
   }, [formFiltro]);
 
   useEffect(() => {
     const executar = async () => {
+      // Limpa os filtros de disciplina e proficiência quando a turma muda
+      formFiltro.resetFields(["disciplinaId", "proficienciaId"]);
+      setDisciplinaSelecionada(null);
+      setProficienciaSelecionada(null);
+      setListaProficiencia([]);
       setDadosLista(null);
+      setDadosLegenda(null);
       setDesabilitarDisciplina(true);
       setDesabilitarProficiencia(true);
+
       if (modalidade && ano) {
-        const valido = await verificarModalidadeTurma();
+        const valido = verificarModalidadeTurma();
         setModalidadeAnoValidos(valido);
 
         if (valido && turma !== 0) {
@@ -152,135 +181,218 @@ const Conteudo: React.FC = () => {
     verificarModalidadeTurma,
     obterDisciplinas,
     resetando,
+    formFiltro,
   ]);
 
   const onChangeDisciplinas = async (disciplinaId: number) => {
     if (disciplinaId) {
       setDisciplinaSelecionada(disciplinaId);
-      console.log("Disciplina ID selecionado:", disciplinaSelecionada);
-      await obterProficiencia();
+      setProficienciaSelecionada(null);
+      setDadosLista(null);
+      setDadosLegenda(null);
+      await obterProficiencia(disciplinaId);
     }
   };
 
   const onChangeProficiencia = async (proficienciaId: number) => {
-    if (proficienciaId) {
+    if (proficienciaId && disciplinaSelecionada) {
       setProficienciaSelecionada(proficienciaId);
-      console.log("Proficiência ID selecionado:", proficienciaSelecionada);
-      if (proficienciaId === 4) {
-        await buscarDadosLista();
-      } else if (proficienciaId === 5) {
-        await buscarDadosLista2();
+    }
+  };
+
+  useEffect(() => {
+    const executarBusca = async () => {
+      // Só busca se disciplina E proficiência estiverem selecionadas
+      if (
+        proficienciaSelecionada &&
+        disciplinaSelecionada &&
+        turma !== 0 &&
+        modalidade &&
+        ano
+      ) {
+        setLoading(true);
+        await buscarDadosListaDoBancoDeDados(
+          disciplinaSelecionada,
+          proficienciaSelecionada,
+        );
+        setLoading(false);
+      }
+    };
+
+    executarBusca();
+  }, [disciplinaSelecionada, proficienciaSelecionada]);
+
+  const buscarDadosListaDoBancoDeDados = async (
+    componenteCurricularId?: number,
+    proficienciaId?: number,
+  ) => {
+    const disciplinaId = componenteCurricularId ?? disciplinaSelecionada;
+    const profId = proficienciaId ?? proficienciaSelecionada;
+
+    try {
+      const resposta = await NovaSondagemServico.get("/Questionario", {
+        headers: { "X-Token-Principal": usuario?.token },
+        params: {
+          TurmaId: turma,
+          ProficienciaId: profId,
+          ComponenteCurricularId: disciplinaId,
+          Modalidade: modalidade,
+          Ano: ano,
+        },
+      });
+
+      console.log("Resposta do questionario:", resposta);
+
+      const dadosLegenda =
+        resposta.data.estudantes[0].coluna[0].opcaoResposta.map(
+          (legenda: any) => ({
+            corFundo: legenda.corFundo,
+            descricaoLegenda: legenda.descricaoOpcaoResposta,
+            textoLegenda: legenda.legenda,
+          }),
+        );
+      setDadosLegenda(dadosLegenda);
+      setDadosLista(resposta.data);
+    } catch (error: any) {
+      console.error("Erro ao buscar dados da lista:", error);
+      console.log("Status do erro:", error.response?.status);
+      console.log("Error code:", error.code);
+
+      if (error.response?.status === 404) {
+        notification.warning({
+          message: "Questões não encontradas",
+          description:
+            "Por favor, cadastre as questões para esta turma antes de continuar.",
+          duration: 5,
+          placement: "topRight",
+        });
+      } else if (error.code === "ERR_NETWORK" || !error.response) {
+        notification.error({
+          message: "Erro de conexão",
+          description:
+            "Não foi possível conectar ao servidor. Verifique sua conexão ou tente novamente mais tarde.",
+          duration: 5,
+          placement: "topRight",
+        });
+      } else {
+        message.error("Erro ao carregar dados da sondagem. Tente novamente.");
       }
     }
   };
 
-  const buscarDadosLista = async () => {
-    const dadosMock = MockDadosTabelaDinamica;
-    const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
-      (legenda) => ({
-        corFundo: legenda.corFundo,
-        descricaoLegenda: legenda.descricaoLegenda,
-        textoLegenda: legenda.descricaoOpcao,
-      })
-    );
-    setDadosLegenda(dadosLegenda);
-    setDadosLista(dadosMock);
-  };
-
-  const buscarDadosLista2 = async () => {
-    try {
-      const dadosMock = MockDadosTabelaDinamica2;
-      const dadosLegenda = dadosMock.estudantes[0].coluna[0].opcaoResposta.map(
-        (legenda) => ({
-          corFundo: legenda.corFundo,
-          descricaoLegenda: legenda.descricaoLegenda,
-          textoLegenda: legenda.descricaoOpcao,
-        })
-      );
-      setDadosLegenda(dadosLegenda);
-      setDadosLista(dadosMock);
-    } catch (error) {
-    } finally {
+  const gerarDados = useCallback(() => {
+    if (!dadosLista?.estudantes?.length) {
+      return [];
     }
-  };
-
-  const salvarDadosSondagem = () => {
     const dadosFormulario = formListaDinamica.getFieldsValue();
 
     const dadosParaSalvar = dadosLista?.estudantes.map(
       (estudante, estudanteIndex) => {
-        const respostas = estudante.coluna.map((coluna, colunaIndex) => ({
-          nomeColuna: coluna.descricaoColuna,
-          respostaId:
-            dadosFormulario[`respostaId_${estudanteIndex}_${colunaIndex}`] ??
-            null,
-          respostaSelecionada:
-            dadosFormulario[`resposta_${estudanteIndex}_${colunaIndex}`] ??
-            null,
-        }));
+        const respostas = estudante.coluna.map((_, colunaIndex) => {
+          const respostaId =
+            dadosFormulario[`respostaId_${estudanteIndex}_${colunaIndex}`];
+          const opcaoRespostaId =
+            dadosFormulario[`resposta_${estudanteIndex}_${colunaIndex}`];
+
+          return {
+            id: respostaId ?? 0,
+            opcaoRespostaId: opcaoRespostaId ?? null,
+          };
+        });
 
         return {
-          numeroEstudante: estudante.numero,
+          codigo: estudante.codigo,
+          numeroAlunoChamada: estudante.numeroAlunoChamada,
           nomeEstudante: estudante.nome,
-          lp: dadosFormulario[`lp_${estudanteIndex}`] ?? false,
-          respostas,
+          linguaPortuguesaSegundaLingua:
+            dadosFormulario[
+              `linguaPortuguesaSegundaLingua_${estudanteIndex}`
+            ] ?? estudante.linguaPortuguesaSegundaLingua,
+          respostas: estudante.coluna.map((coluna, colunaIndex) => ({
+            bimestreId: coluna.idCiclo,
+            questaoId: dadosLista?.questaoId ?? 0,
+            opcaoRespostaId: respostas[colunaIndex].opcaoRespostaId,
+          })),
         };
-      }
+      },
     );
 
-    console.log("Dados organizados para salvar:", dadosParaSalvar);
-  };
+    return dadosParaSalvar;
+  }, [dadosLista, formListaDinamica]);
 
-  const CancelarCadastroSondagem = () => {
-    console.log("Cancelar cadastro de sondagem");
+  const salvarDadosSondagem = useCallback(async () => {
+    const dadosParaSalvar = gerarDados();
+
+    const data = {
+      sondagemId: dadosLista?.sondagemId ?? 0,
+      alunos: dadosParaSalvar,
+    };
+    console.log("Dados para salvar:", data);
+    try {
+      const resposta = await NovaSondagemServico.post("Sondagem", data, {
+        headers: { "X-Token-Principal": usuario?.token },
+      });
+
+      if (resposta.status === 200) {
+        notification.success({
+          message: "Sondagem salva com sucesso!",
+          description:
+            "Os dados da sondagem foram salvos e estão disponíveis para consulta.",
+          duration: 5,
+          placement: "topRight",
+        });
+      }
+    } catch (error: any) {
+      console.error("ERRO:", error);
+
+      const errorMessage =
+        error.response?.data?.title ??
+        error.response?.data?.message ??
+        "Erro ao salvar a sondagem. Tente novamente.";
+
+      const errorDetails = error.response?.data?.errors
+        ? Object.entries(error.response.data.errors)
+            .map(
+              ([key, value]: [string, any]) =>
+                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
+            )
+            .join("\n")
+        : null;
+
+      notification.error({
+        message: "Erro ao salvar sondagem",
+        description: errorDetails ?? errorMessage,
+        duration: 5,
+        placement: "topRight",
+      });
+    }
+  }, [usuario?.token, gerarDados]);
+
+  const CancelarCadastroSondagem = async () => {
+    if (proficienciaSelecionada && disciplinaSelecionada) {
+      console.log("Recarregando sondagem com os parâmetros:", {
+        modalidade,
+        ano,
+        componenteCurricular: disciplinaSelecionada,
+        proficiencia: proficienciaSelecionada,
+        turmaId: turma,
+      });
+
+      await buscarDadosListaDoBancoDeDados(
+        disciplinaSelecionada,
+        proficienciaSelecionada,
+      );
+    }
   };
 
   const voltarSondagem = () => {
-    console.log("Voltar para a tela anterior");
+    globalThis.location.href = "/";
   };
-
-  //Exemplo de uso do serviço NovaSondagemServico
-  // const testarAPI = useCallback(async () => {
-  //   try {
-  //     const resposta = await NovaSondagemServico.get("Ciclo", {
-  //       headers: { "X-Token-Principal": usuario?.token },
-  //       params: {
-  //         componenteCurricular: usuario?.unidadeSelecionada?.id || 0,
-  //         ano: usuario?.turmaSelecionada?.ano || "",
-  //       },
-  //     });
-  //   } catch (error: any) {
-  //     console.error("ERRO:", error.message);
-  //   }
-  // }, []);
-
-  // const data = {
-  //   idEstudante: 123,
-  //   respostas: [
-  //     { idPergunta: 1, resposta: "Resposta 1" },
-  //     { idPergunta: 2, resposta: "Resposta 2" },
-  //   ],
-  // };
-
-  // const testarAPIPost = useCallback(async () => {
-  //   try {
-  //     const resposta = await NovaSondagemServico.post("Ciclo", data, {
-  //       headers: { "X-Token-Principal": usuario?.token },
-  //     });
-  //   } catch (error: any) {
-  //     console.error("ERRO:", error.message);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   testarAPI();
-  //   testarAPIPost();
-  // }, []);
 
   return (
     <>
       <div className="grupoAlertas">
-        {!turmaSelecionada?.turma ? (
+        {!turmaSelecionada?.turma && (
           <Row gutter={16} className="p-0">
             <Alerta
               alerta={{
@@ -292,8 +404,8 @@ const Conteudo: React.FC = () => {
               className="mb-2 larguraAlerta"
             />
           </Row>
-        ) : null}
-        {!modalidadeAnoValidos ? (
+        )}
+        {!modalidadeAnoValidos && (
           <Row gutter={16} className="p-0">
             <Alerta
               alerta={{
@@ -306,7 +418,7 @@ const Conteudo: React.FC = () => {
               className="mb-2 larguraAlerta"
             />
           </Row>
-        ) : null}
+        )}
       </div>
 
       <div className="linhaTituloBotao">
@@ -386,35 +498,21 @@ const Conteudo: React.FC = () => {
             </Row>
           </Form>
         </div>
-        <SondagemListaDinamica
-          dados={dadosLista}
-          formListaDinamica={formListaDinamica}
-        />
+        <Spin spinning={loading} tip="Carregando dados...">
+          <SondagemListaDinamica
+            dados={dadosLista}
+            formListaDinamica={formListaDinamica}
+          />
+        </Spin>
         <Legendas data={dadosLegenda || []} />
+
+        <Auditoria
+          linhas={[
+            "INSERIDO por ANNE ALICE FERREIRA DE PAULA (9350276) em 07/02/2025 07:22:24",
+          ]}
+        />
       </Card>
     </>
   );
 };
 export default Conteudo;
-
-// const MockDisciplina = () => {
-//   const disciplina = {
-//     data: [
-//       { value: 1, label: "Língua Portuguesa" },
-//       { value: 2, label: "Matemática" },
-//     ],
-//   };
-
-//   return disciplina;
-// };
-
-// const MockProficiencia = () => {
-//   const proficiencia = {
-//     data: [
-//       { value: 1, label: "Escrita" },
-//       { value: 2, label: "Leitura" },
-//     ],
-//   };
-
-//   return proficiencia;
-// };

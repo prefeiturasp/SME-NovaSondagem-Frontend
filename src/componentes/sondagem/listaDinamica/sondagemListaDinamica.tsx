@@ -102,7 +102,7 @@ interface ListaSondagemEscritaProps {
 const SondagemListaDinamica: React.FC<
   ListaSondagemEscritaProps & { formListaDinamica: any }
 > = ({ dados, formListaDinamica }) => {
-  const mostrarColunaLP = dados?.questao === "escrita";
+  const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
   const [selectOpenStates, setSelectOpenStates] = useState<
@@ -128,13 +128,14 @@ const SondagemListaDinamica: React.FC<
       const initialValues: any = {};
 
       dados.estudantes.forEach((estudante, estudanteIndex) => {
-        initialValues[`lp_${estudanteIndex}`] = estudante.lp;
+        initialValues[`linguaPortuguesaSegundaLingua_${estudanteIndex}`] =
+          estudante.linguaPortuguesaSegundaLingua;
 
         estudante.coluna.forEach((coluna, colunaIndex) => {
-          const respostaSelecionada = coluna.resposta?.[0];
+          const respostaSelecionada = coluna.resposta;
 
           initialValues[`resposta_${estudanteIndex}_${colunaIndex}`] =
-            respostaSelecionada
+            respostaSelecionada && respostaSelecionada.opcaoRespostaId !== 0
               ? respostaSelecionada.opcaoRespostaId
               : undefined;
 
@@ -148,7 +149,7 @@ const SondagemListaDinamica: React.FC<
   }, [opcoesCarregadas, dados, formListaDinamica]);
 
   const getTotalColumns = useCallback(() => {
-    return dados?.estudantes?.[0]?.coluna?.length || 0;
+    return dados?.estudantes?.[0]?.coluna?.length ?? 0;
   }, [dados]);
 
   const isSelectOpen = useCallback(
@@ -172,7 +173,7 @@ const SondagemListaDinamica: React.FC<
       const targetKey = `${newRow}_${newCol}`;
       const targetRef = selectRefs.current.get(targetKey);
 
-      if (targetRef && targetRef.focus) {
+      if (targetRef?.focus) {
         setTimeout(() => targetRef.focus(), 0);
       }
     },
@@ -226,7 +227,7 @@ const SondagemListaDinamica: React.FC<
     if (opcoesCarregadas && dados?.estudantes && dados.estudantes.length > 0) {
       const firstKey = "0_0";
       const firstRef = selectRefs.current.get(firstKey);
-      if (firstRef && firstRef.focus) {
+      if (firstRef?.focus) {
         setTimeout(() => firstRef.focus(), 100);
       }
     }
@@ -248,7 +249,7 @@ const SondagemListaDinamica: React.FC<
       fixed: "left",
       render: (_, _record, index) => (
         <Form.Item
-          name={`lp_${index}`}
+          name={`linguaPortuguesaSegundaLingua_${index}`}
           valuePropName="checked"
           style={{ margin: 0 }}
         >
@@ -259,7 +260,7 @@ const SondagemListaDinamica: React.FC<
   }
 
   columns.push({
-    title: "Estudante",
+    title: "Estudantes",
     key: "estudante",
     width: mostrarColunaLP ? "40%" : "50%",
     fixed: "left",
@@ -273,32 +274,17 @@ const SondagemListaDinamica: React.FC<
           }}
         >
           <span style={{ fontWeight: 500 }}>
-            {record.numero} - {record.nome}
+            {record.numeroAlunoChamada} - {record.nome}
           </span>
           <Space size={4}>
             {record.pap && <LogoPAP />}
             {record.aee && <LogoAEE />}
-            {record.acessibilidade && <LogoAcessibilidade />}
+            {record.possuiDeficiencia && <LogoAcessibilidade />}
           </Space>
         </div>
       </Space>
     ),
   });
-
-  const nomeQuestao = () => {
-    switch (dados?.questao) {
-      case "escrita":
-        return "Sistema de escrita";
-      case "reescrita":
-        return "Reescrita";
-      case "producao":
-        return "Produção";
-      case "leitura":
-        return "Compreensão de textos";
-      default:
-        return "Questão";
-    }
-  };
 
   if (dados?.estudantes?.[0]?.coluna) {
     dados.estudantes[0].coluna.forEach((coluna, colunaIndex) => {
@@ -312,13 +298,14 @@ const SondagemListaDinamica: React.FC<
             (a, b) => a.ordem - b.ordem
           );
           const options = opcoesOrdenadas.map((opcao) => ({
-            label: opcao.descricaoOpcao,
+            label: opcao.descricaoOpcaoResposta,
             value: opcao.id,
             corFundo: opcao.corFundo,
             corTexto: opcao.corTexto,
+            ordem: opcao.ordem,
           }));
 
-          const isDisabled = !colunaEstudante.PeriodoBimestreAtivo;
+          const isDisabled = !colunaEstudante.periodoBimestreAtivo;
 
           return (
             <>
@@ -361,7 +348,7 @@ const SondagemListaDinamica: React.FC<
       });
     });
     columns.push({
-      title: nomeQuestao(),
+      title: dados.tituloTabelaRespostas,
       children: [...columnsDinamicas],
     });
   }
@@ -376,7 +363,7 @@ const SondagemListaDinamica: React.FC<
 
   const dataSourceComIndice = dados.estudantes.map((estudante, index) => ({
     ...estudante,
-    uniqueKey: `estudante_${index}_${estudante.numero}`,
+    uniqueKey: `estudante_${index}_${estudante.numeroAlunoChamada}`,
   }));
 
   return (

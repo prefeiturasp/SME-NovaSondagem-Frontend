@@ -58,245 +58,164 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
 });
 
 const mockDadosEscrita: DadosTabelaDinamica = {
-  questao: "escrita",
+  sondagemId: 1,
+  tituloTabelaRespostas: "Sistema de escrita",
   estudantes: [
     {
-      lp: true,
-      numero: 1,
+      linguaPortuguesaSegundaLingua: true,
+      numeroAlunoChamada: 1,
       nome: "João Silva",
       pap: true,
       aee: true,
-      acessibilidade: true,
+      possuiDeficiencia: true,
+      codigo: 100001,
       coluna: [
         {
+          idCiclo: 1,
           descricaoColuna: "1° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 1,
               ordem: 1,
-              descricaoOpcao: "PS",
+              descricaoOpcaoResposta: "PS",
               corFundo: "#FF0000",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Pré-silábico",
+              legenda: "Pré-silábico",
             },
             {
               id: 2,
               ordem: 2,
-              descricaoOpcao: "SSV",
+              descricaoOpcaoResposta: "SSV",
               corFundo: "#00FF00",
               corTexto: "#000000",
-              descricaoLegenda: "Silábico sem valor",
+              legenda: "Silábico sem valor",
             },
             {
               id: 3,
               ordem: 3,
-              descricaoOpcao: "SCV",
+              descricaoOpcaoResposta: "SCV",
               corFundo: "#0000FF",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Silábico com valor",
+              legenda: "Silábico com valor",
             },
           ],
-          resposta: [{ id: 1, opcaoRespostaId: 2 }],
+          resposta: { id: 1, opcaoRespostaId: 2 },
         },
         {
+          idCiclo: 2,
           descricaoColuna: "2° ciclo",
-          PeriodoBimestreAtivo: false,
+          periodoBimestreAtivo: false,
           opcaoResposta: [
             {
               id: 4,
               ordem: 1,
-              descricaoOpcao: "A",
+              descricaoOpcaoResposta: "A",
               corFundo: "#FFFF00",
               corTexto: "#000000",
-              descricaoLegenda: "Alfabético",
+              legenda: "Alfabético",
             },
             {
               id: 5,
               ordem: 2,
-              descricaoOpcao: "B",
+              descricaoOpcaoResposta: "B",
               corFundo: "#FF00FF",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Nível B",
+              legenda: "Nível B",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
         },
       ],
     },
     {
-      lp: false,
-      numero: 2,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 2,
       nome: "Maria Santos",
       pap: false,
       aee: false,
-      acessibilidade: false,
+      possuiDeficiencia: false,
+      codigo: 100002,
       coluna: [
         {
+          idCiclo: 1,
           descricaoColuna: "1° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 1,
               ordem: 1,
-              descricaoOpcao: "PS",
+              descricaoOpcaoResposta: "PS",
               corFundo: "#FF0000",
               corTexto: "#FFFFFF",
-              descricaoLegenda: "Pré-silábico",
+              legenda: "Pré-silábico",
             },
             {
               id: 2,
               ordem: 2,
-              descricaoOpcao: "SSV",
+              descricaoOpcaoResposta: "SSV",
               corFundo: "#00FF00",
               corTexto: "#000000",
-              descricaoLegenda: "Silábico sem valor",
+              legenda: "Silábico sem valor",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
         },
         {
+          idCiclo: 2,
           descricaoColuna: "2° ciclo",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 4,
               ordem: 1,
-              descricaoOpcao: "A",
+              descricaoOpcaoResposta: "A",
               corFundo: "#FFFF00",
               corTexto: "#000000",
-              descricaoLegenda: "Alfabético",
+              legenda: "Alfabético",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
         },
       ],
     },
   ],
+  questaoId: 0,
 };
 
 const mockDadosReescrita: DadosTabelaDinamica = {
-  questao: "reescrita",
+  sondagemId: 2,
+  tituloTabelaRespostas: "reescrita",
   estudantes: [
     {
-      lp: false,
-      numero: 1,
+      linguaPortuguesaSegundaLingua: false,
+      numeroAlunoChamada: 1,
       nome: "Carlos Lima",
       pap: false,
       aee: true,
-      acessibilidade: false,
+      possuiDeficiencia: false,
+      codigo: 100003,
       coluna: [
         {
+          idCiclo: 3,
           descricaoColuna: "Avaliação 1",
-          PeriodoBimestreAtivo: true,
+          periodoBimestreAtivo: true,
           opcaoResposta: [
             {
               id: 10,
               ordem: 1,
-              descricaoOpcao: "Opção 1",
+              descricaoOpcaoResposta: "Opção 1",
               corFundo: "#00FFFF",
               corTexto: "#000000",
-              descricaoLegenda: "Primeira opção",
+              legenda: "Primeira opção",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
         },
       ],
     },
   ],
-};
-
-const mockDadosProducao: DadosTabelaDinamica = {
-  questao: "producao",
-  estudantes: [
-    {
-      lp: false,
-      numero: 3,
-      nome: "Ana Costa",
-      pap: false,
-      aee: false,
-      acessibilidade: true,
-      coluna: [
-        {
-          descricaoColuna: "Produção 1",
-          PeriodoBimestreAtivo: true,
-          opcaoResposta: [
-            {
-              id: 20,
-              ordem: 1,
-              descricaoOpcao: "Nível 1",
-              corFundo: "#FFA500",
-              corTexto: "#000000",
-              descricaoLegenda: "Primeiro nível de produção",
-            },
-          ],
-          resposta: [],
-        },
-      ],
-    },
-  ],
-};
-
-const mockDadosLeitura: DadosTabelaDinamica = {
-  questao: "leitura",
-  estudantes: [
-    {
-      lp: false,
-      numero: 4,
-      nome: "Pedro Oliveira",
-      pap: true,
-      aee: false,
-      acessibilidade: false,
-      coluna: [
-        {
-          descricaoColuna: "Leitura 1",
-          PeriodoBimestreAtivo: true,
-          opcaoResposta: [
-            {
-              id: 30,
-              ordem: 1,
-              descricaoOpcao: "Nível A",
-              corFundo: "#800080",
-              corTexto: "#FFFFFF",
-              descricaoLegenda: "Nível A de leitura",
-            },
-          ],
-          resposta: [],
-        },
-      ],
-    },
-  ],
-};
-
-const mockDadosOutro: DadosTabelaDinamica = {
-  questao: "outro",
-  estudantes: [
-    {
-      lp: false,
-      numero: 5,
-      nome: "Lucia Ferreira",
-      pap: false,
-      aee: false,
-      acessibilidade: false,
-      coluna: [
-        {
-          descricaoColuna: "Avaliação",
-          PeriodoBimestreAtivo: true,
-          opcaoResposta: [
-            {
-              id: 40,
-              ordem: 1,
-              descricaoOpcao: "Item 1",
-              corFundo: "#808080",
-              corTexto: "#FFFFFF",
-              descricaoLegenda: "Primeiro item",
-            },
-          ],
-          resposta: [],
-        },
-      ],
-    },
-  ],
+  questaoId: 0,
 };
 
 const WrapperComponent = ({
@@ -337,8 +256,10 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar mensagem quando estudantes está vazio", () => {
       const dadosVazios: DadosTabelaDinamica = {
-        questao: "escrita",
+        tituloTabelaRespostas: "Sistema de escrita",
         estudantes: [],
+        sondagemId: 0,
+        questaoId: 0,
       };
       render(<WrapperComponent dados={dadosVazios} />);
       expect(
@@ -354,9 +275,14 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Coluna LP (questão escrita)", () => {
-    it("deve renderizar coluna LP quando questão é escrita", () => {
+    it("deve renderizar coluna LP quando questão é escrita", async () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getAllByText("LP como 2ª língua?")[0]).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
     });
 
     it("não deve renderizar coluna LP quando questão não é escrita", () => {
@@ -424,29 +350,30 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Nome da questão", () => {
-    it("deve mostrar 'Sistema de escrita' para questão escrita", () => {
+    it("deve mostrar 'Sistema de escrita' para questão escrita", async () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getByText("Sistema de escrita")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
     });
 
-    it("deve mostrar 'Reescrita' para questão reescrita", () => {
+    it("não deve mostrar LP para questão reescrita", async () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
-      expect(screen.getByText("Reescrita")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.queryByText("LP como 2ª língua?")
+        ).not.toBeInTheDocument();
+        expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
+      });
     });
 
-    it("deve mostrar 'Produção' para questão producao", () => {
-      render(<WrapperComponent dados={mockDadosProducao} />);
-      expect(screen.getByText("Produção")).toBeInTheDocument();
-    });
-
-    it("deve mostrar 'Compreensão de textos' para questão leitura", () => {
-      render(<WrapperComponent dados={mockDadosLeitura} />);
-      expect(screen.getByText("Compreensão de textos")).toBeInTheDocument();
-    });
-
-    it("deve mostrar 'Questão' para questão desconhecida", () => {
-      render(<WrapperComponent dados={mockDadosOutro} />);
-      expect(screen.getByText("Questão")).toBeInTheDocument();
+    it("deve renderizar colunas para questão reescrita", async () => {
+      render(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(screen.getAllByText("Avaliação 1")).toHaveLength(2);
+      });
     });
   });
 
@@ -621,12 +548,12 @@ describe("SondagemListaDinamica", () => {
   describe("Width das colunas", () => {
     it("deve definir width de 40% para coluna estudante quando mostra LP", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getAllByText("Estudante")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Estudantes")[0]).toBeInTheDocument();
     });
 
     it("deve definir width de 50% para coluna estudante quando não mostra LP", () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
-      expect(screen.getAllByText("Estudante")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Estudantes")[0]).toBeInTheDocument();
     });
   });
 
@@ -774,7 +701,9 @@ describe("SondagemListaDinamica", () => {
         const checkbox = container.querySelector(
           'input[type="checkbox"]'
         ) as HTMLInputElement;
-        expect(checkbox?.checked).toBe(true);
+
+        expect(checkbox).toBeInTheDocument();
+        expect(checkbox.checked).toBe(true);
       });
     });
   });
@@ -810,14 +739,24 @@ describe("SondagemListaDinamica", () => {
       });
     });
 
-    it("deve rerenderizar eficientemente ao mudar dados", () => {
+    it("deve rerenderizar eficientemente ao mudar dados", async () => {
       const { rerender } = render(
         <WrapperComponent dados={mockDadosEscrita} />
       );
 
-      rerender(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("LP como 2ª língua?")[0]
+        ).toBeInTheDocument();
+      });
 
-      expect(screen.getByText("Reescrita")).toBeInTheDocument();
+      rerender(<WrapperComponent dados={mockDadosReescrita} />);
+      await waitFor(() => {
+        expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
+        expect(
+          screen.queryByText("LP como 2ª língua?")
+        ).not.toBeInTheDocument();
+      });
     });
   });
 
@@ -965,8 +904,10 @@ describe("SondagemListaDinamica", () => {
 
     it("deve lidar com array vazio de estudantes", () => {
       const dadosVazios = {
-        questao: "escrita",
+        sondagemId: 0,
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       const { container } = render(<WrapperComponent dados={dadosVazios} />);
@@ -1107,8 +1048,10 @@ describe("SondagemListaDinamica", () => {
 
     it("deve retornar 0 quando não há estudantes em getTotalColumns", () => {
       const emptyDados: DadosTabelaDinamica = {
-        questao: "escrita",
+        sondagemId: 0,
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       render(<WrapperComponent dados={emptyDados} />);
@@ -1121,8 +1064,10 @@ describe("SondagemListaDinamica", () => {
 
     it("deve retornar quando não há dados em moveFocus", async () => {
       const emptyDados: DadosTabelaDinamica = {
-        questao: "escrita",
+        sondagemId: 0,
+        tituloTabelaRespostas: "escrita",
         estudantes: [],
+        questaoId: 0,
       };
 
       render(<WrapperComponent dados={emptyDados} />);
@@ -1251,6 +1196,144 @@ describe("SondagemListaDinamica", () => {
       fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
 
       expect(select).toBeInTheDocument();
+    });
+  });
+
+  describe("Carregamento de respostas salvas", () => {
+    it("deve renderizar select quando opcaoRespostaId é válido", async () => {
+      const dadosComResposta: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 123, opcaoRespostaId: 2 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComResposta} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve renderizar select quando opcaoRespostaId é 0", async () => {
+      const dadosComRespostaZero: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 0, opcaoRespostaId: 0 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComRespostaZero} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve tratar resposta como objeto direto", async () => {
+      const dadosComResposta: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 456, opcaoRespostaId: 1 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComResposta} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve renderizar múltiplos selects corretamente", async () => {
+      const dadosComMultiplasRespostas: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 101, opcaoRespostaId: 1 },
+              },
+            ],
+          },
+          {
+            ...mockDadosEscrita.estudantes[1],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[1].coluna[0],
+                resposta: { id: 102, opcaoRespostaId: 2 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComMultiplasRespostas} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+        expect(screen.getByTestId("select_1_0")).toBeInTheDocument();
+      });
+
+      // Verifica se os estudantes foram renderizados
+      expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
+      expect(screen.getByText("2 - Maria Santos")).toBeInTheDocument();
+    });
+
+    it("deve renderizar tabela quando resposta é null", async () => {
+      const dadosComRespostaNula: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: null as any,
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComRespostaNula} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+
+      // Verifica que a tabela renderiza mesmo com resposta null
+      expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
     });
   });
 });

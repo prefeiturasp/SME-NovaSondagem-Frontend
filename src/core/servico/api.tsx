@@ -22,9 +22,10 @@ const TOKEN_KEY = "nova_sondagem_token";
 const apiNovaSondagem = axios.create({ baseURL }) as CustomAxiosInstance;
 
 const autenticar = async (tokenPrincipal: string): Promise<string> => {
+  console.log("****TOKENPRINCIPAL*****", tokenPrincipal)
   const response = await axios.post<TokenResponse>(
     `${baseURL}/Autenticacao`,
-    tokenPrincipal,
+    JSON.stringify(tokenPrincipal),
     {
       headers: {
         "Content-Type": "application/json",
@@ -61,17 +62,19 @@ apiNovaSondagem.interceptors.request.use(
     delete config.headers["X-Token-Principal"];
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    throw error;
+  }
 );
 
 apiNovaSondagem.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: any) => {
-    if (axios.isCancel(error)) return Promise.reject(error);
+    if (axios.isCancel(error)) throw error;
     if (error.response?.status === 401) {
       localStorage.removeItem(TOKEN_KEY);
     }
-    return Promise.reject(error);
+    throw error;
   }
 );
 

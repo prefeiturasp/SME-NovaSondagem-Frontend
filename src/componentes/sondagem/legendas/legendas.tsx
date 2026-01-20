@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import "./legendas.css";
@@ -10,6 +10,7 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
       dataIndex: "corFundo",
       key: "corFundo",
       width: 10,
+      align: "left",
       render: (corFundo: string) => (
         <div
           style={{ backgroundColor: corFundo, width: "10px", height: "20px" }}
@@ -20,10 +21,15 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
       title: "",
       dataIndex: "textoLegenda",
       key: "descricao",
+      align: "left",
       render: (_: any, record: LegendasProps) => (
         <span>
-          <span style={{ fontWeight: "bold" }}>{record.textoLegenda}</span>:{" "}
-          {record.descricaoLegenda}
+          <span style={{ fontWeight: "bold" }}>{record.descricaoLegenda}</span>:{" "}
+          <Tooltip title={record.textoLegenda}>
+            <span className="legenda-texto-truncado">
+              {record.textoLegenda}
+            </span>
+          </Tooltip>
         </span>
       ),
     },
@@ -47,6 +53,10 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
         size="small"
         bordered
         className="tabela-legendas"
+        locale={{ emptyText: "Nenhuma legenda cadastrada" }}
+        rowKey={(record) =>
+          `legenda-${record.corFundo}-${record.descricaoLegenda}`
+        }
       />
     </div>
   );
