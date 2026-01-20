@@ -7,5 +7,5 @@ export const getApiUrl = (): string => {
     return import.meta.env.VITE_NOVA_SONDAGEM_API;
   }
 
-  return "http://localhost:9999";
+  return "http://localhost:5173";
 };
