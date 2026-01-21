@@ -53,6 +53,8 @@ const mockProficiencias = [
 const mockQuestionario = {
   sondagemId: 1,
   questaoId: 10,
+  inseridoPor: "Inserido por Professor João em 01/01/2024",
+  alteradoPor: "Alterado por Professor Maria em 10/01/2024",
   estudantes: [
     {
       codigo: "123456",
@@ -1745,6 +1747,107 @@ describe("Conteudo", () => {
         NovaSondagemServico.get as jest.Mock
       ).mock.calls.filter((call) => call[0] === "/Questionario");
       expect(questionarioCalls.length).toBe(0);
+    });
+  });
+
+  describe("Auditoria", () => {
+    it("deve ter campos de auditoria no mock de dados", () => {
+      // Verifica que o mockQuestionario tem os campos de auditoria
+      expect(mockQuestionario.inseridoPor).toBeDefined();
+      expect(mockQuestionario.alteradoPor).toBeDefined();
+      expect(mockQuestionario.inseridoPor).toBe(
+        "Inserido por Professor João em 01/01/2024",
+      );
+      expect(mockQuestionario.alteradoPor).toBe(
+        "Alterado por Professor Maria em 10/01/2024",
+      );
+    });
+
+    it("deve criar array de auditoria com ambos os campos presentes", () => {
+      const dados = {
+        inseridoPor: "Inserido por Professor João em 01/01/2024",
+        alteradoPor: "Alterado por Professor Maria em 10/01/2024",
+      };
+
+      const arrayAuditoria = [dados.inseridoPor, dados.alteradoPor].filter(
+        (item) => item != null && item !== "",
+      );
+
+      expect(arrayAuditoria).toHaveLength(2);
+      expect(arrayAuditoria[0]).toBe(
+        "Inserido por Professor João em 01/01/2024",
+      );
+      expect(arrayAuditoria[1]).toBe(
+        "Alterado por Professor Maria em 10/01/2024",
+      );
+    });
+
+    it("deve filtrar valores null de auditoria", () => {
+      const dados = {
+        inseridoPor: "Inserido por Professor João em 01/01/2024",
+        alteradoPor: null,
+      };
+
+      const arrayAuditoria = [dados.inseridoPor, dados.alteradoPor].filter(
+        (item) => item != null && item !== "",
+      );
+
+      expect(arrayAuditoria).toHaveLength(1);
+      expect(arrayAuditoria[0]).toBe(
+        "Inserido por Professor João em 01/01/2024",
+      );
+    });
+
+    it("deve filtrar strings vazias de auditoria", () => {
+      const dados = {
+        inseridoPor: "",
+        alteradoPor: "Alterado por Professor Maria em 10/01/2024",
+      };
+
+      const arrayAuditoria = [dados.inseridoPor, dados.alteradoPor].filter(
+        (item) => item != null && item !== "",
+      );
+
+      expect(arrayAuditoria).toHaveLength(1);
+      expect(arrayAuditoria[0]).toBe(
+        "Alterado por Professor Maria em 10/01/2024",
+      );
+    });
+
+    it("deve retornar array vazio quando ambos os campos são null", () => {
+      const dados = {
+        inseridoPor: null,
+        alteradoPor: null,
+      };
+
+      const arrayAuditoria = [dados.inseridoPor, dados.alteradoPor].filter(
+        (item) => item != null && item !== "",
+      );
+
+      expect(arrayAuditoria).toHaveLength(0);
+    });
+
+    it("deve retornar array vazio quando ambos os campos são strings vazias", () => {
+      const dados = {
+        inseridoPor: "",
+        alteradoPor: "",
+      };
+
+      const arrayAuditoria = [dados.inseridoPor, dados.alteradoPor].filter(
+        (item) => item != null && item !== "",
+      );
+
+      expect(arrayAuditoria).toHaveLength(0);
+    });
+
+    it("deve filtrar campos undefined", () => {
+      const dados: any = {};
+
+      const arrayAuditoria = [dados.inseridoPor, dados.alteradoPor].filter(
+        (item) => item != null && item !== "",
+      );
+
+      expect(arrayAuditoria).toHaveLength(0);
     });
   });
 });

@@ -9,6 +9,7 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
   return function SelectColorido({
     id,
     options,
+    value,
     onChange,
     disabled,
     placeholder,
@@ -28,8 +29,9 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
       <select
         id={id}
         ref={selectRef}
+        value={value ?? ""}
         onChange={(e) => {
-          if (onChange) onChange(Number(e.target.value));
+          if (onChange) onChange(Number(e.target.value) || undefined);
         }}
         onFocus={() => {
           setIsOpen(true);
@@ -1367,68 +1369,74 @@ describe("SondagemListaDinamica", () => {
     });
 
     it("deve manter respostaId vazio quando resposta é null", async () => {
-      const [form] = Form.useForm();
-      const dadosComRespostaNula: DadosTabelaDinamica = {
-        ...mockDadosEscrita,
-        estudantes: [
-          {
-            ...mockDadosEscrita.estudantes[0],
-            coluna: [
-              {
-                ...mockDadosEscrita.estudantes[0].coluna[0],
-                resposta: null as any,
-              },
-            ],
-          },
-        ],
+      const FormWrapper = () => {
+        const [form] = Form.useForm();
+        return (
+          <SondagemListaDinamica
+            dados={{
+              ...mockDadosEscrita,
+              estudantes: [
+                {
+                  ...mockDadosEscrita.estudantes[0],
+                  coluna: [
+                    {
+                      ...mockDadosEscrita.estudantes[0].coluna[0],
+                      resposta: null as any,
+                    },
+                  ],
+                },
+              ],
+            }}
+            formListaDinamica={form}
+          />
+        );
       };
 
-      render(
-        <SondagemListaDinamica
-          dados={dadosComRespostaNula}
-          formListaDinamica={form}
-        />,
-      );
+      const { container } = render(<FormWrapper />);
 
       await waitFor(() => {
-        const values = form.getFieldsValue();
-        // Quando resposta é null, respostaId deve ser string vazia
-        expect(values.respostaId_0_0).toBe("");
-        // E resposta deve ser undefined
-        expect(values.resposta_0_0).toBeUndefined();
+        const select = container.querySelector(
+          "select[data-testid='select_0_0']",
+        ) as HTMLSelectElement;
+        expect(select).toBeInTheDocument();
+        // Quando resposta é null, select deve estar vazio
+        expect(select.value).toBe("");
       });
     });
 
     it("deve manter respostaId vazio quando opcaoRespostaId é 0", async () => {
-      const [form] = Form.useForm();
-      const dadosComRespostaZero: DadosTabelaDinamica = {
-        ...mockDadosEscrita,
-        estudantes: [
-          {
-            ...mockDadosEscrita.estudantes[0],
-            coluna: [
-              {
-                ...mockDadosEscrita.estudantes[0].coluna[0],
-                resposta: { id: 0, opcaoRespostaId: 0 },
-              },
-            ],
-          },
-        ],
+      const FormWrapper = () => {
+        const [form] = Form.useForm();
+        return (
+          <SondagemListaDinamica
+            dados={{
+              ...mockDadosEscrita,
+              estudantes: [
+                {
+                  ...mockDadosEscrita.estudantes[0],
+                  coluna: [
+                    {
+                      ...mockDadosEscrita.estudantes[0].coluna[0],
+                      resposta: { id: 0, opcaoRespostaId: 0 },
+                    },
+                  ],
+                },
+              ],
+            }}
+            formListaDinamica={form}
+          />
+        );
       };
 
-      render(
-        <SondagemListaDinamica
-          dados={dadosComRespostaZero}
-          formListaDinamica={form}
-        />,
-      );
+      const { container } = render(<FormWrapper />);
 
       await waitFor(() => {
-        const values = form.getFieldsValue();
-        // Quando opcaoRespostaId é 0, respostaId deve ser string vazia
-        expect(values.respostaId_0_0).toBe("");
-        // E resposta deve ser undefined
-        expect(values.resposta_0_0).toBeUndefined();
+        const select = container.querySelector(
+          "select[data-testid='select_0_0']",
+        ) as HTMLSelectElement;
+        expect(select).toBeInTheDocument();
+        // Quando opcaoRespostaId é 0, select deve estar vazio
+        expect(select.value).toBe("");
       });
     });
   });
