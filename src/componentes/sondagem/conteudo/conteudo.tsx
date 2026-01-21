@@ -46,6 +46,8 @@ const Conteudo: React.FC = () => {
     null,
   );
 
+  const [dadosAuditoria, setDadosAuditoria] = useState<string[]>([]);
+
   const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
   const [desabilitarProficiencia, setDesabilitarProficiencia] = useState(true);
 
@@ -253,6 +255,12 @@ const Conteudo: React.FC = () => {
         );
       setDadosLegenda(dadosLegenda);
       setDadosLista(resposta.data);
+
+      const arrayAuditoria = [
+        resposta.data.inseridoPor,
+        resposta.data.alteradoPor,
+      ].filter((item) => item != null && item !== "");
+      setDadosAuditoria(arrayAuditoria);
     } catch (error: any) {
       console.error("Erro ao buscar dados da lista:", error);
       console.log("Status do erro:", error.response?.status);
@@ -506,11 +514,7 @@ const Conteudo: React.FC = () => {
         </Spin>
         <Legendas data={dadosLegenda || []} />
 
-        <Auditoria
-          linhas={[
-            "INSERIDO por ANNE ALICE FERREIRA DE PAULA (9350276) em 07/02/2025 07:22:24",
-          ]}
-        />
+        <Auditoria linhas={dadosAuditoria || []} />
       </Card>
     </>
   );
