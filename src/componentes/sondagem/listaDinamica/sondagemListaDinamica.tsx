@@ -135,12 +135,13 @@ const SondagemListaDinamica: React.FC<
           const respostaSelecionada = coluna.resposta;
 
           initialValues[`resposta_${estudanteIndex}_${colunaIndex}`] =
-            respostaSelecionada && respostaSelecionada.opcaoRespostaId !== 0
+            respostaSelecionada?.opcaoRespostaId &&
+            respostaSelecionada.opcaoRespostaId !== 0
               ? respostaSelecionada.opcaoRespostaId
               : undefined;
 
           initialValues[`respostaId_${estudanteIndex}_${colunaIndex}`] =
-            respostaSelecionada ? respostaSelecionada.id : "";
+            respostaSelecionada?.id ?? "";
         });
       });
 
@@ -157,7 +158,7 @@ const SondagemListaDinamica: React.FC<
       const key = `${row}_${col}`;
       return selectOpenStates.get(key) || false;
     },
-    [selectOpenStates]
+    [selectOpenStates],
   );
 
   const moveFocus = useCallback(
@@ -177,7 +178,7 @@ const SondagemListaDinamica: React.FC<
         setTimeout(() => targetRef.focus(), 0);
       }
     },
-    [dados, getTotalColumns]
+    [dados, getTotalColumns],
   );
 
   const handleKeyNavigation = useCallback(
@@ -208,7 +209,7 @@ const SondagemListaDinamica: React.FC<
         moveFocus(row - 1, col);
       }
     },
-    [getTotalColumns, isSelectOpen, moveFocus]
+    [getTotalColumns, isSelectOpen, moveFocus],
   );
 
   const handleSelectOpen = useCallback(
@@ -220,7 +221,7 @@ const SondagemListaDinamica: React.FC<
         return newMap;
       });
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -295,7 +296,7 @@ const SondagemListaDinamica: React.FC<
         render: (_, record, estudanteIndex) => {
           const colunaEstudante = record.coluna[colunaIndex];
           const opcoesOrdenadas = [...colunaEstudante.opcaoResposta].sort(
-            (a, b) => a.ordem - b.ordem
+            (a, b) => a.ordem - b.ordem,
           );
           const options = opcoesOrdenadas.map((opcao) => ({
             label: opcao.descricaoOpcaoResposta,
