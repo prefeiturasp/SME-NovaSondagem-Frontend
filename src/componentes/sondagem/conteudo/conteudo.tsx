@@ -188,15 +188,17 @@ const Conteudo: React.FC = () => {
 
   useEffect(() => {
     const executar = async () => {
-      // Limpa os filtros de disciplina e proficiência quando a turma muda
-      formFiltro.resetFields(["disciplinaId", "proficienciaId"]);
+      formFiltro.resetFields(["disciplinaId", "proficienciaId", "bimestreId"]);
       setDisciplinaSelecionada(null);
       setProficienciaSelecionada(null);
+      setBimestreSelecionado(null);
       setListaProficiencia([]);
+      setListaBimestre([]);
       setDadosLista(null);
       setDadosLegenda(null);
       setDesabilitarDisciplina(true);
       setDesabilitarProficiencia(true);
+      setDesabilitarBimestre(true);
 
       if (modalidade && ano) {
         const valido = verificarModalidadeTurma();
@@ -226,8 +228,11 @@ const Conteudo: React.FC = () => {
     if (disciplinaId) {
       setDisciplinaSelecionada(disciplinaId);
       setProficienciaSelecionada(null);
+      setBimestreSelecionado(null);
+      setDesabilitarBimestre(true);
       setDadosLista(null);
       setDadosLegenda(null);
+      formFiltro.setFieldValue("bimestreId", null);
       await obterProficiencia(disciplinaId);
     }
   };
@@ -235,9 +240,15 @@ const Conteudo: React.FC = () => {
   const onChangeProficiencia = async (proficienciaId: number) => {
     if (proficienciaId && disciplinaSelecionada) {
       setProficienciaSelecionada(proficienciaId);
-    }
-    if (proficienciaId === 3) {
-      obterBimestre();
+
+      if (proficienciaId === 3 || proficienciaId === 5) {
+        setDesabilitarBimestre(false);
+        obterBimestre();
+      } else {
+        setDesabilitarBimestre(true);
+        setBimestreSelecionado(null);
+        formFiltro.setFieldValue("bimestreId", null);
+      }
     }
   };
 
@@ -249,7 +260,6 @@ const Conteudo: React.FC = () => {
 
   useEffect(() => {
     const executarBusca = async () => {
-      // Só busca se disciplina E proficiência estiverem selecionadas
       if (
         proficienciaSelecionada &&
         disciplinaSelecionada &&
@@ -257,46 +267,29 @@ const Conteudo: React.FC = () => {
         modalidade &&
         ano
       ) {
-        setLoading(true);
-
-        if (proficienciaSelecionada !== 3) {
+        if (proficienciaSelecionada === 3 || proficienciaSelecionada === 5) {
+          if (bimestreSelecionado) {
+            setLoading(true);
+            await buscarDadosListaDoBancoDeDados(
+              disciplinaSelecionada,
+              proficienciaSelecionada,
+              bimestreSelecionado,
+            );
+            setLoading(false);
+          }
+        } else {
+          setLoading(true);
           await buscarDadosListaDoBancoDeDados(
             disciplinaSelecionada,
             proficienciaSelecionada,
           );
+          setLoading(false);
         }
-        setLoading(false);
       }
     };
 
     executarBusca();
-  }, [disciplinaSelecionada, proficienciaSelecionada]);
-
-  useEffect(() => {
-    const executarBusca = async () => {
-      // Só busca se disciplina E proficiência estiverem selecionadas
-      if (
-        proficienciaSelecionada &&
-        disciplinaSelecionada &&
-        turma !== 0 &&
-        modalidade &&
-        ano
-      ) {
-        setLoading(true);
-
-        if (proficienciaSelecionada !== 3) {
-          await buscarDadosListaDoBancoDeDados(
-            disciplinaSelecionada,
-            proficienciaSelecionada,
-            bimestreSelecionado,
-          );
-        }
-        setLoading(false);
-      }
-    };
-
-    executarBusca();
-  }, [bimestreSelecionado]);
+  }, [disciplinaSelecionada, proficienciaSelecionada, bimestreSelecionado]);
 
   const buscarDadosListaDoBancoDeDados = async (
     componenteCurricularId?: number,
@@ -394,7 +387,11 @@ const Conteudo: React.FC = () => {
             ] ?? estudante.linguaPortuguesaSegundaLingua,
           respostas: estudante.coluna.map((coluna, colunaIndex) => ({
             bimestreId: coluna.idCiclo,
-            questaoId: dadosLista.estudantes[estudanteIndex].coluna[colunaIndex].questaoSubrespostaId ?? dadosLista?.questaoId ?? 0,
+            questaoId:
+              dadosLista.estudantes[estudanteIndex].coluna[colunaIndex]
+                .questaoSubrespostaId ??
+              dadosLista?.questaoId ??
+              0,
             opcaoRespostaId: respostas[colunaIndex].opcaoRespostaId,
           })),
         };
@@ -460,11 +457,13 @@ const Conteudo: React.FC = () => {
         componenteCurricular: disciplinaSelecionada,
         proficiencia: proficienciaSelecionada,
         turmaId: turma,
+        bimestreId: bimestreSelecionado,
       });
 
       await buscarDadosListaDoBancoDeDados(
         disciplinaSelecionada,
         proficienciaSelecionada,
+        bimestreSelecionado,
       );
     }
   };
@@ -579,21 +578,24 @@ const Conteudo: React.FC = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                <Form.Item
-                  name="bimestreId"
-                  label="Bimestre"
-                  className="labelSelectSondagem"
-                >
-                  <Select
-                    id="sondagem-select-bimestre"
-                    options={listaBimestre}
-                    placeholder="Selecione o bimestre"
-                    onChange={onChangeBimestre}
-                    disabled={desabilitarBimestre}
-                  />
-                </Form.Item>
-              </Col>
+              {(proficienciaSelecionada === 3 ||
+                proficienciaSelecionada === 5) && (
+                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                  <Form.Item
+                    name="bimestreId"
+                    label="Bimestre"
+                    className="labelSelectSondagem"
+                  >
+                    <Select
+                      id="sondagem-select-bimestre"
+                      options={listaBimestre}
+                      placeholder="Selecione o bimestre"
+                      onChange={onChangeBimestre}
+                      disabled={desabilitarBimestre}
+                    />
+                  </Form.Item>
+                </Col>
+              )}
             </Row>
           </Form>
         </div>
