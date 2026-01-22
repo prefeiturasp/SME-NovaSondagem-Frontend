@@ -38,6 +38,10 @@ const Conteudo: React.FC = () => {
     Array<{ value: number; label: string }>
   >([]);
 
+  const [listaBimestre, setListaBimestre] = useState<
+    Array<{ value: number; label: string }>
+  >([]);
+
   const [dadosLista, setDadosLista] = useState<DadosTabelaDinamica | null>(
     null,
   );
@@ -50,6 +54,7 @@ const Conteudo: React.FC = () => {
 
   const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
   const [desabilitarProficiencia, setDesabilitarProficiencia] = useState(true);
+  const [desabilitarBimestre, setDesabilitarBimestre] = useState(true);
 
   const [disciplinaSelecionada, setDisciplinaSelecionada] = useState<
     number | null
@@ -57,6 +62,10 @@ const Conteudo: React.FC = () => {
   const [proficienciaSelecionada, setProficienciaSelecionada] = useState<
     number | null
   >(null);
+
+  const [bimestreSelecionado, setBimestreSelecionado] = useState<number | null>(
+    null,
+  );
 
   const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -137,6 +146,33 @@ const Conteudo: React.FC = () => {
     [formFiltro, usuario?.token],
   );
 
+  const obterBimestre = useCallback(async () => {
+    try {
+      const resposta = await NovaSondagemServico.get("/Bimestre", {
+        headers: { "X-Token-Principal": usuario?.token },
+      });
+
+      if (resposta?.data?.length > 0) {
+        setDesabilitarBimestre(false);
+        const dadosMapeados = resposta.data
+          .map((item: any) => ({
+            value: item.id,
+            label: item.descricao,
+          }))
+          .sort((a: any, b: any) =>
+            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
+          );
+        setListaBimestre(dadosMapeados);
+      } else {
+        setDesabilitarBimestre(true);
+        setListaBimestre([]);
+      }
+    } catch (error: any) {
+      console.error("Erro ao obter bimestres:", error);
+      message.error("Erro ao carregar dados do bimestre.");
+    }
+  }, [formFiltro]);
+
   const resetando = useCallback(() => {
     formFiltro.resetFields();
     setListaDisciplinas([]);
@@ -200,6 +236,15 @@ const Conteudo: React.FC = () => {
     if (proficienciaId && disciplinaSelecionada) {
       setProficienciaSelecionada(proficienciaId);
     }
+    if (proficienciaId === 3) {
+      obterBimestre();
+    }
+  };
+
+  const onChangeBimestre = async (bimestreId: number) => {
+    if (bimestreId) {
+      setBimestreSelecionado(bimestreId);
+    }
   };
 
   useEffect(() => {
@@ -213,10 +258,13 @@ const Conteudo: React.FC = () => {
         ano
       ) {
         setLoading(true);
-        await buscarDadosListaDoBancoDeDados(
-          disciplinaSelecionada,
-          proficienciaSelecionada,
-        );
+
+        if (proficienciaSelecionada !== 3) {
+          await buscarDadosListaDoBancoDeDados(
+            disciplinaSelecionada,
+            proficienciaSelecionada,
+          );
+        }
         setLoading(false);
       }
     };
@@ -224,9 +272,36 @@ const Conteudo: React.FC = () => {
     executarBusca();
   }, [disciplinaSelecionada, proficienciaSelecionada]);
 
+  useEffect(() => {
+    const executarBusca = async () => {
+      // Só busca se disciplina E proficiência estiverem selecionadas
+      if (
+        proficienciaSelecionada &&
+        disciplinaSelecionada &&
+        turma !== 0 &&
+        modalidade &&
+        ano
+      ) {
+        setLoading(true);
+
+        if (proficienciaSelecionada !== 3) {
+          await buscarDadosListaDoBancoDeDados(
+            disciplinaSelecionada,
+            proficienciaSelecionada,
+            bimestreSelecionado,
+          );
+        }
+        setLoading(false);
+      }
+    };
+
+    executarBusca();
+  }, [bimestreSelecionado]);
+
   const buscarDadosListaDoBancoDeDados = async (
     componenteCurricularId?: number,
     proficienciaId?: number,
+    bimestreId?: number | null,
   ) => {
     const disciplinaId = componenteCurricularId ?? disciplinaSelecionada;
     const profId = proficienciaId ?? proficienciaSelecionada;
@@ -240,6 +315,7 @@ const Conteudo: React.FC = () => {
           ComponenteCurricularId: disciplinaId,
           Modalidade: modalidade,
           Ano: ano,
+          BimestreId: bimestreId ?? undefined,
         },
       });
 
@@ -318,7 +394,7 @@ const Conteudo: React.FC = () => {
             ] ?? estudante.linguaPortuguesaSegundaLingua,
           respostas: estudante.coluna.map((coluna, colunaIndex) => ({
             bimestreId: coluna.idCiclo,
-            questaoId: dadosLista?.questaoId ?? 0,
+            questaoId: dadosLista.estudantes[estudanteIndex].coluna[colunaIndex].questaoSubrespostaId ?? dadosLista?.questaoId ?? 0,
             opcaoRespostaId: respostas[colunaIndex].opcaoRespostaId,
           })),
         };
@@ -500,6 +576,21 @@ const Conteudo: React.FC = () => {
                     placeholder="Selecione a proficiência"
                     onChange={onChangeProficiencia}
                     disabled={desabilitarProficiencia}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                <Form.Item
+                  name="bimestreId"
+                  label="Bimestre"
+                  className="labelSelectSondagem"
+                >
+                  <Select
+                    id="sondagem-select-bimestre"
+                    options={listaBimestre}
+                    placeholder="Selecione o bimestre"
+                    onChange={onChangeBimestre}
+                    disabled={desabilitarBimestre}
                   />
                 </Form.Item>
               </Col>
