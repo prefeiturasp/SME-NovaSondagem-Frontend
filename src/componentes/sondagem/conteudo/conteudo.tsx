@@ -552,7 +552,25 @@ const Conteudo: React.FC = () => {
         <div>
           <Form form={formFiltro} layout="vertical">
             <Row gutter={16}>
-              <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <Col
+                xs={24}
+                sm={24}
+                md={
+                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                    ? 8
+                    : 12
+                }
+                lg={
+                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                    ? 8
+                    : 12
+                }
+                xl={
+                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                    ? 8
+                    : 12
+                }
+              >
                 <Form.Item
                   name="disciplinaId"
                   label="Componente Curricular"
@@ -567,7 +585,25 @@ const Conteudo: React.FC = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <Col
+                xs={24}
+                sm={24}
+                md={
+                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                    ? 8
+                    : 12
+                }
+                lg={
+                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                    ? 8
+                    : 12
+                }
+                xl={
+                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                    ? 8
+                    : 12
+                }
+              >
                 <Form.Item
                   name="proficienciaId"
                   label="Proficiência"
@@ -584,7 +620,7 @@ const Conteudo: React.FC = () => {
               </Col>
               {(proficienciaSelecionada === 3 ||
                 proficienciaSelecionada === 5) && (
-                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                <Col xs={24} sm={24} md={8} lg={8} xl={8}>
                   <Form.Item
                     name="bimestreId"
                     label="Bimestre"
