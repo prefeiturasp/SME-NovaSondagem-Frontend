@@ -25,6 +25,7 @@ export default defineConfig({
       filename: "remoteEntry.js",
       exposes: {
         "./Home": "./src/paginas/home/home.tsx",
+        "./Relatorio": "./src/paginas/relatorio/relatorio.tsx",
       },
       shared: {
         react: {
@@ -62,8 +63,6 @@ export default defineConfig({
     target: "esnext",
     minify: false,
     cssCodeSplit: false,
-    rollupOptions: {
-      external: ["react-redux"],
-    },
+    rollupOptions: {},
   },
 });

@@ -4,6 +4,7 @@ import SemAcesso from "./paginas/sem-acesso/SemAcesso";
 import Home from "./paginas/home/home";
 import type { RootState } from "./types/redux";
 import { useSelector } from "react-redux";
+import Relatorio from "./paginas/relatorio/relatorio";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -24,6 +25,7 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
 
 const AppRoutes: React.FC = () => (
   <Routes>
+    <Route path="/relatorio" element={<Relatorio />} />
     <Route path="/sem-acesso" element={<SemAcesso />} />
     <Route
       path="/"

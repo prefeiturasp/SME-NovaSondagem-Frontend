@@ -13,6 +13,9 @@ dist
 dist-ssr
 *.local
 
+# Generated env file for local development
+public/env.js
+
 .env
 .env.local
 .env.development.local
