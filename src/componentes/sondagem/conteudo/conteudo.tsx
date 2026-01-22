@@ -196,6 +196,7 @@ const Conteudo: React.FC = () => {
       setListaBimestre([]);
       setDadosLista(null);
       setDadosLegenda(null);
+      setDadosAuditoria([]);
       setDesabilitarDisciplina(true);
       setDesabilitarProficiencia(true);
       setDesabilitarBimestre(true);
@@ -240,6 +241,9 @@ const Conteudo: React.FC = () => {
   const onChangeProficiencia = async (proficienciaId: number) => {
     if (proficienciaId && disciplinaSelecionada) {
       setProficienciaSelecionada(proficienciaId);
+      setDadosLista(null);
+      setDadosLegenda(null);
+      setDadosAuditoria([]);
 
       if (proficienciaId === 3 || proficienciaId === 5) {
         setDesabilitarBimestre(false);
