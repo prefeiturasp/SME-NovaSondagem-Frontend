@@ -23,7 +23,13 @@ const Legendas: React.FC<{ data: LegendasProps[] }> = ({ data }) => {
       key: "descricao",
       align: "left",
       render: (_: any, record: LegendasProps) => (
-        <span>
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            whiteSpace: "nowrap",
+          }}
+        >
           <span style={{ fontWeight: "bold" }}>{record.descricaoLegenda}</span>:{" "}
           <Tooltip title={record.textoLegenda}>
             <span className="legenda-texto-truncado">
