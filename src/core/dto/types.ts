@@ -18,6 +18,7 @@ export interface Coluna {
   periodoBimestreAtivo: boolean;
   opcaoResposta: OpcaoResposta[];
   resposta: Resposta;
+  questaoSubrespostaId: number | null;
 }
 
 export interface Estudante {

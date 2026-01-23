@@ -48,6 +48,15 @@ const mockDisciplinas = [
 const mockProficiencias = [
   { id: 1, nome: "Escrita" },
   { id: 2, nome: "Leitura" },
+  { id: 3, nome: "Produção de Texto - Bimestral" },
+  { id: 5, nome: "Matemática - Bimestral" },
+];
+
+const mockBimestres = [
+  { id: 1, descricao: "1º Bimestre" },
+  { id: 2, descricao: "2º Bimestre" },
+  { id: 3, descricao: "3º Bimestre" },
+  { id: 4, descricao: "4º Bimestre" },
 ];
 
 const mockQuestionario = {
@@ -64,6 +73,7 @@ const mockQuestionario = {
       coluna: [
         {
           idCiclo: 1,
+          questaoSubrespostaId: null,
           opcaoResposta: [
             {
               id: 1,
@@ -495,6 +505,449 @@ describe("Conteudo", () => {
           );
         });
       }
+    });
+  });
+
+  describe("Campo Bimestre", () => {
+    it("não deve exibir campo bimestre quando proficiência não é 3 ou 5", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Proficiencia/componente-curricular/1",
+          expect.any(Object),
+        );
+      });
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      await waitFor(() => {
+        const bimestreSelect = container.querySelector(
+          "#sondagem-select-bimestre",
+        );
+        expect(bimestreSelect).not.toBeInTheDocument();
+      });
+    });
+
+    it("deve exibir campo bimestre quando proficiência é 3", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockBimestres });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Produção de Texto - Bimestral"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      await waitFor(() => {
+        const bimestreSelect = container.querySelector(
+          "#sondagem-select-bimestre",
+        );
+        expect(bimestreSelect).toBeInTheDocument();
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Bimestre",
+          expect.any(Object),
+        );
+      });
+    });
+
+    it("deve exibir campo bimestre quando proficiência é 5", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockBimestres });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Matemática - Bimestral"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      await waitFor(() => {
+        const bimestreSelect = container.querySelector(
+          "#sondagem-select-bimestre",
+        );
+        expect(bimestreSelect).toBeInTheDocument();
+      });
+    });
+
+    it("deve carregar lista de bimestres ao selecionar proficiência 3", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockBimestres });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Produção de Texto - Bimestral"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Bimestre",
+          expect.objectContaining({
+            headers: { "X-Token-Principal": "mock-token" },
+          }),
+        );
+      });
+    });
+
+    it("deve buscar questionário apenas quando bimestre for selecionado para proficiências 3 ou 5", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockBimestres })
+        .mockResolvedValueOnce({ data: mockQuestionario });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Produção de Texto - Bimestral"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      // Neste ponto, não deve ter buscado o questionário ainda
+      expect(NovaSondagemServico.get).not.toHaveBeenCalledWith(
+        "/Questionario",
+        expect.any(Object),
+      );
+
+      // Agora seleciona o bimestre
+      await waitFor(() => {
+        const bimestreSelect = container.querySelector(
+          "#sondagem-select-bimestre",
+        );
+        if (bimestreSelect) {
+          fireEvent.mouseDown(bimestreSelect);
+        }
+      });
+
+      await waitFor(() => {
+        const option = document.querySelector(
+          '[title="1º Bimestre"]',
+        ) as HTMLElement;
+        if (option) fireEvent.click(option);
+      });
+
+      // Agora sim deve buscar o questionário
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.objectContaining({
+            params: expect.objectContaining({
+              BimestreId: 1,
+            }),
+          }),
+        );
+      });
+    });
+
+    it("deve limpar bimestre ao trocar para proficiência que não seja 3 ou 5", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockBimestres })
+        .mockResolvedValueOnce({ data: mockProficiencias });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      // Seleciona proficiência 3 (com bimestre)
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Produção de Texto - Bimestral"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      await waitFor(() => {
+        const bimestreSelect = container.querySelector(
+          "#sondagem-select-bimestre",
+        );
+        expect(bimestreSelect).toBeInTheDocument();
+      });
+
+      // Troca para proficiência 1 (sem bimestre)
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      await waitFor(() => {
+        const bimestreSelect = container.querySelector(
+          "#sondagem-select-bimestre",
+        );
+        expect(bimestreSelect).not.toBeInTheDocument();
+      });
+    });
+
+    it("deve tratar erro ao carregar bimestres", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockRejectedValueOnce(new Error("Erro ao buscar bimestres"));
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalled();
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Produção de Texto - Bimestral"]',
+          ) as HTMLElement;
+          if (option) fireEvent.click(option);
+        });
+      }
+
+      await waitFor(() => {
+        expect(message.error).toHaveBeenCalledWith(
+          "Erro ao carregar dados do bimestre.",
+        );
+      });
     });
   });
 
