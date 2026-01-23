@@ -233,6 +233,7 @@ const Conteudo: React.FC = () => {
       setDesabilitarBimestre(true);
       setDadosLista(null);
       setDadosLegenda(null);
+      setDadosAuditoria([]);
       formFiltro.setFieldValue("bimestreId", null);
       await obterProficiencia(disciplinaId);
     }
