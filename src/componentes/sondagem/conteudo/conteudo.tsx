@@ -233,6 +233,7 @@ const Conteudo: React.FC = () => {
       setDesabilitarBimestre(true);
       setDadosLista(null);
       setDadosLegenda(null);
+      setDadosAuditoria([]);
       formFiltro.setFieldValue("bimestreId", null);
       await obterProficiencia(disciplinaId);
     }
@@ -262,7 +263,6 @@ const Conteudo: React.FC = () => {
     }
   };
 
-  useEffect(() => {
     const executarBusca = async () => {
       if (
         proficienciaSelecionada &&
@@ -292,6 +292,8 @@ const Conteudo: React.FC = () => {
       }
     };
 
+
+  useEffect(() => {
     executarBusca();
   }, [disciplinaSelecionada, proficienciaSelecionada, bimestreSelecionado]);
 
@@ -426,6 +428,7 @@ const Conteudo: React.FC = () => {
           duration: 5,
           placement: "topRight",
         });
+        executarBusca();
       }
     } catch (error: any) {
       console.error("ERRO:", error);
