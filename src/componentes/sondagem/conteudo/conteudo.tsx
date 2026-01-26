@@ -648,7 +648,12 @@ const Conteudo: React.FC = () => {
             formListaDinamica={formListaDinamica}
           />
         </Spin>
-        <Legendas data={dadosLegenda || []} />
+        <Legendas
+          data={dadosLegenda || []}
+          ano={ano}
+          proficienciaId={proficienciaSelecionada ?? undefined}
+          dadosCompletos={dadosLista}
+        />
 
         <Auditoria linhas={dadosAuditoria || []} />
       </Card>
