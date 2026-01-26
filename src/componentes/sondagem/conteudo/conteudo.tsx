@@ -76,6 +76,7 @@ const Conteudo: React.FC = () => {
     null,
   );
   const [desabilitarBotoes, setDesabilitarBotoes] = useState<boolean>(false);
+  const [podeSalvar, setPodeSalvar] = useState<boolean>(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
@@ -343,6 +344,8 @@ const Conteudo: React.FC = () => {
       setDadosLegenda(dadosLegenda);
       setDadosLista(resposta.data);
       setDesabilitarBotoes(!resposta.data.podeSalvar);
+      setPodeSalvar(!resposta.data.podeSalvar);
+      console.log(desabilitarBotoes)
 
       const arrayAuditoria = [
         resposta.data.inseridoPor,
@@ -542,7 +545,7 @@ const Conteudo: React.FC = () => {
             onClick={() => {
               CancelarCadastroSondagem();
             }}
-            disabled={desabilitarBotoes}
+            disabled={!podeSalvar}
           >
             Cancelar
           </Button>
@@ -553,7 +556,7 @@ const Conteudo: React.FC = () => {
             onClick={() => {
               salvarDadosSondagem();
             }}
-            disabled={desabilitarBotoes}
+            disabled={!podeSalvar}
           >
             Salvar
           </Button>
@@ -661,6 +664,7 @@ const Conteudo: React.FC = () => {
           <SondagemListaDinamica
             dados={dadosLista}
             formListaDinamica={formListaDinamica}
+            podeSalvar={podeSalvar}
           />
         </Spin>
         <Legendas data={dadosLegenda || []} />
