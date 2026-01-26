@@ -31,8 +31,6 @@ const Conteudo: React.FC = () => {
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const ano = usuario?.turmaSelecionada?.ano;
 
-  const Icon = styled.i``;
-
   console.log("Usuario no conteudo:", usuario);
 
   const [listaDisciplinas, setListaDisciplinas] = useState<
