@@ -344,7 +344,7 @@ const Conteudo: React.FC = () => {
       setDadosLegenda(dadosLegenda);
       setDadosLista(resposta.data);
       setDesabilitarBotoes(!resposta.data.podeSalvar);
-      setPodeSalvar(!resposta.data.podeSalvar);
+      setPodeSalvar(resposta.data.podeSalvar);
       console.log(desabilitarBotoes)
 
       const arrayAuditoria = [
