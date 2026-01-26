@@ -21,14 +21,14 @@ import NovaSondagemServico from "../../../core/servico/servico";
 import { Auditoria } from "../auditoria/auditoria";
 import styled from "styled-components";
 
+export const Icon = styled.i``;
+
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
   const turmaSelecionada = usuario?.turmaSelecionada;
   const turma = turmaSelecionada ? turmaSelecionada.turma : 0;
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const ano = usuario?.turmaSelecionada?.ano;
-
-  const Icon = styled.i``;
 
   console.log("Usuario no conteudo:", usuario);
 
