@@ -158,9 +158,10 @@ const Conteudo: React.FC = () => {
           .map((item: any) => ({
             value: item.id,
             label: item.descricao,
+            codBimestreEnsinoEol: item.codBimestreEnsinoEol,
           }))
-          .sort((a: any, b: any) =>
-            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
+          .sort(
+            (a: any, b: any) => a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
           );
         setListaBimestre(dadosMapeados);
       } else {
@@ -263,35 +264,34 @@ const Conteudo: React.FC = () => {
     }
   };
 
-    const executarBusca = async () => {
-      if (
-        proficienciaSelecionada &&
-        disciplinaSelecionada &&
-        turma !== 0 &&
-        modalidade &&
-        ano
-      ) {
-        if (proficienciaSelecionada === 3 || proficienciaSelecionada === 5) {
-          if (bimestreSelecionado) {
-            setLoading(true);
-            await buscarDadosListaDoBancoDeDados(
-              disciplinaSelecionada,
-              proficienciaSelecionada,
-              bimestreSelecionado,
-            );
-            setLoading(false);
-          }
-        } else {
+  const executarBusca = async () => {
+    if (
+      proficienciaSelecionada &&
+      disciplinaSelecionada &&
+      turma !== 0 &&
+      modalidade &&
+      ano
+    ) {
+      if (proficienciaSelecionada === 3 || proficienciaSelecionada === 5) {
+        if (bimestreSelecionado) {
           setLoading(true);
           await buscarDadosListaDoBancoDeDados(
             disciplinaSelecionada,
             proficienciaSelecionada,
+            bimestreSelecionado,
           );
           setLoading(false);
         }
+      } else {
+        setLoading(true);
+        await buscarDadosListaDoBancoDeDados(
+          disciplinaSelecionada,
+          proficienciaSelecionada,
+        );
+        setLoading(false);
       }
-    };
-
+    }
+  };
 
   useEffect(() => {
     executarBusca();

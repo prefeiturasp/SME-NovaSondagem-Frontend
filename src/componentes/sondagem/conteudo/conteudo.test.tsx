@@ -53,10 +53,11 @@ const mockProficiencias = [
 ];
 
 const mockBimestres = [
-  { id: 1, descricao: "1º Bimestre" },
-  { id: 2, descricao: "2º Bimestre" },
-  { id: 3, descricao: "3º Bimestre" },
-  { id: 4, descricao: "4º Bimestre" },
+  { id: 2, descricao: "1° bimestre", codBimestreEnsinoEol: 1 },
+  { id: 3, descricao: "2° bimestre", codBimestreEnsinoEol: 2 },
+  { id: 4, descricao: "3° bimestre", codBimestreEnsinoEol: 3 },
+  { id: 5, descricao: "4° bimestre", codBimestreEnsinoEol: 4 },
+  { id: 1, descricao: "Inicial", codBimestreEnsinoEol: 0 },
 ];
 
 const mockQuestionario = {
