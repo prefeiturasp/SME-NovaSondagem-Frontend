@@ -20,6 +20,7 @@ import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
 import NovaSondagemServico from "../../../core/servico/servico";
 import { Auditoria } from "../auditoria/auditoria";
+import { validarTurma } from "../../../services/turmaService";
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
@@ -69,24 +70,32 @@ const Conteudo: React.FC = () => {
 
   const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [erroValidacaoTurma, setErroValidacaoTurma] = useState<string | null>(
+    null,
+  );
+  const [desabilitarBotoes, setDesabilitarBotoes] = useState<boolean>(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
 
-  const verificarModalidadeTurma = useCallback(() => {
-    const modStr = String(modalidade);
-    const anoStr = String(ano);
+  const verificarModalidadeTurma = useCallback(async () => {
+    const resultado = await validarTurma({
+      turmaId: turma,
+      token: usuario?.token,
+    });
 
-    if (modStr === "3") {
-      return anoStr === "1";
+    if (!resultado.valida && resultado.mensagens.length > 0) {
+      setDesabilitarDisciplina(true);
+      setDesabilitarProficiencia(true);
+      setDesabilitarBotoes(true);
+      setErroValidacaoTurma(resultado.mensagens.join(" "));
+      return false
+    } else {
+      setDesabilitarBotoes(false);
+      setErroValidacaoTurma(null);
+      return true
     }
-
-    if (modStr === "5") {
-      return ["1", "2", "3"].includes(anoStr);
-    }
-
-    return false;
-  }, [modalidade, ano]);
+  }, [turma, usuario?.token]);
 
   const obterDisciplinas = useCallback(async () => {
     try {
@@ -184,6 +193,7 @@ const Conteudo: React.FC = () => {
     setDisciplinaSelecionada(null);
     setProficienciaSelecionada(null);
     setModalidadeAnoValidos(false);
+    setErroValidacaoTurma(null);
   }, [formFiltro]);
 
   useEffect(() => {
@@ -200,14 +210,15 @@ const Conteudo: React.FC = () => {
       setDesabilitarDisciplina(true);
       setDesabilitarProficiencia(true);
       setDesabilitarBimestre(true);
+      setErroValidacaoTurma(null);
 
       if (modalidade && ano) {
-        const valido = verificarModalidadeTurma();
+        const valido = await verificarModalidadeTurma();
         setModalidadeAnoValidos(valido);
 
         if (valido && turma !== 0) {
-          obterDisciplinas();
-        } else {
+            obterDisciplinas();
+        } else if (turma === 0) {
           resetando();
         }
       } else {
@@ -330,6 +341,7 @@ const Conteudo: React.FC = () => {
         );
       setDadosLegenda(dadosLegenda);
       setDadosLista(resposta.data);
+      setDesabilitarBotoes(!resposta.data.podeSalvar);
 
       const arrayAuditoria = [
         resposta.data.inseridoPor,
@@ -412,6 +424,7 @@ const Conteudo: React.FC = () => {
 
     const data = {
       sondagemId: dadosLista?.sondagemId ?? 0,
+      turmaId: turma,
       alunos: dadosParaSalvar,
     };
     console.log("Dados para salvar:", data);
@@ -454,7 +467,7 @@ const Conteudo: React.FC = () => {
         placement: "topRight",
       });
     }
-  }, [usuario?.token, gerarDados]);
+  }, [usuario?.token, gerarDados, turma]);
 
   const CancelarCadastroSondagem = async () => {
     if (proficienciaSelecionada && disciplinaSelecionada) {
@@ -495,14 +508,13 @@ const Conteudo: React.FC = () => {
             />
           </Row>
         )}
-        {!modalidadeAnoValidos && (
+        {turmaSelecionada?.turma && !modalidadeAnoValidos && (
           <Row gutter={16} className="p-0">
             <Alerta
               alerta={{
                 tipo: "warning",
                 id: "SegundoAlerta",
-                mensagem:
-                  'Só existe sondagem para modalidade "Ensino Fundamental" do 1° a 3° ano e "Educação de Jovens Adultos" do 1° ano.',
+                mensagem: erroValidacaoTurma ?? '',
                 estiloTitulo: { fontSize: "18px" },
               }}
               className="mb-2 larguraAlerta"
@@ -529,6 +541,7 @@ const Conteudo: React.FC = () => {
             onClick={() => {
               CancelarCadastroSondagem();
             }}
+            disabled={desabilitarBotoes}
           >
             Cancelar
           </Button>
@@ -539,6 +552,7 @@ const Conteudo: React.FC = () => {
             onClick={() => {
               salvarDadosSondagem();
             }}
+            disabled={desabilitarBotoes}
           >
             Salvar
           </Button>
