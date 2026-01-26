@@ -13,7 +13,6 @@ import {
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
 import "./conteudo.css";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
@@ -21,6 +20,9 @@ import Legendas from "../legendas/legendas";
 import NovaSondagemServico from "../../../core/servico/servico";
 import { Auditoria } from "../auditoria/auditoria";
 import { validarTurma } from "../../../services/turmaService";
+import styled from "styled-components";
+
+export const Icon = styled.i``;
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
@@ -28,6 +30,8 @@ const Conteudo: React.FC = () => {
   const turma = turmaSelecionada ? turmaSelecionada.turma : 0;
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const ano = usuario?.turmaSelecionada?.ano;
+
+  const Icon = styled.i``;
 
   console.log("Usuario no conteudo:", usuario);
 
@@ -274,35 +278,34 @@ const Conteudo: React.FC = () => {
     }
   };
 
-    const executarBusca = async () => {
-      if (
-        proficienciaSelecionada &&
-        disciplinaSelecionada &&
-        turma !== 0 &&
-        modalidade &&
-        ano
-      ) {
-        if (proficienciaSelecionada === 3 || proficienciaSelecionada === 5) {
-          if (bimestreSelecionado) {
-            setLoading(true);
-            await buscarDadosListaDoBancoDeDados(
-              disciplinaSelecionada,
-              proficienciaSelecionada,
-              bimestreSelecionado,
-            );
-            setLoading(false);
-          }
-        } else {
+  const executarBusca = async () => {
+    if (
+      proficienciaSelecionada &&
+      disciplinaSelecionada &&
+      turma !== 0 &&
+      modalidade &&
+      ano
+    ) {
+      if (proficienciaSelecionada === 3 || proficienciaSelecionada === 5) {
+        if (bimestreSelecionado) {
           setLoading(true);
           await buscarDadosListaDoBancoDeDados(
             disciplinaSelecionada,
             proficienciaSelecionada,
+            bimestreSelecionado,
           );
           setLoading(false);
         }
+      } else {
+        setLoading(true);
+        await buscarDadosListaDoBancoDeDados(
+          disciplinaSelecionada,
+          proficienciaSelecionada,
+        );
+        setLoading(false);
       }
-    };
-
+    }
+  };
 
   useEffect(() => {
     executarBusca();
@@ -532,7 +535,7 @@ const Conteudo: React.FC = () => {
             onClick={() => {
               voltarSondagem();
             }}
-            icon={<ArrowLeftOutlined />}
+            icon={<Icon className={`fa fa-arrow-left iconBotaoVoltar`} />}
           ></Button>
 
           <Button
