@@ -20,7 +20,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
   const usuario = useSelector((store: any) => store.usuario);
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const anoTurma = usuario?.turmaSelecionada?.ano;
-  const naoExibeTituloTabelaRespostas = modalidade == 3 && anoTurma == 1;
+  const exibeLegendaSemDescricao = modalidade == 3 && anoTurma == 1;
 
   const columns: ColumnsType<LegendasProps> = [
     {
@@ -48,9 +48,10 @@ const Legendas: React.FC<LegendasComponentProps> = ({
             whiteSpace: "nowrap",
           }}
         >
-          {naoExibeTituloTabelaRespostas ? null : (
+          {exibeLegendaSemDescricao &&
+          record.descricaoLegenda !== "Sem preenchimento" ? null : (
             <span style={{ fontWeight: "bold" }}>
-              {record.descricaoLegenda}:{" "}
+              {record.descricaoLegenda}:&nbsp;
             </span>
           )}
           <Tooltip title={record.textoLegenda}>
