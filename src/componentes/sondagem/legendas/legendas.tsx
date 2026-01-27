@@ -119,12 +119,12 @@ const Legendas: React.FC<LegendasComponentProps> = ({
     return (
       <div style={{ marginTop: "2em" }}>
         <Row gutter={16}>
-          {colunasParaMostrar.map((config, index) => {
+          {colunasParaMostrar.map((config) => {
             const legendasColuna = extrairLegendasDaColuna(config.descricao);
 
             return (
               <Col
-                key={index}
+                key={config.descricao}
                 xs={24}
                 sm={24}
                 md={colSizes.md}
@@ -149,7 +149,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
                   className="tabela-legendas"
                   locale={{ emptyText: "Nenhuma legenda cadastrada" }}
                   rowKey={(record) =>
-                    `legenda-${index}-${record.corFundo}-${record.descricaoLegenda}`
+                    `legenda-${config.descricao}-${record.corFundo}-${record.descricaoLegenda}`
                   }
                 />
               </Col>
