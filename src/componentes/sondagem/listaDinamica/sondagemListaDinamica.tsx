@@ -4,6 +4,7 @@ import type { ColumnsType } from "antd/es/table";
 import SelectColorido from "../selectColorido";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
 import "./sondagemListaDinamica.css";
+import { useSelector } from "react-redux";
 
 const LogoPAP = () => (
   <svg
@@ -102,7 +103,12 @@ interface ListaSondagemEscritaProps {
 const SondagemListaDinamica: React.FC<
   ListaSondagemEscritaProps & { formListaDinamica: any }
 > = ({ dados, formListaDinamica }) => {
+  const usuario = useSelector((store: any) => store.usuario);
+  const modalidade = usuario?.turmaSelecionada?.modalidade;
+  const ano = usuario?.turmaSelecionada?.ano;
+
   const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
+  const naoExibirTituloTabelaRespostas = modalidade == 3 && ano == 1;
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
   const [selectOpenStates, setSelectOpenStates] = useState<
@@ -348,10 +354,15 @@ const SondagemListaDinamica: React.FC<
         },
       });
     });
-    columns.push({
-      title: dados.tituloTabelaRespostas,
-      children: [...columnsDinamicas],
-    });
+
+    if (naoExibirTituloTabelaRespostas) {
+      columns.push(...columnsDinamicas);
+    } else {
+      columns.push({
+        title: dados.tituloTabelaRespostas,
+        children: [...columnsDinamicas],
+      });
+    }
   }
 
   if (!dados?.estudantes?.length) {

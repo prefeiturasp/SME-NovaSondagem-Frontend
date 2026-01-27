@@ -30,8 +30,6 @@ const Conteudo: React.FC = () => {
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const ano = usuario?.turmaSelecionada?.ano;
 
-  console.log("Usuario no conteudo:", usuario);
-
   const [listaDisciplinas, setListaDisciplinas] = useState<
     Array<{ value: number; label: string }>
   >([]);
@@ -274,7 +272,10 @@ const Conteudo: React.FC = () => {
       modalidade &&
       ano
     ) {
-      if (proficienciaSelecionada === 3 || proficienciaSelecionada === 5) {
+      if (
+        (proficienciaSelecionada === 3 && ano != 1) ||
+        proficienciaSelecionada === 5
+      ) {
         if (bimestreSelecionado) {
           setLoading(true);
           await buscarDadosListaDoBancoDeDados(
@@ -345,9 +346,8 @@ const Conteudo: React.FC = () => {
 
       if (error.response?.status === 404) {
         notification.warning({
-          message: "Questões não encontradas",
-          description:
-            "Por favor, cadastre as questões para esta turma antes de continuar.",
+          message: "Dados não encontrados",
+          description: error.response?.data?.message,
           duration: 5,
           placement: "topRight",
         });
@@ -561,17 +561,20 @@ const Conteudo: React.FC = () => {
                 xs={24}
                 sm={24}
                 md={
-                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                  (proficienciaSelecionada === 3 && ano != 1) ||
+                  proficienciaSelecionada === 5
                     ? 8
                     : 12
                 }
                 lg={
-                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                  (proficienciaSelecionada === 3 && ano != 1) ||
+                  proficienciaSelecionada === 5
                     ? 8
                     : 12
                 }
                 xl={
-                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                  (proficienciaSelecionada === 3 && ano != 1) ||
+                  proficienciaSelecionada === 5
                     ? 8
                     : 12
                 }
@@ -594,17 +597,20 @@ const Conteudo: React.FC = () => {
                 xs={24}
                 sm={24}
                 md={
-                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                  (proficienciaSelecionada === 3 && ano != 1) ||
+                  proficienciaSelecionada === 5
                     ? 8
                     : 12
                 }
                 lg={
-                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                  (proficienciaSelecionada === 3 && ano != 1) ||
+                  proficienciaSelecionada === 5
                     ? 8
                     : 12
                 }
                 xl={
-                  proficienciaSelecionada === 3 || proficienciaSelecionada === 5
+                  (proficienciaSelecionada === 3 && ano != 1) ||
+                  proficienciaSelecionada === 5
                     ? 8
                     : 12
                 }
@@ -623,7 +629,7 @@ const Conteudo: React.FC = () => {
                   />
                 </Form.Item>
               </Col>
-              {(proficienciaSelecionada === 3 ||
+              {((proficienciaSelecionada === 3 && ano != 1) ||
                 proficienciaSelecionada === 5) && (
                 <Col xs={24} sm={24} md={8} lg={8} xl={8}>
                   <Form.Item
