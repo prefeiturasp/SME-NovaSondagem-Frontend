@@ -160,9 +160,10 @@ const Conteudo: React.FC = () => {
           .map((item: any) => ({
             value: item.id,
             label: item.descricao,
+            codBimestreEnsinoEol: item.codBimestreEnsinoEol,
           }))
-          .sort((a: any, b: any) =>
-            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
+          .sort(
+            (a: any, b: any) => a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
           );
         setListaBimestre(dadosMapeados);
       } else {
@@ -649,7 +650,12 @@ const Conteudo: React.FC = () => {
             formListaDinamica={formListaDinamica}
           />
         </Spin>
-        <Legendas data={dadosLegenda || []} />
+        <Legendas
+          data={dadosLegenda || []}
+          ano={ano}
+          proficienciaId={proficienciaSelecionada ?? undefined}
+          dadosCompletos={dadosLista}
+        />
 
         <Auditoria linhas={dadosAuditoria || []} />
       </Card>
