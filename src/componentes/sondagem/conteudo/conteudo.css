@@ -24,7 +24,7 @@
 .linhaTituloBotao {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: end;
   margin-bottom: 1em;
 }
 
