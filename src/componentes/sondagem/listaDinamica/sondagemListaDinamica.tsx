@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Checkbox, Form, Space, Table } from "antd";
+import { Checkbox, ConfigProvider, Form, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import SelectColorido from "../selectColorido";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
@@ -98,15 +98,15 @@ const LogoAcessibilidade = () => (
 
 interface ListaSondagemEscritaProps {
   dados: DadosTabelaDinamica | null;
+  podeSalvar?: boolean;
 }
 
 const SondagemListaDinamica: React.FC<
   ListaSondagemEscritaProps & { formListaDinamica: any }
-> = ({ dados, formListaDinamica }) => {
+> = ({ dados, formListaDinamica,podeSalvar = true }) => {
   const usuario = useSelector((store: any) => store.usuario);
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const ano = usuario?.turmaSelecionada?.ano;
-
   const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
   const naoExibirTituloTabelaRespostas = modalidade == 3 && ano == 1;
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
@@ -260,7 +260,7 @@ const SondagemListaDinamica: React.FC<
           valuePropName="checked"
           style={{ margin: 0 }}
         >
-          <Checkbox />
+          <Checkbox disabled={!podeSalvar} />
         </Form.Item>
       ),
     });
@@ -312,7 +312,7 @@ const SondagemListaDinamica: React.FC<
             ordem: opcao.ordem,
           }));
 
-          const isDisabled = !colunaEstudante.periodoBimestreAtivo;
+          const isDisabled = !podeSalvar || !colunaEstudante.periodoBimestreAtivo;
 
           return (
             <>
@@ -380,19 +380,22 @@ const SondagemListaDinamica: React.FC<
 
   return (
     <div style={{ marginTop: 16, overflowX: "auto" }}>
-      <Form form={formListaDinamica} component={false}>
-        <Table
-          columns={columns}
-          dataSource={dataSourceComIndice}
-          rowKey={(record: any) => record.uniqueKey}
-          pagination={false}
-          scroll={{ x: "max-content", y: 600 }}
-          bordered
-          size="small"
-          sticky
-          className="custom-border-table"
-        />
-      </Form>
+      <ConfigProvider componentDisabled={!podeSalvar}>
+        <Form form={formListaDinamica} component={false}>
+          <Table
+            key={`table-${podeSalvar}`}
+            columns={columns}
+            dataSource={dataSourceComIndice}
+            rowKey={(record: any) => record.uniqueKey}
+            pagination={false}
+            scroll={{ x: "max-content", y: 600 }}
+            bordered
+            size="small"
+            sticky
+            className="custom-border-table"
+          />
+        </Form>
+      </ConfigProvider>
     </div>
   );
 };
