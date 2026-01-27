@@ -5,8 +5,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import Conteudo from "./conteudo";
 import NovaSondagemServico from "../../../core/servico/servico";
 import { message, notification } from "antd";
+import { validarTurma } from "../../../services/turmaService";
 
 jest.mock("../../../core/servico/servico");
+jest.mock("../../../services/turmaService");
 jest.mock("antd", () => {
   const actual = jest.requireActual("antd");
   return {
@@ -63,6 +65,7 @@ const mockBimestres = [
 const mockQuestionario = {
   sondagemId: 1,
   questaoId: 10,
+  podeSalvar: true,
   inseridoPor: "Inserido por Professor João em 01/01/2024",
   alteradoPor: "Alterado por Professor Maria em 10/01/2024",
   estudantes: [
@@ -122,6 +125,7 @@ describe("Conteudo", () => {
     jest.clearAllMocks();
     (NovaSondagemServico.get as jest.Mock).mockReset();
     (NovaSondagemServico.post as jest.Mock).mockReset();
+    (validarTurma as jest.Mock).mockResolvedValue({ valida: true, mensagens: [] });
   });
 
   const createMockStoreWithUser = (usuario: any) => {
@@ -187,15 +191,21 @@ describe("Conteudo", () => {
       expect(screen.queryByText(MENSAGENS.SEM_TURMA)).not.toBeInTheDocument();
     });
 
-    it("deve exibir alerta de modalidade inválida", () => {
+    it("deve exibir alerta de modalidade inválida", async () => {
+      (validarTurma as jest.Mock).mockResolvedValue({
+        valida: false,
+        mensagens: ["Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano)."],
+      });
       const store = createMockStoreWithUser({
         logado: true,
         turmaSelecionada: criarTurma({ modalidade: "1", ano: "4" }),
       });
       renderWithProvider(<Conteudo />, store);
-      expect(
-        screen.getByText(MENSAGENS.MODALIDADE_INVALIDA),
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA),
+        ).toBeInTheDocument();
+      });
     });
   });
 
@@ -237,15 +247,21 @@ describe("Conteudo", () => {
     ];
 
     casosInvalidos.forEach(({ modalidade, ano, descricao }) => {
-      it(`deve exibir alerta para ${descricao}`, () => {
+      it(`deve exibir alerta para ${descricao}`, async () => {
+        (validarTurma as jest.Mock).mockResolvedValue({
+          valida: false,
+          mensagens: ["Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano)."],
+        });
         const store = createMockStoreWithUser({
           logado: true,
           turmaSelecionada: criarTurma({ modalidade, ano }),
         });
         renderWithProvider(<Conteudo />, store);
-        expect(
-          screen.getByText(MENSAGENS.MODALIDADE_INVALIDA),
-        ).toBeInTheDocument();
+        await waitFor(() => {
+          expect(
+            screen.getByText(MENSAGENS.MODALIDADE_INVALIDA),
+          ).toBeInTheDocument();
+        });
       });
     });
   });
@@ -1863,6 +1879,10 @@ describe("Conteudo", () => {
     });
 
     it("deve resetar MENSAGENS quando modalidade muda para inválida", async () => {
+      (validarTurma as jest.Mock).mockResolvedValue({
+        valida: false,
+        mensagens: ["Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano)."],
+      });
       const store = createMockStoreWithUser({
         logado: true,
         turmaSelecionada: criarTurma({ modalidade: "3", ano: "5" }),
