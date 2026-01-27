@@ -1,6 +1,26 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 import Legendas from "./legendas";
+
+const createMockStore = (overrides = {}) =>
+  configureStore({
+    reducer: {
+      usuario: () => ({
+        turmaSelecionada: {
+          modalidade: "1",
+          ano: "1",
+        },
+        ...overrides,
+      }),
+    },
+  });
+
+const renderWithProvider = (ui: React.ReactElement) => {
+  const store = createMockStore();
+  return render(<Provider store={store}>{ui}</Provider>);
+};
 
 describe("Legendas", () => {
   const originalError = console.error;
@@ -43,23 +63,23 @@ describe("Legendas", () => {
 
   describe("Renderização básica", () => {
     it("deve renderizar o componente sem erros", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       expect(container).toBeInTheDocument();
     });
 
     it("deve renderizar título 'Legendas'", () => {
-      render(<Legendas data={mockData} />);
+      renderWithProvider(<Legendas data={mockData} />);
       expect(screen.getByText("Legendas")).toBeInTheDocument();
     });
 
     it("deve renderizar tabela do Ant Design", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const table = container.querySelector(".ant-table");
       expect(table).toBeInTheDocument();
     });
 
     it("deve aplicar classe tabela-legendas", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const table = container.querySelector(".tabela-legendas");
       expect(table).toBeInTheDocument();
     });
@@ -67,21 +87,21 @@ describe("Legendas", () => {
 
   describe("Renderização dos dados", () => {
     it("deve renderizar todas as legendas fornecidas", () => {
-      render(<Legendas data={mockData} />);
+      renderWithProvider(<Legendas data={mockData} />);
       expect(screen.getByText("PS")).toBeInTheDocument();
       expect(screen.getByText("SSV")).toBeInTheDocument();
       expect(screen.getByText("SCV")).toBeInTheDocument();
     });
 
     it("deve renderizar descrições das legendas", () => {
-      render(<Legendas data={mockData} />);
+      renderWithProvider(<Legendas data={mockData} />);
       expect(screen.getByText(/Pré-silábico/)).toBeInTheDocument();
       expect(screen.getByText(/Silábico sem valor/)).toBeInTheDocument();
       expect(screen.getByText(/Silábico com valor/)).toBeInTheDocument();
     });
 
     it("deve renderizar caixas de cor para cada legenda", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const colorBoxes = container.querySelectorAll(
         'div[style*="background-color"]',
       );
@@ -89,7 +109,7 @@ describe("Legendas", () => {
     });
 
     it("deve aplicar cores de fundo corretas", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const tableBody = container.querySelector(".ant-table-tbody");
       // As cores são convertidas para rgb pelo navegador
       expect(tableBody?.innerHTML).toContain("rgb(255, 0, 0)");
@@ -100,25 +120,25 @@ describe("Legendas", () => {
 
   describe("Propriedades da tabela", () => {
     it("deve renderizar tabela sem paginação", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const pagination = container.querySelector(".ant-pagination");
       expect(pagination).not.toBeInTheDocument();
     });
 
     it("deve renderizar tabela sem cabeçalho", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const thead = container.querySelector("thead");
       expect(thead).not.toBeInTheDocument();
     });
 
     it("deve renderizar tabela com tamanho pequeno", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const table = container.querySelector(".ant-table-small");
       expect(table).toBeInTheDocument();
     });
 
     it("deve renderizar tabela com borda", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const table = container.querySelector(".ant-table-bordered");
       expect(table).toBeInTheDocument();
     });
@@ -126,13 +146,13 @@ describe("Legendas", () => {
 
   describe("Casos extremos", () => {
     it("deve renderizar com array vazio", () => {
-      const { container } = render(<Legendas data={[]} />);
+      const { container } = renderWithProvider(<Legendas data={[]} />);
       expect(container.querySelector(".ant-table")).toBeInTheDocument();
     });
 
     it("deve renderizar com uma única legenda", () => {
       const singleData = [mockData[0]];
-      render(<Legendas data={singleData} />);
+      renderWithProvider(<Legendas data={singleData} />);
       expect(screen.getByText("PS")).toBeInTheDocument();
       expect(screen.getByText(/Pré-silábico/)).toBeInTheDocument();
     });
@@ -147,7 +167,7 @@ describe("Legendas", () => {
             "Esta é uma descrição muito longa que deve ser renderizada corretamente na tabela",
         },
       ];
-      render(<Legendas data={longDescriptionData} />);
+      renderWithProvider(<Legendas data={longDescriptionData} />);
       expect(
         screen.getByText(/Esta é uma descrição muito longa/),
       ).toBeInTheDocument();
@@ -156,13 +176,13 @@ describe("Legendas", () => {
 
   describe("Estilos", () => {
     it("deve aplicar margem superior no container", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const mainDiv = container.firstChild as HTMLElement;
       expect(mainDiv).toHaveStyle({ marginTop: "2em" });
     });
 
     it("deve aplicar estilo no cabeçalho da legenda", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const header = container.querySelector(
         'div[style*="background-color"]',
       ) as HTMLElement;
@@ -171,7 +191,7 @@ describe("Legendas", () => {
     });
 
     it("deve aplicar fonte em negrito no texto da legenda", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const boldTexts = container.querySelectorAll(
         'span[style*="font-weight"]',
       );
@@ -179,7 +199,7 @@ describe("Legendas", () => {
     });
 
     it("deve aplicar classe legenda-texto-truncado no texto", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const truncatedTexts = container.querySelectorAll(
         ".legenda-texto-truncado",
       );
@@ -189,7 +209,7 @@ describe("Legendas", () => {
 
   describe("Tooltip para textos longos", () => {
     it("deve renderizar Tooltip para cada texto de legenda", () => {
-      const { container } = render(<Legendas data={mockData} />);
+      const { container } = renderWithProvider(<Legendas data={mockData} />);
       const tooltips = container.querySelectorAll(
         ".ant-tooltip-disabled-compatible-wrapper, [role='tooltip'], .legenda-texto-truncado",
       );
@@ -206,7 +226,7 @@ describe("Legendas", () => {
           descricaoLegenda: "Texto longo",
         },
       ];
-      const { container } = render(<Legendas data={longTextData} />);
+      const { container } = renderWithProvider(<Legendas data={longTextData} />);
       const truncatedText = container.querySelector(".legenda-texto-truncado");
       expect(truncatedText).toBeInTheDocument();
       expect(truncatedText?.textContent).toContain(
@@ -223,7 +243,7 @@ describe("Legendas", () => {
           descricaoLegenda: "Texto curto",
         },
       ];
-      render(<Legendas data={shortTextData} />);
+      renderWithProvider(<Legendas data={shortTextData} />);
       expect(screen.getByText("Curto")).toBeInTheDocument();
       expect(screen.getByText(/Texto curto/)).toBeInTheDocument();
     });
@@ -287,7 +307,7 @@ describe("Legendas", () => {
     };
 
     it("deve renderizar 3 colunas de legendas quando proficienciaId=3 e ano=3", () => {
-      render(
+      renderWithProvider(
         <Legendas
           data={mockData}
           proficienciaId={3}
@@ -302,7 +322,7 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar 2 colunas de legendas quando proficienciaId=3 e ano=2", () => {
-      render(
+      renderWithProvider(
         <Legendas
           data={mockData}
           proficienciaId={3}
@@ -319,7 +339,7 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar legenda única quando proficienciaId=3 e ano=1", () => {
-      render(
+      renderWithProvider(
         <Legendas
           data={mockData}
           proficienciaId={3}
@@ -335,7 +355,7 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar legenda única quando proficienciaId não é 3", () => {
-      render(
+      renderWithProvider(
         <Legendas
           data={mockData}
           proficienciaId={1}
@@ -351,7 +371,7 @@ describe("Legendas", () => {
     });
 
     it("deve extrair legendas corretas de cada coluna", () => {
-      render(
+      renderWithProvider(
         <Legendas
           data={mockData}
           proficienciaId={3}
@@ -374,7 +394,7 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar com ano como string", () => {
-      render(
+      renderWithProvider(
         <Legendas
           data={mockData}
           proficienciaId={3}
@@ -389,7 +409,7 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar Row do Ant Design quando múltiplas legendas", () => {
-      const { container } = render(
+      const { container } = renderWithProvider(
         <Legendas
           data={mockData}
           proficienciaId={3}
@@ -403,7 +423,7 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar múltiplas tabelas quando múltiplas legendas", () => {
-      const { container } = render(
+      const { container } = renderWithProvider(
         <Legendas
           data={mockData}
           proficienciaId={3}
