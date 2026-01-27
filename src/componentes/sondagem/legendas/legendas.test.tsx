@@ -228,4 +228,192 @@ describe("Legendas", () => {
       expect(screen.getByText(/Texto curto/)).toBeInTheDocument();
     });
   });
+
+  describe("Múltiplas legendas - Proficiência Leitura", () => {
+    const mockDadosCompletos = {
+      estudantes: [
+        {
+          codigo: "123456",
+          nome: "Aluno Teste",
+          coluna: [
+            {
+              descricaoColuna: "Localização",
+              opcaoResposta: [
+                {
+                  corFundo: "#FF0000",
+                  descricaoOpcaoResposta: "Não localiza",
+                  legenda: "NL",
+                },
+                {
+                  corFundo: "#00FF00",
+                  descricaoOpcaoResposta: "Localiza",
+                  legenda: "L",
+                },
+              ],
+            },
+            {
+              descricaoColuna: "Inferência",
+              opcaoResposta: [
+                {
+                  corFundo: "#FF00FF",
+                  descricaoOpcaoResposta: "Não infere",
+                  legenda: "NI",
+                },
+                {
+                  corFundo: "#00FFFF",
+                  descricaoOpcaoResposta: "Infere",
+                  legenda: "I",
+                },
+              ],
+            },
+            {
+              descricaoColuna: "Reflexão",
+              opcaoResposta: [
+                {
+                  corFundo: "#FFFF00",
+                  descricaoOpcaoResposta: "Não reflete",
+                  legenda: "NR",
+                },
+                {
+                  corFundo: "#0000FF",
+                  descricaoOpcaoResposta: "Reflete",
+                  legenda: "R",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    it("deve renderizar 3 colunas de legendas quando proficienciaId=3 e ano=3", () => {
+      render(
+        <Legendas
+          data={mockData}
+          proficienciaId={3}
+          ano={3}
+          dadosCompletos={mockDadosCompletos}
+        />,
+      );
+
+      expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
+      expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
+      expect(screen.getByText("Legendas da reflexão")).toBeInTheDocument();
+    });
+
+    it("deve renderizar 2 colunas de legendas quando proficienciaId=3 e ano=2", () => {
+      render(
+        <Legendas
+          data={mockData}
+          proficienciaId={3}
+          ano={2}
+          dadosCompletos={mockDadosCompletos}
+        />,
+      );
+
+      expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
+      expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
+      expect(
+        screen.queryByText("Legendas da reflexão"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("deve renderizar legenda única quando proficienciaId=3 e ano=1", () => {
+      render(
+        <Legendas
+          data={mockData}
+          proficienciaId={3}
+          ano={1}
+          dadosCompletos={mockDadosCompletos}
+        />,
+      );
+
+      expect(screen.getByText("Legendas")).toBeInTheDocument();
+      expect(
+        screen.queryByText("Legendas da localização"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("deve renderizar legenda única quando proficienciaId não é 3", () => {
+      render(
+        <Legendas
+          data={mockData}
+          proficienciaId={1}
+          ano={3}
+          dadosCompletos={mockDadosCompletos}
+        />,
+      );
+
+      expect(screen.getByText("Legendas")).toBeInTheDocument();
+      expect(
+        screen.queryByText("Legendas da localização"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("deve extrair legendas corretas de cada coluna", () => {
+      render(
+        <Legendas
+          data={mockData}
+          proficienciaId={3}
+          ano={3}
+          dadosCompletos={mockDadosCompletos}
+        />,
+      );
+
+      // Localização
+      expect(screen.getByText("NL")).toBeInTheDocument();
+      expect(screen.getByText("L")).toBeInTheDocument();
+
+      // Inferência
+      expect(screen.getByText("NI")).toBeInTheDocument();
+      expect(screen.getByText("I")).toBeInTheDocument();
+
+      // Reflexão
+      expect(screen.getByText("NR")).toBeInTheDocument();
+      expect(screen.getByText("R")).toBeInTheDocument();
+    });
+
+    it("deve renderizar com ano como string", () => {
+      render(
+        <Legendas
+          data={mockData}
+          proficienciaId={3}
+          ano={"3" as any}
+          dadosCompletos={mockDadosCompletos}
+        />,
+      );
+
+      expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
+      expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
+      expect(screen.getByText("Legendas da reflexão")).toBeInTheDocument();
+    });
+
+    it("deve renderizar Row do Ant Design quando múltiplas legendas", () => {
+      const { container } = render(
+        <Legendas
+          data={mockData}
+          proficienciaId={3}
+          ano={3}
+          dadosCompletos={mockDadosCompletos}
+        />,
+      );
+
+      const row = container.querySelector(".ant-row");
+      expect(row).toBeInTheDocument();
+    });
+
+    it("deve renderizar múltiplas tabelas quando múltiplas legendas", () => {
+      const { container } = render(
+        <Legendas
+          data={mockData}
+          proficienciaId={3}
+          ano={3}
+          dadosCompletos={mockDadosCompletos}
+        />,
+      );
+
+      const tables = container.querySelectorAll(".ant-table");
+      expect(tables.length).toBe(3);
+    });
+  });
 });
