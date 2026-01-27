@@ -2,8 +2,23 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Form } from "antd";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 import SondagemListaDinamica from "./sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
+
+const createMockStore = (overrides = {}) =>
+  configureStore({
+    reducer: {
+      usuario: () => ({
+        turmaSelecionada: {
+          modalidade: "1",
+          ano: "1",
+        },
+        ...overrides,
+      }),
+    },
+  });
 
 jest.mock("@/componentes/sondagem/selectColorido", () => {
   return function SelectColorido({
@@ -232,7 +247,12 @@ const WrapperComponent = ({
   anoTurma?: string;
 }) => {
   const [form] = Form.useForm();
-  return <SondagemListaDinamica dados={dados} formListaDinamica={form} />;
+  const store = createMockStore();
+  return (
+    <Provider store={store}>
+      <SondagemListaDinamica dados={dados} formListaDinamica={form} />
+    </Provider>
+  );
 };
 
 describe("SondagemListaDinamica", () => {
@@ -1376,24 +1396,27 @@ describe("SondagemListaDinamica", () => {
     it("deve manter respostaId vazio quando resposta é null", async () => {
       const FormWrapper = () => {
         const [form] = Form.useForm();
+        const store = createMockStore();
         return (
-          <SondagemListaDinamica
-            dados={{
-              ...mockDadosEscrita,
-              estudantes: [
-                {
-                  ...mockDadosEscrita.estudantes[0],
-                  coluna: [
-                    {
-                      ...mockDadosEscrita.estudantes[0].coluna[0],
-                      resposta: null as any,
-                    },
-                  ],
-                },
-              ],
-            }}
-            formListaDinamica={form}
-          />
+          <Provider store={store}>
+            <SondagemListaDinamica
+              dados={{
+                ...mockDadosEscrita,
+                estudantes: [
+                  {
+                    ...mockDadosEscrita.estudantes[0],
+                    coluna: [
+                      {
+                        ...mockDadosEscrita.estudantes[0].coluna[0],
+                        resposta: null as any,
+                      },
+                    ],
+                  },
+                ],
+              }}
+              formListaDinamica={form}
+            />
+          </Provider>
         );
       };
 
@@ -1412,24 +1435,27 @@ describe("SondagemListaDinamica", () => {
     it("deve manter respostaId vazio quando opcaoRespostaId é 0", async () => {
       const FormWrapper = () => {
         const [form] = Form.useForm();
+        const store = createMockStore();
         return (
-          <SondagemListaDinamica
-            dados={{
-              ...mockDadosEscrita,
-              estudantes: [
-                {
-                  ...mockDadosEscrita.estudantes[0],
-                  coluna: [
-                    {
-                      ...mockDadosEscrita.estudantes[0].coluna[0],
-                      resposta: { id: 0, opcaoRespostaId: 0 },
-                    },
-                  ],
-                },
-              ],
-            }}
-            formListaDinamica={form}
-          />
+          <Provider store={store}>
+            <SondagemListaDinamica
+              dados={{
+                ...mockDadosEscrita,
+                estudantes: [
+                  {
+                    ...mockDadosEscrita.estudantes[0],
+                    coluna: [
+                      {
+                        ...mockDadosEscrita.estudantes[0].coluna[0],
+                        resposta: { id: 0, opcaoRespostaId: 0 },
+                      },
+                    ],
+                  },
+                ],
+              }}
+              formListaDinamica={form}
+            />
+          </Provider>
         );
       };
 

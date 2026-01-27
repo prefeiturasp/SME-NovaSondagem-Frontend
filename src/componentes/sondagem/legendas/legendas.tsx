@@ -2,6 +2,7 @@ import { Table, Tooltip, Row, Col } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import "./legendas.css";
+import { useSelector } from "react-redux";
 
 interface LegendasComponentProps {
   data: LegendasProps[];
@@ -16,6 +17,11 @@ const Legendas: React.FC<LegendasComponentProps> = ({
   proficienciaId,
   dadosCompletos,
 }) => {
+  const usuario = useSelector((store: any) => store.usuario);
+  const modalidade = usuario?.turmaSelecionada?.modalidade;
+  const anoTurma = usuario?.turmaSelecionada?.ano;
+  const exibeLegendaSemDescricao = modalidade == 3 && anoTurma == 1;
+
   const columns: ColumnsType<LegendasProps> = [
     {
       title: "",
@@ -42,8 +48,12 @@ const Legendas: React.FC<LegendasComponentProps> = ({
             whiteSpace: "nowrap",
           }}
         >
-          <span style={{ fontWeight: "bold" }}>{record.descricaoLegenda}</span>:
-          {"\u00A0"}
+          {exibeLegendaSemDescricao &&
+          record.descricaoLegenda !== "Sem preenchimento" ? null : (
+            <span style={{ fontWeight: "bold" }}>
+              {record.descricaoLegenda}:&nbsp;
+            </span>
+          )}
           <Tooltip title={record.textoLegenda}>
             <span className="legenda-texto-truncado">
               {record.textoLegenda}

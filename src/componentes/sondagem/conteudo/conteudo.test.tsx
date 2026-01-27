@@ -595,7 +595,7 @@ describe("Conteudo", () => {
       const store = createMockStoreWithUser({
         logado: true,
         token: "mock-token",
-        turmaSelecionada: criarTurma(),
+        turmaSelecionada: criarTurma({ ano: "2" }),
       });
 
       const { container } = renderWithProvider(<Conteudo />, store);
@@ -710,7 +710,7 @@ describe("Conteudo", () => {
       const store = createMockStoreWithUser({
         logado: true,
         token: "mock-token",
-        turmaSelecionada: criarTurma(),
+        turmaSelecionada: criarTurma({ ano: "2" }),
       });
 
       const { container } = renderWithProvider(<Conteudo />, store);
@@ -767,7 +767,7 @@ describe("Conteudo", () => {
       const store = createMockStoreWithUser({
         logado: true,
         token: "mock-token",
-        turmaSelecionada: criarTurma(),
+        turmaSelecionada: criarTurma({ ano: "2" }),
       });
 
       const { container } = renderWithProvider(<Conteudo />, store);
@@ -850,7 +850,7 @@ describe("Conteudo", () => {
       const store = createMockStoreWithUser({
         logado: true,
         token: "mock-token",
-        turmaSelecionada: criarTurma(),
+        turmaSelecionada: criarTurma({ ano: "2" }),
       });
 
       const { container } = renderWithProvider(<Conteudo />, store);
@@ -923,7 +923,7 @@ describe("Conteudo", () => {
       const store = createMockStoreWithUser({
         logado: true,
         token: "mock-token",
-        turmaSelecionada: criarTurma(),
+        turmaSelecionada: criarTurma({ ano: "2" }),
       });
 
       const { container } = renderWithProvider(<Conteudo />, store);
@@ -1105,7 +1105,7 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(notification.warning).toHaveBeenCalledWith(
           expect.objectContaining({
-            message: "Questões não encontradas",
+            message: "Dados não encontrados",
           }),
         );
       });
