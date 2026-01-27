@@ -42,7 +42,8 @@ const Legendas: React.FC<LegendasComponentProps> = ({
             whiteSpace: "nowrap",
           }}
         >
-          <span style={{ fontWeight: "bold" }}>{record.descricaoLegenda}</span>:{" "}
+          <span style={{ fontWeight: "bold" }}>{record.descricaoLegenda}</span>:
+          {"\u00A0"}
           <Tooltip title={record.textoLegenda}>
             <span className="legenda-texto-truncado">
               {record.textoLegenda}
