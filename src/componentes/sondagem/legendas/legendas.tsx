@@ -20,7 +20,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
   const usuario = useSelector((store: any) => store.usuario);
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const anoTurma = usuario?.turmaSelecionada?.ano;
-  const exibeLegendaSemDescricao = modalidade == 3 && anoTurma == 1;
+  const exibeLegendaSemDescricao = modalidade == 3 && anoTurma == 1 && proficienciaId === 3;
 
   const columns: ColumnsType<LegendasProps> = [
     {
