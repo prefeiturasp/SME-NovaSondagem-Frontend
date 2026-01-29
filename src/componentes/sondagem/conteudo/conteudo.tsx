@@ -75,6 +75,8 @@ const Conteudo: React.FC = () => {
   );
   const [desabilitarBotoes, setDesabilitarBotoes] = useState<boolean>(false);
   const [podeSalvar, setPodeSalvar] = useState<boolean>(false);
+  const [componenteBimestres, setComponenteBimestres] = useState<boolean>(false);
+  const [naoExibirTituloTabelaRespostas, setNaoExibirTituloTabelaRespostas] = useState<boolean>(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
@@ -156,7 +158,7 @@ const Conteudo: React.FC = () => {
     [formFiltro, usuario?.token],
   );
 
-  const obterBimestre = useCallback(async () => {
+  const obterBimestre = useCallback(async (proficienciaId?: number) => {
     try {
       const resposta = await NovaSondagemServico.get("/Bimestre", {
         headers: { "X-Token-Principal": usuario?.token },
@@ -174,6 +176,10 @@ const Conteudo: React.FC = () => {
             (a: any, b: any) => a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
           );
         setListaBimestre(dadosMapeados);
+
+        if(proficienciaId === 6)  
+          setListaBimestre(dadosMapeados.filter((bimestre: any) => bimestre.value === 3));
+
       } else {
         setDesabilitarBimestre(true);
         setListaBimestre([]);
@@ -182,7 +188,7 @@ const Conteudo: React.FC = () => {
       console.error("Erro ao obter bimestres:", error);
       message.error("Erro ao carregar dados do bimestre.");
     }
-  }, [formFiltro]);
+  }, [formFiltro, proficienciaSelecionada]);
 
   const resetando = useCallback(() => {
     formFiltro.resetFields();
@@ -258,10 +264,18 @@ const Conteudo: React.FC = () => {
       setDadosLista(null);
       setDadosLegenda(null);
       setDadosAuditoria([]);
+      setBimestreSelecionado(null);
+      formFiltro.setFieldValue("bimestreId", null);
 
-      if (proficienciaId === 3 || proficienciaId === 5) {
-        setDesabilitarBimestre(false);
-        obterBimestre();
+      setComponenteBimestres(
+        (proficienciaId === 3 && ano !== 1) ||
+        [5, 6].includes(proficienciaId)
+      );
+
+      setNaoExibirTituloTabelaRespostas(modalidade === 3 && ano == 1 && proficienciaId === 3);
+
+      if ([3, 5, 6].includes(proficienciaId)) {
+        obterBimestre(proficienciaId);
       } else {
         setDesabilitarBimestre(true);
         setBimestreSelecionado(null);
@@ -284,10 +298,7 @@ const Conteudo: React.FC = () => {
       modalidade &&
       ano
     ) {
-      if (
-        (proficienciaSelecionada === 3 && ano != 1) ||
-        proficienciaSelecionada === 5
-      ) {
+      if (componenteBimestres) {
         if (bimestreSelecionado) {
           setLoading(true);
           await buscarDadosListaDoBancoDeDados(
@@ -406,7 +417,7 @@ const Conteudo: React.FC = () => {
           nomeEstudante: estudante.nome,
           linguaPortuguesaSegundaLingua:
             dadosFormulario[
-              `linguaPortuguesaSegundaLingua_${estudanteIndex}`
+            `linguaPortuguesaSegundaLingua_${estudanteIndex}`
             ] ?? estudante.linguaPortuguesaSegundaLingua,
           respostas: estudante.coluna.map((coluna, colunaIndex) => ({
             bimestreId: coluna.idCiclo,
@@ -458,11 +469,11 @@ const Conteudo: React.FC = () => {
 
       const errorDetails = error.response?.data?.errors
         ? Object.entries(error.response.data.errors)
-            .map(
-              ([key, value]: [string, any]) =>
-                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
-            )
-            .join("\n")
+          .map(
+            ([key, value]: [string, any]) =>
+              `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
+          )
+          .join("\n")
         : null;
 
       notification.error({
@@ -578,22 +589,17 @@ const Conteudo: React.FC = () => {
                 xs={24}
                 sm={24}
                 md={
-                  (proficienciaSelecionada === 3 && ano != 1) ||
-                  proficienciaSelecionada === 5
+                  componenteBimestres
                     ? 8
                     : 12
                 }
-                lg={
-                  (proficienciaSelecionada === 3 && ano != 1) ||
-                  proficienciaSelecionada === 5
-                    ? 8
-                    : 12
+                lg={componenteBimestres
+                  ? 8
+                  : 12
                 }
-                xl={
-                  (proficienciaSelecionada === 3 && ano != 1) ||
-                  proficienciaSelecionada === 5
-                    ? 8
-                    : 12
+                xl={componenteBimestres
+                  ? 8
+                  : 12
                 }
               >
                 <Form.Item
@@ -613,23 +619,17 @@ const Conteudo: React.FC = () => {
               <Col
                 xs={24}
                 sm={24}
-                md={
-                  (proficienciaSelecionada === 3 && ano != 1) ||
-                  proficienciaSelecionada === 5
-                    ? 8
-                    : 12
+                md={componenteBimestres
+                  ? 8
+                  : 12
                 }
-                lg={
-                  (proficienciaSelecionada === 3 && ano != 1) ||
-                  proficienciaSelecionada === 5
-                    ? 8
-                    : 12
+                lg={componenteBimestres
+                  ? 8
+                  : 12
                 }
-                xl={
-                  (proficienciaSelecionada === 3 && ano != 1) ||
-                  proficienciaSelecionada === 5
-                    ? 8
-                    : 12
+                xl={componenteBimestres
+                  ? 8
+                  : 12
                 }
               >
                 <Form.Item
@@ -646,8 +646,7 @@ const Conteudo: React.FC = () => {
                   />
                 </Form.Item>
               </Col>
-              {((proficienciaSelecionada === 3 && ano != 1) ||
-                proficienciaSelecionada === 5) && (
+              {componenteBimestres && (
                 <Col xs={24} sm={24} md={8} lg={8} xl={8}>
                   <Form.Item
                     name="bimestreId"
@@ -672,6 +671,7 @@ const Conteudo: React.FC = () => {
             dados={dadosLista}
             formListaDinamica={formListaDinamica}
             podeSalvar={podeSalvar}
+            naoExibirTituloTabelaRespostas={naoExibirTituloTabelaRespostas}
           />
         </Spin>
         <Legendas

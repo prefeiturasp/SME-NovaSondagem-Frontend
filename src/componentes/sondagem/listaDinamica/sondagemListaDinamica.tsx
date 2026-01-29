@@ -4,7 +4,6 @@ import type { ColumnsType } from "antd/es/table";
 import SelectColorido from "../selectColorido";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
 import "./sondagemListaDinamica.css";
-import { useSelector } from "react-redux";
 
 const LogoPAP = () => (
   <svg
@@ -99,16 +98,13 @@ const LogoAcessibilidade = () => (
 interface ListaSondagemEscritaProps {
   dados: DadosTabelaDinamica | null;
   podeSalvar?: boolean;
+  naoExibirTituloTabelaRespostas?: boolean;
 }
 
 const SondagemListaDinamica: React.FC<
   ListaSondagemEscritaProps & { formListaDinamica: any }
-> = ({ dados, formListaDinamica,podeSalvar = true }) => {
-  const usuario = useSelector((store: any) => store.usuario);
-  const modalidade = usuario?.turmaSelecionada?.modalidade;
-  const ano = usuario?.turmaSelecionada?.ano;
+> = ({ dados, formListaDinamica,podeSalvar = true, naoExibirTituloTabelaRespostas }) => {
   const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
-  const naoExibirTituloTabelaRespostas = modalidade == 3 && ano == 1;
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
   const [selectOpenStates, setSelectOpenStates] = useState<
