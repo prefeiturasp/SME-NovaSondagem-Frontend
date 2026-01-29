@@ -4,7 +4,6 @@ import type { ColumnsType } from "antd/es/table";
 import SelectColorido from "../selectColorido";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
 import "./sondagemListaDinamica.css";
-import { useSelector } from "react-redux";
 
 const LogoPAP = () => (
   <svg
