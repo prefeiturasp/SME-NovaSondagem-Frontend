@@ -75,8 +75,10 @@ const Conteudo: React.FC = () => {
   );
   const [desabilitarBotoes, setDesabilitarBotoes] = useState<boolean>(false);
   const [podeSalvar, setPodeSalvar] = useState<boolean>(false);
-  const [componenteBimestres, setComponenteBimestres] = useState<boolean>(false);
-  const [naoExibirTituloTabelaRespostas, setNaoExibirTituloTabelaRespostas] = useState<boolean>(false);
+  const [componenteBimestres, setComponenteBimestres] =
+    useState<boolean>(false);
+  const [naoExibirTituloTabelaRespostas, setNaoExibirTituloTabelaRespostas] =
+    useState<boolean>(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
@@ -92,11 +94,11 @@ const Conteudo: React.FC = () => {
       setDesabilitarProficiencia(true);
       setDesabilitarBotoes(true);
       setErroValidacaoTurma(resultado.mensagens.join(" "));
-      return false
+      return false;
     } else {
       setDesabilitarBotoes(false);
       setErroValidacaoTurma(null);
-      return true
+      return true;
     }
   }, [turma, usuario?.token]);
 
@@ -158,37 +160,42 @@ const Conteudo: React.FC = () => {
     [formFiltro, usuario?.token],
   );
 
-  const obterBimestre = useCallback(async (proficienciaId?: number) => {
-    try {
-      const resposta = await NovaSondagemServico.get("/Bimestre", {
-        headers: { "X-Token-Principal": usuario?.token },
-      });
+  const obterBimestre = useCallback(
+    async (proficienciaId?: number) => {
+      try {
+        const resposta = await NovaSondagemServico.get("/Bimestre", {
+          headers: { "X-Token-Principal": usuario?.token },
+        });
 
-      if (resposta?.data?.length > 0) {
-        setDesabilitarBimestre(false);
-        const dadosMapeados = resposta.data
-          .map((item: any) => ({
-            value: item.id,
-            label: item.descricao,
-            codBimestreEnsinoEol: item.codBimestreEnsinoEol,
-          }))
-          .sort(
-            (a: any, b: any) => a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
-          );
-        setListaBimestre(dadosMapeados);
+        if (resposta?.data?.length > 0) {
+          setDesabilitarBimestre(false);
+          const dadosMapeados = resposta.data
+            .map((item: any) => ({
+              value: item.id,
+              label: item.descricao,
+              codBimestreEnsinoEol: item.codBimestreEnsinoEol,
+            }))
+            .sort(
+              (a: any, b: any) =>
+                a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
+            );
+          setListaBimestre(dadosMapeados);
 
-        if (proficienciaId === 6)
-          setListaBimestre(dadosMapeados.filter((bimestre: any) => bimestre.value === 3));
-
-      } else {
-        setDesabilitarBimestre(true);
-        setListaBimestre([]);
+          if (proficienciaId === 6)
+            setListaBimestre(
+              dadosMapeados.filter((bimestre: any) => bimestre.value === 3),
+            );
+        } else {
+          setDesabilitarBimestre(true);
+          setListaBimestre([]);
+        }
+      } catch (error: any) {
+        console.error("Erro ao obter bimestres:", error);
+        message.error("Erro ao carregar dados do bimestre.");
       }
-    } catch (error: any) {
-      console.error("Erro ao obter bimestres:", error);
-      message.error("Erro ao carregar dados do bimestre.");
-    }
-  }, [formFiltro, proficienciaSelecionada]);
+    },
+    [formFiltro, proficienciaSelecionada],
+  );
 
   const resetando = useCallback(() => {
     formFiltro.resetFields();
@@ -268,11 +275,12 @@ const Conteudo: React.FC = () => {
       formFiltro.setFieldValue("bimestreId", null);
 
       setComponenteBimestres(
-        (proficienciaId === 3 && ano !== 1) ||
-        [5, 6].includes(proficienciaId)
+        (proficienciaId === 3 && ano !== 1) || [5, 6].includes(proficienciaId),
       );
 
-      setNaoExibirTituloTabelaRespostas(modalidade === 3 && ano == 1 && proficienciaId === 3);
+      setNaoExibirTituloTabelaRespostas(
+        modalidade === 3 && ano == 1 && proficienciaId === 3,
+      );
 
       if ([3, 5, 6].includes(proficienciaId)) {
         obterBimestre(proficienciaId);
@@ -358,48 +366,51 @@ const Conteudo: React.FC = () => {
       if (modalidade === 3 && profId === 6)
         setDadosLegenda([
           {
-            descricaoLegenda: 'Localização',
-            textoLegenda: 'Capacidade de recuperar informações explícitas no texto',
-            corTexto: '#363636',
-          },
-          {
-            descricaoLegenda: 'Inferência',
-            textoLegenda: 'Capacidade de compreender informações implícitas no texto',
-            corTexto: '#363636',
-          },
-          {
-            descricaoLegenda: 'Reflexão',
+            descricaoLegenda: "Localização",
             textoLegenda:
-              '(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto.',
-            corTexto: '#363636',
+              "Capacidade de recuperar informações explícitas no texto",
+            corTexto: "#363636",
           },
           {
-            descricaoLegenda: 'Adequada',
-            textoLegenda: 'Recuperou, compreendeu ou refletiu corretamente sobre a informação',
-            corFundo: '#7ED957',
-            corTexto: '#363636',
+            descricaoLegenda: "Inferência",
+            textoLegenda:
+              "Capacidade de compreender informações implícitas no texto",
+            corTexto: "#363636",
           },
           {
-            descricaoLegenda: 'Inadequada',
-            textoLegenda: 'Não recuperou, compreendeu ou refletiu corretamente sobre a informação',
-            corFundo: '#FFDE59',
-            corTexto: '#363636',
+            descricaoLegenda: "Reflexão",
+            textoLegenda:
+              "(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto",
+            corTexto: "#363636",
           },
           {
-            descricaoLegenda: 'Não Resolveu',
-            textoLegenda: 'Não conseguiu realizar a leitura e/ou compreensão de textos',
-            corFundo: '#F18888',
-            corTexto: '#FFFFFF',
+            descricaoLegenda: "Adequada",
+            textoLegenda:
+              "Recuperou, compreendeu ou refletiu corretamente sobre a informação",
+            corFundo: "#7ED957",
+            corTexto: "#363636",
+          },
+          {
+            descricaoLegenda: "Inadequada",
+            textoLegenda:
+              "Não recuperou, compreendeu ou refletiu corretamente sobre a informação",
+            corFundo: "#FFDE59",
+            corTexto: "#363636",
+          },
+          {
+            descricaoLegenda: "Não Resolveu",
+            textoLegenda:
+              "Não conseguiu realizar a leitura e/ou compreensão de textos",
+            corFundo: "#F18888",
+            corTexto: "#FFFFFF",
           },
         ]);
-      else
-        setDadosLegenda(dadosLegenda);
-
+      else setDadosLegenda(dadosLegenda);
 
       setDadosLista(resposta.data);
       setDesabilitarBotoes(!resposta.data.podeSalvar);
       setPodeSalvar(resposta.data.podeSalvar);
-      console.log(desabilitarBotoes)
+      console.log(desabilitarBotoes);
 
       const arrayAuditoria = [
         resposta.data.inseridoPor,
@@ -458,7 +469,7 @@ const Conteudo: React.FC = () => {
           nomeEstudante: estudante.nome,
           linguaPortuguesaSegundaLingua:
             dadosFormulario[
-            `linguaPortuguesaSegundaLingua_${estudanteIndex}`
+              `linguaPortuguesaSegundaLingua_${estudanteIndex}`
             ] ?? estudante.linguaPortuguesaSegundaLingua,
           respostas: estudante.coluna.map((coluna, colunaIndex) => ({
             bimestreId: coluna.idCiclo,
@@ -510,11 +521,11 @@ const Conteudo: React.FC = () => {
 
       const errorDetails = error.response?.data?.errors
         ? Object.entries(error.response.data.errors)
-          .map(
-            ([key, value]: [string, any]) =>
-              `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
-          )
-          .join("\n")
+            .map(
+              ([key, value]: [string, any]) =>
+                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
+            )
+            .join("\n")
         : null;
 
       notification.error({
@@ -571,7 +582,7 @@ const Conteudo: React.FC = () => {
               alerta={{
                 tipo: "warning",
                 id: "SegundoAlerta",
-                mensagem: erroValidacaoTurma ?? '',
+                mensagem: erroValidacaoTurma ?? "",
                 estiloTitulo: { fontSize: "18px" },
               }}
               className="mb-2 larguraAlerta"
@@ -629,19 +640,9 @@ const Conteudo: React.FC = () => {
               <Col
                 xs={24}
                 sm={24}
-                md={
-                  componenteBimestres
-                    ? 8
-                    : 12
-                }
-                lg={componenteBimestres
-                  ? 8
-                  : 12
-                }
-                xl={componenteBimestres
-                  ? 8
-                  : 12
-                }
+                md={componenteBimestres ? 8 : 12}
+                lg={componenteBimestres ? 8 : 12}
+                xl={componenteBimestres ? 8 : 12}
               >
                 <Form.Item
                   name="disciplinaId"
@@ -660,18 +661,9 @@ const Conteudo: React.FC = () => {
               <Col
                 xs={24}
                 sm={24}
-                md={componenteBimestres
-                  ? 8
-                  : 12
-                }
-                lg={componenteBimestres
-                  ? 8
-                  : 12
-                }
-                xl={componenteBimestres
-                  ? 8
-                  : 12
-                }
+                md={componenteBimestres ? 8 : 12}
+                lg={componenteBimestres ? 8 : 12}
+                xl={componenteBimestres ? 8 : 12}
               >
                 <Form.Item
                   name="proficienciaId"
