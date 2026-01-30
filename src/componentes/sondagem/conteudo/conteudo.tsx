@@ -177,7 +177,7 @@ const Conteudo: React.FC = () => {
           );
         setListaBimestre(dadosMapeados);
 
-        if(proficienciaId === 6)  
+        if (proficienciaId === 6)
           setListaBimestre(dadosMapeados.filter((bimestre: any) => bimestre.value === 3));
 
       } else {
@@ -225,7 +225,7 @@ const Conteudo: React.FC = () => {
         setModalidadeAnoValidos(valido);
 
         if (valido && turma !== 0) {
-            obterDisciplinas();
+          obterDisciplinas();
         } else if (turma === 0) {
           resetando();
         }
@@ -354,7 +354,34 @@ const Conteudo: React.FC = () => {
             textoLegenda: legenda.legenda,
           }),
         );
-      setDadosLegenda(dadosLegenda);
+
+      if (modalidade === 3 && profId === 6)
+        setDadosLegenda([
+          {
+            descricaoLegenda: 'Localização',
+            textoLegenda: 'Capacidade de recuperar informações explícitas no texto',
+            corFundo: '#FFFFFF',
+            corTexto: '#363636',
+          },
+          {
+            descricaoLegenda: 'Inferência',
+            textoLegenda: 'Capacidade de compreender informações implícitas no texto',
+            corFundo: '#FFFFFF',
+            corTexto: '#363636',
+          },
+          {
+            descricaoLegenda: 'Reflexão',
+            textoLegenda:
+              '(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto.',
+            corFundo: '#FFFFFF',
+            corTexto: '#363636',
+          },
+          ...dadosLegenda,
+        ]);
+      else
+        setDadosLegenda(dadosLegenda);
+
+
       setDadosLista(resposta.data);
       setDesabilitarBotoes(!resposta.data.podeSalvar);
       setPodeSalvar(resposta.data.podeSalvar);
