@@ -1,5 +1,5 @@
 export interface LegendasProps {
-  corFundo: string;
+  corFundo?: string;
   corTexto?: string;
   descricaoLegenda: string;
   textoLegenda: string;

@@ -358,6 +358,22 @@ const Conteudo: React.FC = () => {
       if (modalidade === 3 && profId === 6)
         setDadosLegenda([
           {
+            descricaoLegenda: 'Localização',
+            textoLegenda: 'Capacidade de recuperar informações explícitas no texto',
+            corTexto: '#363636',
+          },
+          {
+            descricaoLegenda: 'Inferência',
+            textoLegenda: 'Capacidade de compreender informações implícitas no texto',
+            corTexto: '#363636',
+          },
+          {
+            descricaoLegenda: 'Reflexão',
+            textoLegenda:
+              '(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto.',
+            corTexto: '#363636',
+          },
+          {
             descricaoLegenda: 'Adequada',
             textoLegenda: 'Recuperou, compreendeu ou refletiu corretamente sobre a informação',
             corFundo: '#7ED957',
@@ -374,25 +390,6 @@ const Conteudo: React.FC = () => {
             textoLegenda: 'Não conseguiu realizar a leitura e/ou compreensão de textos',
             corFundo: '#F18888',
             corTexto: '#FFFFFF',
-          },
-          {
-            descricaoLegenda: 'Localização',
-            textoLegenda: 'Capacidade de recuperar informações explícitas no texto',
-            corFundo: '#FFFFFF',
-            corTexto: '#363636',
-          },
-          {
-            descricaoLegenda: 'Inferência',
-            textoLegenda: 'Capacidade de compreender informações implícitas no texto',
-            corFundo: '#FFFFFF',
-            corTexto: '#363636',
-          },
-          {
-            descricaoLegenda: 'Reflexão',
-            textoLegenda:
-              '(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto.',
-            corFundo: '#FFFFFF',
-            corTexto: '#363636',
           },
         ]);
       else
