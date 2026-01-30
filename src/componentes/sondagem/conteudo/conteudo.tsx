@@ -358,6 +358,24 @@ const Conteudo: React.FC = () => {
       if (modalidade === 3 && profId === 6)
         setDadosLegenda([
           {
+            descricaoLegenda: 'Adequada',
+            textoLegenda: 'Recuperou, compreendeu ou refletiu corretamente sobre a informação',
+            corFundo: '#7ED957',
+            corTexto: '#363636',
+          },
+          {
+            descricaoLegenda: 'Inadequada',
+            textoLegenda: 'Não recuperou, compreendeu ou refletiu corretamente sobre a informação',
+            corFundo: '#FFDE59',
+            corTexto: '#363636',
+          },
+          {
+            descricaoLegenda: 'Não Resolveu',
+            textoLegenda: 'Não conseguiu realizar a leitura e/ou compreensão de textos',
+            corFundo: '#F18888',
+            corTexto: '#FFFFFF',
+          },
+          {
             descricaoLegenda: 'Localização',
             textoLegenda: 'Capacidade de recuperar informações explícitas no texto',
             corFundo: '#FFFFFF',
@@ -376,7 +394,6 @@ const Conteudo: React.FC = () => {
             corFundo: '#FFFFFF',
             corTexto: '#363636',
           },
-          ...dadosLegenda,
         ]);
       else
         setDadosLegenda(dadosLegenda);
