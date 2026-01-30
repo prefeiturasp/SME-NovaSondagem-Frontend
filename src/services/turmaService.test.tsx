@@ -1,5 +1,5 @@
 import NovaSondagemServico from "../core/servico/servico";
-import { validarTurma } from "./turmaService"; // ajuste o path conforme o arquivo real
+import { validarTurma } from "./turmaService";
 
 jest.mock("../core/servico/servico", () => ({
   __esModule: true,
