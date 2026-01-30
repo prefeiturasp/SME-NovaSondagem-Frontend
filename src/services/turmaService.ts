@@ -25,7 +25,6 @@ export const validarTurma = async ({
       mensagens: [],
     };
   } catch (error: any) {
-    console.error("Erro ao validar turma:", error);
 
     const mensagens: string[] =
       error.response?.data?.message ? [error.response?.data?.message] : ["Erro ao validar turma."];
