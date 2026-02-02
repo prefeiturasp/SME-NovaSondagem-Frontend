@@ -25,7 +25,6 @@ jest.mock("antd", () => {
   };
 });
 
-// Constantes
 const MENSAGENS = {
   TITULO: "Sondagem",
   INSTRUCAO: /Preencha os campos para conferir as informações/,
@@ -41,7 +40,6 @@ const BOTOES = {
   SALVAR: "Salvar",
 };
 
-// Mock de dados
 const mockDisciplinas = [
   { id: 1, nome: "Português" },
   { id: 2, nome: "Matemática" },
@@ -98,7 +96,6 @@ const mockQuestionario = {
   ],
 };
 
-// Factory functions para turmas
 const criarTurma = (override?: any) => ({
   turma: "1A",
   id: 1,
@@ -433,7 +430,6 @@ describe("Conteudo", () => {
           const options = document.querySelectorAll(".ant-select-item-option");
           expect(options.length).toBeGreaterThan(0);
 
-          // Verifica se as opções estão em ordem alfabética
           const optionTexts = Array.from(options).map(
             (opt) => opt.textContent || "",
           );
@@ -811,13 +807,11 @@ describe("Conteudo", () => {
         });
       }
 
-      // Neste ponto, não deve ter buscado o questionário ainda
       expect(NovaSondagemServico.get).not.toHaveBeenCalledWith(
         "/Questionario",
         expect.any(Object),
       );
 
-      // Agora seleciona o bimestre
       await waitFor(() => {
         const bimestreSelect = container.querySelector(
           "#sondagem-select-bimestre",
@@ -834,7 +828,6 @@ describe("Conteudo", () => {
         if (option) fireEvent.click(option);
       });
 
-      // Agora sim deve buscar o questionário
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
@@ -880,7 +873,6 @@ describe("Conteudo", () => {
         });
       }
 
-      // Seleciona proficiência 3 (com bimestre)
       const proficienciaSelect = container.querySelector(
         "#sondagem-select-proficiencia",
       );
@@ -902,7 +894,6 @@ describe("Conteudo", () => {
         expect(bimestreSelect).toBeInTheDocument();
       });
 
-      // Troca para proficiência 1 (sem bimestre)
       if (proficienciaSelect) {
         fireEvent.mouseDown(proficienciaSelect);
         await waitFor(() => {
@@ -1257,7 +1248,6 @@ describe("Conteudo", () => {
       });
       const { container } = renderWithProvider(<Conteudo />, store);
 
-      // Aguarda carregar disciplinas
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
@@ -1265,7 +1255,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Seleciona disciplina
       const selectDisciplina = container.querySelector(
         "#sondagem-select-componente-curricular",
       );
@@ -1280,7 +1269,6 @@ describe("Conteudo", () => {
         }
       });
 
-      // Aguarda carregar proficiências
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Proficiencia/componente-curricular/1/modalidadeId/3",
@@ -1288,7 +1276,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Seleciona proficiência
       const selectProficiencia = container.querySelector(
         "#sondagem-select-proficiencia",
       );
@@ -1303,7 +1290,6 @@ describe("Conteudo", () => {
         }
       });
 
-      // Aguarda carregar questionário
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
@@ -1311,7 +1297,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -1366,7 +1351,6 @@ describe("Conteudo", () => {
       });
       const { container } = renderWithProvider(<Conteudo />, store);
 
-      // Carrega dados primeiro
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
@@ -1416,7 +1400,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Agora clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -1451,7 +1434,6 @@ describe("Conteudo", () => {
       });
       const { container } = renderWithProvider(<Conteudo />, store);
 
-      // Carrega dados primeiro
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
@@ -1501,7 +1483,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Agora clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -1539,7 +1520,6 @@ describe("Conteudo", () => {
       });
       const { container } = renderWithProvider(<Conteudo />, store);
 
-      // Carrega dados primeiro
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
@@ -1589,7 +1569,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Agora clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -1634,7 +1613,6 @@ describe("Conteudo", () => {
 
       const { container } = renderWithProvider(<Conteudo />, store);
 
-      // Carrega dados primeiro
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
@@ -1684,7 +1662,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Agora clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -1719,7 +1696,6 @@ describe("Conteudo", () => {
 
       const { container } = renderWithProvider(<Conteudo />, store);
 
-      // Carrega dados primeiro
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
@@ -1769,7 +1745,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Agora clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -1805,7 +1780,6 @@ describe("Conteudo", () => {
 
       const { container } = renderWithProvider(<Conteudo />, store);
 
-      // Aguarda carregar disciplinas
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/ComponenteCurricular",
@@ -1813,7 +1787,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Seleciona disciplina
       const selectDisciplina = container.querySelector(
         "#sondagem-select-componente-curricular",
       );
@@ -1828,7 +1801,6 @@ describe("Conteudo", () => {
         }
       });
 
-      // Aguarda carregar proficiências
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           expect.stringContaining("/Proficiencia/componente-curricular/1"),
@@ -1836,7 +1808,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Seleciona proficiência
       const selectProficiencia = container.querySelector(
         "#sondagem-select-proficiencia",
       );
@@ -1851,7 +1822,6 @@ describe("Conteudo", () => {
         }
       });
 
-      // Aguarda carregar questionário
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
@@ -1859,7 +1829,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Clica em salvar
       await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
@@ -2007,7 +1976,6 @@ describe("Conteudo", () => {
         });
       }
 
-      // Muda a turma
       (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({
         data: mockDisciplinas,
       });
@@ -2126,7 +2094,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Seleciona disciplina - NÃO deve buscar questionário ainda
       const disciplinaSelect = container.querySelector(
         "#sondagem-select-componente-curricular",
       );
@@ -2144,7 +2111,6 @@ describe("Conteudo", () => {
         });
       }
 
-      // Verifica que o questionário NÃO foi buscado ainda
       await waitFor(() => {
         const questionarioCalls = (
           NovaSondagemServico.get as jest.Mock
@@ -2152,7 +2118,6 @@ describe("Conteudo", () => {
         expect(questionarioCalls.length).toBe(0);
       });
 
-      // Seleciona proficiência - AGORA deve buscar questionário
       const proficienciaSelect = container.querySelector(
         "#sondagem-select-proficiencia",
       );
@@ -2170,7 +2135,6 @@ describe("Conteudo", () => {
         });
       }
 
-      // Agora sim, deve ter buscado o questionário
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
@@ -2222,10 +2186,8 @@ describe("Conteudo", () => {
         });
       }
 
-      // Aguarda um pouco para garantir que não foi feita nenhuma chamada
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      // Verifica que o questionário NÃO foi buscado
       const questionarioCalls = (
         NovaSondagemServico.get as jest.Mock
       ).mock.calls.filter((call) => call[0] === "/Questionario");
@@ -2235,7 +2197,6 @@ describe("Conteudo", () => {
 
   describe("Auditoria", () => {
     it("deve ter campos de auditoria no mock de dados", () => {
-      // Verifica que o mockQuestionario tem os campos de auditoria
       expect(mockQuestionario.inseridoPor).toBeDefined();
       expect(mockQuestionario.alteradoPor).toBeDefined();
       expect(mockQuestionario.inseridoPor).toBe(
@@ -2395,7 +2356,6 @@ describe("Conteudo", () => {
         );
       });
 
-      // Verifica que a tabela foi renderizada
       await waitFor(() => {
         const table = container.querySelector(".ant-table");
         expect(table).toBeInTheDocument();
@@ -2460,11 +2420,10 @@ describe("Conteudo", () => {
         expect(table).toBeInTheDocument();
       });
 
-      // Verifica que a tabela não tem limitação de scroll vertical
       const tableBody = container.querySelector(".ant-table-body");
       if (tableBody) {
         const style = window.getComputedStyle(tableBody);
-        // Não deve ter altura máxima fixa de 600px
+
         expect(style.maxHeight).not.toBe("600px");
       }
     });
@@ -2532,7 +2491,6 @@ describe("Conteudo", () => {
         expect(table).toBeInTheDocument();
       });
 
-      // Verifica que botões de ação estão habilitados quando podeSalvar é true
       await waitFor(() => {
         const botaoSalvar = screen.getByText(BOTOES.SALVAR);
         expect(botaoSalvar).not.toBeDisabled();
