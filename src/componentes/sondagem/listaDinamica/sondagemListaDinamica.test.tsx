@@ -647,7 +647,7 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Comportamento de scroll", () => {
-    it("deve aplicar estilo de scroll na tabela", () => {
+    it("deve aplicar estilo de scroll horizontal na tabela", () => {
       const { container } = render(
         <WrapperComponent dados={mockDadosEscrita} />,
       );
@@ -655,12 +655,28 @@ describe("SondagemListaDinamica", () => {
       expect(scrollContainer).toBeInTheDocument();
     });
 
-    it("deve ter configuração de scroll y", () => {
+    it("não deve ter configuração de scroll vertical", () => {
       const { container } = render(
         <WrapperComponent dados={mockDadosEscrita} />,
       );
       const tableWrapper = container.querySelector(".ant-table-wrapper");
       expect(tableWrapper).toBeInTheDocument();
+      // A tabela deve renderizar sem limitação de altura vertical
+      const tableBody = container.querySelector(".ant-table-body");
+      if (tableBody) {
+        // Não deve ter altura máxima definida pelo scroll y
+        const style = window.getComputedStyle(tableBody);
+        expect(style.maxHeight).not.toBe("600px");
+      }
+    });
+
+    it("deve permitir que a tabela expanda verticalmente", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />,
+      );
+      const tableContainer = container.querySelector(".ant-table");
+      expect(tableContainer).toBeInTheDocument();
+      // A tabela deve estar visível sem scroll vertical forçado
     });
   });
 

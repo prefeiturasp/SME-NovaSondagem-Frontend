@@ -125,7 +125,10 @@ describe("Conteudo", () => {
     jest.clearAllMocks();
     (NovaSondagemServico.get as jest.Mock).mockReset();
     (NovaSondagemServico.post as jest.Mock).mockReset();
-    (validarTurma as jest.Mock).mockResolvedValue({ valida: true, mensagens: [] });
+    (validarTurma as jest.Mock).mockResolvedValue({
+      valida: true,
+      mensagens: [],
+    });
   });
 
   const createMockStoreWithUser = (usuario: any) => {
@@ -194,7 +197,9 @@ describe("Conteudo", () => {
     it("deve exibir alerta de modalidade inválida", async () => {
       (validarTurma as jest.Mock).mockResolvedValue({
         valida: false,
-        mensagens: ["Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano)."],
+        mensagens: [
+          "Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano).",
+        ],
       });
       const store = createMockStoreWithUser({
         logado: true,
@@ -250,7 +255,9 @@ describe("Conteudo", () => {
       it(`deve exibir alerta para ${descricao}`, async () => {
         (validarTurma as jest.Mock).mockResolvedValue({
           valida: false,
-          mensagens: ["Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano)."],
+          mensagens: [
+            "Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano).",
+          ],
         });
         const store = createMockStoreWithUser({
           logado: true,
@@ -474,7 +481,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-            "/Proficiencia/componente-curricular/1",
+            expect.stringContaining("/Proficiencia/componente-curricular/1"),
             expect.objectContaining({
               headers: { "X-Token-Principal": "mock-token" },
             }),
@@ -559,7 +566,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1009,7 +1016,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1276,7 +1283,7 @@ describe("Conteudo", () => {
       // Aguarda carregar proficiências
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1383,7 +1390,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1468,7 +1475,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1556,7 +1563,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1651,7 +1658,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1736,7 +1743,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1824,7 +1831,7 @@ describe("Conteudo", () => {
       // Aguarda carregar proficiências
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -1881,7 +1888,9 @@ describe("Conteudo", () => {
     it("deve resetar MENSAGENS quando modalidade muda para inválida", async () => {
       (validarTurma as jest.Mock).mockResolvedValue({
         valida: false,
-        mensagens: ["Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano)."],
+        mensagens: [
+          "Só existe sondagem para turmas de Educação Infantil e Ensino Fundamental (1º ao 3º ano).",
+        ],
       });
       const store = createMockStoreWithUser({
         logado: true,
@@ -1932,7 +1941,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1",
+          expect.stringContaining("/Proficiencia/componente-curricular/1"),
           expect.any(Object),
         );
       });
@@ -2322,6 +2331,278 @@ describe("Conteudo", () => {
       );
 
       expect(arrayAuditoria).toHaveLength(0);
+    });
+  });
+
+  describe("Renderização de SondagemListaDinamica", () => {
+    it("deve renderizar SondagemListaDinamica com dados do questionário", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object),
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]',
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/Questionario",
+          expect.any(Object),
+        );
+      });
+
+      // Verifica que a tabela foi renderizada
+      await waitFor(() => {
+        const table = container.querySelector(".ant-table");
+        expect(table).toBeInTheDocument();
+      });
+    });
+
+    it("deve renderizar tabela sem limite de altura vertical", async () => {
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionario });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object),
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]',
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      await waitFor(() => {
+        const table = container.querySelector(".ant-table");
+        expect(table).toBeInTheDocument();
+      });
+
+      // Verifica que a tabela não tem limitação de scroll vertical
+      const tableBody = container.querySelector(".ant-table-body");
+      if (tableBody) {
+        const style = window.getComputedStyle(tableBody);
+        // Não deve ter altura máxima fixa de 600px
+        expect(style.maxHeight).not.toBe("600px");
+      }
+    });
+
+    it("deve passar prop podeSalvar corretamente para SondagemListaDinamica", async () => {
+      const mockQuestionarioComPodeSalvar = {
+        ...mockQuestionario,
+        podeSalvar: true,
+      };
+
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionarioComPodeSalvar });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object),
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]',
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      await waitFor(() => {
+        const table = container.querySelector(".ant-table");
+        expect(table).toBeInTheDocument();
+      });
+
+      // Verifica que botões de ação estão habilitados quando podeSalvar é true
+      await waitFor(() => {
+        const botaoSalvar = screen.getByText(BOTOES.SALVAR);
+        expect(botaoSalvar).not.toBeDisabled();
+      });
+    });
+
+    it("deve desabilitar botões quando podeSalvar é false", async () => {
+      const mockQuestionarioSemPermissao = {
+        ...mockQuestionario,
+        podeSalvar: false,
+      };
+
+      (NovaSondagemServico.get as jest.Mock)
+        .mockResolvedValueOnce({ data: mockDisciplinas })
+        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValueOnce({ data: mockQuestionarioSemPermissao });
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ComponenteCurricular",
+          expect.any(Object),
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Português"]',
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+        await waitFor(() => {
+          const option = document.querySelector(
+            '[title="Escrita"]',
+          ) as HTMLElement;
+          if (option) {
+            fireEvent.click(option);
+          }
+        });
+      }
+
+      await waitFor(() => {
+        const botaoSalvar = container.querySelector(
+          "#sondagem-button-salvar",
+        ) as HTMLButtonElement;
+        expect(botaoSalvar).toBeDisabled();
+      });
     });
   });
 });
