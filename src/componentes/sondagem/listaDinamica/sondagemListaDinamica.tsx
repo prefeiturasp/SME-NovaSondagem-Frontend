@@ -103,7 +103,12 @@ interface ListaSondagemEscritaProps {
 
 const SondagemListaDinamica: React.FC<
   ListaSondagemEscritaProps & { formListaDinamica: any }
-> = ({ dados, formListaDinamica,podeSalvar = true, naoExibirTituloTabelaRespostas }) => {
+> = ({
+  dados,
+  formListaDinamica,
+  podeSalvar = true,
+  naoExibirTituloTabelaRespostas,
+}) => {
   const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
@@ -308,7 +313,8 @@ const SondagemListaDinamica: React.FC<
             ordem: opcao.ordem,
           }));
 
-          const isDisabled = !podeSalvar || !colunaEstudante.periodoBimestreAtivo;
+          const isDisabled =
+            !podeSalvar || !colunaEstudante.periodoBimestreAtivo;
 
           return (
             <>
@@ -384,7 +390,7 @@ const SondagemListaDinamica: React.FC<
             dataSource={dataSourceComIndice}
             rowKey={(record: any) => record.uniqueKey}
             pagination={false}
-            scroll={{ x: "max-content", y: 600 }}
+            scroll={{ x: "max-content" }}
             bordered
             size="small"
             sticky
