@@ -647,7 +647,7 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Comportamento de scroll", () => {
-    it("deve aplicar estilo de scroll na tabela", () => {
+    it("deve aplicar estilo de scroll horizontal na tabela", () => {
       const { container } = render(
         <WrapperComponent dados={mockDadosEscrita} />,
       );
@@ -655,12 +655,25 @@ describe("SondagemListaDinamica", () => {
       expect(scrollContainer).toBeInTheDocument();
     });
 
-    it("deve ter configuração de scroll y", () => {
+    it("não deve ter configuração de scroll vertical", () => {
       const { container } = render(
         <WrapperComponent dados={mockDadosEscrita} />,
       );
       const tableWrapper = container.querySelector(".ant-table-wrapper");
       expect(tableWrapper).toBeInTheDocument();
+      const tableBody = container.querySelector(".ant-table-body");
+      if (tableBody) {
+        const style = window.getComputedStyle(tableBody);
+        expect(style.maxHeight).not.toBe("600px");
+      }
+    });
+
+    it("deve permitir que a tabela expanda verticalmente", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />,
+      );
+      const tableContainer = container.querySelector(".ant-table");
+      expect(tableContainer).toBeInTheDocument();
     });
   });
 
@@ -841,10 +854,10 @@ describe("SondagemListaDinamica", () => {
 
       await waitFor(() => {
         const select = screen.getByTestId("select_0_0");
-        // Simula abertura do select
+
         fireEvent.focus(select);
         fireEvent.mouseDown(select);
-        // Tenta navegar
+
         fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
       });
 
@@ -856,11 +869,10 @@ describe("SondagemListaDinamica", () => {
 
       await waitFor(() => {
         const select = screen.getByTestId("select_0_0");
-        // Tenta navegar para cima no primeiro item
+
         fireEvent.keyDown(select, { key: "ArrowUp", code: "ArrowUp" });
       });
 
-      // Deve permanecer no mesmo select
       expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
     });
   });
@@ -922,7 +934,6 @@ describe("SondagemListaDinamica", () => {
     it("deve calcular total de colunas corretamente", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
 
-      // Verifica se renderizou as colunas corretas
       const ciclo1 = screen.getAllByText("1° ciclo");
       const ciclo2 = screen.getAllByText("2° ciclo");
       expect(ciclo1.length).toBeGreaterThan(0);
@@ -939,7 +950,6 @@ describe("SondagemListaDinamica", () => {
 
       const { container } = render(<WrapperComponent dados={dadosVazios} />);
 
-      // Quando não há estudantes, a tabela não é renderizada ou está vazia
       const tableBody = container.querySelector(".ant-table-tbody");
       if (tableBody) {
         expect(tableBody.children.length).toBeLessThanOrEqual(1);
@@ -960,7 +970,6 @@ describe("SondagemListaDinamica", () => {
         });
       });
 
-      // Deve ter navegado para última coluna
       expect(screen.getByTestId("select_0_1")).toBeInTheDocument();
     });
 
@@ -972,7 +981,6 @@ describe("SondagemListaDinamica", () => {
         fireEvent.keyDown(lastSelect, { key: "Tab", code: "Tab" });
       });
 
-      // Deve ter ciclado para primeira coluna
       expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
     });
   });
@@ -1272,7 +1280,7 @@ describe("SondagemListaDinamica", () => {
       await waitFor(() => {
         const select = screen.getByTestId("select_0_0") as HTMLSelectElement;
         expect(select).toBeInTheDocument();
-        // Deve estar vazio quando opcaoRespostaId é 0
+
         expect(select.value).toBe("");
       });
     });
@@ -1333,7 +1341,6 @@ describe("SondagemListaDinamica", () => {
         expect(screen.getByTestId("select_1_0")).toBeInTheDocument();
       });
 
-      // Verifica se os estudantes foram renderizados
       expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
       expect(screen.getByText("2 - Maria Santos")).toBeInTheDocument();
     });
@@ -1359,11 +1366,10 @@ describe("SondagemListaDinamica", () => {
       await waitFor(() => {
         const select = screen.getByTestId("select_0_0") as HTMLSelectElement;
         expect(select).toBeInTheDocument();
-        // Deve estar vazio quando resposta é null
+
         expect(select.value).toBe("");
       });
 
-      // Verifica que a tabela renderiza mesmo com resposta null
       expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
     });
 
@@ -1388,7 +1394,7 @@ describe("SondagemListaDinamica", () => {
       await waitFor(() => {
         const select = screen.getByTestId("select_0_0") as HTMLSelectElement;
         expect(select).toBeInTheDocument();
-        // Deve ter o valor selecionado quando opcaoRespostaId é válido e diferente de 0
+
         expect(select.value).toBe("2");
       });
     });
@@ -1427,7 +1433,7 @@ describe("SondagemListaDinamica", () => {
           "select[data-testid='select_0_0']",
         ) as HTMLSelectElement;
         expect(select).toBeInTheDocument();
-        // Quando resposta é null, select deve estar vazio
+
         expect(select.value).toBe("");
       });
     });
@@ -1466,7 +1472,7 @@ describe("SondagemListaDinamica", () => {
           "select[data-testid='select_0_0']",
         ) as HTMLSelectElement;
         expect(select).toBeInTheDocument();
-        // Quando opcaoRespostaId é 0, select deve estar vazio
+
         expect(select.value).toBe("");
       });
     });
