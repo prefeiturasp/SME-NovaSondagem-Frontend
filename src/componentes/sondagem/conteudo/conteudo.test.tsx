@@ -477,7 +477,7 @@ describe("Conteudo", () => {
 
         await waitFor(() => {
           expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-            "/Proficiencia/componente-curricular/1/modalidadeId/3",
+            "/Proficiencia/componente-curricular/1/modalidade/3",
             expect.objectContaining({
               headers: { "X-Token-Principal": "mock-token" },
             }),
@@ -562,7 +562,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1/modalidadeId/3",
+          "/Proficiencia/componente-curricular/1/modalidade/3",
           expect.any(Object),
         );
       });
@@ -1007,7 +1007,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1/modalidadeId/3",
+          "/Proficiencia/componente-curricular/1/modalidade/3",
           expect.any(Object),
         );
       });
@@ -1271,7 +1271,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/Proficiencia/componente-curricular/1/modalidadeId/3",
+          "/Proficiencia/componente-curricular/1/modalidade/3",
           expect.any(Object),
         );
       });
