@@ -135,7 +135,7 @@ const Conteudo: React.FC = () => {
 
       try {
         const resposta = await NovaSondagemServico.get(
-          `/Proficiencia/componente-curricular/${idDisciplina}/modalidadeId/${modalidade}`,
+          `/Proficiencia/componente-curricular/${idDisciplina}/modalidade/${modalidade}`,
           {
             headers: { "X-Token-Principal": usuario?.token },
           },
