@@ -352,8 +352,6 @@ const Conteudo: React.FC = () => {
         },
       });
 
-      console.log("Resposta do questionario:", resposta);
-
       const dadosLegenda =
         resposta.data.estudantes[0].coluna[0].opcaoResposta.map(
           (legenda: any) => ({
@@ -410,7 +408,6 @@ const Conteudo: React.FC = () => {
       setDadosLista(resposta.data);
       setDesabilitarBotoes(!resposta.data.podeSalvar);
       setPodeSalvar(resposta.data.podeSalvar);
-      console.log(desabilitarBotoes);
 
       const arrayAuditoria = [
         resposta.data.inseridoPor,
@@ -419,8 +416,6 @@ const Conteudo: React.FC = () => {
       setDadosAuditoria(arrayAuditoria);
     } catch (error: any) {
       console.error("Erro ao buscar dados da lista:", error);
-      console.log("Status do erro:", error.response?.status);
-      console.log("Error code:", error.code);
 
       if (error.response?.status === 404) {
         notification.warning({
@@ -495,7 +490,7 @@ const Conteudo: React.FC = () => {
       turmaId: turma,
       alunos: dadosParaSalvar,
     };
-    console.log("Dados para salvar:", data);
+
     try {
       const resposta = await NovaSondagemServico.post("Sondagem", data, {
         headers: { "X-Token-Principal": usuario?.token },
@@ -539,15 +534,6 @@ const Conteudo: React.FC = () => {
 
   const CancelarCadastroSondagem = async () => {
     if (proficienciaSelecionada && disciplinaSelecionada) {
-      console.log("Recarregando sondagem com os parâmetros:", {
-        modalidade,
-        ano,
-        componenteCurricular: disciplinaSelecionada,
-        proficiencia: proficienciaSelecionada,
-        turmaId: turma,
-        bimestreId: bimestreSelecionado,
-      });
-
       await buscarDadosListaDoBancoDeDados(
         disciplinaSelecionada,
         proficienciaSelecionada,
