@@ -73,7 +73,6 @@ const Conteudo: React.FC = () => {
   const [erroValidacaoTurma, setErroValidacaoTurma] = useState<string | null>(
     null,
   );
-  const [desabilitarBotoes, setDesabilitarBotoes] = useState<boolean>(false);
   const [podeSalvar, setPodeSalvar] = useState<boolean>(false);
   const [componenteBimestres, setComponenteBimestres] =
     useState<boolean>(false);
@@ -92,11 +91,9 @@ const Conteudo: React.FC = () => {
     if (!resultado.valida && resultado.mensagens.length > 0) {
       setDesabilitarDisciplina(true);
       setDesabilitarProficiencia(true);
-      setDesabilitarBotoes(true);
       setErroValidacaoTurma(resultado.mensagens.join(" "));
       return false;
     } else {
-      setDesabilitarBotoes(false);
       setErroValidacaoTurma(null);
       return true;
     }
@@ -406,7 +403,6 @@ const Conteudo: React.FC = () => {
       else setDadosLegenda(dadosLegenda);
 
       setDadosLista(resposta.data);
-      setDesabilitarBotoes(!resposta.data.podeSalvar);
       setPodeSalvar(resposta.data.podeSalvar);
 
       const arrayAuditoria = [
