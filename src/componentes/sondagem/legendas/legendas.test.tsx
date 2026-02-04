@@ -183,9 +183,7 @@ describe("Legendas", () => {
 
     it("deve aplicar estilo no cabeçalho da legenda", () => {
       const { container } = renderWithProvider(<Legendas data={mockData} />);
-      const header = container.querySelector(
-        'div[style*="background-color"]',
-      ) as HTMLElement;
+      const header = container.querySelector(".titulo-legenda") as HTMLElement;
       expect(header).toBeInTheDocument();
       expect(header.textContent).toBe("Legendas");
     });
