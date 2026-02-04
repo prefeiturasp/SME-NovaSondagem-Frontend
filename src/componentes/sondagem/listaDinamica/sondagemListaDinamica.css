@@ -21,3 +21,40 @@
 .rc-virtual-list {
   z-index: 10001 !important;
 }
+
+.listaDinamicaConfig {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.nenhumDado {
+  padding: 20px;
+  text-align: center;
+}
+
+.marginRight05em {
+  margin-right: 0.5em;
+}
+
+.marginZero {
+  margin: 0 !important;
+}
+
+.lpConfig {
+  font-size: 11px;
+  white-space: normal;
+}
+
+.width100 {
+  width: 100%;
+}
+
+.fontWeight500 {
+  font-weight: 500;
+}
+
+.estudantesConfig {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

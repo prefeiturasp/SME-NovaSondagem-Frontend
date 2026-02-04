@@ -20,7 +20,8 @@ const Legendas: React.FC<LegendasComponentProps> = ({
   const usuario = useSelector((store: any) => store.usuario);
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const anoTurma = usuario?.turmaSelecionada?.ano;
-  const exibeLegendaSemDescricao = modalidade == 3 && anoTurma == 1 && proficienciaId === 3;
+  const exibeLegendaSemDescricao =
+    modalidade == 3 && anoTurma == 1 && proficienciaId === 3;
 
   const columns: ColumnsType<LegendasProps> = [
     {
@@ -31,7 +32,8 @@ const Legendas: React.FC<LegendasComponentProps> = ({
       align: "left",
       render: (corFundo: string) => (
         <div
-          style={{ backgroundColor: corFundo, width: "10px", height: "20px" }}
+          className="legenda-cor-box"
+          style={{ backgroundColor: corFundo }}
         />
       ),
     },
@@ -41,16 +43,10 @@ const Legendas: React.FC<LegendasComponentProps> = ({
       key: "descricao",
       align: "left",
       render: (_: any, record: LegendasProps) => (
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            whiteSpace: "nowrap",
-          }}
-        >
+        <span className="config-texto-legenda">
           {exibeLegendaSemDescricao &&
           record.descricaoLegenda !== "Sem preenchimento" ? null : (
-            <span style={{ fontWeight: "bold" }}>
+            <span className="fontWeightBold">
               {record.descricaoLegenda}:&nbsp;
             </span>
           )}
@@ -89,15 +85,8 @@ const Legendas: React.FC<LegendasComponentProps> = ({
   };
 
   const renderizarLegendaUnica = () => (
-    <div style={{ marginTop: "2em" }}>
-      <div
-        style={{
-          backgroundColor: "#FAFAFA",
-          padding: "8px",
-        }}
-      >
-        Legendas
-      </div>
+    <div className="marginTop2em">
+      <div className="titulo-legenda">Legendas</div>
       <Table
         columns={columns}
         dataSource={data}
@@ -128,7 +117,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
       anoNumero === 2 ? { md: 12, lg: 12, xl: 12 } : { md: 8, lg: 8, xl: 8 };
 
     return (
-      <div style={{ marginTop: "2em" }}>
+      <div className="marginTop2em">
         <Row gutter={16}>
           {colunasParaMostrar.map((config) => {
             const legendasColuna = extrairLegendasDaColuna(config.descricao);
@@ -142,14 +131,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
                 lg={colSizes.lg}
                 xl={colSizes.xl}
               >
-                <div
-                  style={{
-                    backgroundColor: "#FAFAFA",
-                    padding: "8px",
-                  }}
-                >
-                  Legendas {config.titulo}
-                </div>
+                <div className="titulo-legenda">Legendas {config.titulo}</div>
                 <Table
                   columns={columns}
                   dataSource={legendasColuna}
