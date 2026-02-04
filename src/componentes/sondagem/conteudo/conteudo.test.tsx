@@ -106,16 +106,13 @@ const criarTurma = (override?: any) => ({
 
 describe("Conteudo", () => {
   const originalError = console.error;
-  const originalLog = console.log;
 
   beforeAll(() => {
     console.error = jest.fn();
-    console.log = jest.fn();
   });
 
   afterAll(() => {
     console.error = originalError;
-    console.log = originalLog;
   });
 
   beforeEach(() => {
