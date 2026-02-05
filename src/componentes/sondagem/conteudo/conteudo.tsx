@@ -12,6 +12,7 @@ import {
 } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
+import { Ano, Proficiencia, Modalidade } from "../../../core/dto/types";
 import "./conteudo.css";
 import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
@@ -74,6 +75,7 @@ const Conteudo: React.FC = () => {
     null,
   );
   const [podeSalvar, setPodeSalvar] = useState<boolean>(false);
+  const [loadingSalvar, setLoadingSalvar] = useState<boolean>(false);
   const [componenteBimestres, setComponenteBimestres] =
     useState<boolean>(false);
   const [naoExibirTituloTabelaRespostas, setNaoExibirTituloTabelaRespostas] =
@@ -183,7 +185,7 @@ const Conteudo: React.FC = () => {
             );
           setListaBimestre(dadosMapeados);
 
-          if (proficienciaId === 6)
+          if (proficienciaId === Proficiencia.CapacidadeLeitora)
             setListaBimestre(
               dadosMapeados.filter((bimestre: any) => bimestre.value === 3),
             );
@@ -277,14 +279,27 @@ const Conteudo: React.FC = () => {
       formFiltro.setFieldValue("bimestreId", null);
 
       setComponenteBimestres(
-        (proficienciaId === 3 && ano !== 1) || [5, 6].includes(proficienciaId),
+        (proficienciaId === Proficiencia.LeituraEJA &&
+          ano !== Ano.PrimeiroAno) ||
+          [
+            Proficiencia.MapeamentoDosSaberes,
+            Proficiencia.CapacidadeLeitora,
+          ].includes(proficienciaId),
       );
 
       setNaoExibirTituloTabelaRespostas(
-        modalidade === 3 && ano == 1 && proficienciaId === 3,
+        modalidade === Modalidade.EJA &&
+          ano === Ano.PrimeiroAno &&
+          proficienciaId === Proficiencia.LeituraEJA,
       );
 
-      if ([3, 5, 6].includes(proficienciaId)) {
+      if (
+        [
+          Proficiencia.LeituraEJA,
+          Proficiencia.MapeamentoDosSaberes,
+          Proficiencia.CapacidadeLeitora,
+        ].includes(proficienciaId)
+      ) {
         obterBimestre(proficienciaId);
       } else {
         setDesabilitarBimestre(true);
@@ -381,7 +396,10 @@ const Conteudo: React.FC = () => {
           }),
         );
 
-      if (modalidade === 3 && profId === 6)
+      if (
+        modalidade === Modalidade.EJA &&
+        profId === Proficiencia.CapacidadeLeitora
+      )
         setDadosLegenda([
           {
             descricaoLegenda: "Localização",
@@ -502,6 +520,7 @@ const Conteudo: React.FC = () => {
   }, [dadosLista, formListaDinamica]);
 
   const salvarDadosSondagem = useCallback(async () => {
+    setLoadingSalvar(true);
     const dadosParaSalvar = gerarDados();
 
     const data = {
@@ -548,6 +567,8 @@ const Conteudo: React.FC = () => {
         duration: 5,
         placement: "topRight",
       });
+    } finally {
+      setLoadingSalvar(false);
     }
   }, [usuario?.token, gerarDados, turma]);
 
@@ -625,7 +646,8 @@ const Conteudo: React.FC = () => {
             onClick={() => {
               salvarDadosSondagem();
             }}
-            disabled={!podeSalvar}
+            disabled={!podeSalvar || loadingSalvar}
+            loading={loadingSalvar}
           >
             Salvar
           </Button>

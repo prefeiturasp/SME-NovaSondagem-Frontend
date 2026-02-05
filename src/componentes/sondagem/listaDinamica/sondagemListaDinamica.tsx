@@ -112,9 +112,7 @@ const SondagemListaDinamica: React.FC<
   const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
-  const [selectOpenStates, setSelectOpenStates] = useState<
-    Map<string, boolean>
-  >(new Map());
+  const selectOpenStatesRef = useRef<Map<string, boolean>>(new Map());
 
   const setSelectRef = useCallback((key: string, ref: any) => {
     if (ref) {
@@ -160,14 +158,6 @@ const SondagemListaDinamica: React.FC<
     return dados?.estudantes?.[0]?.coluna?.length ?? 0;
   }, [dados]);
 
-  const isSelectOpen = useCallback(
-    (row: number, col: number) => {
-      const key = `${row}_${col}`;
-      return selectOpenStates.get(key) || false;
-    },
-    [selectOpenStates],
-  );
-
   const moveFocus = useCallback(
     (newRow: number, newCol: number) => {
       if (!dados?.estudantes) return;
@@ -191,7 +181,6 @@ const SondagemListaDinamica: React.FC<
   const handleKeyNavigation = useCallback(
     (e: React.KeyboardEvent, row: number, col: number) => {
       const totalCols = getTotalColumns();
-      const isOpen = isSelectOpen(row, col);
 
       if (e.key === "Tab") {
         e.preventDefault();
@@ -202,31 +191,15 @@ const SondagemListaDinamica: React.FC<
           const nextCol = (col + 1) % totalCols;
           moveFocus(row, nextCol);
         }
-      } else if (e.key === "ArrowDown") {
-        if (isOpen) {
-          return;
-        }
-        e.preventDefault();
-        moveFocus(row + 1, col);
-      } else if (e.key === "ArrowUp") {
-        if (isOpen) {
-          return;
-        }
-        e.preventDefault();
-        moveFocus(row - 1, col);
       }
     },
-    [getTotalColumns, isSelectOpen, moveFocus],
+    [getTotalColumns, moveFocus],
   );
 
   const handleSelectOpen = useCallback(
     (row: number, col: number, open: boolean) => {
-      setSelectOpenStates((prev) => {
-        const newMap = new Map(prev);
-        const key = `${row}_${col}`;
-        newMap.set(key, open);
-        return newMap;
-      });
+      const key = `${row}_${col}`;
+      selectOpenStatesRef.current.set(key, open);
     },
     [],
   );

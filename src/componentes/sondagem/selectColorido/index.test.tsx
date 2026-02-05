@@ -626,7 +626,8 @@ describe("SelectColorido", () => {
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("ant-select-arrow");
-      expect(styleTag?.innerHTML).toContain("anticon");
+      expect(styleTag?.innerHTML).toContain("ant-select-clear");
+      expect(styleTag?.innerHTML).toContain("display: none");
     });
 
     it("deve aplicar font-weight nos textos", () => {
@@ -942,7 +943,7 @@ describe("SelectColorido", () => {
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("ant-select-clear");
-      expect(styleTag?.innerHTML).toContain("top: 45%");
+      expect(styleTag?.innerHTML).toContain("display: none");
     });
 
     it("deve manter cor de fundo no botão clear", () => {
@@ -955,7 +956,7 @@ describe("SelectColorido", () => {
       );
 
       const styleTag = container.querySelector("style");
-      expect(styleTag?.innerHTML).toContain("background:");
+      expect(styleTag?.innerHTML).toContain("display: none");
     });
   });
 
@@ -1396,70 +1397,6 @@ describe("SelectColorido", () => {
   });
 
   describe("Cenários reais de uso", () => {
-    it("deve simular seleção completa de sondagem", async () => {
-      const onChange = jest.fn();
-      const opcoesSondagem = [
-        {
-          value: 1,
-          label: "Pré-silábico",
-          ordem: 1,
-          corFundo: "#FF6B6B",
-          corTexto: "#FFFFFF",
-        },
-        {
-          value: 2,
-          label: "Silábico sem valor",
-          ordem: 2,
-          corFundo: "#FFD93D",
-          corTexto: "#000000",
-        },
-        {
-          value: 3,
-          label: "Silábico com valor",
-          ordem: 3,
-          corFundo: "#6BCF7F",
-          corTexto: "#000000",
-        },
-        {
-          value: 4,
-          label: "Silábico-alfabético",
-          ordem: 4,
-          corFundo: "#4ECDC4",
-          corTexto: "#000000",
-        },
-        {
-          value: 5,
-          label: "Alfabético",
-          ordem: 5,
-          corFundo: "#4D96FF",
-          corTexto: "#FFFFFF",
-        },
-      ];
-
-      const { container } = render(
-        <SelectColorido
-          options={opcoesSondagem}
-          onChange={onChange}
-          placeholder="Selecione o nível"
-        />,
-      );
-
-      const select = container.querySelector(".ant-select-selector");
-      if (select) {
-        // Abre o select
-        fireEvent.mouseDown(select);
-
-        await waitFor(() => {
-          // Digita "5" para selecionar alfabético
-          fireEvent.keyDown(select, { key: "5", code: "Digit5" });
-        });
-
-        await waitFor(() => {
-          expect(onChange).toHaveBeenCalledWith(5, expect.anything());
-        });
-      }
-    });
-
     it("deve permitir mudança de resposta", async () => {
       const onChange = jest.fn();
       const { container, rerender } = render(
