@@ -1,6 +1,7 @@
 import { Table, Tooltip, Row, Col } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
+import { Ano, Proficiencia, Modalidade } from "../../../core/dto/types";
 import "./legendas.css";
 import { useSelector } from "react-redux";
 
@@ -21,7 +22,9 @@ const Legendas: React.FC<LegendasComponentProps> = ({
   const modalidade = usuario?.turmaSelecionada?.modalidade;
   const anoTurma = usuario?.turmaSelecionada?.ano;
   const exibeLegendaSemDescricao =
-    modalidade == 3 && anoTurma == 1 && proficienciaId === 3;
+    modalidade === Modalidade.EJA &&
+    anoTurma === Ano.PrimeiroAno &&
+    proficienciaId === Proficiencia.LeituraEJA;
 
   const columns: ColumnsType<LegendasProps> = [
     {
@@ -60,10 +63,12 @@ const Legendas: React.FC<LegendasComponentProps> = ({
     },
   ];
 
-  const isProficienciaLeitura = proficienciaId === 3;
+  const isProficienciaLeitura = proficienciaId === Proficiencia.LeituraEJA;
   const anoNumero = typeof ano === "string" ? parseInt(ano, 10) : ano;
   const deveGerarMultiplasLegendas =
-    isProficienciaLeitura && anoNumero && [2, 3].includes(anoNumero);
+    isProficienciaLeitura &&
+    anoNumero &&
+    [Ano.SegundoAno, Ano.TerceiroAno].includes(anoNumero);
 
   const extrairLegendasDaColuna = (
     descricaoColuna: string,

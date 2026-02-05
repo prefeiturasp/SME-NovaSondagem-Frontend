@@ -99,7 +99,11 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
       }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleInputKeyDown = (e: React.KeyboardEvent) => {
+      if (isOpen && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+        return;
+      }
+
       if (isOpen && /^\d$/.test(e.key)) {
         e.preventDefault();
         const numero = Number.parseInt(e.key);
@@ -115,14 +119,19 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         }
         return;
       }
+    };
 
-      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !isOpen) {
-        e.stopPropagation();
-      }
-
-      if (onKeyDown) {
-        onKeyDown(e as any);
-      }
+    const optionRender = (option: any) => {
+      return (
+        <div
+          style={{
+            padding: "8px 12px",
+            borderLeft: "4px solid transparent",
+          }}
+        >
+          {option.data.label}
+        </div>
+      );
     };
 
     useEffect(() => {
@@ -153,23 +162,9 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         .ant-select.select-colorido-${uniqueId} .ant-select-selection-search-input {
           color: ${textColor} !important;
         }
-        .ant-select.select-colorido-${uniqueId} .ant-select-arrow {
-          color: ${textColor} !important;
-        }        
+        .ant-select.select-colorido-${uniqueId} .ant-select-arrow,
         .ant-select.select-colorido-${uniqueId} .ant-select-clear {
-          top: 45% !important;
-          width: 20px !important;
-          inset-inline-end: 8px !important;
-          background: ${backgroundColor} !important;
-          color: ${textColor} !important;
-          border-radius: 4px !important;
-          opacity: 1 !important;
-        }
-        .ant-select.select-colorido-${uniqueId} .ant-select-clear:hover {
-          opacity: 0.8 !important;
-        }
-        .ant-select.select-colorido-${uniqueId} .ant-select-clear .anticon {
-          color: inherit !important;
+          display: none !important;
         }
         .ant-select.select-colorido-${uniqueId}.ant-select-disabled .ant-select-selector {
           opacity: 0.6 !important;
@@ -190,11 +185,14 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           showSearch
           allowClear
           filterOption={filterOption}
+          optionRender={optionRender}
           {...props}
           value={value}
           onChange={handleChange}
           onOpenChange={handleOpenChange}
-          onKeyDown={handleKeyDown}
+          onInputKeyDown={handleInputKeyDown}
+          onKeyDown={onKeyDown}
+          classNames={{ popup: { root: `select-colorido-dropdown` } } as any}
           className={`select-colorido select-colorido-${uniqueId} ${
             props.className ?? ""
           }`}
