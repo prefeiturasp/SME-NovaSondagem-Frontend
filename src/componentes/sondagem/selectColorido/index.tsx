@@ -117,7 +117,6 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
             onOpenChange(false);
           }
         }
-        return;
       }
     };
 
