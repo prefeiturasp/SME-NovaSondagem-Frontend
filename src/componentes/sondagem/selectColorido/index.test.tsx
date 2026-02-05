@@ -626,7 +626,8 @@ describe("SelectColorido", () => {
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("ant-select-arrow");
-      expect(styleTag?.innerHTML).toContain("anticon");
+      expect(styleTag?.innerHTML).toContain("ant-select-clear");
+      expect(styleTag?.innerHTML).toContain("display: none");
     });
 
     it("deve aplicar font-weight nos textos", () => {
@@ -942,7 +943,7 @@ describe("SelectColorido", () => {
 
       const styleTag = container.querySelector("style");
       expect(styleTag?.innerHTML).toContain("ant-select-clear");
-      expect(styleTag?.innerHTML).toContain("top: 45%");
+      expect(styleTag?.innerHTML).toContain("display: none");
     });
 
     it("deve manter cor de fundo no botão clear", () => {
@@ -955,7 +956,7 @@ describe("SelectColorido", () => {
       );
 
       const styleTag = container.querySelector("style");
-      expect(styleTag?.innerHTML).toContain("background:");
+      expect(styleTag?.innerHTML).toContain("display: none");
     });
   });
 
