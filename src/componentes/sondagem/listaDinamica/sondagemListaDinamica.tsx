@@ -112,7 +112,7 @@ const SondagemListaDinamica: React.FC<
   const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
-  const [, setSelectOpenStates] = useState<Map<string, boolean>>(new Map());
+  const selectOpenStatesRef = useRef<Map<string, boolean>>(new Map());
 
   const setSelectRef = useCallback((key: string, ref: any) => {
     if (ref) {
@@ -198,12 +198,8 @@ const SondagemListaDinamica: React.FC<
 
   const handleSelectOpen = useCallback(
     (row: number, col: number, open: boolean) => {
-      setSelectOpenStates((prev) => {
-        const newMap = new Map(prev);
-        const key = `${row}_${col}`;
-        newMap.set(key, open);
-        return newMap;
-      });
+      const key = `${row}_${col}`;
+      selectOpenStatesRef.current.set(key, open);
     },
     [],
   );

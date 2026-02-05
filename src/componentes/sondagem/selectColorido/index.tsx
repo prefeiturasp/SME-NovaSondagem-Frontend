@@ -162,23 +162,9 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         .ant-select.select-colorido-${uniqueId} .ant-select-selection-search-input {
           color: ${textColor} !important;
         }
-        .ant-select.select-colorido-${uniqueId} .ant-select-arrow {
-          color: ${textColor} !important;
-        }        
+        .ant-select.select-colorido-${uniqueId} .ant-select-arrow,
         .ant-select.select-colorido-${uniqueId} .ant-select-clear {
-          top: 45% !important;
-          width: 20px !important;
-          inset-inline-end: 8px !important;
-          background: ${backgroundColor} !important;
-          color: ${textColor} !important;
-          border-radius: 4px !important;
-          opacity: 1 !important;
-        }
-        .ant-select.select-colorido-${uniqueId} .ant-select-clear:hover {
-          opacity: 0.8 !important;
-        }
-        .ant-select.select-colorido-${uniqueId} .ant-select-clear .anticon {
-          color: inherit !important;
+          display: none !important;
         }
         .ant-select.select-colorido-${uniqueId}.ant-select-disabled .ant-select-selector {
           opacity: 0.6 !important;
@@ -206,7 +192,7 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           onOpenChange={handleOpenChange}
           onInputKeyDown={handleInputKeyDown}
           onKeyDown={onKeyDown}
-          dropdownClassName="select-colorido-dropdown"
+          classNames={{ popup: { root: `select-colorido-dropdown` } } as any}
           className={`select-colorido select-colorido-${uniqueId} ${
             props.className ?? ""
           }`}
