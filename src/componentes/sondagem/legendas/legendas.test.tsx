@@ -178,23 +178,19 @@ describe("Legendas", () => {
     it("deve aplicar margem superior no container", () => {
       const { container } = renderWithProvider(<Legendas data={mockData} />);
       const mainDiv = container.firstChild as HTMLElement;
-      expect(mainDiv).toHaveStyle({ marginTop: "2em" });
+      expect(mainDiv).toHaveClass("marginTop2em");
     });
 
     it("deve aplicar estilo no cabeçalho da legenda", () => {
       const { container } = renderWithProvider(<Legendas data={mockData} />);
-      const header = container.querySelector(
-        'div[style*="background-color"]',
-      ) as HTMLElement;
+      const header = container.querySelector(".titulo-legenda") as HTMLElement;
       expect(header).toBeInTheDocument();
       expect(header.textContent).toBe("Legendas");
     });
 
     it("deve aplicar fonte em negrito no texto da legenda", () => {
       const { container } = renderWithProvider(<Legendas data={mockData} />);
-      const boldTexts = container.querySelectorAll(
-        'span[style*="font-weight"]',
-      );
+      const boldTexts = container.querySelectorAll(".fontWeightBold");
       expect(boldTexts.length).toBeGreaterThan(0);
     });
 
@@ -226,7 +222,9 @@ describe("Legendas", () => {
           descricaoLegenda: "Texto longo",
         },
       ];
-      const { container } = renderWithProvider(<Legendas data={longTextData} />);
+      const { container } = renderWithProvider(
+        <Legendas data={longTextData} />,
+      );
       const truncatedText = container.querySelector(".legenda-texto-truncado");
       expect(truncatedText).toBeInTheDocument();
       expect(truncatedText?.textContent).toContain(

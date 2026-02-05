@@ -78,3 +78,27 @@
     max-width: 1100px;
   }
 }
+
+.titulo-legenda {
+  background-color: #fafafa;
+  padding: 8px;
+}
+
+.marginTop2em {
+  margin-top: 2em;
+}
+
+.fontWeightBold {
+  font-weight: bold;
+}
+
+.config-texto-legenda {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.legenda-cor-box {
+  width: 10px;
+  height: 20px;
+}
