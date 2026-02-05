@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Button,
   Card,
@@ -128,6 +128,11 @@ const Conteudo: React.FC = () => {
 
   const obterProficiencia = useCallback(
     async (idDisciplina: number) => {
+      if (!modalidade) {
+        console.warn("Modalidade ainda não carregada. Aguardando...");
+        return;
+      }
+
       formFiltro.setFieldValue("proficienciaId", null);
 
       try {
@@ -154,7 +159,7 @@ const Conteudo: React.FC = () => {
         message.error("Erro ao carregar dados da proficiencia.");
       }
     },
-    [formFiltro, usuario?.token],
+    [formFiltro, usuario?.token, modalidade],
   );
 
   const obterBimestre = useCallback(
@@ -294,6 +299,24 @@ const Conteudo: React.FC = () => {
       setBimestreSelecionado(bimestreId);
     }
   };
+
+  const proficienciaJaCarregada = useRef(false);
+
+  useEffect(() => {
+    if (
+      modalidade &&
+      disciplinaSelecionada &&
+      listaProficiencia.length === 0 &&
+      !proficienciaJaCarregada.current
+    ) {
+      proficienciaJaCarregada.current = true;
+      obterProficiencia(disciplinaSelecionada);
+    }
+  }, [modalidade, disciplinaSelecionada, listaProficiencia.length]);
+
+  useEffect(() => {
+    proficienciaJaCarregada.current = false;
+  }, [disciplinaSelecionada]);
 
   const executarBusca = async () => {
     if (
