@@ -1,3 +1,52 @@
 .select-colorido .ant-select-selector {
   transition: background-color 0.3s ease;
 }
+
+:global(.ant-select-item-option-active) {
+  background-color: #1677ff !important;
+  color: white !important;
+  font-weight: 600 !important;
+  transition: all 0.15s ease !important;
+}
+
+:global(.ant-select-item-option-active)::before {
+  content: "▶ ";
+  color: white;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+:global(.ant-select-item-option-selected.ant-select-item-option-active) {
+  background-color: #0950b8 !important;
+  color: white !important;
+  font-weight: 700 !important;
+}
+
+:global(
+  .ant-select-item-option-selected.ant-select-item-option-active
+)::before {
+  content: "✓ ";
+  color: white;
+  margin-right: 4px;
+}
+
+:global(.ant-select-item-option:hover) {
+  background-color: #e6f4ff !important;
+}
+
+:global(.ant-select-item-option-selected) {
+  background-color: inherit !important;
+}
+
+.select-colorido-dropdown
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  background-color: #e6f4ff;
+  outline: 2px solid #1677ff;
+  outline-offset: -2px;
+}
+
+.select-colorido-dropdown
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #bae0ff;
+  font-weight: 500;
+}

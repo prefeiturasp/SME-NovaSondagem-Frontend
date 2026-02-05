@@ -99,7 +99,11 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
       }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleInputKeyDown = (e: React.KeyboardEvent) => {
+      if (isOpen && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+        return;
+      }
+
       if (isOpen && /^\d$/.test(e.key)) {
         e.preventDefault();
         const numero = Number.parseInt(e.key);
@@ -115,14 +119,19 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         }
         return;
       }
+    };
 
-      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !isOpen) {
-        e.stopPropagation();
-      }
-
-      if (onKeyDown) {
-        onKeyDown(e as any);
-      }
+    const optionRender = (option: any) => {
+      return (
+        <div
+          style={{
+            padding: "8px 12px",
+            borderLeft: "4px solid transparent",
+          }}
+        >
+          {option.data.label}
+        </div>
+      );
     };
 
     useEffect(() => {
@@ -190,11 +199,14 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           showSearch
           allowClear
           filterOption={filterOption}
+          optionRender={optionRender}
           {...props}
           value={value}
           onChange={handleChange}
           onOpenChange={handleOpenChange}
-          onKeyDown={handleKeyDown}
+          onInputKeyDown={handleInputKeyDown}
+          onKeyDown={onKeyDown}
+          dropdownClassName="select-colorido-dropdown"
           className={`select-colorido select-colorido-${uniqueId} ${
             props.className ?? ""
           }`}
