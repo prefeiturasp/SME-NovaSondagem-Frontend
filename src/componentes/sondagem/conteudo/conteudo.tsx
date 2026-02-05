@@ -74,7 +74,6 @@ const Conteudo: React.FC = () => {
   const [erroValidacaoTurma, setErroValidacaoTurma] = useState<string | null>(
     null,
   );
-  const [desabilitarBotoes, setDesabilitarBotoes] = useState<boolean>(false);
   const [podeSalvar, setPodeSalvar] = useState<boolean>(false);
   const [loadingSalvar, setLoadingSalvar] = useState<boolean>(false);
   const [componenteBimestres, setComponenteBimestres] =
@@ -94,11 +93,9 @@ const Conteudo: React.FC = () => {
     if (!resultado.valida && resultado.mensagens.length > 0) {
       setDesabilitarDisciplina(true);
       setDesabilitarProficiencia(true);
-      setDesabilitarBotoes(true);
       setErroValidacaoTurma(resultado.mensagens.join(" "));
       return false;
     } else {
-      setDesabilitarBotoes(false);
       setErroValidacaoTurma(null);
       return true;
     }
@@ -424,9 +421,7 @@ const Conteudo: React.FC = () => {
       else setDadosLegenda(dadosLegenda);
 
       setDadosLista(resposta.data);
-      setDesabilitarBotoes(!resposta.data.podeSalvar);
       setPodeSalvar(resposta.data.podeSalvar);
-      console.log(desabilitarBotoes);
 
       const arrayAuditoria = [
         resposta.data.inseridoPor,
@@ -435,8 +430,6 @@ const Conteudo: React.FC = () => {
       setDadosAuditoria(arrayAuditoria);
     } catch (error: any) {
       console.error("Erro ao buscar dados da lista:", error);
-      console.log("Status do erro:", error.response?.status);
-      console.log("Error code:", error.code);
 
       if (error.response?.status === 404) {
         notification.warning({
@@ -558,15 +551,6 @@ const Conteudo: React.FC = () => {
 
   const CancelarCadastroSondagem = async () => {
     if (proficienciaSelecionada && disciplinaSelecionada) {
-      console.log("Recarregando sondagem com os parâmetros:", {
-        modalidade,
-        ano,
-        componenteCurricular: disciplinaSelecionada,
-        proficiencia: proficienciaSelecionada,
-        turmaId: turma,
-        bimestreId: bimestreSelecionado,
-      });
-
       await buscarDadosListaDoBancoDeDados(
         disciplinaSelecionada,
         proficienciaSelecionada,
