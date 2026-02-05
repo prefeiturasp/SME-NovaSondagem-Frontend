@@ -25,6 +25,7 @@ export default defineConfig({
       filename: "remoteEntry.js",
       exposes: {
         "./Home": "./src/paginas/home/home.tsx",
+        "./Relatorio": "./src/paginas/relatorio/relatorio.tsx",
       },
       shared: {
         react: {
@@ -48,6 +49,9 @@ export default defineConfig({
           if (req.url?.includes("remoteEntry.js")) {
             res.setHeader("Content-Type", "application/javascript");
             res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Methods", "*");
+            res.setHeader("Access-Control-Allow-Headers", "*");
+            res.setHeader("Access-Control-Expose-Headers", "*");
           }
           next();
         });
@@ -59,8 +63,6 @@ export default defineConfig({
     target: "esnext",
     minify: false,
     cssCodeSplit: false,
-    rollupOptions: {
-      external: ["react-redux"],
-    },
+    rollupOptions: {},
   },
 });

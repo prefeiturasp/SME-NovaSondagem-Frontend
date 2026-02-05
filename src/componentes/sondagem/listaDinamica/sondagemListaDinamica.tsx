@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Checkbox, Form, Space, Table } from "antd";
+import { Checkbox, ConfigProvider, Form, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import SelectColorido from "../selectColorido";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
@@ -11,7 +11,7 @@ const LogoPAP = () => (
     viewBox="0 0 49 21"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ marginRight: "0.5em" }}
+    className="marginRight05em"
   >
     <path
       d="M8.08008 11.9893V20.8506L1.56348 18.7656V16.9414C2.74697 17.2585 3.90914 16.3668 3.90918 15.1416V14.1191C3.90905 12.9986 3.20345 11.999 2.14746 11.624L1.56348 11.417V9.12207L8.08008 11.9893ZM15.3779 11.417L14.7939 11.624C13.738 11.999 13.0324 12.9986 13.0322 14.1191V15.1416C13.0323 16.3668 14.1944 17.2585 15.3779 16.9414V18.7656L8.86133 20.8506V11.9893L15.3779 9.12207V11.417ZM49 17.2021H20.3301V3.64941H49V17.2021ZM1.75781 12.9443C2.25457 12.9503 2.60645 13.3899 2.60645 13.8867V14.5957C2.60645 15.1715 2.13678 15.6651 1.56543 15.5938C0.754937 15.4925 0 15.1608 0 14.0742C0.000135869 13.1635 0.921591 12.9346 1.75781 12.9443ZM15.1836 12.9443C16.0198 12.9346 16.9413 13.1635 16.9414 14.0742C16.9414 15.1608 16.1865 15.4925 15.376 15.5938C14.8047 15.6651 14.335 15.1715 14.335 14.5957V13.8867C14.335 13.3899 14.6869 12.9504 15.1836 12.9443ZM3.90918 9.12207C3.70086 7.03743 5.38606 7.21115 6.25488 7.55859C8.86119 9.12238 10.6859 7.55868 11.7285 7.55859C12.5624 7.55859 13.1181 8.60068 13.292 9.12207C11.6239 9.33071 9.29544 10.4251 8.33984 10.9463C6.88029 9.90397 4.77787 9.29581 3.90918 9.12207ZM8.86133 0C10.8766 0 12.5107 1.63416 12.5107 3.64941C12.5105 5.66445 10.8764 7.29785 8.86133 7.29785C6.84641 7.29765 5.21315 5.66432 5.21289 3.64941C5.21289 1.63429 6.84625 0.000202088 8.86133 0Z"
@@ -30,7 +30,7 @@ const LogoAEE = () => (
     viewBox="0 0 48 19"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ marginRight: "0.5em" }}
+    className="marginRight05em"
   >
     <path
       d="M10.0576 0C13.4076 0.000174651 16.3247 1.84888 17.8477 4.58105C17.9165 4.57409 17.9869 4.57129 18.0576 4.57129C19.1935 4.57155 20.1143 5.49294 20.1143 6.62891C20.1141 7.44056 19.6428 8.14003 18.96 8.47461C18.967 8.62022 18.9717 8.7667 18.9717 8.91406C18.9717 11.3969 17.9551 13.6415 16.3174 15.2578C16.4066 15.4882 16.457 15.7381 16.457 16C16.457 17.136 15.5363 18.0574 14.4004 18.0576C13.7921 18.0576 13.2467 17.7917 12.8701 17.3721C11.9857 17.6661 11.0408 17.8281 10.0576 17.8281C8.94177 17.8281 7.87411 17.6215 6.88965 17.2471C6.51372 17.7384 5.9233 18.0576 5.25684 18.0576C4.12085 18.0575 3.2002 17.136 3.2002 16C3.2002 15.6137 3.30795 15.2531 3.49316 14.9443C2.03429 13.3571 1.14258 11.2398 1.14258 8.91406C1.14258 8.76672 1.14625 8.6202 1.15332 8.47461C0.470913 8.13987 0.000129043 7.44024 0 6.62891C0 5.49278 0.921489 4.57129 2.05762 4.57129C2.1278 4.5713 2.19725 4.57418 2.26562 4.58105C3.78858 1.84851 6.70728 0 10.0576 0ZM10.2461 10.79C10.1553 10.6574 9.95894 10.6574 9.86816 10.79L7.08594 14.8574L6.94238 14.8213C7.17635 15.1552 7.31445 15.5613 7.31445 16C7.31445 16.0613 7.30993 16.1217 7.30469 16.1816C8.16051 16.5059 9.08814 16.6855 10.0576 16.6855C10.8638 16.6855 11.6409 16.5619 12.3721 16.334C12.3543 16.2252 12.3428 16.1138 12.3428 16C12.3428 15.4715 12.5425 14.9894 12.8701 14.625L10.2461 10.79ZM48 14.8574H22.4004V3.42871H48V14.8574ZM16.9062 8.33301C15.8597 8.79438 13.7477 9.60927 11.8086 9.98828C11.6384 10.0218 11.5608 10.224 11.668 10.3604L14.498 13.9453C14.9156 13.9649 15.3001 14.1095 15.6162 14.3418C16.9841 12.941 17.8281 11.0266 17.8281 8.91406C17.8281 8.83267 17.8238 8.75169 17.8213 8.6709C17.4849 8.63245 17.1733 8.51369 16.9062 8.33301ZM3.2793 8.28223C2.99685 8.4913 2.65912 8.62802 2.29199 8.66992C2.28949 8.75102 2.28614 8.83236 2.28613 8.91406C2.28613 10.9387 3.06062 12.782 4.3291 14.165C4.60798 14.0237 4.92282 13.9424 5.25684 13.9424C5.36503 13.9424 5.47151 13.9517 5.5752 13.9678L8.21289 10.3887C8.31894 10.2442 8.22556 10.0367 8.04785 10.0127C6.91656 9.86024 4.8799 9.37227 3.2793 8.28223ZM10.0576 1.14258C7.18603 1.14258 4.67939 2.70129 3.33398 5.01758C3.80879 5.39441 4.11426 5.97564 4.11426 6.62891C4.11425 6.68051 4.11117 6.73158 4.10742 6.78223C6.00034 8.04003 10.6524 9.57172 16.0039 6.74902C16.0016 6.70939 16 6.66911 16 6.62891C16 5.97592 16.3048 5.39442 16.7793 5.01758C15.4339 2.70166 12.9288 1.14275 10.0576 1.14258ZM9.82812 2.05762C11.3429 2.05762 12.5712 3.28506 12.5713 4.7998C12.5713 6.31464 11.343 7.54297 9.82812 7.54297C8.31349 7.54273 7.08594 6.31449 7.08594 4.7998C7.08604 3.2852 8.31356 2.05786 9.82812 2.05762Z"
@@ -49,7 +49,7 @@ const LogoAcessibilidade = () => (
     viewBox="0 0 20 18"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ marginRight: "0.5em" }}
+    className="marginRight05em"
   >
     <ellipse
       cx="9.70606"
@@ -97,17 +97,22 @@ const LogoAcessibilidade = () => (
 
 interface ListaSondagemEscritaProps {
   dados: DadosTabelaDinamica | null;
+  podeSalvar?: boolean;
+  naoExibirTituloTabelaRespostas?: boolean;
 }
 
 const SondagemListaDinamica: React.FC<
   ListaSondagemEscritaProps & { formListaDinamica: any }
-> = ({ dados, formListaDinamica }) => {
+> = ({
+  dados,
+  formListaDinamica,
+  podeSalvar = true,
+  naoExibirTituloTabelaRespostas,
+}) => {
   const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
-  const [selectOpenStates, setSelectOpenStates] = useState<
-    Map<string, boolean>
-  >(new Map());
+  const selectOpenStatesRef = useRef<Map<string, boolean>>(new Map());
 
   const setSelectRef = useCallback((key: string, ref: any) => {
     if (ref) {
@@ -132,15 +137,16 @@ const SondagemListaDinamica: React.FC<
           estudante.linguaPortuguesaSegundaLingua;
 
         estudante.coluna.forEach((coluna, colunaIndex) => {
-          const respostaSelecionada = coluna.resposta?.[0];
+          const respostaSelecionada = coluna.resposta;
 
           initialValues[`resposta_${estudanteIndex}_${colunaIndex}`] =
-            respostaSelecionada
+            respostaSelecionada?.opcaoRespostaId &&
+            respostaSelecionada.opcaoRespostaId !== 0
               ? respostaSelecionada.opcaoRespostaId
               : undefined;
 
           initialValues[`respostaId_${estudanteIndex}_${colunaIndex}`] =
-            respostaSelecionada ? respostaSelecionada.id : "";
+            respostaSelecionada?.id ?? "";
         });
       });
 
@@ -151,14 +157,6 @@ const SondagemListaDinamica: React.FC<
   const getTotalColumns = useCallback(() => {
     return dados?.estudantes?.[0]?.coluna?.length ?? 0;
   }, [dados]);
-
-  const isSelectOpen = useCallback(
-    (row: number, col: number) => {
-      const key = `${row}_${col}`;
-      return selectOpenStates.get(key) || false;
-    },
-    [selectOpenStates]
-  );
 
   const moveFocus = useCallback(
     (newRow: number, newCol: number) => {
@@ -177,13 +175,12 @@ const SondagemListaDinamica: React.FC<
         setTimeout(() => targetRef.focus(), 0);
       }
     },
-    [dados, getTotalColumns]
+    [dados, getTotalColumns],
   );
 
   const handleKeyNavigation = useCallback(
     (e: React.KeyboardEvent, row: number, col: number) => {
       const totalCols = getTotalColumns();
-      const isOpen = isSelectOpen(row, col);
 
       if (e.key === "Tab") {
         e.preventDefault();
@@ -194,33 +191,17 @@ const SondagemListaDinamica: React.FC<
           const nextCol = (col + 1) % totalCols;
           moveFocus(row, nextCol);
         }
-      } else if (e.key === "ArrowDown") {
-        if (isOpen) {
-          return;
-        }
-        e.preventDefault();
-        moveFocus(row + 1, col);
-      } else if (e.key === "ArrowUp") {
-        if (isOpen) {
-          return;
-        }
-        e.preventDefault();
-        moveFocus(row - 1, col);
       }
     },
-    [getTotalColumns, isSelectOpen, moveFocus]
+    [getTotalColumns, moveFocus],
   );
 
   const handleSelectOpen = useCallback(
     (row: number, col: number, open: boolean) => {
-      setSelectOpenStates((prev) => {
-        const newMap = new Map(prev);
-        const key = `${row}_${col}`;
-        newMap.set(key, open);
-        return newMap;
-      });
+      const key = `${row}_${col}`;
+      selectOpenStatesRef.current.set(key, open);
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -238,11 +219,7 @@ const SondagemListaDinamica: React.FC<
 
   if (mostrarColunaLP) {
     columns.push({
-      title: (
-        <span style={{ fontSize: "11px", whiteSpace: "normal" }}>
-          LP como 2ª língua?
-        </span>
-      ),
+      title: <span className="lpConfig">LP como 2ª língua?</span>,
       key: "lp",
       width: 110,
       align: "center",
@@ -251,29 +228,23 @@ const SondagemListaDinamica: React.FC<
         <Form.Item
           name={`linguaPortuguesaSegundaLingua_${index}`}
           valuePropName="checked"
-          style={{ margin: 0 }}
+          className="marginZero"
         >
-          <Checkbox />
+          <Checkbox disabled={!podeSalvar} />
         </Form.Item>
       ),
     });
   }
 
   columns.push({
-    title: "Estudante",
+    title: "Estudantes",
     key: "estudante",
     width: mostrarColunaLP ? "40%" : "50%",
     fixed: "left",
     render: (_, record) => (
-      <Space direction="vertical" size={0} style={{ width: "100%" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span style={{ fontWeight: 500 }}>
+      <Space direction="vertical" size={0} className="width100">
+        <div className="estudantesConfig">
+          <span className="fontWeight500">
             {record.numeroAlunoChamada} - {record.nome}
           </span>
           <Space size={4}>
@@ -295,7 +266,7 @@ const SondagemListaDinamica: React.FC<
         render: (_, record, estudanteIndex) => {
           const colunaEstudante = record.coluna[colunaIndex];
           const opcoesOrdenadas = [...colunaEstudante.opcaoResposta].sort(
-            (a, b) => a.ordem - b.ordem
+            (a, b) => a.ordem - b.ordem,
           );
           const options = opcoesOrdenadas.map((opcao) => ({
             label: opcao.descricaoOpcaoResposta,
@@ -305,7 +276,8 @@ const SondagemListaDinamica: React.FC<
             ordem: opcao.ordem,
           }));
 
-          const isDisabled = !colunaEstudante.periodoBimestreAtivo;
+          const isDisabled =
+            !podeSalvar || !colunaEstudante.periodoBimestreAtivo;
 
           return (
             <>
@@ -313,14 +285,14 @@ const SondagemListaDinamica: React.FC<
                 name={`respostaId_${estudanteIndex}_${colunaIndex}`}
                 hidden
                 initialValue=""
-                style={{ margin: 0 }}
+                className="marginZero"
               >
                 <input type="hidden" />
               </Form.Item>
 
               <Form.Item
                 name={`resposta_${estudanteIndex}_${colunaIndex}`}
-                style={{ margin: 0 }}
+                className="marginZero"
                 rules={[{ required: false }]}
               >
                 <SelectColorido
@@ -328,7 +300,7 @@ const SondagemListaDinamica: React.FC<
                   options={options}
                   placeholder="Selecione"
                   disabled={isDisabled}
-                  style={{ width: "100%" }}
+                  className="width100"
                   getPopupContainer={() => document.body}
                   placement="bottomLeft"
                   ref={(ref: any) =>
@@ -347,15 +319,20 @@ const SondagemListaDinamica: React.FC<
         },
       });
     });
-    columns.push({
-      title: dados.tituloTabelaRespostas,
-      children: [...columnsDinamicas],
-    });
+
+    if (naoExibirTituloTabelaRespostas) {
+      columns.push(...columnsDinamicas);
+    } else {
+      columns.push({
+        title: dados.tituloTabelaRespostas,
+        children: [...columnsDinamicas],
+      });
+    }
   }
 
   if (!dados?.estudantes?.length) {
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
+      <div className="nenhumDado">
         <p>Nenhum dado disponível para exibir.</p>
       </div>
     );
@@ -367,20 +344,23 @@ const SondagemListaDinamica: React.FC<
   }));
 
   return (
-    <div style={{ marginTop: 16, overflowX: "auto" }}>
-      <Form form={formListaDinamica} component={false}>
-        <Table
-          columns={columns}
-          dataSource={dataSourceComIndice}
-          rowKey={(record: any) => record.uniqueKey}
-          pagination={false}
-          scroll={{ x: "max-content", y: 600 }}
-          bordered
-          size="small"
-          sticky
-          className="custom-border-table"
-        />
-      </Form>
+    <div className="listaDinamicaConfig">
+      <ConfigProvider componentDisabled={!podeSalvar}>
+        <Form form={formListaDinamica} component={false}>
+          <Table
+            key={`table-${podeSalvar}`}
+            columns={columns}
+            dataSource={dataSourceComIndice}
+            rowKey={(record: any) => record.uniqueKey}
+            pagination={false}
+            scroll={{ x: "max-content" }}
+            bordered
+            size="small"
+            sticky
+            className="custom-border-table"
+          />
+        </Form>
+      </ConfigProvider>
     </div>
   );
 };

@@ -24,7 +24,7 @@
 .linhaTituloBotao {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: end;
   margin-bottom: 1em;
 }
 
@@ -50,7 +50,7 @@
 .tituloSondagem {
   font-family: Roboto, sans-serif;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 24px;
   color: #42474a;
 }
 
@@ -60,4 +60,13 @@
 
 .larguraAlerta {
   width: 100%;
+}
+
+.iconBotaoVoltar {
+  color: #08659a;
+}
+
+.sondagemBotaoEstilo:hover .iconBotaoVoltar {
+  color: #8d5cff;
+  transition: all 0.3s ease;
 }

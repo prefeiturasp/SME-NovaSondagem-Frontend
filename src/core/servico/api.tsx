@@ -24,12 +24,12 @@ const apiNovaSondagem = axios.create({ baseURL }) as CustomAxiosInstance;
 const autenticar = async (tokenPrincipal: string): Promise<string> => {
   const response = await axios.post<TokenResponse>(
     `${baseURL}/Autenticacao`,
-    tokenPrincipal,
+    JSON.stringify(tokenPrincipal),
     {
       headers: {
         "Content-Type": "application/json",
       },
-    }
+    },
   );
 
   const novoToken = response.data.apiAToken;
@@ -39,7 +39,7 @@ const autenticar = async (tokenPrincipal: string): Promise<string> => {
 };
 
 const getOuAutenticaToken = async (
-  tokenPrincipal?: string
+  tokenPrincipal?: string,
 ): Promise<string> => {
   let token = localStorage.getItem(TOKEN_KEY);
   if (!token && tokenPrincipal) {
@@ -47,7 +47,7 @@ const getOuAutenticaToken = async (
   }
   if (!token)
     throw new Error(
-      "Token inválido - forneça X-Token-Principal na primeira chamada"
+      "Token inválido - forneça X-Token-Principal na primeira chamada",
     );
   return token;
 };
@@ -63,7 +63,7 @@ apiNovaSondagem.interceptors.request.use(
   },
   (error) => {
     throw error;
-  }
+  },
 );
 
 apiNovaSondagem.interceptors.response.use(
@@ -74,7 +74,7 @@ apiNovaSondagem.interceptors.response.use(
       localStorage.removeItem(TOKEN_KEY);
     }
     throw error;
-  }
+  },
 );
 
 apiNovaSondagem.CancelarRequisicoes = () => {

@@ -9,7 +9,7 @@ import type {
 describe("Types - Interfaces de Sondagem", () => {
   describe("OpcaoResposta", () => {
     const criarOpcaoResposta = (
-      override?: Partial<OpcaoResposta>
+      override?: Partial<OpcaoResposta>,
     ): OpcaoResposta => ({
       id: 1,
       ordem: 1,
@@ -95,7 +95,8 @@ describe("Types - Interfaces de Sondagem", () => {
       descricaoColuna: "1º Bimestre",
       periodoBimestreAtivo: true,
       opcaoResposta: [],
-      resposta: [],
+      resposta: { id: 0, opcaoRespostaId: 0 },
+      questaoSubrespostaId: null,
       ...override,
     });
 
@@ -107,8 +108,9 @@ describe("Types - Interfaces de Sondagem", () => {
         descricaoColuna: expect.any(String),
         periodoBimestreAtivo: expect.any(Boolean),
         opcaoResposta: expect.any(Array),
-        resposta: expect.any(Array),
+        resposta: expect.any(Object),
       });
+      expect(coluna).toHaveProperty("questaoSubrespostaId");
     });
 
     it("deve gerenciar bimestre ativo e inativo", () => {
@@ -143,20 +145,49 @@ describe("Types - Interfaces de Sondagem", () => {
 
       expect(coluna.opcaoResposta).toHaveLength(2);
       expect(coluna.opcaoResposta[0].descricaoOpcaoResposta).toBe(
-        "Pré-silábico"
+        "Pré-silábico",
       );
       expect(coluna.opcaoResposta[1].descricaoOpcaoResposta).toBe("Alfabético");
     });
 
-    it("deve permitir múltiplas respostas por coluna", () => {
-      const respostas: Resposta[] = [
-        { id: 1, opcaoRespostaId: 1 },
-        { id: 2, opcaoRespostaId: 3 },
-      ];
+    it("deve permitir resposta por coluna", () => {
+      const resposta: Resposta = { id: 1, opcaoRespostaId: 1 };
 
-      const coluna = criarColuna({ resposta: respostas });
+      const coluna = criarColuna({ resposta });
 
-      expect(coluna.resposta).toHaveLength(2);
+      expect(coluna.resposta).toEqual({ id: 1, opcaoRespostaId: 1 });
+    });
+
+    it("deve permitir resposta sem opcaoRespostaId (não respondido)", () => {
+      const resposta: Resposta = { id: 0, opcaoRespostaId: 0 };
+
+      const coluna = criarColuna({ resposta });
+
+      expect(coluna.resposta.id).toBe(0);
+      expect(coluna.resposta.opcaoRespostaId).toBe(0);
+    });
+
+    it("deve aceitar questaoSubrespostaId null quando não há subresposta", () => {
+      const coluna = criarColuna({ questaoSubrespostaId: null });
+
+      expect(coluna.questaoSubrespostaId).toBeNull();
+    });
+
+    it("deve aceitar questaoSubrespostaId com valor quando há subresposta", () => {
+      const coluna = criarColuna({ questaoSubrespostaId: 999 });
+
+      expect(coluna.questaoSubrespostaId).toBe(999);
+    });
+
+    it("deve priorizar questaoSubrespostaId quando presente", () => {
+      const colunaComSubresposta = criarColuna({ questaoSubrespostaId: 100 });
+      const colunaSemSubresposta = criarColuna({ questaoSubrespostaId: null });
+
+      const questaoIdUsado1 = colunaComSubresposta.questaoSubrespostaId ?? 50;
+      const questaoIdUsado2 = colunaSemSubresposta.questaoSubrespostaId ?? 50;
+
+      expect(questaoIdUsado1).toBe(100);
+      expect(questaoIdUsado2).toBe(50);
     });
   });
 
@@ -219,14 +250,16 @@ describe("Types - Interfaces de Sondagem", () => {
           descricaoColuna: "1º Bimestre",
           periodoBimestreAtivo: false,
           opcaoResposta: [],
-          resposta: [{ id: 1, opcaoRespostaId: 1 }],
+          resposta: { id: 1, opcaoRespostaId: 1 },
+          questaoSubrespostaId: null,
         },
         {
           idCiclo: 2,
           descricaoColuna: "2º Bimestre",
           periodoBimestreAtivo: true,
           opcaoResposta: [],
-          resposta: [{ id: 2, opcaoRespostaId: 2 }],
+          resposta: { id: 2, opcaoRespostaId: 2 },
+          questaoSubrespostaId: null,
         },
       ];
 
@@ -240,7 +273,7 @@ describe("Types - Interfaces de Sondagem", () => {
 
   describe("DadosTabelaDinamica", () => {
     const criarDadosTabelaDinamica = (
-      override?: Partial<DadosTabelaDinamica>
+      override?: Partial<DadosTabelaDinamica>,
     ): DadosTabelaDinamica => ({
       sondagemId: 0,
       tituloTabelaRespostas: "Qual hipótese de escrita o estudante apresenta?",
@@ -369,7 +402,8 @@ describe("Types - Interfaces de Sondagem", () => {
         descricaoColuna: "1º Bimestre",
         periodoBimestreAtivo: false,
         opcaoResposta: opcoesResposta,
-        resposta: [{ id: 1, opcaoRespostaId: 1 }],
+        resposta: { id: 1, opcaoRespostaId: 1 },
+        questaoSubrespostaId: null,
       };
 
       const coluna2Bimestre: Coluna = {
@@ -377,7 +411,8 @@ describe("Types - Interfaces de Sondagem", () => {
         descricaoColuna: "2º Bimestre",
         periodoBimestreAtivo: true,
         opcaoResposta: opcoesResposta,
-        resposta: [{ id: 2, opcaoRespostaId: 3 }],
+        resposta: { id: 2, opcaoRespostaId: 3 },
+        questaoSubrespostaId: null,
       };
 
       const estudante: Estudante = {
@@ -402,14 +437,14 @@ describe("Types - Interfaces de Sondagem", () => {
       expect(dados.sondagemId).toBe(789);
       expect(dados.questaoId).toBe(101);
       expect(dados.tituloTabelaRespostas).toBe(
-        "Qual hipótese de escrita o estudante apresenta?"
+        "Qual hipótese de escrita o estudante apresenta?",
       );
       expect(dados.estudantes).toHaveLength(1);
       expect(dados.estudantes[0].nome).toBe("Maria Eduarda");
       expect(dados.estudantes[0].coluna).toHaveLength(2);
       expect(dados.estudantes[0].coluna[0].opcaoResposta).toHaveLength(5);
-      expect(dados.estudantes[0].coluna[0].resposta[0].opcaoRespostaId).toBe(1);
-      expect(dados.estudantes[0].coluna[1].resposta[0].opcaoRespostaId).toBe(3);
+      expect(dados.estudantes[0].coluna[0].resposta.opcaoRespostaId).toBe(1);
+      expect(dados.estudantes[0].coluna[1].resposta.opcaoRespostaId).toBe(3);
       expect(dados.estudantes[0].coluna[1].periodoBimestreAtivo).toBe(true);
     });
 
@@ -419,10 +454,10 @@ describe("Types - Interfaces de Sondagem", () => {
       const resposta3Bim: Resposta = { id: 3, opcaoRespostaId: 5 };
 
       expect(resposta2Bim.opcaoRespostaId!).toBeGreaterThan(
-        resposta1Bim.opcaoRespostaId!
+        resposta1Bim.opcaoRespostaId!,
       );
       expect(resposta3Bim.opcaoRespostaId!).toBeGreaterThan(
-        resposta2Bim.opcaoRespostaId!
+        resposta2Bim.opcaoRespostaId!,
       );
     });
 
@@ -499,7 +534,7 @@ describe("Types - Interfaces de Sondagem", () => {
       const resposta: Resposta = { id: 1, opcaoRespostaId: 20 };
 
       const opcaoSelecionada = opcoes.find(
-        (op) => op.id === resposta.opcaoRespostaId
+        (op) => op.id === resposta.opcaoRespostaId,
       );
 
       expect(opcaoSelecionada).toBeDefined();

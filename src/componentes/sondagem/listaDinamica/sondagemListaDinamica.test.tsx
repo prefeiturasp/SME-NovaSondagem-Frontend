@@ -2,13 +2,29 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Form } from "antd";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 import SondagemListaDinamica from "./sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
+
+const createMockStore = (overrides = {}) =>
+  configureStore({
+    reducer: {
+      usuario: () => ({
+        turmaSelecionada: {
+          modalidade: "1",
+          ano: "1",
+        },
+        ...overrides,
+      }),
+    },
+  });
 
 jest.mock("@/componentes/sondagem/selectColorido", () => {
   return function SelectColorido({
     id,
     options,
+    value,
     onChange,
     disabled,
     placeholder,
@@ -28,8 +44,9 @@ jest.mock("@/componentes/sondagem/selectColorido", () => {
       <select
         id={id}
         ref={selectRef}
+        value={value ?? ""}
         onChange={(e) => {
-          if (onChange) onChange(Number(e.target.value));
+          if (onChange) onChange(Number(e.target.value) || undefined);
         }}
         onFocus={() => {
           setIsOpen(true);
@@ -100,7 +117,8 @@ const mockDadosEscrita: DadosTabelaDinamica = {
               legenda: "Silábico com valor",
             },
           ],
-          resposta: [{ id: 1, opcaoRespostaId: 2 }],
+          resposta: { id: 1, opcaoRespostaId: 2 },
+          questaoSubrespostaId: null,
         },
         {
           idCiclo: 2,
@@ -124,7 +142,8 @@ const mockDadosEscrita: DadosTabelaDinamica = {
               legenda: "Nível B",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
+          questaoSubrespostaId: null,
         },
       ],
     },
@@ -159,7 +178,8 @@ const mockDadosEscrita: DadosTabelaDinamica = {
               legenda: "Silábico sem valor",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
+          questaoSubrespostaId: null,
         },
         {
           idCiclo: 2,
@@ -175,7 +195,8 @@ const mockDadosEscrita: DadosTabelaDinamica = {
               legenda: "Alfabético",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
+          questaoSubrespostaId: null,
         },
       ],
     },
@@ -210,7 +231,8 @@ const mockDadosReescrita: DadosTabelaDinamica = {
               legenda: "Primeira opção",
             },
           ],
-          resposta: [],
+          resposta: { id: 0, opcaoRespostaId: 0 },
+          questaoSubrespostaId: null,
         },
       ],
     },
@@ -225,7 +247,12 @@ const WrapperComponent = ({
   anoTurma?: string;
 }) => {
   const [form] = Form.useForm();
-  return <SondagemListaDinamica dados={dados} formListaDinamica={form} />;
+  const store = createMockStore();
+  return (
+    <Provider store={store}>
+      <SondagemListaDinamica dados={dados} formListaDinamica={form} />
+    </Provider>
+  );
 };
 
 describe("SondagemListaDinamica", () => {
@@ -250,7 +277,7 @@ describe("SondagemListaDinamica", () => {
     it("deve renderizar mensagem quando não há dados", () => {
       render(<WrapperComponent dados={null} />);
       expect(
-        screen.getByText("Nenhum dado disponível para exibir.")
+        screen.getByText("Nenhum dado disponível para exibir."),
       ).toBeInTheDocument();
     });
 
@@ -263,7 +290,7 @@ describe("SondagemListaDinamica", () => {
       };
       render(<WrapperComponent dados={dadosVazios} />);
       expect(
-        screen.getByText("Nenhum dado disponível para exibir.")
+        screen.getByText("Nenhum dado disponível para exibir."),
       ).toBeInTheDocument();
     });
 
@@ -280,7 +307,7 @@ describe("SondagemListaDinamica", () => {
 
       await waitFor(() => {
         expect(
-          screen.getAllByText("LP como 2ª língua?")[0]
+          screen.getAllByText("LP como 2ª língua?")[0],
         ).toBeInTheDocument();
       });
     });
@@ -292,7 +319,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar checkbox LP para cada estudante", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const checkboxes = container.querySelectorAll('input[type="checkbox"]');
       expect(checkboxes.length).toBeGreaterThan(0);
@@ -300,12 +327,12 @@ describe("SondagemListaDinamica", () => {
 
     it("deve marcar checkbox LP conforme valor inicial do estudante", async () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
 
       await waitFor(() => {
         const checkbox = container.querySelector(
-          'input[type="checkbox"]'
+          'input[type="checkbox"]',
         ) as HTMLInputElement;
         expect(checkbox).toBeInTheDocument();
       });
@@ -315,7 +342,7 @@ describe("SondagemListaDinamica", () => {
   describe("Tags de estudante", () => {
     it("deve renderizar tag PAP quando estudante tem PAP", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const papSvgs = container.querySelectorAll('svg[viewBox="0 0 49 21"]');
       expect(papSvgs.length).toBeGreaterThan(0);
@@ -323,7 +350,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar tag AEE quando estudante tem AEE", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const aeeSvgs = container.querySelectorAll('svg[viewBox="0 0 48 19"]');
       expect(aeeSvgs.length).toBeGreaterThan(0);
@@ -331,10 +358,10 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar tag Acessibilidade quando estudante tem acessibilidade", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const acessibilidadeSvgs = container.querySelectorAll(
-        'svg[viewBox="0 0 20 18"]'
+        'svg[viewBox="0 0 20 18"]',
       );
       expect(acessibilidadeSvgs.length).toBeGreaterThan(0);
     });
@@ -354,7 +381,7 @@ describe("SondagemListaDinamica", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
       await waitFor(() => {
         expect(
-          screen.getAllByText("LP como 2ª língua?")[0]
+          screen.getAllByText("LP como 2ª língua?")[0],
         ).toBeInTheDocument();
       });
     });
@@ -363,7 +390,7 @@ describe("SondagemListaDinamica", () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
       await waitFor(() => {
         expect(
-          screen.queryByText("LP como 2ª língua?")
+          screen.queryByText("LP como 2ª língua?"),
         ).not.toBeInTheDocument();
         expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
       });
@@ -434,12 +461,12 @@ describe("SondagemListaDinamica", () => {
   describe("Inicialização de valores do formulário", () => {
     it("deve definir valores iniciais quando opções são carregadas", async () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
 
       await waitFor(() => {
         const checkbox = container.querySelector(
-          'input[type="checkbox"]'
+          'input[type="checkbox"]',
         ) as HTMLInputElement;
         expect(checkbox).toBeInTheDocument();
       });
@@ -450,7 +477,7 @@ describe("SondagemListaDinamica", () => {
 
       await waitFor(() => {
         const hiddenInput = document.querySelector(
-          'input[id="respostaId_0_0"]'
+          'input[id="respostaId_0_0"]',
         ) as HTMLInputElement;
         expect(hiddenInput).toBeInTheDocument();
       });
@@ -461,7 +488,7 @@ describe("SondagemListaDinamica", () => {
 
       await waitFor(() => {
         const hiddenInput = document.querySelector(
-          'input[id="respostaId_1_0"]'
+          'input[id="respostaId_1_0"]',
         ) as HTMLInputElement;
         expect(hiddenInput).toBeInTheDocument();
       });
@@ -471,7 +498,7 @@ describe("SondagemListaDinamica", () => {
   describe("Renderização da tabela", () => {
     it("deve renderizar tabela Ant Design", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const table = container.querySelector(".ant-table");
       expect(table).toBeInTheDocument();
@@ -479,7 +506,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve aplicar classe custom-border-table", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const table = container.querySelector(".custom-border-table");
       expect(table).toBeInTheDocument();
@@ -487,7 +514,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve gerar uniqueKey para cada estudante", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const table = container.querySelector(".ant-table");
       expect(table).toBeInTheDocument();
@@ -515,7 +542,7 @@ describe("SondagemListaDinamica", () => {
   describe("Campos hidden do formulário", () => {
     it("deve renderizar input hidden para respostaId", async () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
 
       await waitFor(() => {
@@ -548,19 +575,19 @@ describe("SondagemListaDinamica", () => {
   describe("Width das colunas", () => {
     it("deve definir width de 40% para coluna estudante quando mostra LP", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
-      expect(screen.getAllByText("Estudante")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Estudantes")[0]).toBeInTheDocument();
     });
 
     it("deve definir width de 50% para coluna estudante quando não mostra LP", () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
-      expect(screen.getAllByText("Estudante")[0]).toBeInTheDocument();
+      expect(screen.getAllByText("Estudantes")[0]).toBeInTheDocument();
     });
   });
 
   describe("Validação de estrutura HTML", () => {
     it("deve renderizar estrutura de tabela correta", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const table = container.querySelector(".ant-table");
       expect(table).toBeInTheDocument();
@@ -568,7 +595,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar colgroup com colunas corretas", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const colgroup = container.querySelector("colgroup");
       expect(colgroup).toBeInTheDocument();
@@ -576,7 +603,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar thead com estrutura de cabeçalho", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const thead = container.querySelector("thead");
       expect(thead).toBeInTheDocument();
@@ -584,7 +611,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar tbody com dados dos estudantes", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const tbody = container.querySelector("tbody");
       expect(tbody).toBeInTheDocument();
@@ -594,7 +621,7 @@ describe("SondagemListaDinamica", () => {
   describe("Renderização de SVG logos", () => {
     it("deve renderizar SVG do LogoPAP com viewBox correto", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const papSvg = container.querySelector('svg[viewBox="0 0 49 21"]');
       expect(papSvg).toBeInTheDocument();
@@ -602,7 +629,7 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar SVG do LogoAEE com viewBox correto", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const aeeSvg = container.querySelector('svg[viewBox="0 0 48 19"]');
       expect(aeeSvg).toBeInTheDocument();
@@ -610,30 +637,43 @@ describe("SondagemListaDinamica", () => {
 
     it("deve renderizar SVG do LogoAcessibilidade com viewBox correto", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const acessibilidadeSvg = container.querySelector(
-        'svg[viewBox="0 0 20 18"]'
+        'svg[viewBox="0 0 20 18"]',
       );
       expect(acessibilidadeSvg).toBeInTheDocument();
     });
   });
 
   describe("Comportamento de scroll", () => {
-    it("deve aplicar estilo de scroll na tabela", () => {
+    it("deve aplicar estilo de scroll horizontal na tabela", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const scrollContainer = container.querySelector(".ant-table-body");
       expect(scrollContainer).toBeInTheDocument();
     });
 
-    it("deve ter configuração de scroll y", () => {
+    it("não deve ter configuração de scroll vertical", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const tableWrapper = container.querySelector(".ant-table-wrapper");
       expect(tableWrapper).toBeInTheDocument();
+      const tableBody = container.querySelector(".ant-table-body");
+      if (tableBody) {
+        const style = window.getComputedStyle(tableBody);
+        expect(style.maxHeight).not.toBe("600px");
+      }
+    });
+
+    it("deve permitir que a tabela expanda verticalmente", () => {
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />,
+      );
+      const tableContainer = container.querySelector(".ant-table");
+      expect(tableContainer).toBeInTheDocument();
     });
   });
 
@@ -660,7 +700,7 @@ describe("SondagemListaDinamica", () => {
   describe("Respostas pré-selecionadas", () => {
     it("deve aplicar resposta existente ao carregar", async () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
 
       await waitFor(() => {
@@ -686,7 +726,7 @@ describe("SondagemListaDinamica", () => {
   describe("Checkbox LP (Língua Portuguesa)", () => {
     it("deve renderizar checkbox LP quando estudante tem lp=true", () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
       const checkboxes = container.querySelectorAll('input[type="checkbox"]');
       expect(checkboxes.length).toBeGreaterThan(0);
@@ -694,12 +734,12 @@ describe("SondagemListaDinamica", () => {
 
     it("deve marcar checkbox quando estudante tem lp=true", async () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
 
       await waitFor(() => {
         const checkbox = container.querySelector(
-          'input[type="checkbox"]'
+          'input[type="checkbox"]',
         ) as HTMLInputElement;
 
         expect(checkbox).toBeInTheDocument();
@@ -741,12 +781,12 @@ describe("SondagemListaDinamica", () => {
 
     it("deve rerenderizar eficientemente ao mudar dados", async () => {
       const { rerender } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
 
       await waitFor(() => {
         expect(
-          screen.getAllByText("LP como 2ª língua?")[0]
+          screen.getAllByText("LP como 2ª língua?")[0],
         ).toBeInTheDocument();
       });
 
@@ -754,7 +794,7 @@ describe("SondagemListaDinamica", () => {
       await waitFor(() => {
         expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
         expect(
-          screen.queryByText("LP como 2ª língua?")
+          screen.queryByText("LP como 2ª língua?"),
         ).not.toBeInTheDocument();
       });
     });
@@ -814,10 +854,10 @@ describe("SondagemListaDinamica", () => {
 
       await waitFor(() => {
         const select = screen.getByTestId("select_0_0");
-        // Simula abertura do select
+
         fireEvent.focus(select);
         fireEvent.mouseDown(select);
-        // Tenta navegar
+
         fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
       });
 
@@ -829,11 +869,10 @@ describe("SondagemListaDinamica", () => {
 
       await waitFor(() => {
         const select = screen.getByTestId("select_0_0");
-        // Tenta navegar para cima no primeiro item
+
         fireEvent.keyDown(select, { key: "ArrowUp", code: "ArrowUp" });
       });
 
-      // Deve permanecer no mesmo select
       expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
     });
   });
@@ -858,7 +897,7 @@ describe("SondagemListaDinamica", () => {
           const firstSelect = screen.getByTestId("select_0_0");
           expect(firstSelect).toBeInTheDocument();
         },
-        { timeout: 200 }
+        { timeout: 200 },
       );
     });
   });
@@ -895,7 +934,6 @@ describe("SondagemListaDinamica", () => {
     it("deve calcular total de colunas corretamente", () => {
       render(<WrapperComponent dados={mockDadosEscrita} />);
 
-      // Verifica se renderizou as colunas corretas
       const ciclo1 = screen.getAllByText("1° ciclo");
       const ciclo2 = screen.getAllByText("2° ciclo");
       expect(ciclo1.length).toBeGreaterThan(0);
@@ -912,7 +950,6 @@ describe("SondagemListaDinamica", () => {
 
       const { container } = render(<WrapperComponent dados={dadosVazios} />);
 
-      // Quando não há estudantes, a tabela não é renderizada ou está vazia
       const tableBody = container.querySelector(".ant-table-tbody");
       if (tableBody) {
         expect(tableBody.children.length).toBeLessThanOrEqual(1);
@@ -933,7 +970,6 @@ describe("SondagemListaDinamica", () => {
         });
       });
 
-      // Deve ter navegado para última coluna
       expect(screen.getByTestId("select_0_1")).toBeInTheDocument();
     });
 
@@ -945,7 +981,6 @@ describe("SondagemListaDinamica", () => {
         fireEvent.keyDown(lastSelect, { key: "Tab", code: "Tab" });
       });
 
-      // Deve ter ciclado para primeira coluna
       expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
     });
   });
@@ -953,7 +988,7 @@ describe("SondagemListaDinamica", () => {
   describe("Interação com formulário", () => {
     it("deve atualizar valores do formulário ao selecionar opção", async () => {
       const { container } = render(
-        <WrapperComponent dados={mockDadosEscrita} />
+        <WrapperComponent dados={mockDadosEscrita} />,
       );
 
       await waitFor(() => {
@@ -1086,7 +1121,7 @@ describe("SondagemListaDinamica", () => {
           const firstSelect = screen.getByTestId("select_0_0");
           expect(firstSelect).toBeInTheDocument();
         },
-        { timeout: 200 }
+        { timeout: 200 },
       );
     });
 
@@ -1196,6 +1231,250 @@ describe("SondagemListaDinamica", () => {
       fireEvent.keyDown(select, { key: "ArrowDown", code: "ArrowDown" });
 
       expect(select).toBeInTheDocument();
+    });
+  });
+
+  describe("Carregamento de respostas salvas", () => {
+    it("deve renderizar select quando opcaoRespostaId é válido", async () => {
+      const dadosComResposta: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 123, opcaoRespostaId: 2 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComResposta} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve renderizar select vazio quando opcaoRespostaId é 0", async () => {
+      const dadosComRespostaZero: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 0, opcaoRespostaId: 0 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComRespostaZero} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0") as HTMLSelectElement;
+        expect(select).toBeInTheDocument();
+
+        expect(select.value).toBe("");
+      });
+    });
+
+    it("deve tratar resposta como objeto direto", async () => {
+      const dadosComResposta: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 456, opcaoRespostaId: 1 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComResposta} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0");
+        expect(select).toBeInTheDocument();
+      });
+    });
+
+    it("deve renderizar múltiplos selects corretamente", async () => {
+      const dadosComMultiplasRespostas: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 101, opcaoRespostaId: 1 },
+              },
+            ],
+          },
+          {
+            ...mockDadosEscrita.estudantes[1],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[1].coluna[0],
+                resposta: { id: 102, opcaoRespostaId: 2 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComMultiplasRespostas} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("select_0_0")).toBeInTheDocument();
+        expect(screen.getByTestId("select_1_0")).toBeInTheDocument();
+      });
+
+      expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
+      expect(screen.getByText("2 - Maria Santos")).toBeInTheDocument();
+    });
+
+    it("deve renderizar select vazio quando resposta é null", async () => {
+      const dadosComRespostaNula: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: null as any,
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComRespostaNula} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0") as HTMLSelectElement;
+        expect(select).toBeInTheDocument();
+
+        expect(select.value).toBe("");
+      });
+
+      expect(screen.getByText("1 - João Silva")).toBeInTheDocument();
+    });
+
+    it("deve tratar corretamente quando resposta tem opcaoRespostaId válido", async () => {
+      const dadosComRespostaValida: DadosTabelaDinamica = {
+        ...mockDadosEscrita,
+        estudantes: [
+          {
+            ...mockDadosEscrita.estudantes[0],
+            coluna: [
+              {
+                ...mockDadosEscrita.estudantes[0].coluna[0],
+                resposta: { id: 123, opcaoRespostaId: 2 },
+              },
+            ],
+          },
+        ],
+      };
+
+      render(<WrapperComponent dados={dadosComRespostaValida} />);
+
+      await waitFor(() => {
+        const select = screen.getByTestId("select_0_0") as HTMLSelectElement;
+        expect(select).toBeInTheDocument();
+
+        expect(select.value).toBe("2");
+      });
+    });
+
+    it("deve manter respostaId vazio quando resposta é null", async () => {
+      const FormWrapper = () => {
+        const [form] = Form.useForm();
+        const store = createMockStore();
+        return (
+          <Provider store={store}>
+            <SondagemListaDinamica
+              dados={{
+                ...mockDadosEscrita,
+                estudantes: [
+                  {
+                    ...mockDadosEscrita.estudantes[0],
+                    coluna: [
+                      {
+                        ...mockDadosEscrita.estudantes[0].coluna[0],
+                        resposta: null as any,
+                      },
+                    ],
+                  },
+                ],
+              }}
+              formListaDinamica={form}
+            />
+          </Provider>
+        );
+      };
+
+      const { container } = render(<FormWrapper />);
+
+      await waitFor(() => {
+        const select = container.querySelector(
+          "select[data-testid='select_0_0']",
+        ) as HTMLSelectElement;
+        expect(select).toBeInTheDocument();
+
+        expect(select.value).toBe("");
+      });
+    });
+
+    it("deve manter respostaId vazio quando opcaoRespostaId é 0", async () => {
+      const FormWrapper = () => {
+        const [form] = Form.useForm();
+        const store = createMockStore();
+        return (
+          <Provider store={store}>
+            <SondagemListaDinamica
+              dados={{
+                ...mockDadosEscrita,
+                estudantes: [
+                  {
+                    ...mockDadosEscrita.estudantes[0],
+                    coluna: [
+                      {
+                        ...mockDadosEscrita.estudantes[0].coluna[0],
+                        resposta: { id: 0, opcaoRespostaId: 0 },
+                      },
+                    ],
+                  },
+                ],
+              }}
+              formListaDinamica={form}
+            />
+          </Provider>
+        );
+      };
+
+      const { container } = render(<FormWrapper />);
+
+      await waitFor(() => {
+        const select = container.querySelector(
+          "select[data-testid='select_0_0']",
+        ) as HTMLSelectElement;
+        expect(select).toBeInTheDocument();
+
+        expect(select.value).toBe("");
+      });
     });
   });
 });

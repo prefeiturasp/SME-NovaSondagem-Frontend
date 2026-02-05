@@ -1,3 +1,29 @@
 .select-colorido .ant-select-selector {
   transition: background-color 0.3s ease;
 }
+
+.ant-select-item-option:hover {
+  background-color: #e6f4ff !important;
+  color: #000000 !important;
+}
+
+.ant-select-item-option-active {
+  background-color: #1677ff !important;
+  color: #ffffff !important;
+  transition: all 0.12s ease !important;
+}
+
+.ant-select-item-option-selected.ant-select-item-option-active {
+  background-color: #0950b8 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  outline: 2px solid #1677ff !important;
+  outline-offset: -2px !important;
+}
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #bae0ff !important;
+}
