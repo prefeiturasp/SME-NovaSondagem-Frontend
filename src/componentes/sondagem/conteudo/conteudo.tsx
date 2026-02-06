@@ -131,7 +131,6 @@ const Conteudo: React.FC = () => {
   const obterProficiencia = useCallback(
     async (idDisciplina: number) => {
       if (!modalidade) {
-        console.warn("Modalidade ainda não carregada. Aguardando...");
         return;
       }
 
