@@ -1,0 +1,748 @@
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import {
+  Button,
+  Card,
+  Form,
+  Select,
+  Row,
+  Col,
+  message,
+  notification,
+  Spin,
+} from "antd";
+import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
+import type { DadosTabelaDinamica } from "../../../core/dto/types";
+import { Ano, Proficiencia, Modalidade } from "../../../core/dto/types";
+import "./conteudo.css";
+import { useSelector } from "react-redux";
+import Alerta from "../../../componentes/biblioteca/Alerta";
+import type { LegendasProps } from "../../../core/dto/legendaProps";
+import Legendas from "../legendas/legendas";
+import NovaSondagemServico from "../../../core/servico/servico";
+import { Auditoria } from "../auditoria/auditoria";
+import { validarTurma } from "../../../services/turmaService";
+import styled from "styled-components";
+
+export const Icon = styled.i``;
+
+const Conteudo: React.FC = () => {
+  const usuario = useSelector((store: any) => store.usuario);
+  const turmaSelecionada = usuario?.turmaSelecionada;
+  const turma = turmaSelecionada ? turmaSelecionada.turma : 0;
+  const modalidade = usuario?.turmaSelecionada?.modalidade;
+  const ano = usuario?.turmaSelecionada?.ano;
+
+  const [listaDisciplinas, setListaDisciplinas] = useState<
+    Array<{ value: number; label: string }>
+  >([]);
+
+  const [listaProficiencia, setListaProficiencia] = useState<
+    Array<{ value: number; label: string }>
+  >([]);
+
+  const [listaBimestre, setListaBimestre] = useState<
+    Array<{ value: number; label: string }>
+  >([]);
+
+  const [dadosLista, setDadosLista] = useState<DadosTabelaDinamica | null>(
+    null,
+  );
+
+  const [dadosLegenda, setDadosLegenda] = useState<LegendasProps[] | null>(
+    null,
+  );
+
+  const [dadosAuditoria, setDadosAuditoria] = useState<string[]>([]);
+
+  const [desabilitarDisciplina, setDesabilitarDisciplina] = useState(true);
+  const [desabilitarProficiencia, setDesabilitarProficiencia] = useState(true);
+  const [desabilitarBimestre, setDesabilitarBimestre] = useState(true);
+
+  const [disciplinaSelecionada, setDisciplinaSelecionada] = useState<
+    number | null
+  >(null);
+  const [proficienciaSelecionada, setProficienciaSelecionada] = useState<
+    number | null
+  >(null);
+
+  const [bimestreSelecionado, setBimestreSelecionado] = useState<number | null>(
+    null,
+  );
+
+  const [modalidadeAnoValidos, setModalidadeAnoValidos] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [erroValidacaoTurma, setErroValidacaoTurma] = useState<string | null>(
+    null,
+  );
+  const [podeSalvar, setPodeSalvar] = useState<boolean>(false);
+  const [loadingSalvar, setLoadingSalvar] = useState<boolean>(false);
+  const [componenteBimestres, setComponenteBimestres] =
+    useState<boolean>(false);
+  const [naoExibirTituloTabelaRespostas, setNaoExibirTituloTabelaRespostas] =
+    useState<boolean>(false);
+
+  const [formFiltro] = Form.useForm();
+  const [formListaDinamica] = Form.useForm();
+
+  const verificarModalidadeTurma = useCallback(async () => {
+    const resultado = await validarTurma({
+      turmaId: turma,
+      token: usuario?.token,
+    });
+
+    if (!resultado.valida && resultado.mensagens.length > 0) {
+      setDesabilitarDisciplina(true);
+      setDesabilitarProficiencia(true);
+      setErroValidacaoTurma(resultado.mensagens.join(" "));
+      return false;
+    } else {
+      setErroValidacaoTurma(null);
+      return true;
+    }
+  }, [turma, usuario?.token]);
+
+  const obterDisciplinas = useCallback(async () => {
+    try {
+      const resposta = await NovaSondagemServico.get("/ComponenteCurricular", {
+        headers: { "X-Token-Principal": usuario?.token },
+      });
+
+      if (resposta?.data?.length > 0) {
+        setDesabilitarDisciplina(false);
+        const dadosMapeados = resposta.data
+          .map((item: any) => ({
+            value: item.id,
+            label: item.nome,
+          }))
+          .sort((a: any, b: any) =>
+            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
+          );
+        setListaDisciplinas(dadosMapeados);
+      } else {
+        setDesabilitarDisciplina(true);
+        setListaDisciplinas([]);
+      }
+    } catch (error: any) {
+      console.error("Erro ao obter disciplinas:", error);
+      message.error("Erro ao carregar dados da disciplina.");
+    }
+  }, [formFiltro]);
+
+  const obterProficiencia = useCallback(
+    async (idDisciplina: number) => {
+      if (!modalidade) {
+        return;
+      }
+
+      formFiltro.setFieldValue("proficienciaId", null);
+
+      try {
+        const resposta = await NovaSondagemServico.get(
+          `/Proficiencia/componente-curricular/${idDisciplina}/modalidade/${modalidade}`,
+          {
+            headers: { "X-Token-Principal": usuario?.token },
+          },
+        );
+
+        if (resposta?.data?.length > 0) {
+          setDesabilitarProficiencia(false);
+          const dadosMapeados = resposta.data.map((item: any) => ({
+            value: item.id,
+            label: item.nome,
+          }));
+          setListaProficiencia(dadosMapeados);
+        } else {
+          setDesabilitarProficiencia(true);
+          setListaProficiencia([]);
+        }
+      } catch (error: any) {
+        console.error("Erro ao obter proficiência:", error);
+        message.error("Erro ao carregar dados da proficiencia.");
+      }
+    },
+    [formFiltro, usuario?.token, modalidade],
+  );
+
+  const obterBimestre = useCallback(
+    async (proficienciaId?: number) => {
+      try {
+        const resposta = await NovaSondagemServico.get("/Bimestre", {
+          headers: { "X-Token-Principal": usuario?.token },
+        });
+
+        if (resposta?.data?.length > 0) {
+          setDesabilitarBimestre(false);
+          const dadosMapeados = resposta.data
+            .map((item: any) => ({
+              value: item.id,
+              label: item.descricao,
+              codBimestreEnsinoEol: item.codBimestreEnsinoEol,
+            }))
+            .sort(
+              (a: any, b: any) =>
+                a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
+            );
+          setListaBimestre(dadosMapeados);
+
+          if (proficienciaId === Proficiencia.CapacidadeLeitora)
+            setListaBimestre(
+              dadosMapeados.filter((bimestre: any) => bimestre.value === 3),
+            );
+        } else {
+          setDesabilitarBimestre(true);
+          setListaBimestre([]);
+        }
+      } catch (error: any) {
+        console.error("Erro ao obter bimestres:", error);
+        message.error("Erro ao carregar dados do bimestre.");
+      }
+    },
+    [formFiltro, proficienciaSelecionada],
+  );
+
+  const resetando = useCallback(() => {
+    formFiltro.resetFields();
+    setListaDisciplinas([]);
+    setListaProficiencia([]);
+    setDesabilitarDisciplina(true);
+    setDesabilitarProficiencia(true);
+    setDadosLista(null);
+    setDadosLegenda(null);
+    setDisciplinaSelecionada(null);
+    setProficienciaSelecionada(null);
+    setModalidadeAnoValidos(false);
+    setErroValidacaoTurma(null);
+  }, [formFiltro]);
+
+  useEffect(() => {
+    const executar = async () => {
+      formFiltro.resetFields(["disciplinaId", "proficienciaId", "bimestreId"]);
+      setDisciplinaSelecionada(null);
+      setProficienciaSelecionada(null);
+      setBimestreSelecionado(null);
+      setListaProficiencia([]);
+      setListaBimestre([]);
+      setDadosLista(null);
+      setDadosLegenda(null);
+      setDadosAuditoria([]);
+      setDesabilitarDisciplina(true);
+      setDesabilitarProficiencia(true);
+      setDesabilitarBimestre(true);
+      setErroValidacaoTurma(null);
+
+      if (modalidade && ano) {
+        const valido = await verificarModalidadeTurma();
+        setModalidadeAnoValidos(valido);
+
+        if (valido && turma !== 0) {
+          obterDisciplinas();
+        } else if (turma === 0) {
+          resetando();
+        }
+      } else {
+        resetando();
+      }
+    };
+    executar();
+  }, [
+    modalidade,
+    ano,
+    turma,
+    verificarModalidadeTurma,
+    obterDisciplinas,
+    resetando,
+    formFiltro,
+  ]);
+
+  const onChangeDisciplinas = async (disciplinaId: number) => {
+    if (disciplinaId) {
+      setDisciplinaSelecionada(disciplinaId);
+      setProficienciaSelecionada(null);
+      setBimestreSelecionado(null);
+      setDesabilitarBimestre(true);
+      setDadosLista(null);
+      setDadosLegenda(null);
+      setDadosAuditoria([]);
+      formFiltro.setFieldValue("bimestreId", null);
+      await obterProficiencia(disciplinaId);
+    }
+  };
+
+  const onChangeProficiencia = async (proficienciaId: number) => {
+    if (proficienciaId && disciplinaSelecionada) {
+      setProficienciaSelecionada(proficienciaId);
+      setDadosLista(null);
+      setDadosLegenda(null);
+      setDadosAuditoria([]);
+      setBimestreSelecionado(null);
+      formFiltro.setFieldValue("bimestreId", null);
+
+      setComponenteBimestres(
+        (proficienciaId === Proficiencia.LeituraEJA &&
+          ano !== Ano.PrimeiroAno) ||
+          [
+            Proficiencia.MapeamentoDosSaberes,
+            Proficiencia.CapacidadeLeitora,
+          ].includes(proficienciaId),
+      );
+
+      setNaoExibirTituloTabelaRespostas(
+        modalidade === Modalidade.EJA &&
+          ano === Ano.PrimeiroAno &&
+          proficienciaId === Proficiencia.LeituraEJA,
+      );
+
+      if (
+        [
+          Proficiencia.LeituraEJA,
+          Proficiencia.MapeamentoDosSaberes,
+          Proficiencia.CapacidadeLeitora,
+        ].includes(proficienciaId)
+      ) {
+        obterBimestre(proficienciaId);
+      } else {
+        setDesabilitarBimestre(true);
+        setBimestreSelecionado(null);
+        formFiltro.setFieldValue("bimestreId", null);
+      }
+    }
+  };
+
+  const onChangeBimestre = async (bimestreId: number) => {
+    if (bimestreId) {
+      setBimestreSelecionado(bimestreId);
+    }
+  };
+
+  const proficienciaJaCarregada = useRef(false);
+
+  useEffect(() => {
+    if (
+      modalidade &&
+      disciplinaSelecionada &&
+      listaProficiencia.length === 0 &&
+      !proficienciaJaCarregada.current
+    ) {
+      proficienciaJaCarregada.current = true;
+      obterProficiencia(disciplinaSelecionada);
+    }
+  }, [modalidade, disciplinaSelecionada, listaProficiencia.length]);
+
+  useEffect(() => {
+    proficienciaJaCarregada.current = false;
+  }, [disciplinaSelecionada]);
+
+  const executarBusca = async () => {
+    if (
+      proficienciaSelecionada &&
+      disciplinaSelecionada &&
+      turma !== 0 &&
+      modalidade &&
+      ano
+    ) {
+      if (componenteBimestres) {
+        if (bimestreSelecionado) {
+          setLoading(true);
+          await buscarDadosListaDoBancoDeDados(
+            disciplinaSelecionada,
+            proficienciaSelecionada,
+            bimestreSelecionado,
+          );
+          setLoading(false);
+        }
+      } else {
+        setLoading(true);
+        await buscarDadosListaDoBancoDeDados(
+          disciplinaSelecionada,
+          proficienciaSelecionada,
+        );
+        setLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    executarBusca();
+  }, [disciplinaSelecionada, proficienciaSelecionada, bimestreSelecionado]);
+
+  const buscarDadosListaDoBancoDeDados = async (
+    componenteCurricularId?: number,
+    proficienciaId?: number,
+    bimestreId?: number | null,
+  ) => {
+    const disciplinaId = componenteCurricularId ?? disciplinaSelecionada;
+    const profId = proficienciaId ?? proficienciaSelecionada;
+
+    try {
+      const resposta = await NovaSondagemServico.get("/Questionario", {
+        headers: { "X-Token-Principal": usuario?.token },
+        params: {
+          TurmaId: turma,
+          ProficienciaId: profId,
+          ComponenteCurricularId: disciplinaId,
+          Modalidade: modalidade,
+          Ano: ano,
+          BimestreId: bimestreId ?? undefined,
+        },
+      });
+
+      const dadosLegenda =
+        resposta.data.estudantes[0].coluna[0].opcaoResposta.map(
+          (legenda: any) => ({
+            corFundo: legenda.corFundo,
+            descricaoLegenda: legenda.descricaoOpcaoResposta,
+            textoLegenda: legenda.legenda,
+          }),
+        );
+
+      if (
+        modalidade === Modalidade.EJA &&
+        profId === Proficiencia.CapacidadeLeitora
+      )
+        setDadosLegenda([
+          {
+            descricaoLegenda: "Localização",
+            textoLegenda:
+              "Capacidade de recuperar informações explícitas no texto",
+            corTexto: "#363636",
+          },
+          {
+            descricaoLegenda: "Inferência",
+            textoLegenda:
+              "Capacidade de compreender informações implícitas no texto",
+            corTexto: "#363636",
+          },
+          {
+            descricaoLegenda: "Reflexão",
+            textoLegenda:
+              "(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto.",
+            corTexto: "#363636",
+          },
+          {
+            descricaoLegenda: "Adequada",
+            textoLegenda:
+              "Recuperou, compreendeu ou refletiu corretamente sobre a informação",
+            corFundo: "#7ED957",
+            corTexto: "#363636",
+          },
+          {
+            descricaoLegenda: "Inadequada",
+            textoLegenda:
+              "Não recuperou, compreendeu ou refletiu corretamente sobre a informação",
+            corFundo: "#FFDE59",
+            corTexto: "#363636",
+          },
+          {
+            descricaoLegenda: "Não Resolveu",
+            textoLegenda:
+              "Não conseguiu realizar a leitura e/ou compreensão de textos",
+            corFundo: "#F18888",
+            corTexto: "#FFFFFF",
+          },
+        ]);
+      else setDadosLegenda(dadosLegenda);
+
+      setDadosLista(resposta.data);
+      setPodeSalvar(resposta.data.podeSalvar);
+
+      const arrayAuditoria = [
+        resposta.data.inseridoPor,
+        resposta.data.alteradoPor,
+      ].filter((item) => item != null && item !== "");
+      setDadosAuditoria(arrayAuditoria);
+    } catch (error: any) {
+      console.error("Erro ao buscar dados da lista:", error);
+
+      if (error.response?.status === 404) {
+        notification.warning({
+          message: "Dados não encontrados",
+          description: error.response?.data?.message,
+          duration: 5,
+          placement: "topRight",
+        });
+      } else if (error.code === "ERR_NETWORK" || !error.response) {
+        notification.error({
+          message: "Erro de conexão",
+          description:
+            "Não foi possível conectar ao servidor. Verifique sua conexão ou tente novamente mais tarde.",
+          duration: 5,
+          placement: "topRight",
+        });
+      } else {
+        message.error("Erro ao carregar dados da sondagem. Tente novamente.");
+      }
+    }
+  };
+
+  const gerarDados = useCallback(() => {
+    if (!dadosLista?.estudantes?.length) {
+      return [];
+    }
+    const dadosFormulario = formListaDinamica.getFieldsValue();
+
+    const dadosParaSalvar = dadosLista?.estudantes.map(
+      (estudante, estudanteIndex) => {
+        const respostas = estudante.coluna.map((_, colunaIndex) => {
+          const respostaId =
+            dadosFormulario[`respostaId_${estudanteIndex}_${colunaIndex}`];
+          const opcaoRespostaId =
+            dadosFormulario[`resposta_${estudanteIndex}_${colunaIndex}`];
+
+          return {
+            id: respostaId ?? 0,
+            opcaoRespostaId: opcaoRespostaId ?? null,
+          };
+        });
+
+        return {
+          codigo: estudante.codigo,
+          numeroAlunoChamada: estudante.numeroAlunoChamada,
+          nomeEstudante: estudante.nome,
+          linguaPortuguesaSegundaLingua:
+            dadosFormulario[
+              `linguaPortuguesaSegundaLingua_${estudanteIndex}`
+            ] ?? estudante.linguaPortuguesaSegundaLingua,
+          respostas: estudante.coluna.map((coluna, colunaIndex) => ({
+            bimestreId: coluna.idCiclo,
+            questaoId:
+              dadosLista.estudantes[estudanteIndex].coluna[colunaIndex]
+                .questaoSubrespostaId ??
+              dadosLista?.questaoId ??
+              0,
+            opcaoRespostaId: respostas[colunaIndex].opcaoRespostaId,
+          })),
+        };
+      },
+    );
+
+    return dadosParaSalvar;
+  }, [dadosLista, formListaDinamica]);
+
+  const salvarDadosSondagem = useCallback(async () => {
+    setLoadingSalvar(true);
+    const dadosParaSalvar = gerarDados();
+
+    const data = {
+      sondagemId: dadosLista?.sondagemId ?? 0,
+      turmaId: turma,
+      alunos: dadosParaSalvar,
+    };
+
+    try {
+      const resposta = await NovaSondagemServico.post("Sondagem", data, {
+        headers: { "X-Token-Principal": usuario?.token },
+      });
+
+      if (resposta.status === 200) {
+        notification.success({
+          message: "Sondagem salva com sucesso!",
+          description:
+            "Os dados da sondagem foram salvos e estão disponíveis para consulta.",
+          duration: 5,
+          placement: "topRight",
+        });
+        executarBusca();
+      }
+    } catch (error: any) {
+      console.error("ERRO:", error);
+
+      const errorMessage =
+        error.response?.data?.title ??
+        error.response?.data?.message ??
+        "Erro ao salvar a sondagem. Tente novamente.";
+
+      const errorDetails = error.response?.data?.errors
+        ? Object.entries(error.response.data.errors)
+            .map(
+              ([key, value]: [string, any]) =>
+                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
+            )
+            .join("\n")
+        : null;
+
+      notification.error({
+        message: "Erro ao salvar sondagem",
+        description: errorDetails ?? errorMessage,
+        duration: 5,
+        placement: "topRight",
+      });
+    } finally {
+      setLoadingSalvar(false);
+    }
+  }, [usuario?.token, gerarDados, turma]);
+
+  const CancelarCadastroSondagem = async () => {
+    if (proficienciaSelecionada && disciplinaSelecionada) {
+      await buscarDadosListaDoBancoDeDados(
+        disciplinaSelecionada,
+        proficienciaSelecionada,
+        bimestreSelecionado,
+      );
+    }
+  };
+
+  const voltarSondagem = () => {
+    globalThis.location.href = "/";
+  };
+
+  return (
+    <>
+      <div className="grupoAlertas">
+        {!turmaSelecionada?.turma && (
+          <Row gutter={16} className="p-0">
+            <Alerta
+              alerta={{
+                tipo: "warning",
+                id: "AlertaPrincipal",
+                mensagem: "Você precisa escolher uma turma.",
+                estiloTitulo: { fontSize: "18px" },
+              }}
+              className="mb-2 larguraAlerta"
+            />
+          </Row>
+        )}
+        {turmaSelecionada?.turma && !modalidadeAnoValidos && (
+          <Row gutter={16} className="p-0">
+            <Alerta
+              alerta={{
+                tipo: "warning",
+                id: "SegundoAlerta",
+                mensagem: erroValidacaoTurma ?? "",
+                estiloTitulo: { fontSize: "18px" },
+              }}
+              className="mb-2 larguraAlerta"
+            />
+          </Row>
+        )}
+      </div>
+
+      <div className="linhaTituloBotao">
+        <div className="tituloSondagem">Sondagem</div>
+        <div>
+          <Button
+            id="sondagem-button-voltar"
+            className="sondagemBotaoEstilo"
+            onClick={() => {
+              voltarSondagem();
+            }}
+            icon={<Icon className={`fa fa-arrow-left iconBotaoVoltar`} />}
+          ></Button>
+
+          <Button
+            id="sondagem-button-cancelar"
+            className="sondagemBotaoEstilo"
+            onClick={() => {
+              CancelarCadastroSondagem();
+            }}
+            disabled={!podeSalvar}
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            id="sondagem-button-salvar"
+            className="sondagemBotaoEstilo"
+            onClick={() => {
+              salvarDadosSondagem();
+            }}
+            disabled={!podeSalvar || loadingSalvar}
+            loading={loadingSalvar}
+          >
+            Salvar
+          </Button>
+        </div>
+      </div>
+
+      <Card className="CardSondagemEfeitos">
+        <div className="textoSondagemEstilo">
+          <p>
+            Preencha os campos para conferir as informações das turmas e
+            estudantes da Unidade Educacional selecionada.
+          </p>
+        </div>
+        <div>
+          <Form form={formFiltro} layout="vertical">
+            <Row gutter={16}>
+              <Col
+                xs={24}
+                sm={24}
+                md={componenteBimestres ? 8 : 12}
+                lg={componenteBimestres ? 8 : 12}
+                xl={componenteBimestres ? 8 : 12}
+              >
+                <Form.Item
+                  name="disciplinaId"
+                  label="Componente Curricular"
+                  className="labelSelectSondagem"
+                >
+                  <Select
+                    id="sondagem-select-componente-curricular"
+                    options={listaDisciplinas}
+                    placeholder="Selecione o componente curricular"
+                    onChange={onChangeDisciplinas}
+                    disabled={desabilitarDisciplina}
+                  />
+                </Form.Item>
+              </Col>
+              <Col
+                xs={24}
+                sm={24}
+                md={componenteBimestres ? 8 : 12}
+                lg={componenteBimestres ? 8 : 12}
+                xl={componenteBimestres ? 8 : 12}
+              >
+                <Form.Item
+                  name="proficienciaId"
+                  label="Proficiência"
+                  className="labelSelectSondagem"
+                >
+                  <Select
+                    id="sondagem-select-proficiencia"
+                    options={listaProficiencia}
+                    placeholder="Selecione a proficiência"
+                    onChange={onChangeProficiencia}
+                    disabled={desabilitarProficiencia}
+                  />
+                </Form.Item>
+              </Col>
+              {componenteBimestres && (
+                <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+                  <Form.Item
+                    name="bimestreId"
+                    label="Bimestre"
+                    className="labelSelectSondagem"
+                  >
+                    <Select
+                      id="sondagem-select-bimestre"
+                      options={listaBimestre}
+                      placeholder="Selecione o bimestre"
+                      onChange={onChangeBimestre}
+                      disabled={desabilitarBimestre}
+                    />
+                  </Form.Item>
+                </Col>
+              )}
+            </Row>
+          </Form>
+        </div>
+        <Spin spinning={loading} tip="Carregando dados...">
+          <SondagemListaDinamica
+            dados={dadosLista}
+            formListaDinamica={formListaDinamica}
+            podeSalvar={podeSalvar}
+            naoExibirTituloTabelaRespostas={naoExibirTituloTabelaRespostas}
+          />
+        </Spin>
+        <Legendas
+          data={dadosLegenda || []}
+          ano={ano}
+          proficienciaId={proficienciaSelecionada ?? undefined}
+          dadosCompletos={dadosLista}
+        />
+
+        <Auditoria linhas={dadosAuditoria || []} />
+      </Card>
+    </>
+  );
+};
+export default Conteudo;

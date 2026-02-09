@@ -1,0 +1,51 @@
+{
+  "questao": "leitura",
+  "estudantes": [
+    {
+      "lp": true,
+      "numero": 1,
+      "nome": "João Silva",
+      "pap": true,
+      "aee": true,
+      "acessibilidade": true,
+      "coluna": [
+        {
+          "descricaoColuna": "Localização",
+          "PeriodoBimestreAtivo": true,
+          "opcaoResposta": [
+            {
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcao": "Adequada",
+              "corFundo": "#7ED957",
+              "corTexto": "#FFFFFF",
+              "descricaoLegenda": "Hipótese pré-silábica"
+            },
+            {
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcao": "Inadequada",
+              "corFundo": "#FFDE59",
+              "corTexto": "#FFFFFF",
+              "descricaoLegenda": "Hipótese pré-silábica"
+            },
+            {
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcao": "Não resolveu",
+              "corFundo": "#F18888",
+              "corTexto": "#FFFFFF",
+              "descricaoLegenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 1,
+              "opcaoRespostaId": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

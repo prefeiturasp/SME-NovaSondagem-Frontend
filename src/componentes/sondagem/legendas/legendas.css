@@ -1,0 +1,104 @@
+.tabela-legendas.tabela-legendas.ant-table.ant-table-small.ant-table-bordered {
+  border: 1px solid #f0f0f0 !important;
+}
+
+.tabela-legendas.tabela-legendas.ant-table.ant-table-small.ant-table-bordered
+  .ant-table-cell {
+  border-color: #f0f0f0 !important;
+}
+
+.tabela-legendas.tabela-legendas.ant-table.ant-table-small.ant-table-bordered
+  .ant-table-tbody
+  > tr
+  > td {
+  border-color: #f0f0f0 !important;
+}
+
+.tabela-legendas.tabela-legendas.ant-table.ant-table-small.ant-table-bordered
+  .ant-table-thead
+  > tr
+  > th {
+  border-color: #f0f0f0 !important;
+}
+
+.tabela-legendas .ant-table-cell {
+  text-align: left !important;
+  border: 1px solid #f0f0f0 !important;
+}
+
+.ant-table.ant-table-small.ant-table-bordered {
+  border: 1px solid #f0f0f0 !important;
+}
+
+.tabela-legendas table {
+  border-collapse: collapse;
+}
+
+.tabela-legendas .ant-table,
+.tabela-legendas .ant-table-container,
+.tabela-legendas .ant-table-content table {
+  border-width: 1px !important;
+}
+
+.legenda-texto-truncado {
+  display: inline-block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+@media (min-width: 576px) {
+  .legenda-texto-truncado {
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 768px) {
+  .legenda-texto-truncado {
+    max-width: 550px;
+  }
+}
+
+@media (min-width: 992px) {
+  .legenda-texto-truncado {
+    max-width: 700px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .legenda-texto-truncado {
+    max-width: 900px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .legenda-texto-truncado {
+    max-width: 1100px;
+  }
+}
+
+.titulo-legenda {
+  background-color: #fafafa;
+  padding: 8px;
+}
+
+.marginTop2em {
+  margin-top: 2em;
+}
+
+.fontWeightBold {
+  font-weight: bold;
+}
+
+.config-texto-legenda {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.legenda-cor-box {
+  width: 10px;
+  height: 20px;
+}
