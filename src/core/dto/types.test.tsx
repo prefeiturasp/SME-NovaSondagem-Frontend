@@ -276,6 +276,7 @@ describe("Types - Interfaces de Sondagem", () => {
       override?: Partial<DadosTabelaDinamica>,
     ): DadosTabelaDinamica => ({
       sondagemId: 0,
+      questionarioId: 0,
       tituloTabelaRespostas: "Qual hipótese de escrita o estudante apresenta?",
       estudantes: [],
       questaoId: 0,
@@ -287,6 +288,7 @@ describe("Types - Interfaces de Sondagem", () => {
 
       expect(dados).toMatchObject({
         sondagemId: expect.any(Number),
+        questionarioId: expect.any(Number),
         tituloTabelaRespostas: expect.any(String),
         estudantes: expect.any(Array),
         questaoId: expect.any(Number),
@@ -305,6 +307,13 @@ describe("Types - Interfaces de Sondagem", () => {
 
       expect(dados.questaoId).toBe(456);
       expect(typeof dados.questaoId).toBe("number");
+    });
+
+    it("deve conter questionarioId válido", () => {
+      const dados = criarDadosTabelaDinamica({ questionarioId: 789 });
+
+      expect(dados.questionarioId).toBe(789);
+      expect(typeof dados.questionarioId).toBe("number");
     });
 
     it("deve gerenciar lista vazia de estudantes", () => {
@@ -340,11 +349,13 @@ describe("Types - Interfaces de Sondagem", () => {
 
       const dados = criarDadosTabelaDinamica({
         sondagemId: 456,
+        questionarioId: 999,
         questaoId: 789,
         estudantes,
       });
 
       expect(dados.sondagemId).toBe(456);
+      expect(dados.questionarioId).toBe(999);
       expect(dados.questaoId).toBe(789);
       expect(dados.estudantes).toHaveLength(2);
       expect(dados.estudantes[0].nome).toBe("Ana Silva");
@@ -428,6 +439,7 @@ describe("Types - Interfaces de Sondagem", () => {
 
       const dados: DadosTabelaDinamica = {
         sondagemId: 789,
+        questionarioId: 101,
         questaoId: 101,
         tituloTabelaRespostas:
           "Qual hipótese de escrita o estudante apresenta?",
@@ -497,6 +509,7 @@ describe("Types - Interfaces de Sondagem", () => {
 
       const dados: DadosTabelaDinamica = {
         sondagemId: 999,
+        questionarioId: 202,
         questaoId: 202,
         tituloTabelaRespostas: "Sondagem de leitura",
         estudantes,

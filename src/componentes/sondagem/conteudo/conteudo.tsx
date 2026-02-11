@@ -731,6 +731,7 @@ const Conteudo: React.FC = () => {
             formListaDinamica={formListaDinamica}
             podeSalvar={podeSalvar}
             naoExibirTituloTabelaRespostas={naoExibirTituloTabelaRespostas}
+            token={usuario?.token || ""}
           />
         </Spin>
         <Legendas

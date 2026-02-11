@@ -4,6 +4,7 @@ import type { ColumnsType } from "antd/es/table";
 import SelectColorido from "../selectColorido";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
 import "./sondagemListaDinamica.css";
+import { parametroQuestionarioService } from "../../../services/parametroQuestionarioService/parametroQuestionarioService";
 
 const LogoPAP = () => (
   <svg
@@ -99,6 +100,7 @@ interface ListaSondagemEscritaProps {
   dados: DadosTabelaDinamica | null;
   podeSalvar?: boolean;
   naoExibirTituloTabelaRespostas?: boolean;
+  token: string;
 }
 
 const SondagemListaDinamica: React.FC<
@@ -108,8 +110,9 @@ const SondagemListaDinamica: React.FC<
   formListaDinamica,
   podeSalvar = true,
   naoExibirTituloTabelaRespostas,
+  token,
 }) => {
-  const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
+  const [mostrarColunaLP, setMostrarColunaLP] = useState(false);
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
   const selectOpenStatesRef = useRef<Map<string, boolean>>(new Map());
@@ -123,10 +126,28 @@ const SondagemListaDinamica: React.FC<
   }, []);
 
   useEffect(() => {
-    if (dados?.estudantes && dados.estudantes.length > 0) {
-      setOpcoesCarregadas(true);
-    }
-  }, [dados]);
+    if (!dados?.estudantes || dados.estudantes.length === 0) return;
+
+    const carregarParametros = async () => {
+      try {
+        const response = await parametroQuestionarioService({
+          idQuestionario: dados.questionarioId ?? 0,
+          token: token,
+        });
+
+        const parametro = response.find(
+          (param) => param.tipo === "PossuiLinguaPortuguesaSegundaLingua",
+        );
+        setMostrarColunaLP(parametro?.valor === "true");
+        setOpcoesCarregadas(true);
+      } catch (error) {
+        console.error("Erro ao carregar parâmetros do questionário:", error);
+        setOpcoesCarregadas(true);
+      }
+    };
+
+    carregarParametros();
+  }, [dados?.estudantes, dados?.questionarioId, token]);
 
   useEffect(() => {
     if (opcoesCarregadas && dados?.estudantes) {
