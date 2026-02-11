@@ -78,8 +78,6 @@ const Conteudo: React.FC = () => {
   const [loadingSalvar, setLoadingSalvar] = useState<boolean>(false);
   const [componenteBimestres, setComponenteBimestres] =
     useState<boolean>(false);
-  const [naoExibirTituloTabelaRespostas, setNaoExibirTituloTabelaRespostas] =
-    useState<boolean>(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
@@ -284,12 +282,6 @@ const Conteudo: React.FC = () => {
             Proficiencia.MapeamentoDosSaberes,
             Proficiencia.CapacidadeLeitora,
           ].includes(proficienciaId),
-      );
-
-      setNaoExibirTituloTabelaRespostas(
-        modalidade === Modalidade.EJA &&
-          ano === Ano.PrimeiroAno &&
-          proficienciaId === Proficiencia.LeituraEJA,
       );
 
       if (
@@ -730,7 +722,6 @@ const Conteudo: React.FC = () => {
             dados={dadosLista}
             formListaDinamica={formListaDinamica}
             podeSalvar={podeSalvar}
-            naoExibirTituloTabelaRespostas={naoExibirTituloTabelaRespostas}
             token={usuario?.token || ""}
           />
         </Spin>

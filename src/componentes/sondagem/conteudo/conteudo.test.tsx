@@ -6,9 +6,13 @@ import Conteudo from "./conteudo";
 import NovaSondagemServico from "../../../core/servico/servico";
 import { message, notification } from "antd";
 import { validarTurma } from "../../../services/turmaService";
+import * as parametroService from "../../../services/parametroQuestionarioService/parametroQuestionarioService";
 
 jest.mock("../../../core/servico/servico");
 jest.mock("../../../services/turmaService");
+jest.mock(
+  "../../../services/parametroQuestionarioService/parametroQuestionarioService",
+);
 jest.mock("antd", () => {
   const actual = jest.requireActual("antd");
   return {
@@ -123,6 +127,23 @@ describe("Conteudo", () => {
       valida: true,
       mensagens: [],
     });
+    // Mock padrão do servicço de parâmetros - com coluna LP habilitada
+    (
+      parametroService.parametroQuestionarioService as jest.Mock
+    ).mockResolvedValue([
+      {
+        id: 1,
+        idQuestionario: 1,
+        tipo: "PossuiLinguaPortuguesaSegundaLingua",
+        valor: "true",
+      },
+      {
+        id: 2,
+        idQuestionario: 1,
+        tipo: "ExibirTituloTabelaSondagem",
+        valor: "true",
+      },
+    ]);
   });
 
   const createMockStoreWithUser = (usuario: any) => {

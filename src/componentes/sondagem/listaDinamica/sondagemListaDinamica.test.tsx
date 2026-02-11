@@ -1057,45 +1057,60 @@ describe("SondagemListaDinamica", () => {
       expect(select).toBeDisabled();
     });
 
-    it("deve mostrar titulo da tabela quando naoExibirTituloTabelaRespostas=false", () => {
-      const TestWrapper = () => {
-        const [form] = Form.useForm();
-        const store = createMockStore();
-        return (
-          <Provider store={store}>
-            <SondagemListaDinamica
-              dados={mockDadosEscrita}
-              formListaDinamica={form}
-              token="test-token"
-              naoExibirTituloTabelaRespostas={false}
-            />
-          </Provider>
-        );
-      };
-      render(<TestWrapper />);
-      expect(screen.getByText("Sistema de escrita")).toBeInTheDocument();
+    it("deve mostrar titulo da tabela quando ExibirTituloTabelaSondagem=true no endpoint", async () => {
+      (
+        parametroService.parametroQuestionarioService as jest.Mock
+      ).mockResolvedValue([
+        {
+          id: 1,
+          idQuestionario: 1,
+          tipo: "PossuiLinguaPortuguesaSegundaLingua",
+          valor: "true",
+        },
+        {
+          id: 2,
+          idQuestionario: 1,
+          tipo: "ExibirTituloTabelaSondagem",
+          valor: "true",
+        },
+      ]);
+
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Sistema de escrita")).toBeInTheDocument();
+      });
     });
 
-    it("deve ocultar titulo da tabela quando naoExibirTituloTabelaRespostas=true", () => {
-      const TestWrapper = () => {
-        const [form] = Form.useForm();
-        const store = createMockStore();
-        return (
-          <Provider store={store}>
-            <SondagemListaDinamica
-              dados={mockDadosEscrita}
-              formListaDinamica={form}
-              token="test-token"
-              naoExibirTituloTabelaRespostas={true}
-            />
-          </Provider>
-        );
-      };
+    it("deve ocultar titulo da tabela quando ExibirTituloTabelaSondagem=false no endpoint", async () => {
+      (
+        parametroService.parametroQuestionarioService as jest.Mock
+      ).mockResolvedValue([
+        {
+          id: 1,
+          idQuestionario: 1,
+          tipo: "PossuiLinguaPortuguesaSegundaLingua",
+          valor: "true",
+        },
+        {
+          id: 2,
+          idQuestionario: 1,
+          tipo: "ExibirTituloTabelaSondagem",
+          valor: "false",
+        },
+      ]);
 
-      const { container } = render(<TestWrapper />);
+      const { container } = render(
+        <WrapperComponent dados={mockDadosEscrita} />,
+      );
 
-      // Quando naoExibirTituloTabelaRespostas é true, as colunas não possuem children
-      expect(container.querySelector(".ant-table")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(container.querySelector(".ant-table")).toBeInTheDocument();
+        // Quando ExibirTituloTabelaSondagem é false, não há colgroup com title
+        expect(
+          screen.queryByText("Sistema de escrita"),
+        ).not.toBeInTheDocument();
+      });
     });
   });
 
