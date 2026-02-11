@@ -840,6 +840,9 @@ describe("SondagemListaDinamica", () => {
       rerender(<WrapperComponent dados={mockDadosReescrita} />);
       await waitFor(() => {
         expect(screen.getByText("1 - Carlos Lima")).toBeInTheDocument();
+        expect(
+          screen.queryByText("LP como 2ª língua?"),
+        ).not.toBeInTheDocument();
       });
     });
   });

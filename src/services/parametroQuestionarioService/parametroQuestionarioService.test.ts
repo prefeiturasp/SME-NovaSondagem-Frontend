@@ -56,9 +56,9 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-        "/ParametroQuestionario/questionario",
+        "/ParametroQuestionario/questionario/42",
         expect.objectContaining({
-          params: { idQuestionario: 42 },
+          headers: { "X-Token-Principal": "token-teste" },
         }),
       );
     });
@@ -77,7 +77,7 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-        "/ParametroQuestionario/questionario",
+        "/ParametroQuestionario/questionario/50",
         expect.objectContaining({
           headers: { "X-Token-Principal": token },
         }),
@@ -97,7 +97,7 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-        "/ParametroQuestionario/questionario",
+        "/ParametroQuestionario/questionario/1",
         expect.any(Object),
       );
     });
@@ -156,9 +156,9 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-        "/ParametroQuestionario/questionario",
+        "/ParametroQuestionario/questionario/0",
         expect.objectContaining({
-          params: { idQuestionario: 0 },
+          headers: { "X-Token-Principal": "token" },
         }),
       );
     });
@@ -177,9 +177,9 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-        "/ParametroQuestionario/questionario",
+        "/ParametroQuestionario/questionario/999999",
         expect.objectContaining({
-          params: { idQuestionario: largeId },
+          headers: { "X-Token-Principal": "token" },
         }),
       );
     });
@@ -197,7 +197,7 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-        "/ParametroQuestionario/questionario",
+        "/ParametroQuestionario/questionario/1",
         expect.objectContaining({
           headers: { "X-Token-Principal": "" },
         }),
@@ -219,7 +219,7 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-        "/ParametroQuestionario/questionario",
+        "/ParametroQuestionario/questionario/1",
         expect.objectContaining({
           headers: { "X-Token-Principal": longToken },
         }),
@@ -497,10 +497,9 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-        "/ParametroQuestionario/questionario",
+        "/ParametroQuestionario/questionario/123",
         {
           headers: { "X-Token-Principal": token },
-          params: { idQuestionario },
         },
       );
     });

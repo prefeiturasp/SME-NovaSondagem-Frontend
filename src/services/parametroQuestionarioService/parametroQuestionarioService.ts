@@ -18,10 +18,9 @@ export const parametroQuestionarioService = async ({
 }: QuestionarioParams): Promise<QuestionarioParamsResponse[]> => {
   try {
     const resposta = await NovaSondagemServico.get(
-      `/ParametroQuestionario/questionario`,
+      `/ParametroQuestionario/questionario/${idQuestionario}`,
       {
         headers: { "X-Token-Principal": token },
-        params: { idQuestionario },
       },
     );
     return resposta?.data;
