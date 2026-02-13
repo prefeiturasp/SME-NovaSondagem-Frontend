@@ -722,7 +722,7 @@ const Conteudo: React.FC = () => {
             dados={dadosLista}
             formListaDinamica={formListaDinamica}
             podeSalvar={podeSalvar}
-            token={usuario?.token || ""}
+            token={usuario?.token ?? ""}
           />
         </Spin>
         <Legendas
