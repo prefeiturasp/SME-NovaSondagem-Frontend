@@ -1,0 +1,51 @@
+.custom-border-table-relatorio.ant-table-wrapper .ant-table {
+  border: 1px solid #f0f0f0 !important;
+  box-shadow: none;
+}
+
+.custom-border-table-relatorio.ant-table-wrapper .ant-table-thead > tr > th {
+  background-color: #fafafa !important;
+  box-shadow: none !important;
+}
+
+.custom-border-table-relatorio.ant-table-wrapper .ant-table-tbody > tr > td {
+  border-right: 1px solid #f0f0f0 !important;
+}
+
+.custom-border-table-relatorio.ant-table-wrapper .ant-table-container {
+  border-right: 1px solid #f0f0f0;
+  box-shadow: none;
+}
+
+.lista-dinamica-relatorio {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.nenhum-dado-relatorio {
+  padding: 20px;
+  text-align: center;
+}
+
+.marginRight05em {
+  margin-right: 0.5em;
+}
+
+.width100 {
+  width: 100%;
+}
+
+.font-weight-500 {
+  font-weight: 500;
+}
+
+.estudantes-config-relatorio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lp-config-relatorio {
+  font-size: 11px;
+  white-space: normal;
+}
