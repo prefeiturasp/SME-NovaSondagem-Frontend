@@ -57,3 +57,24 @@
   font-size: 11px;
   white-space: normal;
 }
+
+.lista-dinamica-relatorio .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #6933ff !important;
+  border-color: #6933ff !important;
+}
+
+.lista-dinamica-relatorio .ant-checkbox-checked .ant-checkbox-inner::after {
+  border-color: #ffffff !important;
+}
+
+.lista-dinamica-relatorio .ant-checkbox-disabled .ant-checkbox-inner {
+  border-color: #6933ff !important;
+  opacity: 1 !important;
+}
+
+.lista-dinamica-relatorio
+  .ant-checkbox-disabled.ant-checkbox-checked
+  .ant-checkbox-inner {
+  background-color: #6933ff !important;
+  opacity: 1 !important;
+}
