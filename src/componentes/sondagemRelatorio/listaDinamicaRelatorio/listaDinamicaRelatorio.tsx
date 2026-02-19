@@ -111,7 +111,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   const columnsDinamicas: ColumnsType<EstudanteRelatorio> = [];
 
   columns.push({
-    title: "Nº",
+    title: "Número chamada",
     key: "numeroChamada",
     width: 60,
     align: "center",
@@ -120,14 +120,14 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   });
 
   columns.push({
-    title: "Estudantes",
+    title: "Nome",
     key: "estudante",
     width: 250,
     fixed: "left",
     render: (_, record) => (
       <Space direction="vertical" size={0} className="width100">
         <div className="estudantes-config-relatorio">
-          <span className="font-weight-500">{record.nome}</span>
+          <span className="font-weight-500 font-size-16">{record.nome}</span>
           <Space size={4}>
             {record.pap && <LogoPAP />}
             {record.aee && <LogoAEE />}
@@ -139,7 +139,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   });
 
   columns.push({
-    title: "Código EOL",
+    title: "EOL",
     key: "codigoEol",
     width: 110,
     align: "center",

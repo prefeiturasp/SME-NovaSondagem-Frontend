@@ -5,7 +5,6 @@ import ConteudoRelatorio from "~/componentes/sondagemRelatorio/conteudoRelatorio
 const Relatorio: React.FC = () => {
   return (
     <div className="relatorio">
-      ESTE EH O MEU RELATORIO
       <ConteudoRelatorio />
     </div>
   );
