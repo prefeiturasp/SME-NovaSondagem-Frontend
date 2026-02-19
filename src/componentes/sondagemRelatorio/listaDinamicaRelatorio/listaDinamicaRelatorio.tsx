@@ -169,7 +169,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
     columns.push({
       title: <span className="lp-config-relatorio">LP como 2ª língua?</span>,
       key: "lp",
-      width: 60,
+      width: 70,
       align: "center",
       fixed: "left",
       render: (_, record) => (
@@ -185,6 +185,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
         key: `coluna_${colunaIndex}`,
         width: 150,
         align: "center",
+        className: "coluna-dinamica-relatorio",
         render: (_, record) => {
           const colunaEstudante = record.coluna[colunaIndex];
           return (
