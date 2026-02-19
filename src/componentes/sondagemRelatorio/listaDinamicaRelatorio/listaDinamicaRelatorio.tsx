@@ -1,5 +1,5 @@
 import React from "react";
-import { ConfigProvider, Space, Table } from "antd";
+import { Checkbox, ConfigProvider, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import CelulaColorida from "../celulaColorida/celulaColorida";
 import type {
@@ -54,11 +54,41 @@ const LogoAcessibilidade = () => (
     xmlns="http://www.w3.org/2000/svg"
     className="marginRight05em"
   >
-    <ellipse cx="9.70606" cy="4.89747" rx="2.10255" ry="2.10255" fill="#45A7DF" />
-    <ellipse cx="18.1159" cy="6.52532" rx="1.15301" ry="1.15301" fill="#45A7DF" />
-    <ellipse cx="1.29559" cy="6.52532" rx="1.15301" ry="1.15301" fill="#45A7DF" />
-    <ellipse cx="5.09344" cy="16.2919" rx="1.15301" ry="1.15301" fill="#45A7DF" />
-    <ellipse cx="14.318" cy="16.2919" rx="1.15301" ry="1.15301" fill="#45A7DF" />
+    <ellipse
+      cx="9.70606"
+      cy="4.89747"
+      rx="2.10255"
+      ry="2.10255"
+      fill="#45A7DF"
+    />
+    <ellipse
+      cx="18.1159"
+      cy="6.52532"
+      rx="1.15301"
+      ry="1.15301"
+      fill="#45A7DF"
+    />
+    <ellipse
+      cx="1.29559"
+      cy="6.52532"
+      rx="1.15301"
+      ry="1.15301"
+      fill="#45A7DF"
+    />
+    <ellipse
+      cx="5.09344"
+      cy="16.2919"
+      rx="1.15301"
+      ry="1.15301"
+      fill="#45A7DF"
+    />
+    <ellipse
+      cx="14.318"
+      cy="16.2919"
+      rx="1.15301"
+      ry="1.15301"
+      fill="#45A7DF"
+    />
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -79,19 +109,6 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
 
   const columns: ColumnsType<EstudanteRelatorio> = [];
   const columnsDinamicas: ColumnsType<EstudanteRelatorio> = [];
-
-  if (mostrarColunaLP) {
-    columns.push({
-      title: <span className="lp-config-relatorio">LP como 2ª língua?</span>,
-      key: "lp",
-      width: 110,
-      align: "center",
-      fixed: "left",
-      render: (_, record) => (
-        <span>{record.linguaPortuguesaSegundaLingua ? "Sim" : "Não"}</span>
-      ),
-    });
-  }
 
   columns.push({
     title: "Nº",
@@ -147,6 +164,19 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
     fixed: "left",
     render: (_, record) => <span>{record.genero}</span>,
   });
+
+  if (mostrarColunaLP) {
+    columns.push({
+      title: <span className="lp-config-relatorio">LP como 2ª língua?</span>,
+      key: "lp",
+      width: 110,
+      align: "center",
+      fixed: "left",
+      render: (_, record) => (
+        <Checkbox checked={record.linguaPortuguesaSegundaLingua} disabled />
+      ),
+    });
+  }
 
   if (dados?.estudantes?.[0]?.coluna) {
     dados.estudantes[0].coluna.forEach((coluna, colunaIndex) => {
