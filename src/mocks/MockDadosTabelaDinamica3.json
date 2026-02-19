@@ -111,8 +111,8 @@
             }
           ],
           "resposta": {
-            "id": 1,
-            "opcaoRespostaId": 2
+            "id": null,
+            "opcaoRespostaId": null
           }
         },
         {

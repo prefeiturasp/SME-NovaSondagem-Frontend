@@ -20,13 +20,15 @@ const CelulaColorida: React.FC<CelulaColoridaProps> = ({
     if (!respostaAtual?.opcaoRespostaId) return null;
 
     return opcaoResposta.find(
-      (opcao) => opcao.id === respostaAtual.opcaoRespostaId
+      (opcao) => opcao.id === respostaAtual.opcaoRespostaId,
     );
   }, [opcaoResposta, resposta]);
 
-  const corFundo = opcaoSelecionada?.corFundo ?? "#FFFFFF";
-  const corTexto = opcaoSelecionada?.corTexto ?? "#42474A";
-  const texto = opcaoSelecionada?.descricaoOpcaoResposta ?? "";
+  const corFundo = opcaoSelecionada ? opcaoSelecionada.corFundo : "#FFFFFF";
+  const corTexto = opcaoSelecionada ? opcaoSelecionada.corTexto : "#BFBFC2";
+  const texto = opcaoSelecionada
+    ? opcaoSelecionada.descricaoOpcaoResposta
+    : "Vazio";
 
   return (
     <div
