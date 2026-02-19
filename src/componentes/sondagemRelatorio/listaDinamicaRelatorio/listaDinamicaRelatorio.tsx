@@ -113,7 +113,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   columns.push({
     title: "Número chamada",
     key: "numeroChamada",
-    width: 60,
+    width: 75,
     align: "center",
     fixed: "left",
     render: (_, record) => <span>{record.numeroAlunoChamada}</span>,
@@ -122,7 +122,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   columns.push({
     title: "Nome",
     key: "estudante",
-    width: 250,
+    width: 350,
     fixed: "left",
     render: (_, record) => (
       <Space direction="vertical" size={0} className="width100">
@@ -141,7 +141,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   columns.push({
     title: "EOL",
     key: "codigoEol",
-    width: 110,
+    width: 60,
     align: "center",
     fixed: "left",
     render: (_, record) => <span>{record.codigoEol}</span>,
@@ -150,7 +150,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   columns.push({
     title: "Raça",
     key: "raca",
-    width: 100,
+    width: 60,
     align: "center",
     fixed: "left",
     render: (_, record) => <span>{record.raca}</span>,
@@ -159,7 +159,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   columns.push({
     title: "Gênero",
     key: "genero",
-    width: 100,
+    width: 60,
     align: "center",
     fixed: "left",
     render: (_, record) => <span>{record.genero}</span>,
@@ -169,7 +169,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
     columns.push({
       title: <span className="lp-config-relatorio">LP como 2ª língua?</span>,
       key: "lp",
-      width: 110,
+      width: 60,
       align: "center",
       fixed: "left",
       render: (_, record) => (
