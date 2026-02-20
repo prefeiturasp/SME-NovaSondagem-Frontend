@@ -1,17 +1,24 @@
 import React, { useState } from "react";
 import ListaDinamicaRelatorio from "../listaDinamicaRelatorio/listaDinamicaRelatorio";
 import type { DadosTabelaDinamicaRelatorio } from "../../../core/dto/typesRelatorio";
-import mockDados from "../../../mocks/MockDadosTabelaDinamica3.json";
-import { Button, Card, Spin } from "antd";
+import { Button, Card, Spin, Form } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
 import styled from "styled-components";
 export const Icon = styled.i``;
 
+import mockDados from "../../../mocks/MockDadosTabelaDinamica3.json";
+
 const ConteudoRelatorio: React.FC = () => {
-  const dados = mockDados as DadosTabelaDinamicaRelatorio;
+  const [formFiltro] = Form.useForm();
+  const [dados2, setDados] = useState<DadosTabelaDinamicaRelatorio | null>(
+    null,
+  );
+  console.log("dados2", dados2);
   const [loading] = useState(false);
   const [loadingGerar] = useState<boolean>(false);
+
+  const dados = mockDados as DadosTabelaDinamicaRelatorio;
 
   const GerarDados = async () => {
     // Geradados do relatorio, fica habilitado so quando tem dados na tabela.
@@ -63,7 +70,13 @@ const ConteudoRelatorio: React.FC = () => {
         </div>
       </div>
       <Card className="CardSondagemEfeitosRelatorio">
-        <FiltroRelatorio />
+        <div className="textoSondagemEstilo">
+          <p>
+            Preencha os campos para conferir as informações das turmas e
+            estudantes da Unidade Educacional selecionada.
+          </p>
+        </div>
+        <FiltroRelatorio form={formFiltro} onDadosCarregados={setDados} />
         <Spin spinning={loading} tip="Carregando dados...">
           <ListaDinamicaRelatorio dados={dados} />
         </Spin>
