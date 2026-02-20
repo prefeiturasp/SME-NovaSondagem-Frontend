@@ -1,0 +1,33 @@
+.CardSondagemEfeitosRelatorio {
+  box-shadow: 0px 0px 6px 0px #0000001f;
+  border-radius: 4px;
+  background-color: #ffffff;
+}
+
+.linhaTituloBotao {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 1em;
+}
+
+.tituloSondagem {
+  font-family: Roboto, sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #42474a;
+}
+
+.sondagemBotaoEstilo {
+  font-size: 14px;
+  font-family: Roboto, sans-serif;
+  font-weight: 700;
+  color: #08659a;
+  border: 1px solid #08659a;
+  border-radius: 4px;
+  margin-left: 1em;
+}
+
+.iconBotaoGerar {
+  margin-right: 0.5em;
+}

@@ -4,7 +4,7 @@ import ConteudoRelatorio from "~/componentes/sondagemRelatorio/conteudoRelatorio
 
 const Relatorio: React.FC = () => {
   return (
-    <div className="relatorio">
+    <div className="classtudoRelatorio">
       <ConteudoRelatorio />
     </div>
   );
