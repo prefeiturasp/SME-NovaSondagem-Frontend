@@ -1,4 +1,4 @@
-import NovaSondagemServico from "../../core/servico/servico";
+import axios from "axios";
 
 interface AnoLetivoParams {
   token: string;
@@ -9,13 +9,22 @@ interface AnoLetivoResponse {
   label: string;
 }
 
+const novoSgpApi = axios.create({
+  baseURL: "https://hom-novosgp.sme.prefeitura.sp.gov.br/api",
+});
+
 const AnoLetivoService = async ({
   token,
 }: AnoLetivoParams): Promise<AnoLetivoResponse[] | null> => {
   try {
-    const resposta = await NovaSondagemServico.get(`/AnoLetivo`, {
+    const consideraHistorico = true;
+    const anoMinimo = 2026;
+    const resposta = await novoSgpApi.get(
+      `/v1/abrangencias/${consideraHistorico}/anos-letivos?anoMinimo=${anoMinimo}`,
+      {
       headers: { "X-Token-Principal": token },
-    });
+      },
+    );
 
     if (resposta?.data?.length > 0) {
       const dadosMapeados = resposta.data
