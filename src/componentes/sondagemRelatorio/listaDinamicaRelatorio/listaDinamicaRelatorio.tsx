@@ -144,7 +144,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
     width: 60,
     align: "center",
     fixed: "left",
-    render: (_, record) => <span>{record.codigoEol}</span>,
+    render: (_, record) => <span>{record.codigo}</span>,
   });
 
   columns.push({
@@ -159,7 +159,7 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
   columns.push({
     title: "Gênero",
     key: "genero",
-    width: 60,
+    width: 65,
     align: "center",
     fixed: "left",
     render: (_, record) => <span>{record.genero}</span>,

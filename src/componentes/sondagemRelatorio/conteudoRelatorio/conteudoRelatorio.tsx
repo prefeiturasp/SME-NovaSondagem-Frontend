@@ -7,18 +7,12 @@ import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
 import styled from "styled-components";
 export const Icon = styled.i``;
 
-import mockDados from "../../../mocks/MockDadosTabelaDinamica3.json";
-
 const ConteudoRelatorio: React.FC = () => {
   const [formFiltro] = Form.useForm();
-  const [dados2, setDados] = useState<DadosTabelaDinamicaRelatorio | null>(
-    null,
-  );
-  console.log("dados2", dados2);
+  const [dados, setDados] = useState<DadosTabelaDinamicaRelatorio | null>(null);
+
   const [loading] = useState(false);
   const [loadingGerar] = useState<boolean>(false);
-
-  const dados = mockDados as DadosTabelaDinamicaRelatorio;
 
   const GerarDados = async () => {
     // Geradados do relatorio, fica habilitado so quando tem dados na tabela.
