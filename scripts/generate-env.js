@@ -34,6 +34,7 @@ const env = parseEnv(envContent);
 const envJsContent = `window.__ENV__ = {
   VITE_NOVA_SONDAGEM_API: "${env.VITE_NOVA_SONDAGEM_API || ""}",
   VITE_NOVA_SONDAGEM_VERSAO: "${env.VITE_NOVA_SONDAGEM_VERSAO || ""}",
+  VITE_SGP_API: "${env.VITE_SGP_API || ""}"
 };
 `;
 

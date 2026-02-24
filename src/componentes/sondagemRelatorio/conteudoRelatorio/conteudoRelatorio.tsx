@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import ListaDinamicaRelatorio from "../listaDinamicaRelatorio/listaDinamicaRelatorio";
 import type { DadosTabelaDinamicaRelatorio } from "../../../core/dto/typesRelatorio";
 import { Button, Card, Spin, Form } from "antd";
@@ -11,6 +11,7 @@ import mockDados from "../../../mocks/MockDadosTabelaDinamica3.json";
 
 const ConteudoRelatorio: React.FC = () => {
   const [formFiltro] = Form.useForm();
+  const filtroRef = useRef<{ reset: () => void } | null>(null);
   const [dados2, setDados] = useState<DadosTabelaDinamicaRelatorio | null>(
     null,
   );
@@ -25,7 +26,9 @@ const ConteudoRelatorio: React.FC = () => {
   };
 
   const CancelarCadastroSondagem = async () => {
-    // limpa o filtro?
+    formFiltro.resetFields();
+    filtroRef.current?.reset();
+    setDados(null);
   };
 
   const voltarSondagem = () => {
@@ -76,7 +79,11 @@ const ConteudoRelatorio: React.FC = () => {
             estudantes da Unidade Educacional selecionada.
           </p>
         </div>
-        <FiltroRelatorio form={formFiltro} onDadosCarregados={setDados} />
+        <FiltroRelatorio
+          ref={filtroRef}
+          form={formFiltro}
+          onDadosCarregados={setDados}
+        />
         <Spin spinning={loading} tip="Carregando dados...">
           <ListaDinamicaRelatorio dados={dados} />
         </Spin>

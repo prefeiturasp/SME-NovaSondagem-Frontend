@@ -21,7 +21,7 @@ const BimestreService = async ({
       const dadosMapeados = resposta.data
         .map((item: any) => ({
           value: item.id,
-          label: item.nome,
+          label: item.descricao,
         }))
         .sort((a: any, b: any) =>
           a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
