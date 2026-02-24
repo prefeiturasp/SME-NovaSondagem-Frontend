@@ -1,13 +1,10 @@
 import React, { useMemo } from "react";
-import type {
-  OpcaoRespostaRelatorio,
-  RespostaRelatorio,
-} from "../../../core/dto/typesRelatorio";
+import type { OpcaoResposta, Resposta } from "../../../core/dto/typesRelatorio";
 import "./celulaColorida.css";
 
 interface CelulaColoridaProps {
-  opcaoResposta: OpcaoRespostaRelatorio[];
-  resposta: RespostaRelatorio | RespostaRelatorio[];
+  opcaoResposta: OpcaoResposta[];
+  resposta: Resposta | Resposta[];
 }
 
 const CelulaColorida: React.FC<CelulaColoridaProps> = ({

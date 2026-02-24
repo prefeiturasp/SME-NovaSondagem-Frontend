@@ -1,4 +1,4 @@
-import type { DadosTabelaDinamicaRelatorio } from "~/core/dto/typesRelatorio";
+import type { DadosTabelaDinamica } from "~/core/dto/typesRelatorio";
 import NovaSondagemServico from "../../core/servico/servico";
 
 interface ValidarDadosRelatorioParams {
@@ -25,7 +25,7 @@ const DadosRelatorioService = async ({
   ueCodigo,
   bimestreId,
   token,
-}: ValidarDadosRelatorioParams): Promise<DadosTabelaDinamicaRelatorio | null> => {
+}: ValidarDadosRelatorioParams): Promise<DadosTabelaDinamica | null> => {
   try {
     const resposta = await NovaSondagemServico.get(
       `/Relatorio/sondagem-por-turma`,
@@ -46,7 +46,7 @@ const DadosRelatorioService = async ({
     );
 
     if (resposta?.data) {
-      return resposta.data as DadosTabelaDinamicaRelatorio;
+      return resposta.data as DadosTabelaDinamica;
     }
 
     return null;

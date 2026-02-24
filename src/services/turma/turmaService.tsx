@@ -12,6 +12,7 @@ interface TurmaParams {
 interface TurmaResponse {
   value: number;
   label: string;
+  ano: number;
 }
 
 const TurmaService = async ({
@@ -36,7 +37,11 @@ const TurmaService = async ({
 
     if (resposta?.data?.length > 0) {
       const dadosMapeados = resposta.data
-        .map((item: any) => ({ value: item.id, label: item.nome }))
+        .map((item: any) => ({
+          value: item.codigo,
+          label: item.nome,
+          ano: item.ano,
+        }))
         .sort((a: any, b: any) =>
           a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
         );

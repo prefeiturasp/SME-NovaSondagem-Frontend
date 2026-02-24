@@ -3,8 +3,8 @@ import { Checkbox, ConfigProvider, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import CelulaColorida from "../celulaColorida/celulaColorida";
 import type {
-  DadosTabelaDinamicaRelatorio,
-  EstudanteRelatorio,
+  DadosTabelaDinamica,
+  Estudante,
 } from "../../../core/dto/typesRelatorio";
 import "./listaDinamicaRelatorio.css";
 
@@ -99,7 +99,7 @@ const LogoAcessibilidade = () => (
 );
 
 interface ListaDinamicaRelatorioProps {
-  dados: DadosTabelaDinamicaRelatorio | null;
+  dados: DadosTabelaDinamica | null;
 }
 
 const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
@@ -107,8 +107,8 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
 }) => {
   const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
 
-  const columns: ColumnsType<EstudanteRelatorio> = [];
-  const columnsDinamicas: ColumnsType<EstudanteRelatorio> = [];
+  const columns: ColumnsType<Estudante> = [];
+  const columnsDinamicas: ColumnsType<Estudante> = [];
 
   columns.push({
     title: "Número chamada",

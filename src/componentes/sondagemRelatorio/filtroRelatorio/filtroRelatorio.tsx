@@ -6,8 +6,10 @@ import React, {
 } from "react";
 import { Form, Row, Col, Select } from "antd";
 import type { FormInstance } from "antd";
-import type { DadosTabelaDinamicaRelatorio } from "../../../core/dto/typesRelatorio";
-import mockDados from "../../../mocks/MockDadosTabelaDinamica3.json";
+import type {
+  DadosTabelaDinamica,
+  ValoresFiltroRelatorio,
+} from "../../../core/dto/typesRelatorio";
 import "./filtroRelatorio.css";
 import ComponenteCurricularService from "~/services/componenteCurricularService/componenteCurricularService";
 import { useSelector } from "react-redux";
@@ -18,28 +20,18 @@ import DreService from "~/services/dre/dreService";
 import UeService from "~/services/ue/ueService";
 import ModalidadeService from "~/services/modalidade/modalidadeService";
 import TurmaService from "~/services/turma/turmaService";
-
-type ValoresFiltroRelatorio = {
-  anoLetivo?: number;
-  dre?: number;
-  ue?: number;
-  modalidade?: number;
-  semestre?: number;
-  turma?: number;
-  componenteCurricular?: number;
-  proficiencia?: number;
-  bimestre?: number;
-};
+import DadosRelatorioService from "~/services/buscarDadosRelatorio/buscarDadosRelatorio";
 
 type FiltroRelatorioProps = {
   form: FormInstance;
-  onDadosCarregados: (dados: DadosTabelaDinamicaRelatorio | null) => void;
+  onDadosCarregados: (dados: DadosTabelaDinamica | null) => void;
+  onFiltrosAlterados: (filtros: ValoresFiltroRelatorio | null) => void;
 };
 
 const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   { reset: () => void },
   FiltroRelatorioProps
-> = ({ form, onDadosCarregados }, ref) => {
+> = ({ form, onDadosCarregados, onFiltrosAlterados }, ref) => {
   const usuario = useSelector((store: any) => store.usuario);
 
   const [listaAnosLetivos, setListaAnosLetivos] = useState<
@@ -58,8 +50,9 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     Array<{ value: number; label: string }>
   >([]);
   const [listaTurmas, setListaTurmas] = useState<
-    Array<{ value: number; label: string }>
+    Array<{ value: number; label: string; ano: number }>
   >([]);
+
   const [listaComponentesCurriculares, setListaComponentesCurriculares] =
     useState<Array<{ value: number; label: string }>>([]);
   const [listaProficiencias, setListaProficiencias] = useState<
@@ -284,10 +277,29 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
   };
 
-  const buscarDados = async () => {
-    // Esse meetodo é ativado só quando os filtros são preenchidos.
-    const dados = mockDados as DadosTabelaDinamicaRelatorio;
+  const buscarDados = async (valores: ValoresFiltroRelatorio) => {
+    const ano = listaTurmas.find((turma) => turma.value === valores.turma)?.ano;
+    valores.ano = ano;
+
+    const dados = await DadosRelatorioService({
+      turmaId: valores.turma as number,
+      proficienciaId: valores.proficiencia as number,
+      componenteCurricularId: valores.componenteCurricular as number,
+      modalidade: valores.modalidade as number,
+      ano: ano as number,
+      anoLetivo: valores.anoLetivo as number,
+      semestre:
+        valores.modalidade === 5
+          ? 1
+          : ((valores.semestre as number | undefined) ?? 1),
+      ueCodigo: String(valores.ue),
+      bimestreId: (valores.bimestre as number | undefined) ?? null,
+      token: usuario?.token,
+    });
+    console.log("dados do relatorio", dados);
+    console.log("valores do filtro", valores);
     onDadosCarregados(dados);
+    onFiltrosAlterados(valores);
   };
 
   const camposObrigatorios: Array<keyof ValoresFiltroRelatorio> = [
@@ -308,11 +320,12 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
 
   const onValuesChange = (_: unknown, allValues: ValoresFiltroRelatorio) => {
     if (validarCamposPreenchidos(allValues)) {
-      void buscarDados();
+      void buscarDados(allValues);
       return;
     }
 
     onDadosCarregados(null);
+    onFiltrosAlterados(null);
   };
 
   const isInfantil = selectedModalidade === 5;

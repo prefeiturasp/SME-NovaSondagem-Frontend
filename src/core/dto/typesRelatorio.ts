@@ -1,4 +1,4 @@
-export interface OpcaoRespostaRelatorio {
+export interface OpcaoResposta {
   id: number;
   ordem: number;
   descricaoOpcaoResposta: string;
@@ -7,21 +7,21 @@ export interface OpcaoRespostaRelatorio {
   legenda: string;
 }
 
-export interface RespostaRelatorio {
+export interface Resposta {
   id: number;
   opcaoRespostaId: number | null;
 }
 
-export interface ColunaRelatorio {
+export interface Coluna {
   idCiclo: number;
   descricaoColuna: string;
   PeriodoBimestreAtivo: boolean;
   questaoSubrespostaId: number | null;
-  opcaoResposta: OpcaoRespostaRelatorio[];
-  resposta: RespostaRelatorio | RespostaRelatorio[];
+  opcaoResposta: OpcaoResposta[];
+  resposta: Resposta | Resposta[];
 }
 
-export interface EstudanteRelatorio {
+export interface Estudante {
   linguaPortuguesaSegundaLingua: boolean;
   numeroAlunoChamada: number;
   codigo: number;
@@ -32,10 +32,23 @@ export interface EstudanteRelatorio {
   codigoEol: string;
   raca: string;
   genero: string;
-  coluna: ColunaRelatorio[];
+  coluna: Coluna[];
 }
 
-export interface DadosTabelaDinamicaRelatorio {
+export interface DadosTabelaDinamica {
   tituloTabelaRespostas: string;
-  estudantes: EstudanteRelatorio[];
+  estudantes: Estudante[];
 }
+
+export type ValoresFiltroRelatorio = {
+  anoLetivo?: number;
+  dre?: number;
+  ue?: number;
+  modalidade?: number;
+  semestre?: number;
+  turma?: number;
+  componenteCurricular?: number;
+  proficiencia?: number;
+  bimestre?: number;
+  ano?: number;
+};
