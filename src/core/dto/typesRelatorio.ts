@@ -1,10 +1,4 @@
 export interface OpcaoRespostaRelatorio {
-  alteradoEm: string | null;
-  alteradoPor: string | null;
-  alteradoRF: string | null;
-  criadoEm: string;
-  criadoPor: string;
-  criadoRF: string;
   id: number;
   ordem: number;
   descricaoOpcaoResposta: string;
@@ -42,12 +36,6 @@ export interface EstudanteRelatorio {
 }
 
 export interface DadosTabelaDinamicaRelatorio {
-  alteradoPor: string | null;
-  inseridoPor: string | null;
-  podeSalvar: boolean;
-  questaoId: number;
-  questionarioId: number;
-  sondagemId: number;
   tituloTabelaRespostas: string;
   estudantes: EstudanteRelatorio[];
 }
