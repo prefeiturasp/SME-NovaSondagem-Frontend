@@ -24,9 +24,10 @@ describe("BimestreService", () => {
       headers: { "X-Token-Principal": token },
     });
 
+    // Deve preservar a ordem recebida da API
     expect(resultado).toEqual([
-      { value: 1, label: "1º Bimestre" },
       { value: 2, label: "2º Bimestre" },
+      { value: 1, label: "1º Bimestre" },
     ]);
   });
 

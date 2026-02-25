@@ -23,9 +23,9 @@ const BimestreService = async ({
         label: item.descricao,
       }));
       return dadosMapeados;
-    } else {
-      return null;
     }
+
+    return null;
   } catch (error: any) {
     console.error("Erro ao carregar bimestres:", error);
     return null;
