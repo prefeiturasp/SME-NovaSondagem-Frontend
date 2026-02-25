@@ -35,6 +35,7 @@ const ConteudoRelatorio: React.FC = () => {
     formFiltro.resetFields();
     filtroRef.current?.reset();
     setDados(null);
+    setDadosLegenda(null);
   };
 
   const voltarSondagem = () => {

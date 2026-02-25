@@ -8,7 +8,7 @@ interface ValidarDadosRelatorioParams {
   modalidade: number;
   ano: number;
   anoLetivo: number;
-  semestre: number;
+  semestre?: number;
   ueCodigo: string;
   bimestreId?: number | null;
   token: string;

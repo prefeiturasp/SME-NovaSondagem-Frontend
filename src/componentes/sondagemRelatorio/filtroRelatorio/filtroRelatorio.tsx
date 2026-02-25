@@ -76,6 +76,9 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   const [selectedModalidade, setSelectedModalidade] = useState<number | null>(
     null,
   );
+  const [selectedProficiencia, setSelectedProficiencia] = useState<
+    number | null
+  >(null);
 
   const onChangeAnoLetivo = async (value: number) => {
     form.setFieldsValue({
@@ -124,6 +127,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     setDesabilitarUE(true);
     setDesabilitarTurma(true);
     setSelectedModalidade(value ?? null);
+    setSelectedProficiencia(null);
 
     let ehEja = 5;
 
@@ -207,13 +211,31 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
   };
 
-  const onChangeProficiencia = () => {};
+  const onChangeProficiencia = (value: number) => {
+    setSelectedProficiencia(value ?? null);
+    const permitir = [3, 5, 6].includes(value ?? -1);
+    if (!permitir) {
+      form.setFieldsValue({ bimestre: undefined, semestre: undefined });
+      setDesabilitarBimestre(true);
+      setDesabilitarSemestre(true);
+      return;
+    }
+
+    if (selectedModalidade === 5) {
+      setDesabilitarBimestre(false);
+      setDesabilitarSemestre(true);
+    } else {
+      setDesabilitarSemestre(false);
+      setDesabilitarBimestre(true);
+    }
+  };
   const onChangeSemestre = () => {};
   const onChangeBimestre = () => {};
 
   const onCancel = () => {
     form.resetFields();
     setSelectedModalidade(null);
+    setSelectedProficiencia(null);
     setListaDREs([]);
     setListaUEs([]);
     setListaModalidades([]);
@@ -280,6 +302,10 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   const buscarDados = async (valores: ValoresFiltroRelatorio) => {
     const ano = listaTurmas.find((turma) => turma.value === valores.turma)?.ano;
     valores.ano = ano;
+    const bimestrePayload =
+      valores.modalidade === 5
+        ? ((valores.bimestre as number | undefined) ?? null)
+        : ((valores.semestre as number | undefined) ?? 1);
 
     const dados = await DadosRelatorioService({
       turmaId: valores.turma as number,
@@ -288,12 +314,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       modalidade: valores.modalidade as number,
       ano: ano as number,
       anoLetivo: valores.anoLetivo as number,
-      semestre:
-        valores.modalidade === 5
-          ? 1
-          : ((valores.semestre as number | undefined) ?? 1),
+      bimestreId: bimestrePayload,
       ueCodigo: String(valores.ue),
-      bimestreId: (valores.bimestre as number | undefined) ?? null,
       token: usuario?.token,
     });
     console.log("dados do relatorio", dados);
@@ -329,6 +351,22 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const isInfantil = selectedModalidade === 5;
+  let leitura = 3;
+  let mapeamentoDosSaberes = 5;
+  let capacidadeLeitora = 6;
+  const permitirBimestrePorProficiencia = [
+    leitura,
+    mapeamentoDosSaberes,
+    capacidadeLeitora,
+  ];
+  const showBimestre =
+    selectedModalidade !== null &&
+    isInfantil &&
+    permitirBimestrePorProficiencia.includes(selectedProficiencia ?? -1);
+  const showSemestre =
+    selectedModalidade !== null &&
+    !isInfantil &&
+    permitirBimestrePorProficiencia.includes(selectedProficiencia ?? -1);
 
   return (
     <>
@@ -450,40 +488,41 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
             </Form.Item>
           </Col>
 
-          {selectedModalidade !== null &&
-            (isInfantil ? (
-              <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-                <Form.Item
-                  name="bimestre"
-                  label="Bimestre"
-                  className="labelSelectSondagem"
-                >
-                  <Select
-                    id="sondagem-select-bimestre"
-                    options={listaBimestres}
-                    placeholder="Selecione"
-                    onChange={onChangeBimestre}
-                    disabled={desabilitarBimestre}
-                  />
-                </Form.Item>
-              </Col>
-            ) : (
-              <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-                <Form.Item
-                  name="semestre"
-                  label="Semestre"
-                  className="labelSelectSondagem"
-                >
-                  <Select
-                    id="sondagem-select-semestre"
-                    options={listaSemestres}
-                    placeholder="Selecione"
-                    onChange={onChangeSemestre}
-                    disabled={desabilitarSemestre}
-                  />
-                </Form.Item>
-              </Col>
-            ))}
+          {showBimestre && (
+            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+              <Form.Item
+                name="bimestre"
+                label="Bimestre"
+                className="labelSelectSondagem"
+              >
+                <Select
+                  id="sondagem-select-bimestre"
+                  options={listaBimestres}
+                  placeholder="Selecione"
+                  onChange={onChangeBimestre}
+                  disabled={desabilitarBimestre}
+                />
+              </Form.Item>
+            </Col>
+          )}
+
+          {showSemestre && (
+            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+              <Form.Item
+                name="semestre"
+                label="Semestre"
+                className="labelSelectSondagem"
+              >
+                <Select
+                  id="sondagem-select-semestre"
+                  options={listaSemestres}
+                  placeholder="Selecione"
+                  onChange={onChangeSemestre}
+                  disabled={desabilitarSemestre}
+                />
+              </Form.Item>
+            </Col>
+          )}
         </Row>
       </Form>
     </>
