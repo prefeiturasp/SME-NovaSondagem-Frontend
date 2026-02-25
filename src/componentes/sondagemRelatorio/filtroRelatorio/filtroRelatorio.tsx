@@ -21,7 +21,7 @@ import UeService from "../../../services/ue/ueService";
 import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import TurmaService from "../../../services/turma/turmaService";
 import DadosRelatorioService from "../../../services/buscarDadosRelatorio/buscarDadosRelatorio";
-import { validarTurma } from "~/services/turmaService";
+import { validarTurma } from "../../../services/turmaService";
 
 type FiltroRelatorioProps = {
   form: FormInstance;

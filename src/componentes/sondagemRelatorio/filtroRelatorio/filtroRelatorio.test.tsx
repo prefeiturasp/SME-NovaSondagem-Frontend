@@ -63,6 +63,10 @@ jest.mock(
   }),
 );
 
+jest.mock("~/services/turmaService", () => ({
+  validarTurma: jest.fn(async () => ({ valida: true, mensagens: [] })),
+}));
+
 jest.mock("react-redux", () => ({
   useSelector: jest.fn(),
 }));
@@ -78,7 +82,10 @@ describe("FiltroRelatorio - testes superficiais", () => {
     jest.clearAllMocks();
   });
 
-  const renderWithForm = (onDadosCarregados = jest.fn()) => {
+  const renderWithForm = (
+    onDadosCarregados = jest.fn(),
+    onErroValidacaoTurma = jest.fn(),
+  ) => {
     let formRef: any;
     const Wrapper: React.FC = () => {
       const [form] = Form.useForm();
@@ -88,6 +95,7 @@ describe("FiltroRelatorio - testes superficiais", () => {
           form={form}
           onDadosCarregados={onDadosCarregados}
           onFiltrosAlterados={() => {}}
+          onErroValidacaoTurma={onErroValidacaoTurma}
         />
       );
     };
@@ -107,6 +115,7 @@ describe("FiltroRelatorio - testes superficiais", () => {
           form={form}
           onDadosCarregados={() => {}}
           onFiltrosAlterados={() => {}}
+          onErroValidacaoTurma={() => {}}
         />
       );
     };
@@ -121,7 +130,7 @@ describe("FiltroRelatorio - testes superficiais", () => {
     expect(selects.length).toBeGreaterThanOrEqual(7);
   });
 
-  it("dispara onDadosCarregados quando campos obrigatórios preenchidos via form", async () => {
+  it("permite preencher os campos obrigatórios via form", async () => {
     const onDadosCarregados = jest.fn();
     const { getForm } = renderWithForm(onDadosCarregados);
 

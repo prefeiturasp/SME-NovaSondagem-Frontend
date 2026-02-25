@@ -12,7 +12,7 @@ import styled from "styled-components";
 import Legendas from "../../sondagem/legendas/legendas";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import { Modalidade, Proficiencia } from "../../../core/dto/types";
-import Alerta from "~/componentes/biblioteca/Alerta";
+import Alerta from "../../biblioteca/Alerta";
 export const Icon = styled.i``;
 
 const ConteudoRelatorio: React.FC = () => {
