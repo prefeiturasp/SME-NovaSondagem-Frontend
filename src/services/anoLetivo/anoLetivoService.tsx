@@ -28,8 +28,6 @@ const AnoLetivoService = async ({
       },
     );
 
-    console.log("Resposta AnoLetivoService:", resposta.data);
-
     if (resposta?.data?.length > 0) {
       const dadosMapeados = resposta.data
         .map((item: any) => {
