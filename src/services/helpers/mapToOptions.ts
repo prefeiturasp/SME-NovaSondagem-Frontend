@@ -1,6 +1,4 @@
-export type LabelKey = string;
-
-export function mapIdNameAndSort(data: any[], labelKey: LabelKey = "nome") {
+export function mapIdNameAndSort(data: any[], labelKey: string = "nome") {
   if (!Array.isArray(data)) return [];
   return data
     .map((item: any) => ({ value: item.id, label: item[labelKey] }))
