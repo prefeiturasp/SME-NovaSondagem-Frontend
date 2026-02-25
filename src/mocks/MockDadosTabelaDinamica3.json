@@ -1,0 +1,1009 @@
+{
+  "alteradoPor": null,
+  "inseridoPor": null,
+  "podeSalvar": false,
+  "questaoId": 1,
+  "questionarioId": 4,
+  "sondagemId": 1,
+  "tituloTabelaRespostas": "Sistema de escrita",
+  "estudantes": [
+    {
+      "linguaPortuguesaSegundaLingua": true,
+      "numeroAlunoChamada": 1,
+      "codigo": 12345,
+      "nome": "João Silva",
+      "pap": true,
+      "aee": false,
+      "possuiDeficiencia": true,
+      "codigoEol": "EOL1234",
+      "raca": "Branca",
+      "genero": "Masculino",
+      "coluna": [
+        {
+          "idCiclo": 1,
+          "descricaoColuna": "1° ciclo",
+          "PeriodoBimestreAtivo": true,
+          "questaoSubrespostaId": null,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": {
+            "id": null,
+            "opcaoRespostaId": null
+          }
+        },
+        {
+          "idCiclo": 2,
+          "descricaoColuna": "2° ciclo",
+          "PeriodoBimestreAtivo": true,
+          "questaoSubrespostaId": null,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 2,
+              "opcaoRespostaId": 2
+            }
+          ]
+        },
+        {
+          "idCiclo": 3,
+          "descricaoColuna": "3° ciclo",
+          "PeriodoBimestreAtivo": true,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 3,
+              "opcaoRespostaId": 4
+            }
+          ]
+        },
+        {
+          "idCiclo": 4,
+          "descricaoColuna": "4° ciclo",
+          "PeriodoBimestreAtivo": false,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 3,
+              "opcaoRespostaId": 5
+            }
+          ]
+        },
+        {
+          "idCiclo": 5,
+          "descricaoColuna": "5° ciclo",
+          "PeriodoBimestreAtivo": false,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 4,
+              "opcaoRespostaId": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linguaPortuguesaSegundaLingua": true,
+      "numeroAlunoChamada": 2,
+      "codigo": 77345,
+      "nome": "Carla Ferreira Campos teste teste teste",
+      "pap": true,
+      "aee": true,
+      "possuiDeficiencia": true,
+      "codigoEol": "EOL1112",
+      "raca": "Parda",
+      "genero": "Feminino",
+      "coluna": [
+        {
+          "idCiclo": 11,
+          "descricaoColuna": "1° ciclo",
+          "PeriodoBimestreAtivo": true,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 1,
+              "opcaoRespostaId": 5
+            }
+          ]
+        },
+        {
+          "idCiclo": 12,
+          "descricaoColuna": "2° ciclo",
+          "PeriodoBimestreAtivo": true,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 2,
+              "opcaoRespostaId": 5
+            }
+          ]
+        },
+        {
+          "idCiclo": 13,
+          "descricaoColuna": "3° ciclo",
+          "PeriodoBimestreAtivo": true,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 3,
+              "opcaoRespostaId": 2
+            }
+          ]
+        },
+        {
+          "idCiclo": 14,
+          "descricaoColuna": "4° ciclo",
+          "PeriodoBimestreAtivo": false,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 3,
+              "opcaoRespostaId": 1
+            }
+          ]
+        },
+        {
+          "idCiclo": 15,
+          "descricaoColuna": "5° ciclo",
+          "PeriodoBimestreAtivo": false,
+          "opcaoResposta": [
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 1,
+              "ordem": 1,
+              "descricaoOpcaoResposta": "PS",
+              "corFundo": "#FF3131",
+              "corTexto": "#FFFFFF",
+              "legenda": "Escrita pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 2,
+              "ordem": 2,
+              "descricaoOpcaoResposta": "SSV",
+              "corFundo": "#FFDE59",
+              "corTexto": "#42474A",
+              "legenda": "Hipótese silábica sem valor"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 3,
+              "ordem": 3,
+              "descricaoOpcaoResposta": "SCV",
+              "corFundo": "#FF914D",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 4,
+              "ordem": 4,
+              "descricaoOpcaoResposta": "SA",
+              "corFundo": "#5170FF",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 5,
+              "ordem": 5,
+              "descricaoOpcaoResposta": "A",
+              "corFundo": "#00BF63",
+              "corTexto": "#FFFFFF",
+              "legenda": "Hipótese pré-silábica"
+            },
+            {
+              "alteradoEm": null,
+              "alteradoPor": null,
+              "alteradoRF": null,
+              "criadoEm": "0001-01-01T00:00:00",
+              "criadoPor": "",
+              "criadoRF": "",
+              "id": 6,
+              "ordem": 6,
+              "descricaoOpcaoResposta": "Sem preenchimento",
+              "corFundo": "#FFFFFF",
+              "corTexto": "#3a4246ff",
+              "legenda": "Hipótese pré-silábica"
+            }
+          ],
+          "resposta": [
+            {
+              "id": 4,
+              "opcaoRespostaId": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

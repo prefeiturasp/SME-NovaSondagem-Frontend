@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Button,
   Card,
@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
+import { LEGENDA_EJA_CAPACIDADE_LEITORA } from "../legendas/legendaEjaCapacidadeLeitora";
 import NovaSondagemServico from "../../../core/servico/servico";
 import { Auditoria } from "../auditoria/auditoria";
 import { validarTurma } from "../../../services/turmaService";
@@ -109,15 +110,9 @@ const Conteudo: React.FC = () => {
 
       if (resposta?.data?.length > 0) {
         setDesabilitarDisciplina(false);
-        const dadosMapeados = resposta.data
-          .map((item: any) => ({
-            value: item.id,
-            label: item.nome,
-          }))
-          .sort((a: any, b: any) =>
-            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
-          );
-        setListaDisciplinas(dadosMapeados);
+        const { mapIdNameAndSort } =
+          await import("../../../services/helpers/mapToOptions");
+        setListaDisciplinas(mapIdNameAndSort(resposta.data, "nome"));
       } else {
         setDesabilitarDisciplina(true);
         setListaDisciplinas([]);
@@ -130,6 +125,10 @@ const Conteudo: React.FC = () => {
 
   const obterProficiencia = useCallback(
     async (idDisciplina: number) => {
+      if (!modalidade) {
+        return;
+      }
+
       formFiltro.setFieldValue("proficienciaId", null);
 
       try {
@@ -142,11 +141,9 @@ const Conteudo: React.FC = () => {
 
         if (resposta?.data?.length > 0) {
           setDesabilitarProficiencia(false);
-          const dadosMapeados = resposta.data.map((item: any) => ({
-            value: item.id,
-            label: item.nome,
-          }));
-          setListaProficiencia(dadosMapeados);
+          const { mapIdNameAndSort } =
+            await import("../../../services/helpers/mapToOptions");
+          setListaProficiencia(mapIdNameAndSort(resposta.data, "nome"));
         } else {
           setDesabilitarProficiencia(true);
           setListaProficiencia([]);
@@ -156,7 +153,7 @@ const Conteudo: React.FC = () => {
         message.error("Erro ao carregar dados da proficiencia.");
       }
     },
-    [formFiltro, usuario?.token],
+    [formFiltro, usuario?.token, modalidade],
   );
 
   const obterBimestre = useCallback(
@@ -310,6 +307,24 @@ const Conteudo: React.FC = () => {
     }
   };
 
+  const proficienciaJaCarregada = useRef(false);
+
+  useEffect(() => {
+    if (
+      modalidade &&
+      disciplinaSelecionada &&
+      listaProficiencia.length === 0 &&
+      !proficienciaJaCarregada.current
+    ) {
+      proficienciaJaCarregada.current = true;
+      obterProficiencia(disciplinaSelecionada);
+    }
+  }, [modalidade, disciplinaSelecionada, listaProficiencia.length]);
+
+  useEffect(() => {
+    proficienciaJaCarregada.current = false;
+  }, [disciplinaSelecionada]);
+
   const executarBusca = async () => {
     if (
       proficienciaSelecionada &&
@@ -377,47 +392,7 @@ const Conteudo: React.FC = () => {
         modalidade === Modalidade.EJA &&
         profId === Proficiencia.CapacidadeLeitora
       )
-        setDadosLegenda([
-          {
-            descricaoLegenda: "Localização",
-            textoLegenda:
-              "Capacidade de recuperar informações explícitas no texto",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Inferência",
-            textoLegenda:
-              "Capacidade de compreender informações implícitas no texto",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Reflexão",
-            textoLegenda:
-              "(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto.",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Adequada",
-            textoLegenda:
-              "Recuperou, compreendeu ou refletiu corretamente sobre a informação",
-            corFundo: "#7ED957",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Inadequada",
-            textoLegenda:
-              "Não recuperou, compreendeu ou refletiu corretamente sobre a informação",
-            corFundo: "#FFDE59",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Não Resolveu",
-            textoLegenda:
-              "Não conseguiu realizar a leitura e/ou compreensão de textos",
-            corFundo: "#F18888",
-            corTexto: "#FFFFFF",
-          },
-        ]);
+        setDadosLegenda(LEGENDA_EJA_CAPACIDADE_LEITORA);
       else setDadosLegenda(dadosLegenda);
 
       setDadosLista(resposta.data);

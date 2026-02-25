@@ -1,0 +1,44 @@
+import React, { useMemo } from "react";
+import type { OpcaoResposta, Resposta } from "../../../core/dto/typesRelatorio";
+import "./celulaColorida.css";
+
+interface CelulaColoridaProps {
+  opcaoResposta: OpcaoResposta[];
+  resposta: Resposta | Resposta[];
+}
+
+const CelulaColorida: React.FC<CelulaColoridaProps> = ({
+  opcaoResposta,
+  resposta,
+}) => {
+  const opcaoSelecionada = useMemo(() => {
+    const respostaAtual = Array.isArray(resposta) ? resposta[0] : resposta;
+
+    if (!respostaAtual?.opcaoRespostaId) return null;
+
+    return opcaoResposta.find(
+      (opcao) => opcao.id === respostaAtual.opcaoRespostaId,
+    );
+  }, [opcaoResposta, resposta]);
+
+  const corFundo = opcaoSelecionada ? opcaoSelecionada.corFundo : "#FFFFFF";
+  const corTexto = opcaoSelecionada ? opcaoSelecionada.corTexto : "#BFBFC2";
+  const texto = opcaoSelecionada
+    ? opcaoSelecionada.descricaoOpcaoResposta
+    : "Vazio";
+
+  return (
+    <div
+      className="celula-colorida"
+      style={{
+        backgroundColor: corFundo,
+        color: corTexto,
+      }}
+      title={opcaoSelecionada?.legenda ?? ""}
+    >
+      {texto}
+    </div>
+  );
+};
+
+export default CelulaColorida;

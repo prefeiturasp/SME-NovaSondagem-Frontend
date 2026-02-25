@@ -301,7 +301,7 @@ describe("Conteudo", () => {
     it("deve recarregar dados ao clicar em Cancelar com disciplina e proficiência selecionadas", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValue({ data: mockProficiencias })
         .mockResolvedValueOnce({ data: mockQuestionario });
 
       const store = createMockStoreWithUser({
@@ -439,7 +439,7 @@ describe("Conteudo", () => {
     it("deve carregar proficiências ao selecionar disciplina", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias });
+        .mockResolvedValue({ data: mockProficiencias });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -486,7 +486,7 @@ describe("Conteudo", () => {
     it("deve tratar erro ao carregar proficiências", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockRejectedValueOnce(new Error("Erro ao buscar proficiências"));
+        .mockRejectedValue(new Error("Erro ao buscar proficiências"));
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -526,10 +526,39 @@ describe("Conteudo", () => {
   });
 
   describe("Campo Bimestre", () => {
+    const mockGetCampoBimestre = (overrides?: {
+      questionario?: any;
+      bimestres?: any;
+      bimestreError?: any;
+    }) => {
+      (NovaSondagemServico.get as jest.Mock).mockImplementation(
+        (url: string) => {
+          if (url === "/ComponenteCurricular") {
+            return Promise.resolve({ data: mockDisciplinas });
+          }
+          if (url.startsWith("/Proficiencia/")) {
+            return Promise.resolve({ data: mockProficiencias });
+          }
+          if (url === "/Bimestre") {
+            if (overrides?.bimestreError) {
+              return Promise.reject(overrides.bimestreError);
+            }
+            return Promise.resolve({
+              data: overrides?.bimestres ?? mockBimestres,
+            });
+          }
+          if (url === "/Questionario") {
+            return Promise.resolve({
+              data: overrides?.questionario ?? mockQuestionario,
+            });
+          }
+          return Promise.resolve({ data: [] });
+        },
+      );
+    };
+
     it("não deve exibir campo bimestre quando proficiência não é 3 ou 5", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias });
+      mockGetCampoBimestre();
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -587,10 +616,7 @@ describe("Conteudo", () => {
     });
 
     it("deve exibir campo bimestre quando proficiência é 3", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockBimestres });
+      mockGetCampoBimestre();
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -648,10 +674,7 @@ describe("Conteudo", () => {
     });
 
     it("deve exibir campo bimestre quando proficiência é 5", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockBimestres });
+      mockGetCampoBimestre();
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -702,10 +725,7 @@ describe("Conteudo", () => {
     });
 
     it("deve carregar lista de bimestres ao selecionar proficiência 3", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockBimestres });
+      mockGetCampoBimestre();
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -758,11 +778,7 @@ describe("Conteudo", () => {
     });
 
     it("deve buscar questionário apenas quando bimestre for selecionado para proficiências 3 ou 5", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockBimestres })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetCampoBimestre({ questionario: mockQuestionario });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -794,15 +810,12 @@ describe("Conteudo", () => {
         "#sondagem-select-proficiencia",
       );
 
-      if (proficienciaSelect) {
-        fireEvent.mouseDown(proficienciaSelect);
-        await waitFor(() => {
-          const option = document.querySelector(
-            '[title="Produção de Texto - Bimestral"]',
-          ) as HTMLElement;
-          if (option) fireEvent.click(option);
-        });
-      }
+      expect(proficienciaSelect).toBeInTheDocument();
+      fireEvent.mouseDown(proficienciaSelect as HTMLElement);
+      const opcaoProficiencia = await screen.findByTitle(
+        "Produção de Texto - Bimestral",
+      );
+      fireEvent.click(opcaoProficiencia);
 
       expect(NovaSondagemServico.get).not.toHaveBeenCalledWith(
         "/Questionario",
@@ -813,17 +826,16 @@ describe("Conteudo", () => {
         const bimestreSelect = container.querySelector(
           "#sondagem-select-bimestre",
         );
-        if (bimestreSelect) {
-          fireEvent.mouseDown(bimestreSelect);
-        }
+        expect(bimestreSelect).toBeInTheDocument();
+        expect(bimestreSelect?.className).not.toContain("ant-select-disabled");
       });
 
-      await waitFor(() => {
-        const option = document.querySelector(
-          '[title="1º Bimestre"]',
-        ) as HTMLElement;
-        if (option) fireEvent.click(option);
-      });
+      const bimestreSelect = container.querySelector(
+        "#sondagem-select-bimestre",
+      ) as HTMLElement;
+      fireEvent.mouseDown(bimestreSelect);
+      const opcaoBimestre = await screen.findByTitle("1º Bimestre");
+      fireEvent.click(opcaoBimestre);
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
@@ -838,11 +850,7 @@ describe("Conteudo", () => {
     });
 
     it("deve limpar bimestre ao trocar para proficiência que não seja 3 ou 5", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockBimestres })
-        .mockResolvedValueOnce({ data: mockProficiencias });
+      mockGetCampoBimestre();
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -874,15 +882,12 @@ describe("Conteudo", () => {
         "#sondagem-select-proficiencia",
       );
 
-      if (proficienciaSelect) {
-        fireEvent.mouseDown(proficienciaSelect);
-        await waitFor(() => {
-          const option = document.querySelector(
-            '[title="Produção de Texto - Bimestral"]',
-          ) as HTMLElement;
-          if (option) fireEvent.click(option);
-        });
-      }
+      expect(proficienciaSelect).toBeInTheDocument();
+      fireEvent.mouseDown(proficienciaSelect as HTMLElement);
+      const opcaoProficienciaBimestral = await screen.findByTitle(
+        "Produção de Texto - Bimestral",
+      );
+      fireEvent.click(opcaoProficienciaBimestral);
 
       await waitFor(() => {
         const bimestreSelect = container.querySelector(
@@ -891,15 +896,9 @@ describe("Conteudo", () => {
         expect(bimestreSelect).toBeInTheDocument();
       });
 
-      if (proficienciaSelect) {
-        fireEvent.mouseDown(proficienciaSelect);
-        await waitFor(() => {
-          const option = document.querySelector(
-            '[title="Escrita"]',
-          ) as HTMLElement;
-          if (option) fireEvent.click(option);
-        });
-      }
+      fireEvent.mouseDown(proficienciaSelect as HTMLElement);
+      const opcaoEscrita = await screen.findByTitle("Escrita");
+      fireEvent.click(opcaoEscrita);
 
       await waitFor(() => {
         const bimestreSelect = container.querySelector(
@@ -910,10 +909,9 @@ describe("Conteudo", () => {
     });
 
     it("deve tratar erro ao carregar bimestres", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockRejectedValueOnce(new Error("Erro ao buscar bimestres"));
+      mockGetCampoBimestre({
+        bimestreError: new Error("Erro ao buscar bimestres"),
+      });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -964,11 +962,33 @@ describe("Conteudo", () => {
   });
 
   describe("Busca de questionário", () => {
+    const mockGetQuestionario = (overrides?: {
+      questionario?: any;
+      questionarioError?: any;
+    }) => {
+      (NovaSondagemServico.get as jest.Mock).mockImplementation(
+        (url: string) => {
+          if (url === "/ComponenteCurricular") {
+            return Promise.resolve({ data: mockDisciplinas });
+          }
+          if (url.startsWith("/Proficiencia/")) {
+            return Promise.resolve({ data: mockProficiencias });
+          }
+          if (url === "/Questionario") {
+            if (overrides?.questionarioError) {
+              return Promise.reject(overrides.questionarioError);
+            }
+            return Promise.resolve({
+              data: overrides?.questionario ?? mockQuestionario,
+            });
+          }
+          return Promise.resolve({ data: [] });
+        },
+      );
+    };
+
     it("deve buscar questionário quando disciplina e proficiência são selecionadas", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetQuestionario({ questionario: mockQuestionario });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -1043,12 +1063,9 @@ describe("Conteudo", () => {
     });
 
     it("deve exibir notificação de warning para erro 404", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockRejectedValueOnce({
-          response: { status: 404 },
-        });
+      mockGetQuestionario({
+        questionarioError: { response: { status: 404 } },
+      });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -1107,12 +1124,9 @@ describe("Conteudo", () => {
     });
 
     it("deve exibir notificação de erro para problema de rede", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockRejectedValueOnce({
-          code: "ERR_NETWORK",
-        });
+      mockGetQuestionario({
+        questionarioError: { code: "ERR_NETWORK" },
+      });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -1168,12 +1182,9 @@ describe("Conteudo", () => {
     });
 
     it("deve exibir message error para erros genéricos", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockRejectedValueOnce({
-          response: { status: 500 },
-        });
+      mockGetQuestionario({
+        questionarioError: { response: { status: 500 } },
+      });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -1228,11 +1239,33 @@ describe("Conteudo", () => {
   });
 
   describe("Método salvarDadosSondagem", () => {
+    const mockQuestionarioComPodeSalvar = {
+      ...mockQuestionario,
+      podeSalvar: true,
+    };
+
+    const mockGetQuestionarioComSalvar = () => {
+      (NovaSondagemServico.get as jest.Mock).mockImplementation(
+        (url: string) => {
+          if (url === "/ComponenteCurricular") {
+            return Promise.resolve({ data: mockDisciplinas });
+          }
+          if (url.startsWith("/Proficiencia/")) {
+            return Promise.resolve({ data: mockProficiencias });
+          }
+          if (url === "/Questionario") {
+            return Promise.resolve({ data: mockQuestionarioComPodeSalvar });
+          }
+          if (url === "/Bimestre") {
+            return Promise.resolve({ data: mockBimestres });
+          }
+          return Promise.resolve({ data: [] });
+        },
+      );
+    };
+
     it("deve exibir mensagem de sucesso quando retornar status 200", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetQuestionarioComSalvar();
 
       (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
         status: 200,
@@ -1295,6 +1328,11 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
+        const salvarButton = screen.getByText(BOTOES.SALVAR);
+        expect(salvarButton).not.toBeDisabled();
+      });
+
+      await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
           fireEvent.click(salvarButton);
@@ -1328,10 +1366,7 @@ describe("Conteudo", () => {
     });
 
     it("deve exibir mensagem de erro quando falhar", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetQuestionarioComSalvar();
 
       (NovaSondagemServico.post as jest.Mock).mockRejectedValue({
         response: {
@@ -1398,6 +1433,11 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
+        const salvarButton = screen.getByText(BOTOES.SALVAR);
+        expect(salvarButton).not.toBeDisabled();
+      });
+
+      await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
           fireEvent.click(salvarButton);
@@ -1415,10 +1455,7 @@ describe("Conteudo", () => {
     });
 
     it("deve usar token do usuário no header", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetQuestionarioComSalvar();
 
       (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
         status: 200,
@@ -1481,6 +1518,11 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
+        const salvarButton = screen.getByText(BOTOES.SALVAR);
+        expect(salvarButton).not.toBeDisabled();
+      });
+
+      await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
           fireEvent.click(salvarButton);
@@ -1501,10 +1543,7 @@ describe("Conteudo", () => {
     });
 
     it("deve exibir mensagem de erro genérica quando não há message na resposta", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetQuestionarioComSalvar();
 
       (NovaSondagemServico.post as jest.Mock).mockRejectedValue({
         response: {},
@@ -1567,6 +1606,11 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
+        const salvarButton = screen.getByText(BOTOES.SALVAR);
+        expect(salvarButton).not.toBeDisabled();
+      });
+
+      await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
           fireEvent.click(salvarButton);
@@ -1603,10 +1647,7 @@ describe("Conteudo", () => {
         token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetQuestionarioComSalvar();
 
       const { container } = renderWithProvider(<Conteudo />, store);
 
@@ -1660,10 +1701,19 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
+        const salvarButton = screen.getByText(BOTOES.SALVAR);
+        expect(salvarButton).not.toBeDisabled();
+      });
+
+      await waitFor(() => {
         const salvarButton = screen.queryByText(BOTOES.SALVAR);
         if (salvarButton) {
           fireEvent.click(salvarButton);
         }
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.post).toHaveBeenCalled();
       });
 
       await waitFor(() => {
@@ -1674,7 +1724,7 @@ describe("Conteudo", () => {
           }),
         );
       });
-    });
+    }, 10000);
 
     it("deve enviar sondagemId do dadosLista", async () => {
       (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
@@ -1686,10 +1736,7 @@ describe("Conteudo", () => {
         token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetQuestionarioComSalvar();
 
       const { container } = renderWithProvider(<Conteudo />, store);
 
@@ -1740,6 +1787,11 @@ describe("Conteudo", () => {
           "/Questionario",
           expect.any(Object),
         );
+      });
+
+      await waitFor(() => {
+        const salvarButton = screen.getByText(BOTOES.SALVAR);
+        expect(salvarButton).not.toBeDisabled();
       });
 
       await waitFor(() => {
@@ -1770,10 +1822,7 @@ describe("Conteudo", () => {
         token: "mock-token",
         turmaSelecionada: criarTurma(),
       });
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      mockGetQuestionarioComSalvar();
 
       const { container } = renderWithProvider(<Conteudo />, store);
 
@@ -1824,6 +1873,11 @@ describe("Conteudo", () => {
           "/Questionario",
           expect.any(Object),
         );
+      });
+
+      await waitFor(() => {
+        const salvarButton = screen.getByText(BOTOES.SALVAR);
+        expect(salvarButton).not.toBeDisabled();
       });
 
       await waitFor(() => {
@@ -1874,7 +1928,7 @@ describe("Conteudo", () => {
     it("deve resetar proficiência ao mudar disciplina", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias });
+        .mockResolvedValue({ data: mockProficiencias });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -1936,7 +1990,7 @@ describe("Conteudo", () => {
     it("deve limpar disciplina e proficiência quando turma mudar", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias });
+        .mockResolvedValue({ data: mockProficiencias });
 
       const initialStore = createMockStoreWithUser({
         logado: true,
@@ -2073,7 +2127,7 @@ describe("Conteudo", () => {
     it("deve buscar dados apenas quando disciplina E proficiência estiverem selecionadas", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValue({ data: mockProficiencias })
         .mockResolvedValueOnce({ data: mockQuestionario });
 
       const store = createMockStoreWithUser({
@@ -2149,7 +2203,7 @@ describe("Conteudo", () => {
     it("não deve buscar dados se apenas disciplina estiver selecionada", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias });
+        .mockResolvedValue({ data: mockProficiencias });
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -2296,7 +2350,7 @@ describe("Conteudo", () => {
     it("deve renderizar SondagemListaDinamica com dados do questionário", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValue({ data: mockProficiencias })
         .mockResolvedValueOnce({ data: mockQuestionario });
 
       const store = createMockStoreWithUser({
@@ -2362,7 +2416,7 @@ describe("Conteudo", () => {
     it("deve renderizar tabela sem limite de altura vertical", async () => {
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValue({ data: mockProficiencias })
         .mockResolvedValueOnce({ data: mockQuestionario });
 
       const store = createMockStoreWithUser({
@@ -2433,7 +2487,7 @@ describe("Conteudo", () => {
 
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValue({ data: mockProficiencias })
         .mockResolvedValueOnce({ data: mockQuestionarioComPodeSalvar });
 
       const store = createMockStoreWithUser({
@@ -2502,7 +2556,7 @@ describe("Conteudo", () => {
 
       (NovaSondagemServico.get as jest.Mock)
         .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValueOnce({ data: mockProficiencias })
+        .mockResolvedValue({ data: mockProficiencias })
         .mockResolvedValueOnce({ data: mockQuestionarioSemPermissao });
 
       const store = createMockStoreWithUser({
