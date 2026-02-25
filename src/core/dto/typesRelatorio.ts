@@ -38,6 +38,7 @@ export interface Estudante {
 export interface DadosTabelaDinamica {
   tituloTabelaRespostas: string;
   estudantes: Estudante[];
+  legenda: LegendaQuestionario[];
 }
 
 export type ValoresFiltroRelatorio = {
@@ -52,3 +53,12 @@ export type ValoresFiltroRelatorio = {
   bimestre?: number;
   ano?: number;
 };
+
+export interface LegendaQuestionario {
+  id: number;
+  ordem: number;
+  descricaoOpcaoResposta: string;
+  corFundo: string;
+  corTexto: string;
+  legenda: string;
+}

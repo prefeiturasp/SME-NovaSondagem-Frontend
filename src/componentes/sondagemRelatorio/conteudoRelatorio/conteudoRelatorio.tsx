@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ListaDinamicaRelatorio from "../listaDinamicaRelatorio/listaDinamicaRelatorio";
 import type {
   DadosTabelaDinamica,
+  LegendaQuestionario,
   ValoresFiltroRelatorio,
 } from "../../../core/dto/typesRelatorio";
 import { Button, Card, Spin, Form } from "antd";
@@ -42,9 +43,14 @@ const ConteudoRelatorio: React.FC = () => {
 
   useEffect(() => {
     if (dados) {
-      const dadosLegenda = dados.estudantes[0].coluna[0].opcaoResposta.map(
-        (legenda: any) => ({
+      const legendaQuestionario = Array.isArray(dados.legenda)
+        ? dados.legenda
+        : [];
+
+      const dadosLegenda: LegendasProps[] = legendaQuestionario.map(
+        (legenda: LegendaQuestionario) => ({
           corFundo: legenda.corFundo,
+          corTexto: legenda.corTexto,
           descricaoLegenda: legenda.descricaoOpcaoResposta,
           textoLegenda: legenda.legenda,
         }),
