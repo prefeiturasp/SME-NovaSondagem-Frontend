@@ -347,8 +347,6 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       ueCodigo: String(valores.ue),
       token: usuario?.token,
     });
-    console.log("dados do relatorio", dados);
-    console.log("valores do filtro", valores);
     onDadosCarregados(dados);
     onFiltrosAlterados(valores);
   };
