@@ -18,18 +18,14 @@ const BimestreService = async ({
     });
 
     if (resposta?.data?.length > 0) {
-      const dadosMapeados = resposta.data
-        .map((item: any) => ({
-          value: item.id,
-          label: item.descricao,
-        }))
-        .sort((a: any, b: any) =>
-          a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
-        );
+      const dadosMapeados = resposta.data.map((item: any) => ({
+        value: item.id,
+        label: item.descricao,
+      }));
       return dadosMapeados;
-    } else {
-      return null;
     }
+
+    return null;
   } catch (error: any) {
     console.error("Erro ao carregar bimestres:", error);
     return null;

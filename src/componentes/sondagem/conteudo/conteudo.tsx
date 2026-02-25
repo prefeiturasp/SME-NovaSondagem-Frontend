@@ -109,15 +109,9 @@ const Conteudo: React.FC = () => {
 
       if (resposta?.data?.length > 0) {
         setDesabilitarDisciplina(false);
-        const dadosMapeados = resposta.data
-          .map((item: any) => ({
-            value: item.id,
-            label: item.nome,
-          }))
-          .sort((a: any, b: any) =>
-            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
-          );
-        setListaDisciplinas(dadosMapeados);
+        const { mapIdNameAndSort } =
+          await import("../../../services/helpers/mapToOptions");
+        setListaDisciplinas(mapIdNameAndSort(resposta.data, "nome"));
       } else {
         setDesabilitarDisciplina(true);
         setListaDisciplinas([]);
@@ -146,11 +140,9 @@ const Conteudo: React.FC = () => {
 
         if (resposta?.data?.length > 0) {
           setDesabilitarProficiencia(false);
-          const dadosMapeados = resposta.data.map((item: any) => ({
-            value: item.id,
-            label: item.nome,
-          }));
-          setListaProficiencia(dadosMapeados);
+          const { mapIdNameAndSort } =
+            await import("../../../services/helpers/mapToOptions");
+          setListaProficiencia(mapIdNameAndSort(resposta.data, "nome"));
         } else {
           setDesabilitarProficiencia(true);
           setListaProficiencia([]);
