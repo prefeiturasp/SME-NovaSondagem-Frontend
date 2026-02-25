@@ -1,4 +1,5 @@
 import NovaSondagemServico from "../../core/servico/servico";
+import { mapIdNameAndSort } from "../helpers/mapToOptions";
 
 interface ValidarComponenteCurricularParams {
   //turmaId: number;
@@ -23,18 +24,9 @@ const ComponenteCurricularService = async ({
     });
 
     if (resposta?.data?.length > 0) {
-      const dadosMapeados = resposta.data
-        .map((item: any) => ({
-          value: item.id,
-          label: item.nome,
-        }))
-        .sort((a: any, b: any) =>
-          a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
-        );
-      return dadosMapeados;
-    } else {
-      return null;
+      return mapIdNameAndSort(resposta.data, "nome");
     }
+    return null;
   } catch (error: any) {
     console.error("Erro ao carregar componentes curriculares:", error);
     return null;

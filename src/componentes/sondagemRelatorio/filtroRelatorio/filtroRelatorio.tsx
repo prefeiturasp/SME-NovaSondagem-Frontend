@@ -304,8 +304,12 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     valores.ano = ano;
     const bimestrePayload =
       valores.modalidade === 5
-        ? ((valores.bimestre as number | undefined) ?? null)
-        : ((valores.semestre as number | undefined) ?? 1);
+        ? typeof valores.bimestre === "number"
+          ? valores.bimestre
+          : null
+        : typeof valores.semestre === "number"
+          ? valores.semestre
+          : 1;
 
     const dados = await DadosRelatorioService({
       turmaId: valores.turma as number,
@@ -369,163 +373,157 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     permitirBimestrePorProficiencia.includes(selectedProficiencia ?? -1);
 
   return (
-    <>
-      <Form form={form} layout="vertical" onValuesChange={onValuesChange}>
-        <Row gutter={16}>
+    <Form form={form} layout="vertical" onValuesChange={onValuesChange}>
+      <Row gutter={16}>
+        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Form.Item
+            name="anoLetivo"
+            label="Ano Letivo"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-select-ano-letivo"
+              options={listaAnosLetivos}
+              placeholder="Selecione"
+              onChange={onChangeAnoLetivo}
+              disabled={desabilitarAnoLetivo}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Form.Item
+            name="modalidade"
+            label="Modalidade"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-select-modalidade"
+              options={listaModalidades}
+              placeholder="Selecione"
+              onChange={onChangeModalidade}
+              disabled={desabilitarModalidade}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Form.Item
+            name="dre"
+            label="Diretoria Regional de Educação (DRE)"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-select-dre"
+              options={listaDREs}
+              placeholder="Selecione"
+              onChange={onChangeDRE}
+              disabled={desabilitarDRE}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Form.Item
+            name="ue"
+            label="Unidade Educacional (UE)"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-select-ue"
+              options={listaUEs}
+              placeholder="Selecione"
+              onChange={onChangeUE}
+              disabled={desabilitarUE}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Form.Item name="turma" label="Turma" className="labelSelectSondagem">
+            <Select
+              id="sondagem-select-turma"
+              options={listaTurmas}
+              placeholder="Selecione"
+              onChange={onChangeTurma}
+              disabled={desabilitarTurma}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Form.Item
+            name="componenteCurricular"
+            label="Componente curricular"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-select-componente-curricular"
+              options={listaComponentesCurriculares}
+              placeholder="Selecione"
+              onChange={onChangeComponenteCurricular}
+              disabled={desabilitarComponenteCurricular}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
+        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Form.Item
+            name="proficiencia"
+            label="Proficiência"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-select-proficiencia"
+              options={listaProficiencias}
+              placeholder="Selecione"
+              onChange={onChangeProficiencia}
+              disabled={desabilitarProficiencia}
+            />
+          </Form.Item>
+        </Col>
+
+        {showBimestre && (
           <Col xs={24} sm={24} md={8} lg={8} xl={8}>
             <Form.Item
-              name="anoLetivo"
-              label="Ano Letivo"
+              name="bimestre"
+              label="Bimestre"
               className="labelSelectSondagem"
             >
               <Select
-                id="sondagem-select-ano-letivo"
-                options={listaAnosLetivos}
+                id="sondagem-select-bimestre"
+                options={listaBimestres}
                 placeholder="Selecione"
-                onChange={onChangeAnoLetivo}
-                disabled={desabilitarAnoLetivo}
+                onChange={onChangeBimestre}
+                disabled={desabilitarBimestre}
               />
             </Form.Item>
           </Col>
+        )}
 
+        {showSemestre && (
           <Col xs={24} sm={24} md={8} lg={8} xl={8}>
             <Form.Item
-              name="modalidade"
-              label="Modalidade"
+              name="semestre"
+              label="Semestre"
               className="labelSelectSondagem"
             >
               <Select
-                id="sondagem-select-modalidade"
-                options={listaModalidades}
+                id="sondagem-select-semestre"
+                options={listaSemestres}
                 placeholder="Selecione"
-                onChange={onChangeModalidade}
-                disabled={desabilitarModalidade}
+                onChange={onChangeSemestre}
+                disabled={desabilitarSemestre}
               />
             </Form.Item>
           </Col>
-
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <Form.Item
-              name="dre"
-              label="Diretoria Regional de Educação (DRE)"
-              className="labelSelectSondagem"
-            >
-              <Select
-                id="sondagem-select-dre"
-                options={listaDREs}
-                placeholder="Selecione"
-                onChange={onChangeDRE}
-                disabled={desabilitarDRE}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <Form.Item
-              name="ue"
-              label="Unidade Educacional (UE)"
-              className="labelSelectSondagem"
-            >
-              <Select
-                id="sondagem-select-ue"
-                options={listaUEs}
-                placeholder="Selecione"
-                onChange={onChangeUE}
-                disabled={desabilitarUE}
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <Form.Item
-              name="turma"
-              label="Turma"
-              className="labelSelectSondagem"
-            >
-              <Select
-                id="sondagem-select-turma"
-                options={listaTurmas}
-                placeholder="Selecione"
-                onChange={onChangeTurma}
-                disabled={desabilitarTurma}
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <Form.Item
-              name="componenteCurricular"
-              label="Componente curricular"
-              className="labelSelectSondagem"
-            >
-              <Select
-                id="sondagem-select-componente-curricular"
-                options={listaComponentesCurriculares}
-                placeholder="Selecione"
-                onChange={onChangeComponenteCurricular}
-                disabled={desabilitarComponenteCurricular}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <Form.Item
-              name="proficiencia"
-              label="Proficiência"
-              className="labelSelectSondagem"
-            >
-              <Select
-                id="sondagem-select-proficiencia"
-                options={listaProficiencias}
-                placeholder="Selecione"
-                onChange={onChangeProficiencia}
-                disabled={desabilitarProficiencia}
-              />
-            </Form.Item>
-          </Col>
-
-          {showBimestre && (
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                name="bimestre"
-                label="Bimestre"
-                className="labelSelectSondagem"
-              >
-                <Select
-                  id="sondagem-select-bimestre"
-                  options={listaBimestres}
-                  placeholder="Selecione"
-                  onChange={onChangeBimestre}
-                  disabled={desabilitarBimestre}
-                />
-              </Form.Item>
-            </Col>
-          )}
-
-          {showSemestre && (
-            <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-              <Form.Item
-                name="semestre"
-                label="Semestre"
-                className="labelSelectSondagem"
-              >
-                <Select
-                  id="sondagem-select-semestre"
-                  options={listaSemestres}
-                  placeholder="Selecione"
-                  onChange={onChangeSemestre}
-                  disabled={desabilitarSemestre}
-                />
-              </Form.Item>
-            </Col>
-          )}
-        </Row>
-      </Form>
-    </>
+        )}
+      </Row>
+    </Form>
   );
 };
 
