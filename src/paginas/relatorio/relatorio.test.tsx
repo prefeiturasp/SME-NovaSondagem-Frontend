@@ -1,25 +1,31 @@
 import { render, screen } from "@testing-library/react";
 import Relatorio from "./relatorio";
 
+jest.mock(
+  "../../componentes/sondagemRelatorio/conteudoRelatorio/conteudoRelatorio",
+  () => () => (
+    <div data-testid="conteudo-relatorio-mock">Conteúdo Relatório</div>
+  ),
+);
+
 describe("Relatorio", () => {
   it("deve renderizar o componente", () => {
     render(<Relatorio />);
 
-    const elemento = screen.getByText("ESTE EH O MEU RELATORIO");
+    const elemento = screen.getByTestId("conteudo-relatorio-mock");
     expect(elemento).toBeInTheDocument();
   });
 
-  it("deve ter a classe CSS relatorio", () => {
+  it("deve ter a classe CSS da página", () => {
     const { container } = render(<Relatorio />);
 
-    const divRelatorio = container.querySelector(".relatorio");
+    const divRelatorio = container.querySelector(".classtudoRelatorio");
     expect(divRelatorio).toBeInTheDocument();
   });
 
-  it("deve renderizar uma div com o texto correto", () => {
-    const { container } = render(<Relatorio />);
+  it("deve renderizar o conteúdo do relatório", () => {
+    render(<Relatorio />);
 
-    const divRelatorio = container.querySelector(".relatorio");
-    expect(divRelatorio).toHaveTextContent("ESTE EH O MEU RELATORIO");
+    expect(screen.getByText("Conteúdo Relatório")).toBeInTheDocument();
   });
 });
