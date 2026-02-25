@@ -309,12 +309,10 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       } else {
         bimestrePayload = null;
       }
+    } else if (typeof valores.semestre === "number") {
+      bimestrePayload = valores.semestre;
     } else {
-      if (typeof valores.semestre === "number") {
-        bimestrePayload = valores.semestre;
-      } else {
-        bimestrePayload = 1;
-      }
+      bimestrePayload = 1;
     }
 
     const dados = await DadosRelatorioService({
