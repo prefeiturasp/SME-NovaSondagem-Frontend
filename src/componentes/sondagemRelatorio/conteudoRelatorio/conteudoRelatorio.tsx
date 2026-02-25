@@ -5,13 +5,14 @@ import type {
   LegendaQuestionario,
   ValoresFiltroRelatorio,
 } from "../../../core/dto/typesRelatorio";
-import { Button, Card, Spin, Form } from "antd";
+import { Button, Card, Spin, Form, Row } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
 import styled from "styled-components";
 import Legendas from "../../sondagem/legendas/legendas";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import { Modalidade, Proficiencia } from "../../../core/dto/types";
+import Alerta from "~/componentes/biblioteca/Alerta";
 export const Icon = styled.i``;
 
 const ConteudoRelatorio: React.FC = () => {
@@ -26,6 +27,10 @@ const ConteudoRelatorio: React.FC = () => {
 
   const [loading] = useState(false);
   const [loadingGerar] = useState<boolean>(false);
+
+  const [erroValidacaoTurma, setErroValidacaoTurma] = useState<string | null>(
+    null,
+  );
 
   const GerarDados = async () => {
     // Geradados do relatorio, fica habilitado so quando tem dados na tabela.
@@ -108,6 +113,22 @@ const ConteudoRelatorio: React.FC = () => {
 
   return (
     <>
+      <div
+        className="grupoAlertas"
+        style={{ display: erroValidacaoTurma ? "block" : "none" }}
+      >
+        <Row gutter={16} className="p-0">
+          <Alerta
+            alerta={{
+              tipo: "warning",
+              id: "SegundoAlerta",
+              mensagem: erroValidacaoTurma ?? "",
+              estiloTitulo: { fontSize: "18px" },
+            }}
+            className="mb-2 larguraAlerta"
+          />
+        </Row>
+      </div>
       <div className="linhaTituloBotao">
         <div className="tituloSondagem">Sondagem por turma</div>
         <div>
@@ -155,6 +176,7 @@ const ConteudoRelatorio: React.FC = () => {
           form={formFiltro}
           onDadosCarregados={setDados}
           onFiltrosAlterados={setFiltros}
+          onErroValidacaoTurma={setErroValidacaoTurma}
         />
         <Spin spinning={loading} tip="Carregando dados...">
           <ListaDinamicaRelatorio dados={dados} />

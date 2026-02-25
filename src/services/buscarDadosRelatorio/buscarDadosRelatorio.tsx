@@ -1,3 +1,4 @@
+import { notification } from "antd";
 import type { DadosTabelaDinamica } from "../../core/dto/typesRelatorio";
 import NovaSondagemServico from "../../core/servico/servico";
 
@@ -52,6 +53,26 @@ const DadosRelatorioService = async ({
     return null;
   } catch (error: any) {
     console.error("Erro ao carregar dados do relatório:", error);
+    const errorMessage =
+      error.response?.data?.title ??
+      error.response?.data?.message ??
+      "Erro ao carregar dados do relatório. Tente novamente.";
+
+    const errorDetails = error.response?.data?.errors
+      ? Object.entries(error.response.data.errors)
+          .map(
+            ([key, value]: [string, any]) =>
+              `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
+          )
+          .join("\n")
+      : null;
+
+    notification.error({
+      message: "Erro ao carregar dados do relatório",
+      description: errorDetails ?? errorMessage,
+      duration: 5,
+      placement: "topRight",
+    });
     return null;
   }
 };
