@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getSgpApiUrl } from "~/config";
+import { getSgpApiUrl } from "../../config";
 
 interface TurmaParams {
   token: string;

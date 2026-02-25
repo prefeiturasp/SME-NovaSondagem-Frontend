@@ -1,4 +1,4 @@
-import type { DadosTabelaDinamica } from "~/core/dto/typesRelatorio";
+import type { DadosTabelaDinamica } from "../../core/dto/typesRelatorio";
 import NovaSondagemServico from "../../core/servico/servico";
 
 interface ValidarDadosRelatorioParams {

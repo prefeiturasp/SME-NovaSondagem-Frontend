@@ -11,16 +11,16 @@ import type {
   ValoresFiltroRelatorio,
 } from "../../../core/dto/typesRelatorio";
 import "./filtroRelatorio.css";
-import ComponenteCurricularService from "~/services/componenteCurricularService/componenteCurricularService";
+import ComponenteCurricularService from "../../../services/componenteCurricularService/componenteCurricularService";
 import { useSelector } from "react-redux";
-import ProficienciaService from "~/services/proficienciaService/ProficienciaService";
-import BimestreService from "~/services/bimestreService/bimestreService";
-import AnoLetivoService from "~/services/anoLetivo/anoLetivoService";
-import DreService from "~/services/dre/dreService";
-import UeService from "~/services/ue/ueService";
-import ModalidadeService from "~/services/modalidade/modalidadeService";
-import TurmaService from "~/services/turma/turmaService";
-import DadosRelatorioService from "~/services/buscarDadosRelatorio/buscarDadosRelatorio";
+import ProficienciaService from "../../../services/proficienciaService/ProficienciaService";
+import BimestreService from "../../../services/bimestreService/bimestreService";
+import AnoLetivoService from "../../../services/anoLetivo/anoLetivoService";
+import DreService from "../../../services/dre/dreService";
+import UeService from "../../../services/ue/ueService";
+import ModalidadeService from "../../../services/modalidade/modalidadeService";
+import TurmaService from "../../../services/turma/turmaService";
+import DadosRelatorioService from "../../../services/buscarDadosRelatorio/buscarDadosRelatorio";
 
 type FiltroRelatorioProps = {
   form: FormInstance;

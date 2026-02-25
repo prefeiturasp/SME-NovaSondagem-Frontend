@@ -9,9 +9,9 @@ import { Button, Card, Spin, Form } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
 import styled from "styled-components";
-import Legendas from "~/componentes/sondagem/legendas/legendas";
-import type { LegendasProps } from "~/core/dto/legendaProps";
-import { Modalidade, Proficiencia } from "~/core/dto/types";
+import Legendas from "../../sondagem/legendas/legendas";
+import type { LegendasProps } from "../../../core/dto/legendaProps";
+import { Modalidade, Proficiencia } from "../../../core/dto/types";
 export const Icon = styled.i``;
 
 const ConteudoRelatorio: React.FC = () => {
