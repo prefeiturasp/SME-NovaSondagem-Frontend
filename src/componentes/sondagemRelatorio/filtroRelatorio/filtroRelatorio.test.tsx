@@ -274,7 +274,8 @@ describe("FiltroRelatorio", () => {
           anoLetivo: 2026,
           ano: 3,
           ueCodigo: "20",
-          bimestreId: 1,
+          bimestreId: null,
+          semestre: 1,
           token: "fake-token",
         }),
       );
