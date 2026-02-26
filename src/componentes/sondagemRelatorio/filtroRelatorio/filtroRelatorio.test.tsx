@@ -24,7 +24,15 @@ jest.mock("antd", () => {
       value={value ?? ""}
       onChange={(event) => {
         const raw = event.target.value;
-        onChange?.(raw === "" ? undefined : Number(raw));
+        if (raw === "") {
+          onChange?.(undefined);
+          return;
+        }
+        if (raw === "null") {
+          onChange?.(null);
+          return;
+        }
+        onChange?.(Number(raw));
       }}
     >
       <option value="">Selecione</option>
@@ -274,6 +282,102 @@ describe("FiltroRelatorio", () => {
       expect(onDadosCarregados).toHaveBeenCalled();
       expect(onFiltrosAlterados).toHaveBeenCalled();
       expect(onErroValidacaoTurma).toHaveBeenCalledWith(null);
+    });
+  });
+
+  it("exibe bimestre para modalidade 5 e envia null ao selecionar 'Todos'", async () => {
+    renderWithForm();
+
+    const changeSelect = async (testId: string, value: string | number) => {
+      const select = screen.getByTestId(testId);
+      await waitFor(() => expect(select).not.toBeDisabled());
+      fireEvent.change(select, { target: { value: String(value) } });
+    };
+
+    await changeSelect("sondagem-select-ano-letivo", 2026);
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-modalidade", 5);
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-dre", 10);
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-ue", 20);
+    await waitFor(() => expect(TurmaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-turma", 30);
+    await waitFor(() => expect(validarTurma).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-componente-curricular", 40);
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-proficiencia", 3);
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("sondagem-select-bimestre"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId("sondagem-select-semestre"),
+      ).not.toBeInTheDocument();
+    });
+
+    const selectBimestre = screen.getByTestId(
+      "sondagem-select-bimestre",
+    ) as HTMLSelectElement;
+    expect(selectBimestre.value).toBe("");
+    expect(screen.getByText("Todos")).toBeInTheDocument();
+
+    fireEvent.change(selectBimestre, { target: { value: "null" } });
+
+    await waitFor(() => {
+      expect(DadosRelatorioService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          modalidade: 5,
+          bimestreId: null,
+          token: "fake-token",
+        }),
+      );
+    });
+  });
+
+  it("exibe semestre para modalidade diferente de 5", async () => {
+    renderWithForm();
+
+    const changeSelect = async (testId: string, value: string | number) => {
+      const select = screen.getByTestId(testId);
+      await waitFor(() => expect(select).not.toBeDisabled());
+      fireEvent.change(select, { target: { value: String(value) } });
+    };
+
+    await changeSelect("sondagem-select-ano-letivo", 2026);
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-modalidade", 1);
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-dre", 10);
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-ue", 20);
+    await waitFor(() => expect(TurmaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-turma", 30);
+    await waitFor(() => expect(validarTurma).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-componente-curricular", 40);
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-proficiencia", 3);
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("sondagem-select-semestre"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId("sondagem-select-bimestre"),
+      ).not.toBeInTheDocument();
     });
   });
 });

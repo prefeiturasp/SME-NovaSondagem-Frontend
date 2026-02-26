@@ -52,7 +52,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     Array<{ value: number; label: string }>
   >([]);
   const [listaSemestres, setListaSemestres] = useState<
-    Array<{ value: number; label: string }>
+    Array<{ value: number | null; label: string }>
   >([]);
   const [listaTurmas, setListaTurmas] = useState<
     Array<{ value: number; label: string; ano: number }>
@@ -64,7 +64,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     Array<{ value: number; label: string }>
   >([]);
   const [listaBimestres, setListaBimestres] = useState<
-    Array<{ value: number; label: string }>
+    Array<{ value: number | null; label: string }>
   >([]);
 
   const [desabilitarAnoLetivo] = useState(false);
@@ -84,6 +84,14 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   const [selectedProficiencia, setSelectedProficiencia] = useState<
     number | null
   >(null);
+
+  const normalizarNumero = (
+    value: number | string | null | undefined,
+  ): number | null => {
+    if (value === null || value === undefined || value === "") return null;
+    const numero = Number(value);
+    return Number.isNaN(numero) ? null : numero;
+  };
 
   const onChangeAnoLetivo = async (value: number) => {
     form.setFieldsValue({
@@ -117,7 +125,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
   };
 
-  const onChangeModalidade = async (value: number) => {
+  const onChangeModalidade = async (value: number | string | null) => {
+    const modalidadeSelecionada = normalizarNumero(value);
     form.setFieldsValue({
       dre: undefined,
       ue: undefined,
@@ -131,19 +140,19 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     setDesabilitarDRE(true);
     setDesabilitarUE(true);
     setDesabilitarTurma(true);
-    setSelectedModalidade(value ?? null);
+    setSelectedModalidade(modalidadeSelecionada);
     setSelectedProficiencia(null);
 
     let ehEja = 5;
 
-    if (value === ehEja) {
+    if (modalidadeSelecionada === ehEja) {
       setDesabilitarSemestre(true);
     } else {
       setDesabilitarSemestre(false);
     }
 
     const ano = form.getFieldValue("anoLetivo");
-    if (!value || !ano) return;
+    if (modalidadeSelecionada === null || !ano) return;
 
     const dres = await DreService({ token: usuario?.token, anoLetivo: ano });
     if (dres) {
@@ -232,15 +241,9 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
   };
 
-  const onChangeProficiencia = (value: number) => {
-    setSelectedProficiencia(value ?? null);
-    const permitir = [3, 5, 6].includes(value ?? -1);
-    if (!permitir) {
-      form.setFieldsValue({ bimestre: undefined, semestre: undefined });
-      setDesabilitarBimestre(true);
-      setDesabilitarSemestre(true);
-      return;
-    }
+  const onChangeProficiencia = (value: number | string | null) => {
+    const proficienciaSelecionada = normalizarNumero(value);
+    setSelectedProficiencia(proficienciaSelecionada);
 
     if (selectedModalidade === 5) {
       setDesabilitarBimestre(false);
@@ -250,8 +253,21 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       setDesabilitarBimestre(true);
     }
   };
-  const onChangeSemestre = () => {};
-  const onChangeBimestre = () => {};
+
+  const onChangeSemestre = (value: number | null) => {
+    const valores = {
+      ...form.getFieldsValue(),
+      semestre: value,
+    } as ValoresFiltroRelatorio;
+    void buscarDados(valores);
+  };
+  const onChangeBimestre = (value: number | null) => {
+    const valores = {
+      ...form.getFieldsValue(),
+      bimestre: value,
+    } as ValoresFiltroRelatorio;
+    void buscarDados(valores);
+  };
 
   const onCancel = () => {
     form.resetFields();
@@ -285,6 +301,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     obterAnosLetivos(usuario?.token);
 
     setListaSemestres([
+      { value: null, label: "Todos" },
       { value: 1, label: "1º Semestre" },
       { value: 2, label: "2º Semestre" },
     ]);
@@ -312,7 +329,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   const obterBimestres = async (token: string) => {
     const resposta = await BimestreService({ token });
     if (resposta) {
-      setListaBimestres(resposta);
+      setListaBimestres([{ value: null, label: "Todos" }, ...resposta]);
       setDesabilitarBimestre(false);
     } else {
       setListaBimestres([]);
@@ -333,7 +350,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     } else if (typeof valores.semestre === "number") {
       bimestrePayload = valores.semestre;
     } else {
-      bimestrePayload = 1;
+      bimestrePayload = null;
     }
 
     const dados = await DadosRelatorioService({
@@ -351,52 +368,15 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     onFiltrosAlterados(valores);
   };
 
-  const camposObrigatorios: Array<keyof ValoresFiltroRelatorio> = [
-    "anoLetivo",
-    "dre",
-    "ue",
-    "modalidade",
-    "turma",
-    "componenteCurricular",
-    "proficiencia",
-  ];
-
-  const validarCamposPreenchidos = (valores: ValoresFiltroRelatorio) =>
-    camposObrigatorios.every((campo) => {
-      const valor = valores[campo];
-      return valor !== undefined && valor !== null;
-    });
-
-  const onValuesChange = (_: unknown, allValues: ValoresFiltroRelatorio) => {
-    if (validarCamposPreenchidos(allValues)) {
-      void buscarDados(allValues);
-      return;
-    }
-
-    onDadosCarregados(null);
-    onFiltrosAlterados(null);
-  };
-
   const isInfantil = selectedModalidade === 5;
-  let leitura = 3;
-  let mapeamentoDosSaberes = 5;
-  let capacidadeLeitora = 6;
-  const permitirBimestrePorProficiencia = [
-    leitura,
-    mapeamentoDosSaberes,
-    capacidadeLeitora,
-  ];
+  const temProficienciaSelecionada = selectedProficiencia !== null;
   const showBimestre =
-    selectedModalidade !== null &&
-    isInfantil &&
-    permitirBimestrePorProficiencia.includes(selectedProficiencia ?? -1);
+    selectedModalidade !== null && isInfantil && temProficienciaSelecionada;
   const showSemestre =
-    selectedModalidade !== null &&
-    !isInfantil &&
-    permitirBimestrePorProficiencia.includes(selectedProficiencia ?? -1);
+    selectedModalidade !== null && !isInfantil && temProficienciaSelecionada;
 
   return (
-    <Form form={form} layout="vertical" onValuesChange={onValuesChange}>
+    <Form form={form} layout="vertical">
       <Row gutter={16}>
         <Col xs={24} sm={24} md={8} lg={8} xl={8}>
           <Form.Item
