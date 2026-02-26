@@ -74,8 +74,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   const [desabilitarSemestre, setDesabilitarSemestre] = useState(false);
   const [desabilitarTurma, setDesabilitarTurma] = useState(true);
   const [desabilitarComponenteCurricular, setDesabilitarComponenteCurricular] =
-    useState(false);
-  const [desabilitarProficiencia, setDesabilitarProficiencia] = useState(false);
+    useState(true);
+  const [desabilitarProficiencia, setDesabilitarProficiencia] = useState(true);
   const [desabilitarBimestre, setDesabilitarBimestre] = useState(false);
 
   const [selectedModalidade, setSelectedModalidade] = useState<number | null>(
