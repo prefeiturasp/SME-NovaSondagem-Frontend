@@ -338,6 +338,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const buscarDados = async (valores: ValoresFiltroRelatorio) => {
+    onDadosCarregados(null);
+
     const ano = listaTurmas.find((turma) => turma.value === valores.turma)?.ano;
     valores.ano = ano;
     let bimestrePayload: number | null;

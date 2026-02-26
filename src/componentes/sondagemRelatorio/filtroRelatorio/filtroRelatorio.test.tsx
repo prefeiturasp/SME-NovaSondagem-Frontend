@@ -280,6 +280,13 @@ describe("FiltroRelatorio", () => {
         }),
       );
       expect(onDadosCarregados).toHaveBeenCalled();
+      expect(onDadosCarregados).toHaveBeenNthCalledWith(1, null);
+      expect(onDadosCarregados).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          tituloTabelaRespostas: "Leitura",
+        }),
+      );
       expect(onFiltrosAlterados).toHaveBeenCalled();
       expect(onErroValidacaoTurma).toHaveBeenCalledWith(null);
     });

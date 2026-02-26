@@ -95,6 +95,15 @@ jest.mock("../filtroRelatorio/filtroRelatorio", () => {
         >
           Carregar sem legenda
         </button>
+
+        <button
+          data-testid="filtro-limpar-dados"
+          onClick={() => {
+            props.onDadosCarregados(null);
+          }}
+        >
+          Limpar dados
+        </button>
       </Form>
     );
   });
@@ -217,6 +226,33 @@ describe("ConteudoRelatorio", () => {
       expect(mockFiltroReset).toHaveBeenCalledTimes(1);
       expect(screen.getByTestId("lista-relatorio")).toHaveTextContent(
         "sem-dados",
+      );
+      expect(screen.getByTestId("legendas-relatorio")).toHaveTextContent(
+        '"dataLen":0',
+      );
+    });
+  });
+
+  it("deve limpar legenda ao receber dados nulos em uma nova busca", async () => {
+    render(<ConteudoRelatorio />);
+
+    fireEvent.click(screen.getByTestId("filtro-normal"));
+    await waitFor(() => {
+      const legendas = screen.getByTestId("legendas-relatorio");
+      expect(legendas).toHaveTextContent('"dataLen":1');
+      expect(screen.getByTestId("lista-relatorio")).toHaveTextContent(
+        "Relatório teste",
+      );
+    });
+
+    fireEvent.click(screen.getByTestId("filtro-limpar-dados"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("lista-relatorio")).toHaveTextContent(
+        "sem-dados",
+      );
+      expect(screen.getByTestId("legendas-relatorio")).toHaveTextContent(
+        '"dataLen":0',
       );
     });
   });
