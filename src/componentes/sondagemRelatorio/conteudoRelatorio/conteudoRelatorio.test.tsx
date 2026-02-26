@@ -68,6 +68,17 @@ jest.mock("../filtroRelatorio/filtroRelatorio", () => {
         </button>
 
         <button
+          data-testid="filtro-erro-turma"
+          onClick={() => {
+            props.onErroValidacaoTurma(
+              "Turma inválida para geração do relatório",
+            );
+          }}
+        >
+          Disparar erro turma
+        </button>
+
+        <button
           data-testid="filtro-sem-legenda"
           onClick={() => {
             props.onFiltrosAlterados({
@@ -97,6 +108,10 @@ jest.mock(
     </div>
   ),
 );
+
+jest.mock("~/componentes/biblioteca/Alerta", () => (props: any) => (
+  <div data-testid="alerta-mock">{props.alerta?.mensagem}</div>
+));
 
 jest.mock("../../sondagem/legendas/legendas", () => (props: any) => (
   <div data-testid="legendas-relatorio">
@@ -202,6 +217,18 @@ describe("ConteudoRelatorio", () => {
       expect(mockFiltroReset).toHaveBeenCalledTimes(1);
       expect(screen.getByTestId("lista-relatorio")).toHaveTextContent(
         "sem-dados",
+      );
+    });
+  });
+
+  it("deve exibir alerta quando filtro informar erro de validação de turma", async () => {
+    render(<ConteudoRelatorio />);
+
+    fireEvent.click(screen.getByTestId("filtro-erro-turma"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("alerta-mock")).toHaveTextContent(
+        "Turma inválida para geração do relatório",
       );
     });
   });

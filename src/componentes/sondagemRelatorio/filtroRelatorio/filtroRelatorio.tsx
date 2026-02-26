@@ -21,17 +21,22 @@ import UeService from "../../../services/ue/ueService";
 import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import TurmaService from "../../../services/turma/turmaService";
 import DadosRelatorioService from "../../../services/buscarDadosRelatorio/buscarDadosRelatorio";
+import { validarTurma } from "../../../services/turmaService";
 
 type FiltroRelatorioProps = {
   form: FormInstance;
   onDadosCarregados: (dados: DadosTabelaDinamica | null) => void;
   onFiltrosAlterados: (filtros: ValoresFiltroRelatorio | null) => void;
+  onErroValidacaoTurma: (mensagem: string | null) => void;
 };
 
 const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   { reset: () => void },
   FiltroRelatorioProps
-> = ({ form, onDadosCarregados, onFiltrosAlterados }, ref) => {
+> = (
+  { form, onDadosCarregados, onFiltrosAlterados, onErroValidacaoTurma },
+  ref,
+) => {
   const usuario = useSelector((store: any) => store.usuario);
 
   const [listaAnosLetivos, setListaAnosLetivos] = useState<
@@ -191,7 +196,23 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
   };
 
-  const onChangeTurma = () => {};
+  const onChangeTurma = async (turma: number) => {
+    const resultado = await validarTurma({
+      turmaId: turma,
+      token: usuario?.token,
+    });
+    if (!resultado.valida && resultado.mensagens.length > 0) {
+      setDesabilitarComponenteCurricular(true);
+      setDesabilitarProficiencia(true);
+      onErroValidacaoTurma(resultado.mensagens.join(" "));
+      return false;
+    } else {
+      setDesabilitarComponenteCurricular(false);
+      setDesabilitarProficiencia(false);
+      onErroValidacaoTurma(null);
+      return true;
+    }
+  };
 
   const onChangeComponenteCurricular = async (value: number) => {
     const modalidade = form.getFieldValue("modalidade");
@@ -326,8 +347,6 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       ueCodigo: String(valores.ue),
       token: usuario?.token,
     });
-    console.log("dados do relatorio", dados);
-    console.log("valores do filtro", valores);
     onDadosCarregados(dados);
     onFiltrosAlterados(valores);
   };

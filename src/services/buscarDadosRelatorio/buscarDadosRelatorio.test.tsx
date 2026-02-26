@@ -1,7 +1,13 @@
 import NovaSondagemServico from "../../core/servico/servico";
 import DadosRelatorioService from "./buscarDadosRelatorio";
+import { notification } from "antd";
 
 jest.mock("../../core/servico/servico");
+jest.mock("antd", () => ({
+  notification: {
+    error: jest.fn(),
+  },
+}));
 
 describe("DadosRelatorioService", () => {
   const parametrosBase = {
@@ -108,6 +114,47 @@ describe("DadosRelatorioService", () => {
 
     expect(resultado).toBeNull();
     expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(notification.error).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "Erro ao carregar dados do relatório",
+      }),
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("deve exibir detalhes da API na notificação quando houver campo errors", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+
+    (NovaSondagemServico.get as jest.Mock).mockRejectedValueOnce({
+      response: {
+        data: {
+          title: "Falha de validação",
+          errors: {
+            turmaId: ["Turma inválida"],
+            ueCodigo: ["UE não encontrada"],
+          },
+        },
+      },
+    });
+
+    const resultado = await DadosRelatorioService({
+      ...parametrosBase,
+      bimestreId: null,
+    });
+
+    expect(resultado).toBeNull();
+    expect(notification.error).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "Erro ao carregar dados do relatório",
+        description: expect.stringContaining("turmaId: Turma inválida"),
+      }),
+    );
+    expect(notification.error).toHaveBeenCalledWith(
+      expect.objectContaining({
+        description: expect.stringContaining("ueCodigo: UE não encontrada"),
+      }),
+    );
 
     consoleErrorSpy.mockRestore();
   });
