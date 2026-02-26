@@ -177,6 +177,11 @@ describe("FiltroRelatorio", () => {
       expect(AnoLetivoService).toHaveBeenCalledWith({ token: "fake-token" });
     });
 
+    expect(
+      screen.getByTestId("sondagem-select-componente-curricular"),
+    ).toBeDisabled();
+    expect(screen.getByTestId("sondagem-select-proficiencia")).toBeDisabled();
+
     expect(ComponenteCurricularService).not.toHaveBeenCalled();
     expect(BimestreService).not.toHaveBeenCalled();
   });
