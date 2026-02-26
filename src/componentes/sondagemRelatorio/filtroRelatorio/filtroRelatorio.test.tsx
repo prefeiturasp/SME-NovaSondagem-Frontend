@@ -262,7 +262,7 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
-    await changeSelect("sondagem-select-semestre", 1);
+    await changeSelect("sondagem-select-semestre", 0);
 
     await waitFor(() => {
       expect(DadosRelatorioService).toHaveBeenCalledWith(
@@ -275,7 +275,7 @@ describe("FiltroRelatorio", () => {
           ano: 3,
           ueCodigo: "20",
           bimestreId: null,
-          semestre: 1,
+          semestre: 0,
           token: "fake-token",
         }),
       );
@@ -350,7 +350,7 @@ describe("FiltroRelatorio", () => {
     });
   });
 
-  it("exibe semestre para modalidade diferente de 5", async () => {
+  it("exibe semestre para modalidade diferente de 5 com opções Todos, 1º e 2º", async () => {
     renderWithForm();
 
     const changeSelect = async (testId: string, value: string | number) => {
@@ -387,6 +387,14 @@ describe("FiltroRelatorio", () => {
         screen.queryByTestId("sondagem-select-bimestre"),
       ).not.toBeInTheDocument();
     });
+
+    expect(screen.getByText("Todos")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "1º Semestre" })).toHaveValue(
+      "0",
+    );
+    expect(screen.getByRole("option", { name: "2º Semestre" })).toHaveValue(
+      "1",
+    );
 
     expect(BimestreService).not.toHaveBeenCalled();
   });

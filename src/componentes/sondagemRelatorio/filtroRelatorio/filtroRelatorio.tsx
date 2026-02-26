@@ -331,8 +331,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       setDesabilitarBimestre(true);
       setListaSemestres([
         { value: null, label: "Todos" },
-        { value: 1, label: "1º Semestre" },
-        { value: 2, label: "2º Semestre" },
+        { value: 0, label: "1º Semestre" },
+        { value: 1, label: "2º Semestre" },
       ]);
     }
   };
