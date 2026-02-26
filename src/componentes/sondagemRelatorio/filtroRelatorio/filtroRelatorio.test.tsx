@@ -24,7 +24,15 @@ jest.mock("antd", () => {
       value={value ?? ""}
       onChange={(event) => {
         const raw = event.target.value;
-        onChange?.(raw === "" ? undefined : Number(raw));
+        if (raw === "") {
+          onChange?.(undefined);
+          return;
+        }
+        if (raw === "null") {
+          onChange?.(null);
+          return;
+        }
+        onChange?.(Number(raw));
       }}
     >
       <option value="">Selecione</option>
@@ -162,16 +170,15 @@ describe("FiltroRelatorio", () => {
     });
   });
 
-  it("carrega serviços iniciais com token do usuário", async () => {
+  it("carrega apenas anos letivos na inicialização", async () => {
     renderWithForm();
 
     await waitFor(() => {
       expect(AnoLetivoService).toHaveBeenCalledWith({ token: "fake-token" });
-      expect(ComponenteCurricularService).toHaveBeenCalledWith({
-        token: "fake-token",
-      });
-      expect(BimestreService).toHaveBeenCalledWith({ token: "fake-token" });
     });
+
+    expect(ComponenteCurricularService).not.toHaveBeenCalled();
+    expect(BimestreService).not.toHaveBeenCalled();
   });
 
   it("chama validação da turma e propaga erro quando turma inválida", async () => {
@@ -255,7 +262,7 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
-    await changeSelect("sondagem-select-semestre", 1);
+    await changeSelect("sondagem-select-semestre", 0);
 
     await waitFor(() => {
       expect(DadosRelatorioService).toHaveBeenCalledWith(
@@ -267,13 +274,128 @@ describe("FiltroRelatorio", () => {
           anoLetivo: 2026,
           ano: 3,
           ueCodigo: "20",
-          bimestreId: 1,
+          bimestreId: null,
+          semestre: 0,
           token: "fake-token",
         }),
       );
       expect(onDadosCarregados).toHaveBeenCalled();
+      expect(onDadosCarregados).toHaveBeenNthCalledWith(1, null);
+      expect(onDadosCarregados).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          tituloTabelaRespostas: "Leitura",
+        }),
+      );
       expect(onFiltrosAlterados).toHaveBeenCalled();
       expect(onErroValidacaoTurma).toHaveBeenCalledWith(null);
     });
+  });
+
+  it("exibe bimestre para modalidade 5 e envia null ao selecionar 'Todos'", async () => {
+    renderWithForm();
+
+    const changeSelect = async (testId: string, value: string | number) => {
+      const select = screen.getByTestId(testId);
+      await waitFor(() => expect(select).not.toBeDisabled());
+      fireEvent.change(select, { target: { value: String(value) } });
+    };
+
+    await changeSelect("sondagem-select-ano-letivo", 2026);
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-modalidade", 5);
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-dre", 10);
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-ue", 20);
+    await waitFor(() => expect(TurmaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-turma", 30);
+    await waitFor(() => expect(validarTurma).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-componente-curricular", 40);
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-proficiencia", 3);
+    await waitFor(() => expect(BimestreService).toHaveBeenCalled());
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("sondagem-select-bimestre"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId("sondagem-select-semestre"),
+      ).not.toBeInTheDocument();
+    });
+
+    const selectBimestre = screen.getByTestId(
+      "sondagem-select-bimestre",
+    ) as HTMLSelectElement;
+    expect(selectBimestre.value).toBe("");
+    expect(screen.getByText("Todos")).toBeInTheDocument();
+
+    fireEvent.change(selectBimestre, { target: { value: "null" } });
+
+    await waitFor(() => {
+      expect(DadosRelatorioService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          modalidade: 5,
+          bimestreId: null,
+          token: "fake-token",
+        }),
+      );
+    });
+  });
+
+  it("exibe semestre para modalidade diferente de 5 com opções Todos, 1º e 2º", async () => {
+    renderWithForm();
+
+    const changeSelect = async (testId: string, value: string | number) => {
+      const select = screen.getByTestId(testId);
+      await waitFor(() => expect(select).not.toBeDisabled());
+      fireEvent.change(select, { target: { value: String(value) } });
+    };
+
+    await changeSelect("sondagem-select-ano-letivo", 2026);
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-modalidade", 1);
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-dre", 10);
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-ue", 20);
+    await waitFor(() => expect(TurmaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-turma", 30);
+    await waitFor(() => expect(validarTurma).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-componente-curricular", 40);
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-proficiencia", 3);
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("sondagem-select-semestre"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId("sondagem-select-bimestre"),
+      ).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Todos")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "1º Semestre" })).toHaveValue(
+      "0",
+    );
+    expect(screen.getByRole("option", { name: "2º Semestre" })).toHaveValue(
+      "1",
+    );
+
+    expect(BimestreService).not.toHaveBeenCalled();
   });
 });
