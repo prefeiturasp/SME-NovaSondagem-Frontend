@@ -417,18 +417,6 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
 
     const ano = listaTurmas.find((turma) => turma.value === valores.turma)?.ano;
     valores.ano = ano;
-    let bimestrePayload: number | null;
-    if (valores.modalidade === 5) {
-      if (typeof valores.bimestre === "number") {
-        bimestrePayload = valores.bimestre;
-      } else {
-        bimestrePayload = null;
-      }
-    } else if (typeof valores.semestre === "number") {
-      bimestrePayload = valores.semestre;
-    } else {
-      bimestrePayload = null;
-    }
 
     const dados = await DadosRelatorioService({
       turmaId: valores.turma as number,
@@ -437,7 +425,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       modalidade: valores.modalidade as number,
       ano: ano as number,
       anoLetivo: valores.anoLetivo as number,
-      bimestreId: bimestrePayload,
+      bimestreId: valores.bimestre as number | null,
+      semestre: valores.semestre as number | null,
       ueCodigo: String(valores.ue),
       token: usuario?.token,
     });

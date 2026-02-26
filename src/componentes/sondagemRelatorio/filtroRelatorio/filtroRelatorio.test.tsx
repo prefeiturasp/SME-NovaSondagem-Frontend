@@ -170,16 +170,15 @@ describe("FiltroRelatorio", () => {
     });
   });
 
-  it("carrega serviços iniciais com token do usuário", async () => {
+  it("carrega apenas anos letivos na inicialização", async () => {
     renderWithForm();
 
     await waitFor(() => {
       expect(AnoLetivoService).toHaveBeenCalledWith({ token: "fake-token" });
-      expect(ComponenteCurricularService).toHaveBeenCalledWith({
-        token: "fake-token",
-      });
-      expect(BimestreService).toHaveBeenCalledWith({ token: "fake-token" });
     });
+
+    expect(ComponenteCurricularService).not.toHaveBeenCalled();
+    expect(BimestreService).not.toHaveBeenCalled();
   });
 
   it("chama validação da turma e propaga erro quando turma inválida", async () => {
@@ -320,6 +319,7 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
+    await waitFor(() => expect(BimestreService).toHaveBeenCalled());
 
     await waitFor(() => {
       expect(
@@ -386,5 +386,7 @@ describe("FiltroRelatorio", () => {
         screen.queryByTestId("sondagem-select-bimestre"),
       ).not.toBeInTheDocument();
     });
+
+    expect(BimestreService).not.toHaveBeenCalled();
   });
 });

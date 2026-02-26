@@ -17,7 +17,6 @@ describe("DadosRelatorioService", () => {
     modalidade: 3,
     ano: 5,
     anoLetivo: 2026,
-    semestre: 1,
     ueCodigo: "123456",
     token: "token-teste",
   };
@@ -39,6 +38,7 @@ describe("DadosRelatorioService", () => {
 
     const resultado = await DadosRelatorioService({
       ...parametrosBase,
+      semestre: 1,
       bimestreId: null,
     });
 
@@ -53,7 +53,7 @@ describe("DadosRelatorioService", () => {
           modalidade: parametrosBase.modalidade,
           ano: parametrosBase.ano,
           anoLetivo: parametrosBase.anoLetivo,
-          semestre: parametrosBase.semestre,
+          semestre: 1,
           ueCodigo: parametrosBase.ueCodigo,
           bimestreId: null,
         },
@@ -93,6 +93,7 @@ describe("DadosRelatorioService", () => {
       "/Relatorio/sondagem-por-turma",
       expect.objectContaining({
         params: expect.objectContaining({
+          semestre: undefined,
           bimestreId: undefined,
         }),
       }),
