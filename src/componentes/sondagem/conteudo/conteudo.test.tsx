@@ -810,15 +810,12 @@ describe("Conteudo", () => {
         "#sondagem-select-proficiencia",
       );
 
-      if (proficienciaSelect) {
-        fireEvent.mouseDown(proficienciaSelect);
-        await waitFor(() => {
-          const option = document.querySelector(
-            '[title="Produção de Texto - Bimestral"]',
-          ) as HTMLElement;
-          if (option) fireEvent.click(option);
-        });
-      }
+      expect(proficienciaSelect).toBeInTheDocument();
+      fireEvent.mouseDown(proficienciaSelect as HTMLElement);
+      const opcaoProficiencia = await screen.findByTitle(
+        "Produção de Texto - Bimestral",
+      );
+      fireEvent.click(opcaoProficiencia);
 
       expect(NovaSondagemServico.get).not.toHaveBeenCalledWith(
         "/Questionario",
@@ -829,17 +826,16 @@ describe("Conteudo", () => {
         const bimestreSelect = container.querySelector(
           "#sondagem-select-bimestre",
         );
-        if (bimestreSelect) {
-          fireEvent.mouseDown(bimestreSelect);
-        }
+        expect(bimestreSelect).toBeInTheDocument();
+        expect(bimestreSelect?.className).not.toContain("ant-select-disabled");
       });
 
-      await waitFor(() => {
-        const option = document.querySelector(
-          '[title="1º Bimestre"]',
-        ) as HTMLElement;
-        if (option) fireEvent.click(option);
-      });
+      const bimestreSelect = container.querySelector(
+        "#sondagem-select-bimestre",
+      ) as HTMLElement;
+      fireEvent.mouseDown(bimestreSelect);
+      const opcaoBimestre = await screen.findByTitle("1º Bimestre");
+      fireEvent.click(opcaoBimestre);
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
@@ -886,15 +882,12 @@ describe("Conteudo", () => {
         "#sondagem-select-proficiencia",
       );
 
-      if (proficienciaSelect) {
-        fireEvent.mouseDown(proficienciaSelect);
-        await waitFor(() => {
-          const option = document.querySelector(
-            '[title="Produção de Texto - Bimestral"]',
-          ) as HTMLElement;
-          if (option) fireEvent.click(option);
-        });
-      }
+      expect(proficienciaSelect).toBeInTheDocument();
+      fireEvent.mouseDown(proficienciaSelect as HTMLElement);
+      const opcaoProficienciaBimestral = await screen.findByTitle(
+        "Produção de Texto - Bimestral",
+      );
+      fireEvent.click(opcaoProficienciaBimestral);
 
       await waitFor(() => {
         const bimestreSelect = container.querySelector(
@@ -903,15 +896,9 @@ describe("Conteudo", () => {
         expect(bimestreSelect).toBeInTheDocument();
       });
 
-      if (proficienciaSelect) {
-        fireEvent.mouseDown(proficienciaSelect);
-        await waitFor(() => {
-          const option = document.querySelector(
-            '[title="Escrita"]',
-          ) as HTMLElement;
-          if (option) fireEvent.click(option);
-        });
-      }
+      fireEvent.mouseDown(proficienciaSelect as HTMLElement);
+      const opcaoEscrita = await screen.findByTitle("Escrita");
+      fireEvent.click(opcaoEscrita);
 
       await waitFor(() => {
         const bimestreSelect = container.querySelector(

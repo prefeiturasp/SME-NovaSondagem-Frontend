@@ -1,3 +1,8 @@
-.relatorio {
-    background-color: lightgray;
+body {
+  background-color: #f5f6f8;
+}
+
+.classtudoRelatorio {
+  background-color: #f5f6f8;
+  padding: 1rem 2rem;
 }
