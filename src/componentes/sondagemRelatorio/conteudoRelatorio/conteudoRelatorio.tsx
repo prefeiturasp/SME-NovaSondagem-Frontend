@@ -69,6 +69,8 @@ const ConteudoRelatorio: React.FC = () => {
       )
         setDadosLegenda(LEGENDA_EJA_CAPACIDADE_LEITORA);
       else setDadosLegenda(dadosLegenda);
+    } else {
+      setDadosLegenda(null);
     }
   }, [dados]);
 
