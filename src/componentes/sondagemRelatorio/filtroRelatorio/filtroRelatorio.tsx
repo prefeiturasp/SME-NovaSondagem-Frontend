@@ -331,8 +331,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       setDesabilitarBimestre(true);
       setListaSemestres([
         { value: null, label: "Todos" },
-        { value: 0, label: "1º Semestre" },
-        { value: 1, label: "2º Semestre" },
+        { value: 1, label: "1º Semestre" },
+        { value: 2, label: "2º Semestre" },
       ]);
     }
   };
@@ -340,7 +340,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   const onChangeSemestre = (value: number | null) => {
     const valores = {
       ...form.getFieldsValue(),
-      semestre: value,
+      semestreId: value,
     } as ValoresFiltroRelatorio;
     void buscarDados(valores);
   };
@@ -427,7 +427,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       ano: ano as number,
       anoLetivo: valores.anoLetivo as number,
       bimestreId: isInfantil ? (valores.bimestre ?? null) : null,
-      semestre: isInfantil ? null : (valores.semestre ?? null),
+      semestreId: isInfantil ? null : (valores.semestreId ?? null),
       ueCodigo: String(valores.ue),
       token: usuario?.token,
     });
