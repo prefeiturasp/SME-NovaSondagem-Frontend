@@ -63,4 +63,5 @@ export interface DadosTabelaDinamica {
   tituloTabelaRespostas: string;
   estudantes: Estudante[];
   questaoId: number;
+  questionarioId: number;
 }
