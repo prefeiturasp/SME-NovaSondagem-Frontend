@@ -23,7 +23,7 @@ export const parametroQuestionarioService = async ({
         headers: { "X-Token-Principal": token },
       },
     );
-    return resposta?.data;
+    return Array.isArray(resposta?.data) ? resposta.data : [];
   } catch (error: any) {
     console.error("Erro ao validar parâmetro do questionário:", error);
 

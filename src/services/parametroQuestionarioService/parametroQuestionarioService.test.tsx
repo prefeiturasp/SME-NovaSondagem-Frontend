@@ -254,7 +254,7 @@ describe("parametroQuestionarioService", () => {
       });
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        "Erro ao validar questionário:",
+        "Erro ao validar parâmetro do questionário:",
         erro,
       );
     });
@@ -269,7 +269,7 @@ describe("parametroQuestionarioService", () => {
         token: "token",
       });
 
-      expect(resultado).toEqual(null);
+      expect(resultado).toEqual([]);
     });
 
     it("deve retornar array vazio quando resposta é undefined", async () => {
@@ -282,7 +282,7 @@ describe("parametroQuestionarioService", () => {
         token: "token",
       });
 
-      expect(resultado).toEqual(undefined);
+      expect(resultado).toEqual([]);
     });
 
     it("deve lidar com erro de tipo 401 (Não autorizado)", async () => {
