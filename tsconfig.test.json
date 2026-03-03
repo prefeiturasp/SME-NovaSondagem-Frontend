@@ -5,9 +5,12 @@
     "verbatimModuleSyntax": false,
     "allowImportingTsExtensions": false,
     "moduleResolution": "node",
-    "module": "esnext",
+    "module": "commonjs",
     "target": "ES2022",
-    "types": ["jest", "@testing-library/jest-dom", "node", "vite/client"]
+    "types": ["jest", "@testing-library/jest-dom", "node"],
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "isolatedModules": true
   },
   "include": ["src/**/*", "src/types/**/*"]
 }

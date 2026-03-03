@@ -5,7 +5,7 @@ import type {
   LegendaQuestionario,
   ValoresFiltroRelatorio,
 } from "../../../core/dto/typesRelatorio";
-import { Button, Card, Spin, Form, Row } from "antd";
+import { Button, Card, Spin, Form, Row, Dropdown, notification } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
 import styled from "styled-components";
@@ -14,6 +14,9 @@ import { LEGENDA_EJA_CAPACIDADE_LEITORA } from "../../sondagem/legendas/legendaE
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import { Modalidade, Proficiencia } from "../../../core/dto/types";
 import Alerta from "../../biblioteca/Alerta";
+import RelatorioExportService from "../../../services/relatorioExportService/RelatorioExportService";
+import { useSelector } from "react-redux";
+
 export const Icon = styled.i``;
 
 const ConteudoRelatorio: React.FC = () => {
@@ -21,20 +24,62 @@ const ConteudoRelatorio: React.FC = () => {
   const filtroRef = useRef<{ reset: () => void } | null>(null);
   const [dados, setDados] = useState<DadosTabelaDinamica | null>(null);
   const [filtros, setFiltros] = useState<ValoresFiltroRelatorio | null>(null);
+  const usuario = useSelector((store: any) => store.usuario);
 
   const [dadosLegenda, setDadosLegenda] = useState<LegendasProps[] | null>(
     null,
   );
 
   const [loading] = useState(false);
-  const [loadingGerar] = useState<boolean>(false);
+  const [loadingGerar, setLoadingGerar] = useState<boolean>(false);
 
   const [erroValidacaoTurma, setErroValidacaoTurma] = useState<string | null>(
     null,
   );
 
-  const GerarDados = async () => {
-    // Geradados do relatorio, fica habilitado so quando tem dados na tabela.
+  const GerarDados = async (formato: "pdf" | "excel") => {
+    if (!filtros || !dados) return;
+
+    setLoadingGerar(true);
+    try {
+      const extensaoRelatorio = formato === "pdf" ? 1 : 4;
+      const sucesso = await RelatorioExportService({
+        extensaoRelatorio: extensaoRelatorio,
+        turmaId: filtros.turma as number,
+        proficienciaId: filtros.proficiencia as number,
+        componenteCurricularId: filtros.componenteCurricular as number,
+        modalidade: filtros.modalidade as number,
+        anoLetivo: filtros.anoLetivo as number,
+        semestreId: filtros.semestreId ?? null,
+        bimestreId: filtros.bimestre ?? null,
+        ueCodigo: String(filtros.ue),
+        token: usuario?.token,
+      });
+
+      if (sucesso) {
+        notification.success({
+          message: "Sucesso",
+          description:
+            "Solicitação de geração do relatório gerada com sucesso. Em breve você receberá uma notificação com o resultado.",
+          duration: 4,
+        });
+      } else {
+        notification.error({
+          message: "Erro",
+          description: "Falha ao gerar relatório. Tente novamente.",
+          duration: 4,
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao gerar relatório:", error);
+      notification.error({
+        message: "Erro",
+        description: "Ocorreu um erro ao gerar o relatório.",
+        duration: 4,
+      });
+    } finally {
+      setLoadingGerar(false);
+    }
   };
 
   const CancelarCadastroSondagem = async () => {
@@ -114,17 +159,27 @@ const ConteudoRelatorio: React.FC = () => {
             Cancelar
           </Button>
 
-          <Button
-            id="sondagem-button-gerar"
-            className="sondagemBotaoEstilo"
-            onClick={() => {
-              GerarDados();
+          <Dropdown
+            menu={{
+              items: [
+                { key: "pdf", label: "Relatório em PDF" },
+                { key: "excel", label: "Relatório em .xlsx (Excel)" },
+              ],
+              onClick: ({ key }) => void GerarDados(key as "pdf" | "excel"),
             }}
-            loading={loadingGerar}
-            icon={<Icon className="fa fa-print iconBotaoGerar" />}
+            trigger={["click"]}
+            disabled={!dados}
           >
-            Gerar
-          </Button>
+            <Button
+              id="sondagem-button-gerar"
+              className="sondagemBotaoEstilo"
+              loading={loadingGerar}
+              disabled={!dados || loadingGerar}
+              icon={<Icon className="fa fa-print iconBotaoGerar" />}
+            >
+              Gerar
+            </Button>
+          </Dropdown>
         </div>
       </div>
       <Card className="CardSondagemEfeitosRelatorio">
