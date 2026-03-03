@@ -168,7 +168,6 @@ const ConteudoRelatorio: React.FC = () => {
             Cancelar
           </Button>
 
-          {/* dropdown com opções de formato */}
           <Dropdown
             overlay={
               <Menu onClick={({ key }) => GerarDados(key as "pdf" | "excel")}>
