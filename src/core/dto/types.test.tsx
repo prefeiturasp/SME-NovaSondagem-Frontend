@@ -279,6 +279,7 @@ describe("Types - Interfaces de Sondagem", () => {
       tituloTabelaRespostas: "Qual hipótese de escrita o estudante apresenta?",
       estudantes: [],
       questaoId: 0,
+      questionarioId: 0,
       ...override,
     });
 
@@ -290,6 +291,7 @@ describe("Types - Interfaces de Sondagem", () => {
         tituloTabelaRespostas: expect.any(String),
         estudantes: expect.any(Array),
         questaoId: expect.any(Number),
+        questionarioId: expect.any(Number),
       });
     });
 
@@ -305,6 +307,13 @@ describe("Types - Interfaces de Sondagem", () => {
 
       expect(dados.questaoId).toBe(456);
       expect(typeof dados.questaoId).toBe("number");
+    });
+
+    it("deve conter questionarioId válido", () => {
+      const dados = criarDadosTabelaDinamica({ questionarioId: 654 });
+
+      expect(dados.questionarioId).toBe(654);
+      expect(typeof dados.questionarioId).toBe("number");
     });
 
     it("deve gerenciar lista vazia de estudantes", () => {
@@ -341,11 +350,13 @@ describe("Types - Interfaces de Sondagem", () => {
       const dados = criarDadosTabelaDinamica({
         sondagemId: 456,
         questaoId: 789,
+        questionarioId: 321,
         estudantes,
       });
 
       expect(dados.sondagemId).toBe(456);
       expect(dados.questaoId).toBe(789);
+      expect(dados.questionarioId).toBe(321);
       expect(dados.estudantes).toHaveLength(2);
       expect(dados.estudantes[0].nome).toBe("Ana Silva");
       expect(dados.estudantes[1].pap).toBe(true);
@@ -429,6 +440,7 @@ describe("Types - Interfaces de Sondagem", () => {
       const dados: DadosTabelaDinamica = {
         sondagemId: 789,
         questaoId: 101,
+        questionarioId: 555,
         tituloTabelaRespostas:
           "Qual hipótese de escrita o estudante apresenta?",
         estudantes: [estudante],
@@ -436,6 +448,7 @@ describe("Types - Interfaces de Sondagem", () => {
 
       expect(dados.sondagemId).toBe(789);
       expect(dados.questaoId).toBe(101);
+      expect(dados.questionarioId).toBe(555);
       expect(dados.tituloTabelaRespostas).toBe(
         "Qual hipótese de escrita o estudante apresenta?",
       );
@@ -498,12 +511,14 @@ describe("Types - Interfaces de Sondagem", () => {
       const dados: DadosTabelaDinamica = {
         sondagemId: 999,
         questaoId: 202,
+        questionarioId: 666,
         tituloTabelaRespostas: "Sondagem de leitura",
         estudantes,
       };
 
       expect(dados.sondagemId).toBe(999);
       expect(dados.questaoId).toBe(202);
+      expect(dados.questionarioId).toBe(666);
       expect(dados.estudantes).toHaveLength(3);
       expect(dados.estudantes[0].linguaPortuguesaSegundaLingua).toBe(true);
       expect(dados.estudantes[1].linguaPortuguesaSegundaLingua).toBe(false);

@@ -63,6 +63,8 @@ const mockBimestres = [
 const mockQuestionario = {
   sondagemId: 1,
   questaoId: 10,
+  questionarioId: 99,
+  tituloTabelaRespostas: "Sistema de escrita",
   podeSalvar: true,
   inseridoPor: "Inserido por Professor João em 01/01/2024",
   alteradoPor: "Alterado por Professor Maria em 10/01/2024",
@@ -2348,10 +2350,45 @@ describe("Conteudo", () => {
 
   describe("Renderização de SondagemListaDinamica", () => {
     it("deve renderizar SondagemListaDinamica com dados do questionário", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValue({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      (NovaSondagemServico.get as jest.Mock).mockImplementation(
+        (url: string) => {
+          if (url === "/ComponenteCurricular") {
+            return Promise.resolve({ data: mockDisciplinas });
+          }
+
+          if (url.startsWith("/Proficiencia/")) {
+            return Promise.resolve({ data: mockProficiencias });
+          }
+
+          if (url === "/Questionario") {
+            return Promise.resolve({ data: mockQuestionario });
+          }
+
+          if (
+            url ===
+            `/ParametroQuestionario/questionario/${mockQuestionario.questionarioId}`
+          ) {
+            return Promise.resolve({
+              data: [
+                {
+                  id: 1,
+                  idQuestionario: mockQuestionario.questionarioId,
+                  valor: "true",
+                  tipo: "PossuiLinguaPortuguesaSegundaLingua",
+                },
+                {
+                  id: 2,
+                  idQuestionario: mockQuestionario.questionarioId,
+                  valor: "true",
+                  tipo: "ExibirTituloTabelaSondagem",
+                },
+              ],
+            });
+          }
+
+          return Promise.resolve({ data: [] });
+        },
+      );
 
       const store = createMockStoreWithUser({
         logado: true,
@@ -2404,6 +2441,15 @@ describe("Conteudo", () => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
           "/Questionario",
           expect.any(Object),
+        );
+      });
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          "/ParametroQuestionario/questionario/99",
+          {
+            headers: { "X-Token-Principal": "mock-token" },
+          },
         );
       });
 
