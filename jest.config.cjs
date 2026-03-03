@@ -13,17 +13,7 @@ module.exports = {
     "^.+\\.(ts|tsx)$": [
       "ts-jest",
       {
-        tsconfig: {
-          jsx: "react-jsx",
-          esModuleInterop: true,
-          verbatimModuleSyntax: false,
-          allowImportingTsExtensions: false,
-          moduleResolution: "node",
-          module: "esnext",
-          target: "ES2022",
-          resolveJsonModule: true,
-          types: ["jest", "@testing-library/jest-dom", "node", "vite/client"],
-        },
+        tsconfig: "tsconfig.test.json",
       },
     ],
     "^.+\\.(js|jsx)$": [
