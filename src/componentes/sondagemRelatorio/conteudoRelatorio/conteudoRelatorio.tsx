@@ -165,7 +165,7 @@ const ConteudoRelatorio: React.FC = () => {
                 { key: "pdf", label: "Relatório em PDF" },
                 { key: "excel", label: "Relatório em .xlsx (Excel)" },
               ],
-              onClick: ({ key }) => GerarDados(key as "pdf" | "excel"),
+              onClick: ({ key }) => void GerarDados(key as "pdf" | "excel"),
             }}
             trigger={["click"]}
             disabled={!dados}
