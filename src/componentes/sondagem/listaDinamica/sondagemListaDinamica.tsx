@@ -5,22 +5,20 @@ import SelectColorido from "../selectColorido";
 import { LogoAcessibilidade, LogoAEE, LogoPAP } from "../shared/logos";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
 import "./sondagemListaDinamica.css";
+import { parametroQuestionarioService } from "../../../services/parametroQuestionarioService/parametroQuestionarioService";
 
 interface ListaSondagemEscritaProps {
   dados: DadosTabelaDinamica | null;
   podeSalvar?: boolean;
-  naoExibirTituloTabelaRespostas?: boolean;
+  token: string;
 }
 
 const SondagemListaDinamica: React.FC<
   ListaSondagemEscritaProps & { formListaDinamica: any }
-> = ({
-  dados,
-  formListaDinamica,
-  podeSalvar = true,
-  naoExibirTituloTabelaRespostas,
-}) => {
-  const mostrarColunaLP = dados?.tituloTabelaRespostas === "Sistema de escrita";
+> = ({ dados, formListaDinamica, podeSalvar = true, token }) => {
+  const [mostrarColunaLP, setMostrarColunaLP] = useState(false);
+  const [mostrarTituloTabelaSondagem, setMostrarTituloTabelaSondagem] =
+    useState(true);
   const [opcoesCarregadas, setOpcoesCarregadas] = useState(false);
   const selectRefs = useRef<Map<string, any>>(new Map());
   const selectOpenStatesRef = useRef<Map<string, boolean>>(new Map());
@@ -34,10 +32,38 @@ const SondagemListaDinamica: React.FC<
   }, []);
 
   useEffect(() => {
-    if (dados?.estudantes && dados.estudantes.length > 0) {
-      setOpcoesCarregadas(true);
-    }
-  }, [dados]);
+    if (!dados?.estudantes || dados.estudantes.length === 0) return;
+
+    const carregarParametros = async () => {
+      try {
+        const response = await parametroQuestionarioService({
+          idQuestionario: dados.questionarioId ?? 0,
+          token: token,
+        });
+
+        const parametro = response.find(
+          (param) => param.tipo === "PossuiLinguaPortuguesaSegundaLingua",
+        );
+
+        const ExibirTituloTabelaSondagem = response.find(
+          (param) => param.tipo === "ExibirTituloTabelaSondagem",
+        );
+
+        setMostrarColunaLP(parametro?.valor === "true");
+
+        setMostrarTituloTabelaSondagem(
+          ExibirTituloTabelaSondagem?.valor !== "false",
+        );
+
+        setOpcoesCarregadas(true);
+      } catch (error) {
+        console.error("Erro ao carregar parâmetros do questionário:", error);
+        setOpcoesCarregadas(true);
+      }
+    };
+
+    carregarParametros();
+  }, [dados?.estudantes, dados?.questionarioId, token]);
 
   useEffect(() => {
     if (opcoesCarregadas && dados?.estudantes) {
@@ -231,13 +257,13 @@ const SondagemListaDinamica: React.FC<
       });
     });
 
-    if (naoExibirTituloTabelaRespostas) {
-      columns.push(...columnsDinamicas);
-    } else {
+    if (mostrarTituloTabelaSondagem) {
       columns.push({
         title: dados.tituloTabelaRespostas,
         children: [...columnsDinamicas],
       });
+    } else {
+      columns.push(...columnsDinamicas);
     }
   }
 

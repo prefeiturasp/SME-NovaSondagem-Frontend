@@ -9,7 +9,7 @@ interface ValidarDadosRelatorioParams {
   modalidade: number;
   ano: number;
   anoLetivo: number;
-  semestre?: number | null;
+  semestreId?: number | null;
   ueCodigo: string;
   bimestreId?: number | null;
   token: string;
@@ -22,7 +22,7 @@ const DadosRelatorioService = async ({
   modalidade,
   ano,
   anoLetivo,
-  semestre,
+  semestreId,
   ueCodigo,
   bimestreId,
   token,
@@ -39,7 +39,7 @@ const DadosRelatorioService = async ({
           modalidade,
           ano,
           anoLetivo,
-          semestre,
+          semestreId,
           ueCodigo,
           bimestreId,
         },

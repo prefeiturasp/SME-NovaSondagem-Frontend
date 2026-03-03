@@ -267,7 +267,7 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
-    await changeSelect("sondagem-select-semestre", 0);
+    await changeSelect("sondagem-select-semestre", "null");
 
     await waitFor(() => {
       expect(DadosRelatorioService).toHaveBeenCalledWith(
@@ -280,7 +280,7 @@ describe("FiltroRelatorio", () => {
           ano: 3,
           ueCodigo: "20",
           bimestreId: null,
-          semestre: 0,
+          semestreId: null,
           token: "fake-token",
         }),
       );
@@ -394,11 +394,12 @@ describe("FiltroRelatorio", () => {
     });
 
     expect(screen.getByText("Todos")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Todos" })).toHaveValue("Todos");
     expect(screen.getByRole("option", { name: "1º Semestre" })).toHaveValue(
-      "0",
+      "1",
     );
     expect(screen.getByRole("option", { name: "2º Semestre" })).toHaveValue(
-      "1",
+      "2",
     );
 
     expect(BimestreService).not.toHaveBeenCalled();

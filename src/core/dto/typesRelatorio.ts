@@ -46,7 +46,7 @@ export type ValoresFiltroRelatorio = {
   dre?: number;
   ue?: number;
   modalidade?: number;
-  semestre?: number;
+  semestreId?: number;
   turma?: number;
   componenteCurricular?: number;
   proficiencia?: number;
