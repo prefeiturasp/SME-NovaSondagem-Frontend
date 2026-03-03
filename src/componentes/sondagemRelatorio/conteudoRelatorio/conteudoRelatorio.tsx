@@ -5,16 +5,7 @@ import type {
   LegendaQuestionario,
   ValoresFiltroRelatorio,
 } from "../../../core/dto/typesRelatorio";
-import {
-  Button,
-  Card,
-  Spin,
-  Form,
-  Row,
-  Dropdown,
-  Menu,
-  notification,
-} from "antd";
+import { Button, Card, Spin, Form, Row, Dropdown, notification } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
 import styled from "styled-components";
@@ -53,7 +44,7 @@ const ConteudoRelatorio: React.FC = () => {
     try {
       const extensaoRelatorio = formato === "pdf" ? 1 : 4;
       const sucesso = await RelatorioExportService({
-        extensaoRelatorio: extensaoRelatorio as 1 | 4,
+        extensaoRelatorio: extensaoRelatorio,
         turmaId: filtros.turma as number,
         proficienciaId: filtros.proficiencia as number,
         componenteCurricularId: filtros.componenteCurricular as number,
@@ -169,12 +160,13 @@ const ConteudoRelatorio: React.FC = () => {
           </Button>
 
           <Dropdown
-            overlay={
-              <Menu onClick={({ key }) => GerarDados(key as "pdf" | "excel")}>
-                <Menu.Item key="pdf">Relatório em PDF</Menu.Item>
-                <Menu.Item key="excel">Relatório em .xlsx (Excel)</Menu.Item>
-              </Menu>
-            }
+            menu={{
+              items: [
+                { key: "pdf", label: "Relatório em PDF" },
+                { key: "excel", label: "Relatório em .xlsx (Excel)" },
+              ],
+              onClick: ({ key }) => GerarDados(key as "pdf" | "excel"),
+            }}
             trigger={["click"]}
             disabled={!dados}
           >
