@@ -101,8 +101,9 @@ const Conteudo: React.FC = () => {
   }, [turma, usuario?.token]);
 
   const obterDisciplinas = useCallback(async () => {
+    
     try {
-      const resposta = await NovaSondagemServico.get("/ComponenteCurricular", {
+      const resposta = await NovaSondagemServico.get(`/ComponenteCurricular/modalidade/${modalidade}`, {
         headers: { "X-Token-Principal": usuario?.token },
       });
 
@@ -119,7 +120,7 @@ const Conteudo: React.FC = () => {
       console.error("Erro ao obter disciplinas:", error);
       message.error("Erro ao carregar dados da disciplina.");
     }
-  }, [formFiltro]);
+  }, [formFiltro, modalidade]);
 
   const obterProficiencia = useCallback(
     async (idDisciplina: number) => {
@@ -225,7 +226,7 @@ const Conteudo: React.FC = () => {
         const valido = await verificarModalidadeTurma();
         setModalidadeAnoValidos(valido);
 
-        if (valido && turma !== 0) {
+        if (valido && modalidade && turma !== 0) {
           obterDisciplinas();
         } else if (turma === 0) {
           resetando();

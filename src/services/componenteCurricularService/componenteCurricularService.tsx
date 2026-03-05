@@ -2,8 +2,8 @@ import NovaSondagemServico from "../../core/servico/servico";
 import { mapIdNameAndSort } from "../helpers/mapToOptions";
 
 interface ValidarComponenteCurricularParams {
-  //turmaId: number;
   token: string;
+  modalidade: string;
 }
 
 interface ValidarComponenteCurricularResponse {
@@ -12,13 +12,13 @@ interface ValidarComponenteCurricularResponse {
 }
 
 const ComponenteCurricularService = async ({
-  //turmaId,
   token,
+  modalidade,
 }: ValidarComponenteCurricularParams): Promise<
   ValidarComponenteCurricularResponse[] | null
 > => {
   try {
-    const resposta = await NovaSondagemServico.get(`/ComponenteCurricular`, {
+    const resposta = await NovaSondagemServico.get(`/ComponenteCurricular/modalidade/${modalidade}`, {
       headers: { "X-Token-Principal": token },
       //params: { turmaId },
     });

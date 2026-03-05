@@ -251,6 +251,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       semestre: undefined,
       bimestre: undefined,
     });
+    const modalidade = form.getFieldValue("modalidade");
+
     setListaComponentesCurriculares([]);
     setListaProficiencias([]);
     setListaBimestres([]);
@@ -270,7 +272,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       onErroValidacaoTurma(resultado.mensagens.join(" "));
       return false;
     } else {
-      obterComponentesCurriculares(usuario?.token);
+      obterComponentesCurriculares(usuario?.token, modalidade);
       setDesabilitarComponenteCurricular(false);
       setDesabilitarProficiencia(false);
       onErroValidacaoTurma(null);
@@ -382,8 +384,8 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     obterAnosLetivos(usuario?.token);
   }, [usuario?.token]);
 
-  const obterComponentesCurriculares = async (token: string) => {
-    const resposta = await ComponenteCurricularService({ token });
+  const obterComponentesCurriculares = async (token: string, modalidade: string) => {
+    const resposta = await ComponenteCurricularService({ token, modalidade });
     if (resposta) {
       setListaComponentesCurriculares(resposta);
       setDesabilitarComponenteCurricular(false);
