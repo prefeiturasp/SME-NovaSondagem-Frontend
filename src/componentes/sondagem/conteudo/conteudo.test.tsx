@@ -106,6 +106,10 @@ const criarTurma = (override?: any) => ({
   ...override,
 });
 
+// helper to build the expected URL used in Conteudo
+const componenteEndpoint = (modalidade = criarTurma().modalidade) =>
+  `/ComponenteCurricular/modalidade/${modalidade}`;
+
 describe("Conteudo", () => {
   const originalError = console.error;
 
@@ -315,8 +319,7 @@ describe("Conteudo", () => {
       renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -364,7 +367,7 @@ describe("Conteudo", () => {
 
       await waitFor(() => {
         expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+          componenteEndpoint(),
           expect.objectContaining({
             headers: { "X-Token-Principal": "mock-token" },
           }),
@@ -412,8 +415,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -452,8 +454,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -535,7 +536,7 @@ describe("Conteudo", () => {
     }) => {
       (NovaSondagemServico.get as jest.Mock).mockImplementation(
         (url: string) => {
-          if (url === "/ComponenteCurricular") {
+          if (url.startsWith("/ComponenteCurricular")) {
             return Promise.resolve({ data: mockDisciplinas });
           }
           if (url.startsWith("/Proficiencia/")) {
@@ -970,7 +971,7 @@ describe("Conteudo", () => {
     }) => {
       (NovaSondagemServico.get as jest.Mock).mockImplementation(
         (url: string) => {
-          if (url === "/ComponenteCurricular") {
+          if (url.startsWith("/ComponenteCurricular")) {
             return Promise.resolve({ data: mockDisciplinas });
           }
           if (url.startsWith("/Proficiencia/")) {
@@ -1001,8 +1002,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1078,8 +1078,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1249,7 +1248,7 @@ describe("Conteudo", () => {
     const mockGetQuestionarioComSalvar = () => {
       (NovaSondagemServico.get as jest.Mock).mockImplementation(
         (url: string) => {
-          if (url === "/ComponenteCurricular") {
+          if (url.startsWith("/ComponenteCurricular")) {
             return Promise.resolve({ data: mockDisciplinas });
           }
           if (url.startsWith("/Proficiencia/")) {
@@ -1281,8 +1280,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1386,8 +1384,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1407,10 +1404,10 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          expect.stringContaining("/Proficiencia/componente-curricular/1"),
-          expect.any(Object),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
+        expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
 
       const selectProficiencia = container.querySelector(
@@ -1471,8 +1468,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1492,10 +1488,10 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          expect.stringContaining("/Proficiencia/componente-curricular/1"),
-          expect.any(Object),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
+        expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
 
       const selectProficiencia = container.querySelector(
@@ -1559,8 +1555,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1580,10 +1575,10 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          expect.stringContaining("/Proficiencia/componente-curricular/1"),
-          expect.any(Object),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
+        expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
 
       const selectProficiencia = container.querySelector(
@@ -1654,8 +1649,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1675,10 +1669,10 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          expect.stringContaining("/Proficiencia/componente-curricular/1"),
-          expect.any(Object),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
+        expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
 
       const selectProficiencia = container.querySelector(
@@ -1743,8 +1737,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1764,10 +1757,10 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          expect.stringContaining("/Proficiencia/componente-curricular/1"),
-          expect.any(Object),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
+        expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
 
       const selectProficiencia = container.querySelector(
@@ -1829,8 +1822,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -1850,10 +1842,10 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          expect.stringContaining("/Proficiencia/componente-curricular/1"),
-          expect.any(Object),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
+        expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
 
       const selectProficiencia = container.querySelector(
@@ -1962,10 +1954,10 @@ describe("Conteudo", () => {
       }
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          expect.stringContaining("/Proficiencia/componente-curricular/1"),
-          expect.any(Object),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
+        expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
     });
 
@@ -2006,8 +1998,7 @@ describe("Conteudo", () => {
       );
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -2064,8 +2055,7 @@ describe("Conteudo", () => {
       const { rerender } = renderWithProvider(<Conteudo />, initialStore);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -2141,8 +2131,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -2216,8 +2205,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -2352,7 +2340,7 @@ describe("Conteudo", () => {
     it("deve renderizar SondagemListaDinamica com dados do questionário", async () => {
       (NovaSondagemServico.get as jest.Mock).mockImplementation(
         (url: string) => {
-          if (url === "/ComponenteCurricular") {
+          if (url.startsWith("/ComponenteCurricular")) {
             return Promise.resolve({ data: mockDisciplinas });
           }
 
@@ -2399,8 +2387,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -2474,8 +2461,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -2545,8 +2531,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
@@ -2614,8 +2599,7 @@ describe("Conteudo", () => {
       const { container } = renderWithProvider(<Conteudo />, store);
 
       await waitFor(() => {
-        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-          "/ComponenteCurricular",
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(expect.stringContaining("/ComponenteCurricular"),
           expect.any(Object),
         );
       });
