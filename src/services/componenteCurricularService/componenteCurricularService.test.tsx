@@ -5,6 +5,7 @@ jest.mock("../../core/servico/servico");
 
 describe("ComponenteCurricularService", () => {
   const token = "token-teste";
+  const modalidade = "1"; // required by the service signature
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -18,10 +19,10 @@ describe("ComponenteCurricularService", () => {
       ],
     });
 
-    const resultado = await ComponenteCurricularService({ token });
+    const resultado = await ComponenteCurricularService({ token, modalidade });
 
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/ComponenteCurricular",
+      "/ComponenteCurricular/modalidade/1",
       {
         headers: { "X-Token-Principal": token },
       },
@@ -38,7 +39,7 @@ describe("ComponenteCurricularService", () => {
       data: [],
     });
 
-    const resultado = await ComponenteCurricularService({ token });
+    const resultado = await ComponenteCurricularService({ token, modalidade });
 
     expect(resultado).toBeNull();
   });
@@ -48,7 +49,7 @@ describe("ComponenteCurricularService", () => {
       data: null,
     });
 
-    const resultado = await ComponenteCurricularService({ token });
+    const resultado = await ComponenteCurricularService({ token, modalidade });
 
     expect(resultado).toBeNull();
   });
@@ -60,7 +61,7 @@ describe("ComponenteCurricularService", () => {
       new Error("erro de rede"),
     );
 
-    const resultado = await ComponenteCurricularService({ token });
+    const resultado = await ComponenteCurricularService({ token, modalidade });
 
     expect(resultado).toBeNull();
     expect(consoleErrorSpy).toHaveBeenCalled();
