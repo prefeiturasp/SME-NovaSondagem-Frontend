@@ -1404,8 +1404,8 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        const chamadasProficiencia = NovaSondagemServico.get.mock.calls.filter(
-          ([url]) => (url as string).includes('/Proficiencia/componente-curricular/'),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
         expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
@@ -1488,8 +1488,8 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        const chamadasProficiencia = NovaSondagemServico.get.mock.calls.filter(
-          ([url]) => (url as string).includes('/Proficiencia/componente-curricular/'),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
         expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
@@ -1575,8 +1575,8 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        const chamadasProficiencia = NovaSondagemServico.get.mock.calls.filter(
-          ([url]) => (url as string).includes('/Proficiencia/componente-curricular/'),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
         expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
@@ -1669,8 +1669,8 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        const chamadasProficiencia = NovaSondagemServico.get.mock.calls.filter(
-          ([url]) => (url as string).includes('/Proficiencia/componente-curricular/'),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
         expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
@@ -1757,8 +1757,8 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        const chamadasProficiencia = NovaSondagemServico.get.mock.calls.filter(
-          ([url]) => (url as string).includes('/Proficiencia/componente-curricular/'),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
         expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
@@ -1842,8 +1842,8 @@ describe("Conteudo", () => {
       });
 
       await waitFor(() => {
-        const chamadasProficiencia = NovaSondagemServico.get.mock.calls.filter(
-          ([url]) => (url as string).includes('/Proficiencia/componente-curricular/'),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
         expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
@@ -1954,8 +1954,8 @@ describe("Conteudo", () => {
       }
 
       await waitFor(() => {
-        const chamadasProficiencia = NovaSondagemServico.get.mock.calls.filter(
-          ([url]) => (url as string).includes('/Proficiencia/componente-curricular/'),
+        const chamadasProficiencia = (NovaSondagemServico.get as jest.Mock).mock.calls.filter(
+          ([url]: [string]) => url.includes('/Proficiencia/componente-curricular/'),
         );
         expect(chamadasProficiencia.length).toBeGreaterThan(0);
       });
