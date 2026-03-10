@@ -106,9 +106,6 @@ const criarTurma = (override?: any) => ({
   ...override,
 });
 
-// helper to build the expected URL used in Conteudo
-const componenteEndpoint = () => `/ComponenteCurricular`;
-
 describe("Conteudo", () => {
   const originalError = console.error;
 
@@ -398,9 +395,9 @@ describe("Conteudo", () => {
         );
       });
 
-      const disciplinaSelect = container.querySelector(
-        "#sondagem-select-componente-curricular",
-      )?.closest(".ant-select");
+      const disciplinaSelect = container
+        .querySelector("#sondagem-select-componente-curricular")
+        ?.closest(".ant-select");
       expect(disciplinaSelect?.className).toContain("ant-select-disabled");
     });
 
