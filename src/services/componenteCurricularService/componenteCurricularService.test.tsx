@@ -22,7 +22,7 @@ describe("ComponenteCurricularService", () => {
     const resultado = await ComponenteCurricularService({ token, modalidade });
 
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/ComponenteCurricular/modalidade/1",
+      "/ComponenteCurricular?IdModalidade=1",
       {
         headers: { "X-Token-Principal": token },
       },

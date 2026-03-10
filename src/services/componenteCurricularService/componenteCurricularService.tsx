@@ -18,10 +18,12 @@ const ComponenteCurricularService = async ({
   ValidarComponenteCurricularResponse[] | null
 > => {
   try {
-    const resposta = await NovaSondagemServico.get(`/ComponenteCurricular/modalidade/${modalidade}`, {
-      headers: { "X-Token-Principal": token },
-      //params: { turmaId },
-    });
+    const resposta = await NovaSondagemServico.get(
+      `/ComponenteCurricular?IdModalidade=${modalidade}`,
+      {
+        headers: { "X-Token-Principal": token },
+      },
+    );
 
     if (resposta?.data?.length > 0) {
       return mapIdNameAndSort(resposta.data, "nome");
