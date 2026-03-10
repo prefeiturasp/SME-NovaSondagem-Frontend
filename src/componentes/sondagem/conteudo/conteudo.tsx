@@ -102,9 +102,12 @@ const Conteudo: React.FC = () => {
 
   const obterDisciplinas = useCallback(async () => {
     try {
-      const resposta = await NovaSondagemServico.get("/ComponenteCurricular", {
-        headers: { "X-Token-Principal": usuario?.token },
-      });
+      const resposta = await NovaSondagemServico.get(
+        `/ComponenteCurricular?IdModalidade=${modalidade}`,
+        {
+          headers: { "X-Token-Principal": usuario?.token },
+        },
+      );
 
       if (resposta?.data?.length > 0) {
         setDesabilitarDisciplina(false);
