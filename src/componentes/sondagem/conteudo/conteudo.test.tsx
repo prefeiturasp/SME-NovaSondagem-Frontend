@@ -400,7 +400,7 @@ describe("Conteudo", () => {
 
       const disciplinaSelect = container.querySelector(
         "#sondagem-select-componente-curricular",
-      );
+      )?.closest(".ant-select");
       expect(disciplinaSelect?.className).toContain("ant-select-disabled");
     });
 
