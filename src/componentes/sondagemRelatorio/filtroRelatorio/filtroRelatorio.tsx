@@ -414,6 +414,36 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
   };
 
+  const ajustarColunasQuandoBimestreTodos = (
+    dados: DadosTabelaDinamica | null,
+  ): DadosTabelaDinamica | null => {
+    if (!dados) return dados;
+
+    return {
+      ...dados,
+      estudantes: dados.estudantes.map((estudante) => ({
+        ...estudante,
+        coluna: estudante.coluna.map((coluna) => {
+          const baseNome = coluna.descricaoColuna.split("-")[0].trim();
+
+          if (coluna.idCiclo === 1) {
+            return {
+              ...coluna,
+              descricaoColuna: `${baseNome} - Inicial`,
+            };
+          }
+
+          const numeroBimestre = coluna.idCiclo - 1;
+
+          return {
+            ...coluna,
+            descricaoColuna: `${baseNome} - ${numeroBimestre}º Bim`,
+          };
+        }),
+      })),
+    };
+  };
+
   const buscarDados = async (valores: ValoresFiltroRelatorio) => {
     onDadosCarregados(null);
 
@@ -433,7 +463,13 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       ueCodigo: String(valores.ue),
       token: usuario?.token,
     });
-    onDadosCarregados(dados);
+
+    const dadosAjustados =
+      valores.bimestre === null
+        ? ajustarColunasQuandoBimestreTodos(dados)
+        : dados;
+
+    onDadosCarregados(dadosAjustados);
     onFiltrosAlterados(valores);
   };
 
