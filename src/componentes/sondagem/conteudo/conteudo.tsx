@@ -19,6 +19,7 @@ import Alerta from "../../../componentes/biblioteca/Alerta";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
 import { LEGENDA_EJA_CAPACIDADE_LEITORA } from "../legendas/legendaEjaCapacidadeLeitora";
+import { classificarTipoLegenda } from "../legendas/legendaClassifier";
 import NovaSondagemServico from "../../../core/servico/servico";
 import { Auditoria } from "../auditoria/auditoria";
 import { validarTurma } from "../../../services/turmaService";
@@ -376,11 +377,16 @@ const Conteudo: React.FC = () => {
 
       const dadosLegenda =
         resposta.data.estudantes[0].coluna[0].opcaoResposta.map(
-          (legenda: any) => ({
-            corFundo: legenda.corFundo,
-            descricaoLegenda: legenda.descricaoOpcaoResposta,
-            textoLegenda: legenda.legenda,
-          }),
+          (legenda: any) => {
+            const tipo = classificarTipoLegenda(legenda.legenda);
+
+            return {
+              corFundo: legenda.corFundo,
+              descricaoLegenda: legenda.descricaoOpcaoResposta,
+              textoLegenda: legenda.legenda,
+              tipo,
+            };
+          },
         );
 
       if (

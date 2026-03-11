@@ -11,6 +11,7 @@ import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
 import styled from "styled-components";
 import Legendas from "../../sondagem/legendas/legendas";
 import { LEGENDA_EJA_CAPACIDADE_LEITORA } from "../../sondagem/legendas/legendaEjaCapacidadeLeitora";
+import { classificarTipoLegenda } from "../../sondagem/legendas/legendaClassifier";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import { Modalidade, Proficiencia } from "../../../core/dto/types";
 import Alerta from "../../biblioteca/Alerta";
@@ -100,12 +101,17 @@ const ConteudoRelatorio: React.FC = () => {
         : [];
 
       const dadosLegenda: LegendasProps[] = legendaQuestionario.map(
-        (legenda: LegendaQuestionario) => ({
-          corFundo: legenda.corFundo,
-          corTexto: legenda.corTexto,
-          descricaoLegenda: legenda.descricaoOpcaoResposta,
-          textoLegenda: legenda.legenda,
-        }),
+        (legenda: LegendaQuestionario) => {
+          const tipo = classificarTipoLegenda(legenda.legenda);
+
+          return {
+            corFundo: legenda.corFundo,
+            corTexto: legenda.corTexto,
+            descricaoLegenda: legenda.descricaoOpcaoResposta,
+            textoLegenda: legenda.legenda,
+            tipo,
+          };
+        },
       );
 
       if (

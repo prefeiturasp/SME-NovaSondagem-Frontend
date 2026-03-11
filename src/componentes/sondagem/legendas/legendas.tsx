@@ -2,6 +2,7 @@ import { Table, Tooltip, Row, Col } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import { Ano, Proficiencia, Modalidade } from "../../../core/dto/types";
+import { pertenceAColuna } from "./legendaClassifier";
 import "./legendas.css";
 import { useSelector } from "react-redux";
 
@@ -121,11 +122,34 @@ const Legendas: React.FC<LegendasComponentProps> = ({
     const colSizes =
       anoNumero === 2 ? { md: 12, lg: 12, xl: 12 } : { md: 8, lg: 8, xl: 8 };
 
+    const genericas = data.filter(
+      (l) =>
+        !pertenceAColuna("Localização", l) &&
+        !pertenceAColuna("Inferência", l) &&
+        !pertenceAColuna("Reflexão", l),
+    );
+
     return (
       <div className="marginTop2em">
         <Row gutter={16}>
           {colunasParaMostrar.map((config) => {
-            const legendasColuna = extrairLegendasDaColuna(config.descricao);
+            let legendasColuna = extrairLegendasDaColuna(config.descricao);
+
+            legendasColuna = legendasColuna.filter((item) =>
+              pertenceAColuna(config.descricao, item),
+            );
+
+            if (legendasColuna.length === 0 && data.length) {
+              legendasColuna = data.filter((item) =>
+                pertenceAColuna(config.descricao, item),
+              );
+            }
+
+            if (genericas.length) {
+              genericas.forEach((g) => {
+                if (!legendasColuna.includes(g)) legendasColuna.push(g);
+              });
+            }
 
             return (
               <Col
