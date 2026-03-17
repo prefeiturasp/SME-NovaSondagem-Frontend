@@ -85,6 +85,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
 
     return coluna.opcaoResposta.map((opcao: any) => ({
       corFundo: opcao.corFundo,
+      corTexto: opcao.corTexto,
       descricaoLegenda: opcao.descricaoOpcaoResposta,
       textoLegenda: opcao.legenda,
     }));
@@ -113,7 +114,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
     const configuracoes = [
       { titulo: "da localização", descricao: "Localização" },
       { titulo: "da inferência", descricao: "Inferência" },
-      { titulo: "da reflexão", descricao: "Reflexão" },
+      { titulo: "da apreciação e réplica", descricao: "Reflexão" },
     ];
 
     const numColunas = anoNumero === 2 ? 2 : 3;
@@ -129,27 +130,44 @@ const Legendas: React.FC<LegendasComponentProps> = ({
         !pertenceAColuna("Reflexão", l),
     );
 
+    const mesclarSemDuplicar = (
+      ...listas: LegendasProps[][]
+    ): LegendasProps[] => {
+      const mapa = new Map<string, LegendasProps>();
+
+      listas.flat().forEach((item) => {
+        const chave = [
+          item.corFundo ?? "",
+          item.corTexto ?? "",
+          item.descricaoLegenda ?? "",
+          item.textoLegenda ?? "",
+        ].join("|");
+
+        if (!mapa.has(chave)) {
+          mapa.set(chave, item);
+        }
+      });
+
+      return Array.from(mapa.values());
+    };
+
     return (
       <div className="marginTop2em">
         <Row gutter={16}>
           {colunasParaMostrar.map((config) => {
-            let legendasColuna = extrairLegendasDaColuna(config.descricao);
+            const legendasExtraidas = extrairLegendasDaColuna(
+              config.descricao,
+            ).filter((item) => pertenceAColuna(config.descricao, item));
 
-            legendasColuna = legendasColuna.filter((item) =>
+            const legendasClassificadas = data.filter((item) =>
               pertenceAColuna(config.descricao, item),
             );
 
-            if (legendasColuna.length === 0 && data.length) {
-              legendasColuna = data.filter((item) =>
-                pertenceAColuna(config.descricao, item),
-              );
-            }
-
-            if (genericas.length) {
-              genericas.forEach((g) => {
-                if (!legendasColuna.includes(g)) legendasColuna.push(g);
-              });
-            }
+            const legendasColuna = mesclarSemDuplicar(
+              legendasExtraidas,
+              legendasClassificadas,
+              genericas,
+            );
 
             return (
               <Col
