@@ -400,7 +400,10 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     obterAnosLetivos(usuario?.token);
   }, [usuario?.token]);
 
-  const obterComponentesCurriculares = async (token: string, modalidade: string) => {
+  const obterComponentesCurriculares = async (
+    token: string,
+    modalidade: string,
+  ) => {
     const resposta = await ComponenteCurricularService({ token, modalidade });
     if (resposta) {
       setListaComponentesCurriculares(resposta);
