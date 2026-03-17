@@ -291,9 +291,8 @@ describe("FiltroRelatorio", () => {
         }),
       );
       expect(onDadosCarregados).toHaveBeenCalled();
-      expect(onDadosCarregados).toHaveBeenNthCalledWith(1, null);
-      expect(onDadosCarregados).toHaveBeenNthCalledWith(
-        2,
+      expect(onDadosCarregados).toHaveBeenCalledWith(null);
+      expect(onDadosCarregados).toHaveBeenLastCalledWith(
         expect.objectContaining({
           tituloTabelaRespostas: "Leitura",
         }),

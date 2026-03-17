@@ -12,7 +12,7 @@ export const LEGENDA_EJA_CAPACIDADE_LEITORA: LegendasProps[] = [
     corTexto: "#363636",
   },
   {
-    descricaoLegenda: "Reflexão",
+    descricaoLegenda: "Apreciação e réplica",
     textoLegenda:
       "(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto.",
     corTexto: "#363636",

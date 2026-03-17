@@ -23,6 +23,8 @@ const renderWithProvider = (ui: React.ReactElement) => {
   return render(<Provider store={store}>{ui}</Provider>);
 };
 
+const TITULO_TERCEIRA_COLUNA = /Legendas da (reflexão|apreciação e réplica)/i;
+
 describe("Legendas", () => {
   const originalError = console.error;
 
@@ -329,6 +331,89 @@ describe("Legendas", () => {
       expect(generic.length).toBeGreaterThanOrEqual(2);
     });
 
+    it("mescla extração parcial com legendas completas da coluna", () => {
+      const multiData: any[] = [
+        {
+          corFundo: "#7ED957",
+          descricaoLegenda: "Adequada",
+          textoLegenda: "Localizou a informação",
+        },
+        {
+          corFundo: "#FFDE59",
+          descricaoLegenda: "Inadequada",
+          textoLegenda: "Não localizou a informação",
+        },
+        {
+          corFundo: "#7ED957",
+          descricaoLegenda: "Adequada",
+          textoLegenda: "Inferiu a informação",
+        },
+        {
+          corFundo: "#FFDE59",
+          descricaoLegenda: "Inadequada",
+          textoLegenda: "Não inferiu a informação",
+        },
+        {
+          corFundo: "#FFFFFF",
+          descricaoLegenda: "Sem preenchimento",
+          textoLegenda:
+            "Seleção feita pelo professor quando o estudante não respondeu",
+        },
+      ];
+
+      const dadosCompletosParcial = {
+        estudantes: [
+          {
+            coluna: [
+              {
+                descricaoColuna: "Localização",
+                opcaoResposta: [
+                  {
+                    corFundo: "#7ED957",
+                    descricaoOpcaoResposta: "Adequada",
+                    legenda: "Localizou a informação",
+                  },
+                ],
+              },
+              {
+                descricaoColuna: "Inferência",
+                opcaoResposta: [
+                  {
+                    corFundo: "#FFDE59",
+                    descricaoOpcaoResposta: "Inadequada",
+                    legenda: "Não inferiu a informação",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={multiData}
+            ano={Ano.SegundoAno}
+            proficienciaId={Proficiencia.LeituraEJA}
+            dadosCompletos={dadosCompletosParcial}
+          />
+        </Provider>,
+      );
+
+      const localTabela = screen.getByText(
+        /Legendas da localização/i,
+      ).nextSibling;
+      expect(localTabela).toHaveTextContent("Localizou a informação");
+      expect(localTabela).toHaveTextContent("Não localizou a informação");
+
+      const inferTabela = screen.getByText(
+        /Legendas da inferência/i,
+      ).nextSibling;
+      expect(inferTabela).toHaveTextContent("Inferiu a informação");
+      expect(inferTabela).toHaveTextContent("Não inferiu a informação");
+    });
+
     it("cada coluna mostra apenas suas legendas e não repete", () => {
       render(
         <Provider store={storeEjaPrimeiro}>
@@ -356,8 +441,7 @@ describe("Legendas", () => {
       expect(inferTabela).not.toHaveTextContent("Localizou");
       expect(inferTabela).not.toHaveTextContent("Realizou a proposta");
 
-      const reflexTabela =
-        screen.getByText(/Legendas da reflexão/i).nextSibling;
+      const reflexTabela = screen.getByText(TITULO_TERCEIRA_COLUNA).nextSibling;
       expect(reflexTabela).toHaveTextContent("Realizou a proposta");
       expect(reflexTabela).not.toHaveTextContent("Localizou");
       expect(reflexTabela).not.toHaveTextContent("Inferiu");
@@ -407,7 +491,7 @@ describe("Legendas", () => {
         screen.getByText(/Legendas da inferência/i).nextSibling,
       ).toHaveTextContent("Inferiu");
       expect(
-        screen.getByText(/Legendas da reflexão/i).nextSibling,
+        screen.getByText(TITULO_TERCEIRA_COLUNA).nextSibling,
       ).toHaveTextContent("Realizou a proposta");
     });
 
@@ -425,7 +509,7 @@ describe("Legendas", () => {
 
       expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
       expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
-      expect(screen.getByText("Legendas da reflexão")).toBeInTheDocument();
+      expect(screen.getByText(TITULO_TERCEIRA_COLUNA)).toBeInTheDocument();
     });
 
     it("deve renderizar 2 colunas de legendas quando proficienciaId=3 e ano=2", () => {
@@ -443,7 +527,7 @@ describe("Legendas", () => {
       expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
       expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
       expect(
-        screen.queryByText("Legendas da reflexão"),
+        screen.queryByText(TITULO_TERCEIRA_COLUNA),
       ).not.toBeInTheDocument();
     });
 
@@ -522,7 +606,7 @@ describe("Legendas", () => {
 
       expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
       expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
-      expect(screen.getByText("Legendas da reflexão")).toBeInTheDocument();
+      expect(screen.getByText(TITULO_TERCEIRA_COLUNA)).toBeInTheDocument();
     });
 
     it("deve renderizar Row do Ant Design quando múltiplas legendas", () => {

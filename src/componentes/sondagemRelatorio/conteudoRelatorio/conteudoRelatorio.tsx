@@ -123,7 +123,7 @@ const ConteudoRelatorio: React.FC = () => {
     } else {
       setDadosLegenda(null);
     }
-  }, [dados]);
+  }, [dados, filtros?.modalidade, filtros?.proficiencia]);
 
   return (
     <>
