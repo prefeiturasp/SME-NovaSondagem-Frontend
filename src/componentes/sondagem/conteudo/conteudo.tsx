@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Button,
   Card,
@@ -158,42 +158,38 @@ const Conteudo: React.FC = () => {
     [formFiltro, usuario?.token, modalidade],
   );
 
-  const obterBimestre = useCallback(
-    async (proficienciaId?: number) => {
-      try {
-        const resposta = await NovaSondagemServico.get("/Bimestre", {
-          headers: { "X-Token-Principal": usuario?.token },
-        });
+  const obterBimestre = useCallback(async () => {
+    if (!modalidade) {
+      return;
+    }
 
-        if (resposta?.data?.length > 0) {
-          setDesabilitarBimestre(false);
-          const dadosMapeados = resposta.data
-            .map((item: any) => ({
-              value: item.id,
-              label: item.descricao,
-              codBimestreEnsinoEol: item.codBimestreEnsinoEol,
-            }))
-            .sort(
-              (a: any, b: any) =>
-                a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
-            );
-          setListaBimestre(dadosMapeados);
+    try {
+      const resposta = await NovaSondagemServico.get("/Bimestre", {
+        headers: { "X-Token-Principal": usuario?.token },
+        params: { modalidade },
+      });
 
-          if (proficienciaId === Proficiencia.CapacidadeLeitora)
-            setListaBimestre(
-              dadosMapeados.filter((bimestre: any) => bimestre.value === 3),
-            );
-        } else {
-          setDesabilitarBimestre(true);
-          setListaBimestre([]);
-        }
-      } catch (error: any) {
-        console.error("Erro ao obter bimestres:", error);
-        message.error("Erro ao carregar dados do bimestre.");
+      if (resposta?.data?.length > 0) {
+        setDesabilitarBimestre(false);
+        const dadosMapeados = resposta.data
+          .map((item: any) => ({
+            value: item.id,
+            label: item.descricao,
+            codBimestreEnsinoEol: item.codBimestreEnsinoEol,
+          }))
+          .sort(
+            (a: any, b: any) => a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
+          );
+        setListaBimestre(dadosMapeados);
+      } else {
+        setDesabilitarBimestre(true);
+        setListaBimestre([]);
       }
-    },
-    [formFiltro, proficienciaSelecionada],
-  );
+    } catch (error: any) {
+      console.error("Erro ao obter bimestres:", error);
+      message.error("Erro ao carregar dados do bimestre.");
+    }
+  }, [modalidade, usuario?.token]);
 
   const resetando = useCallback(() => {
     formFiltro.resetFields();
@@ -288,7 +284,7 @@ const Conteudo: React.FC = () => {
           Proficiencia.CapacidadeLeitora,
         ].includes(proficienciaId)
       ) {
-        obterBimestre(proficienciaId);
+        obterBimestre();
       } else {
         setDesabilitarBimestre(true);
         setBimestreSelecionado(null);
@@ -302,24 +298,6 @@ const Conteudo: React.FC = () => {
       setBimestreSelecionado(bimestreId);
     }
   };
-
-  const proficienciaJaCarregada = useRef(false);
-
-  useEffect(() => {
-    if (
-      modalidade &&
-      disciplinaSelecionada &&
-      listaProficiencia.length === 0 &&
-      !proficienciaJaCarregada.current
-    ) {
-      proficienciaJaCarregada.current = true;
-      obterProficiencia(disciplinaSelecionada);
-    }
-  }, [modalidade, disciplinaSelecionada, listaProficiencia.length]);
-
-  useEffect(() => {
-    proficienciaJaCarregada.current = false;
-  }, [disciplinaSelecionada]);
 
   const executarBusca = async () => {
     if (
