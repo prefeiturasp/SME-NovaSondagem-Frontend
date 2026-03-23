@@ -2077,10 +2077,23 @@ describe("Conteudo", () => {
 
   describe("Busca de dados somente após seleção completa", () => {
     it("deve buscar dados apenas quando disciplina E proficiência estiverem selecionadas", async () => {
-      (NovaSondagemServico.get as jest.Mock)
-        .mockResolvedValueOnce({ data: mockDisciplinas })
-        .mockResolvedValue({ data: mockProficiencias })
-        .mockResolvedValueOnce({ data: mockQuestionario });
+      (NovaSondagemServico.get as jest.Mock).mockImplementation(
+        (url: string) => {
+          if (url.startsWith("/ComponenteCurricular")) {
+            return Promise.resolve({ data: mockDisciplinas });
+          }
+
+          if (url.startsWith("/Proficiencia/")) {
+            return Promise.resolve({ data: mockProficiencias });
+          }
+
+          if (url === "/Questionario") {
+            return Promise.resolve({ data: mockQuestionario });
+          }
+
+          return Promise.resolve({ data: [] });
+        },
+      );
 
       const store = createMockStoreWithUser({
         logado: true,
