@@ -2,7 +2,48 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 
+const mockNotificationSuccess = jest.fn();
+const mockNotificationError = jest.fn();
+const mockExportarRelatorio = jest.fn();
+
 const mockFiltroReset = jest.fn();
+
+jest.mock("antd", () => {
+  const actual = jest.requireActual("antd");
+
+  const Dropdown = ({ menu, children, disabled }: any) => (
+    <div>
+      {children}
+      {menu?.items?.map((item: any) => (
+        <button
+          key={item.key}
+          type="button"
+          disabled={disabled}
+          onClick={() => menu.onClick?.({ key: item.key })}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  return {
+    ...actual,
+    Dropdown,
+    notification: {
+      success: mockNotificationSuccess,
+      error: mockNotificationError,
+    },
+  };
+});
+
+jest.mock(
+  "../../../services/relatorioExportService/RelatorioExportService",
+  () => ({
+    __esModule: true,
+    default: (...args: any[]) => mockExportarRelatorio(...args),
+  }),
+);
 
 // Create a mock store for tests
 const createMockStore = () => {
@@ -159,6 +200,9 @@ import ConteudoRelatorio from "./conteudoRelatorio";
 describe("ConteudoRelatorio", () => {
   beforeEach(() => {
     mockFiltroReset.mockClear();
+    mockNotificationSuccess.mockClear();
+    mockNotificationError.mockClear();
+    mockExportarRelatorio.mockReset();
   });
 
   it("deve renderizar título, instrução e botões principais", () => {
@@ -288,5 +332,106 @@ describe("ConteudoRelatorio", () => {
         "Turma inválida para geração do relatório",
       );
     });
+  });
+
+  it("gera relatório em pdf com notificação de sucesso", async () => {
+    mockExportarRelatorio.mockResolvedValueOnce(true);
+
+    renderWithProvider(<ConteudoRelatorio />);
+
+    fireEvent.click(screen.getByTestId("filtro-normal"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("lista-relatorio")).toHaveTextContent(
+        "Relatório teste",
+      );
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Relatório em PDF" }));
+
+    await waitFor(() => {
+      expect(mockExportarRelatorio).toHaveBeenCalledWith(
+        expect.objectContaining({
+          extensaoRelatorio: 1,
+          turmaId: undefined,
+          proficienciaId: 1,
+          componenteCurricularId: undefined,
+          modalidade: 1,
+          anoLetivo: undefined,
+          semestreId: null,
+          bimestreId: null,
+          ueCodigo: "undefined",
+        }),
+      );
+      expect(mockNotificationSuccess).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Sucesso",
+        }),
+      );
+    });
+  });
+
+  it("exibe erro quando serviço retorna falha ao gerar relatório", async () => {
+    mockExportarRelatorio.mockResolvedValueOnce(false);
+
+    renderWithProvider(<ConteudoRelatorio />);
+
+    fireEvent.click(screen.getByTestId("filtro-normal"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("lista-relatorio")).toHaveTextContent(
+        "Relatório teste",
+      );
+    });
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Relatório em .xlsx (Excel)" }),
+    );
+
+    await waitFor(() => {
+      expect(mockExportarRelatorio).toHaveBeenCalledWith(
+        expect.objectContaining({
+          extensaoRelatorio: 4,
+        }),
+      );
+      expect(mockNotificationError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Erro",
+          description: "Falha ao gerar relatório. Tente novamente.",
+        }),
+      );
+    });
+  });
+
+  it("trata exceção inesperada na geração do relatório", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+    mockExportarRelatorio.mockRejectedValueOnce(new Error("falha inesperada"));
+
+    renderWithProvider(<ConteudoRelatorio />);
+
+    fireEvent.click(screen.getByTestId("filtro-normal"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("lista-relatorio")).toHaveTextContent(
+        "Relatório teste",
+      );
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Relatório em PDF" }));
+
+    await waitFor(() => {
+      expect(mockNotificationError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Erro",
+          description: "Ocorreu um erro ao gerar o relatório.",
+        }),
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Erro ao gerar relatório:",
+        expect.any(Error),
+      );
+    });
+
+    consoleErrorSpy.mockRestore();
   });
 });
