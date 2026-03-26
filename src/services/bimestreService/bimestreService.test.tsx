@@ -5,6 +5,7 @@ jest.mock("../../core/servico/servico");
 
 describe("BimestreService", () => {
   const token = "token-teste";
+  const modalidade = "Fundamental";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -18,11 +19,14 @@ describe("BimestreService", () => {
       ],
     });
 
-    const resultado = await BimestreService({ token });
+    const resultado = await BimestreService({ token, modalidade });
 
-    expect(NovaSondagemServico.get).toHaveBeenCalledWith("/Bimestre", {
-      headers: { "X-Token-Principal": token },
-    });
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+      `/Bimestre?modalidade=${modalidade}`,
+      {
+        headers: { "X-Token-Principal": token },
+      },
+    );
 
     // Deve preservar a ordem recebida da API
     expect(resultado).toEqual([
@@ -36,7 +40,7 @@ describe("BimestreService", () => {
       data: [],
     });
 
-    const resultado = await BimestreService({ token });
+    const resultado = await BimestreService({ token, modalidade });
 
     expect(resultado).toBeNull();
   });
@@ -46,7 +50,7 @@ describe("BimestreService", () => {
       data: null,
     });
 
-    const resultado = await BimestreService({ token });
+    const resultado = await BimestreService({ token, modalidade });
 
     expect(resultado).toBeNull();
   });
@@ -57,7 +61,7 @@ describe("BimestreService", () => {
       new Error("Erro de rede"),
     );
 
-    const resultado = await BimestreService({ token });
+    const resultado = await BimestreService({ token, modalidade });
 
     expect(resultado).toBeNull();
     expect(consoleErrorSpy).toHaveBeenCalled();
