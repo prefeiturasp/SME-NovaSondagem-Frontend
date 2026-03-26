@@ -2,6 +2,7 @@ import NovaSondagemServico from "../../core/servico/servico";
 
 interface BimestreParams {
   token: string;
+  modalidade: string;
 }
 
 interface BimestreResponse {
@@ -11,11 +12,15 @@ interface BimestreResponse {
 
 const BimestreService = async ({
   token,
+  modalidade,
 }: BimestreParams): Promise<BimestreResponse[] | null> => {
   try {
-    const resposta = await NovaSondagemServico.get(`/Bimestre`, {
-      headers: { "X-Token-Principal": token },
-    });
+    const resposta = await NovaSondagemServico.get(
+      `/Bimestre?modalidade=${modalidade}`,
+      {
+        headers: { "X-Token-Principal": token },
+      },
+    );
 
     if (resposta?.data?.length > 0) {
       const dadosMapeados = resposta.data.map((item: any) => ({

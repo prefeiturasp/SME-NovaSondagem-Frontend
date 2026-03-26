@@ -273,7 +273,8 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
-    await changeSelect("sondagem-select-semestre", "null");
+    await waitFor(() => expect(BimestreService).toHaveBeenCalled());
+    await changeSelect("sondagem-select-bimestre", "null");
 
     await waitFor(() => {
       expect(DadosRelatorioService).toHaveBeenCalledWith(
@@ -336,9 +337,6 @@ describe("FiltroRelatorio", () => {
       expect(
         screen.getByTestId("sondagem-select-bimestre"),
       ).toBeInTheDocument();
-      expect(
-        screen.queryByTestId("sondagem-select-semestre"),
-      ).not.toBeInTheDocument();
     });
 
     const selectBimestre = screen.getByTestId(
@@ -360,7 +358,7 @@ describe("FiltroRelatorio", () => {
     });
   });
 
-  it("exibe semestre para modalidade diferente de 5 com opções Todos, 1º e 2º", async () => {
+  it("exibe bimestre para modalidade diferente de 5", async () => {
     renderWithForm();
 
     const changeSelect = async (testId: string, value: string | number) => {
@@ -388,25 +386,18 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
+    await waitFor(() => expect(BimestreService).toHaveBeenCalled());
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("sondagem-select-semestre"),
+        screen.getByTestId("sondagem-select-bimestre"),
       ).toBeInTheDocument();
-      expect(
-        screen.queryByTestId("sondagem-select-bimestre"),
-      ).not.toBeInTheDocument();
     });
 
     expect(screen.getByText("Todos")).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Todos" })).toHaveValue("Todos");
-    expect(screen.getByRole("option", { name: "1º Semestre" })).toHaveValue(
+    expect(screen.getByRole("option", { name: "1º Bimestre" })).toHaveValue(
       "1",
     );
-    expect(screen.getByRole("option", { name: "2º Semestre" })).toHaveValue(
-      "2",
-    );
-
-    expect(BimestreService).not.toHaveBeenCalled();
   });
 });
