@@ -376,8 +376,11 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
 
   const obterBimestres = async (token: string, modalidade: string) => {
     const resposta = await BimestreService({ token, modalidade });
+    const ehEja = normalizarNumero(modalidade) === 3;
     if (resposta) {
-      setListaBimestres([{ value: null, label: "Todos" }, ...resposta]);
+      setListaBimestres(
+        ehEja ? resposta : [{ value: null, label: "Todos" }, ...resposta],
+      );
       setDesabilitarBimestre(false);
     } else {
       setListaBimestres([]);
