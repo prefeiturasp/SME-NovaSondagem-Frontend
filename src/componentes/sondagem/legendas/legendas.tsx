@@ -2,6 +2,7 @@ import { Table, Tooltip, Row, Col } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import { Ano, Proficiencia, Modalidade } from "../../../core/dto/types";
+import { pertenceAColuna } from "./legendaClassifier";
 import "./legendas.css";
 import { useSelector } from "react-redux";
 
@@ -84,6 +85,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
 
     return coluna.opcaoResposta.map((opcao: any) => ({
       corFundo: opcao.corFundo,
+      corTexto: opcao.corTexto,
       descricaoLegenda: opcao.descricaoOpcaoResposta,
       textoLegenda: opcao.legenda,
     }));
@@ -112,7 +114,7 @@ const Legendas: React.FC<LegendasComponentProps> = ({
     const configuracoes = [
       { titulo: "da localização", descricao: "Localização" },
       { titulo: "da inferência", descricao: "Inferência" },
-      { titulo: "da reflexão", descricao: "Reflexão" },
+      { titulo: "da apreciação e réplica", descricao: "Reflexão" },
     ];
 
     const numColunas = anoNumero === 2 ? 2 : 3;
@@ -121,11 +123,51 @@ const Legendas: React.FC<LegendasComponentProps> = ({
     const colSizes =
       anoNumero === 2 ? { md: 12, lg: 12, xl: 12 } : { md: 8, lg: 8, xl: 8 };
 
+    const genericas = data.filter(
+      (l) =>
+        !pertenceAColuna("Localização", l) &&
+        !pertenceAColuna("Inferência", l) &&
+        !pertenceAColuna("Reflexão", l),
+    );
+
+    const mesclarSemDuplicar = (
+      ...listas: LegendasProps[][]
+    ): LegendasProps[] => {
+      const mapa = new Map<string, LegendasProps>();
+
+      listas.flat().forEach((item) => {
+        const chave = [
+          item.corFundo ?? "",
+          item.corTexto ?? "",
+          item.descricaoLegenda ?? "",
+          item.textoLegenda ?? "",
+        ].join("|");
+
+        if (!mapa.has(chave)) {
+          mapa.set(chave, item);
+        }
+      });
+
+      return Array.from(mapa.values());
+    };
+
     return (
       <div className="marginTop2em">
         <Row gutter={16}>
           {colunasParaMostrar.map((config) => {
-            const legendasColuna = extrairLegendasDaColuna(config.descricao);
+            const legendasExtraidas = extrairLegendasDaColuna(
+              config.descricao,
+            ).filter((item) => pertenceAColuna(config.descricao, item));
+
+            const legendasClassificadas = data.filter((item) =>
+              pertenceAColuna(config.descricao, item),
+            );
+
+            const legendasColuna = mesclarSemDuplicar(
+              legendasExtraidas,
+              legendasClassificadas,
+              genericas,
+            );
 
             return (
               <Col

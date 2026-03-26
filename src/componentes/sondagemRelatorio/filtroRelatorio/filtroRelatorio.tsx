@@ -93,7 +93,14 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     return Number.isNaN(numero) ? null : numero;
   };
 
+  const limparResultadoRelatorio = () => {
+    onDadosCarregados(null);
+    onFiltrosAlterados(null);
+    onErroValidacaoTurma(null);
+  };
+
   const onChangeAnoLetivo = async (value: number) => {
+    limparResultadoRelatorio();
     form.setFieldsValue({
       modalidade: undefined,
       dre: undefined,
@@ -126,6 +133,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const onChangeModalidade = async (value: number | string | null) => {
+    limparResultadoRelatorio();
     const modalidadeSelecionada = normalizarNumero(value);
     form.setFieldsValue({
       dre: undefined,
@@ -172,6 +180,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const onChangeDRE = async (value: number) => {
+    limparResultadoRelatorio();
     form.setFieldsValue({
       ue: undefined,
       turma: undefined,
@@ -210,6 +219,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const onChangeUE = async (value: number) => {
+    limparResultadoRelatorio();
     form.setFieldsValue({
       turma: undefined,
       componenteCurricular: undefined,
@@ -245,12 +255,15 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const onChangeTurma = async (turma: number) => {
+    limparResultadoRelatorio();
     form.setFieldsValue({
       componenteCurricular: undefined,
       proficiencia: undefined,
       semestre: undefined,
       bimestre: undefined,
     });
+    const modalidade = form.getFieldValue("modalidade");
+
     setListaComponentesCurriculares([]);
     setListaProficiencias([]);
     setListaBimestres([]);
@@ -270,7 +283,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       onErroValidacaoTurma(resultado.mensagens.join(" "));
       return false;
     } else {
-      obterComponentesCurriculares(usuario?.token);
+      obterComponentesCurriculares(usuario?.token, modalidade);
       setDesabilitarComponenteCurricular(false);
       setDesabilitarProficiencia(false);
       onErroValidacaoTurma(null);
@@ -279,6 +292,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const onChangeComponenteCurricular = async (value: number) => {
+    limparResultadoRelatorio();
     form.setFieldsValue({
       proficiencia: undefined,
       semestre: undefined,
@@ -309,6 +323,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const onChangeProficiencia = (value: number | string | null) => {
+    limparResultadoRelatorio();
     form.setFieldsValue({
       semestre: undefined,
       bimestre: undefined,
@@ -338,6 +353,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const onChangeSemestre = (value: number | null) => {
+    limparResultadoRelatorio();
     const valores = {
       ...form.getFieldsValue(),
       semestreId: value,
@@ -345,6 +361,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     void buscarDados(valores);
   };
   const onChangeBimestre = (value: number | null) => {
+    limparResultadoRelatorio();
     const valores = {
       ...form.getFieldsValue(),
       bimestre: value,
@@ -353,6 +370,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const onCancel = () => {
+    limparResultadoRelatorio();
     form.resetFields();
     setSelectedModalidade(null);
     setSelectedProficiencia(null);
@@ -382,8 +400,11 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     obterAnosLetivos(usuario?.token);
   }, [usuario?.token]);
 
-  const obterComponentesCurriculares = async (token: string) => {
-    const resposta = await ComponenteCurricularService({ token });
+  const obterComponentesCurriculares = async (
+    token: string,
+    modalidade: string,
+  ) => {
+    const resposta = await ComponenteCurricularService({ token, modalidade });
     if (resposta) {
       setListaComponentesCurriculares(resposta);
       setDesabilitarComponenteCurricular(false);
@@ -413,8 +434,6 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
 
   const buscarDados = async (valores: ValoresFiltroRelatorio) => {
-    onDadosCarregados(null);
-
     const ano = listaTurmas.find((turma) => turma.value === valores.turma)?.ano;
     valores.ano = ano;
     const isInfantil = valores.modalidade === 5;

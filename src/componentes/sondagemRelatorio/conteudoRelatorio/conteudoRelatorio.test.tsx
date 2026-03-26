@@ -1,6 +1,27 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 
 const mockFiltroReset = jest.fn();
+
+// Create a mock store for tests
+const createMockStore = () => {
+  return configureStore({
+    reducer: {
+      usuario: () => ({
+        usuario: {
+          token: "mock-token",
+        },
+      }),
+    },
+  });
+};
+
+// Helper to render components with Redux Provider
+const renderWithProvider = (component: React.ReactElement) => {
+  const mockStore = createMockStore();
+  return render(<Provider store={mockStore}>{component}</Provider>);
+};
 
 jest.mock("../filtroRelatorio/filtroRelatorio", () => {
   const React = require("react");
@@ -141,7 +162,7 @@ describe("ConteudoRelatorio", () => {
   });
 
   it("deve renderizar título, instrução e botões principais", () => {
-    render(<ConteudoRelatorio />);
+    renderWithProvider(<ConteudoRelatorio />);
 
     expect(screen.getByText("Sondagem por turma")).toBeInTheDocument();
     expect(
@@ -159,7 +180,7 @@ describe("ConteudoRelatorio", () => {
   });
 
   it("deve mapear legenda padrão quando não for cenário EJA + CapacidadeLeitora", async () => {
-    render(<ConteudoRelatorio />);
+    renderWithProvider(<ConteudoRelatorio />);
 
     fireEvent.click(screen.getByTestId("filtro-normal"));
 
@@ -179,7 +200,7 @@ describe("ConteudoRelatorio", () => {
   });
 
   it("deve aplicar legenda fixa no cenário EJA com CapacidadeLeitora", async () => {
-    render(<ConteudoRelatorio />);
+    renderWithProvider(<ConteudoRelatorio />);
 
     fireEvent.click(screen.getByTestId("filtro-eja"));
 
@@ -193,7 +214,7 @@ describe("ConteudoRelatorio", () => {
   });
 
   it("deve suportar dados sem legenda e manter lista de legendas vazia", async () => {
-    render(<ConteudoRelatorio />);
+    renderWithProvider(<ConteudoRelatorio />);
 
     fireEvent.click(screen.getByTestId("filtro-sem-legenda"));
 
@@ -211,7 +232,7 @@ describe("ConteudoRelatorio", () => {
   });
 
   it("deve limpar dados e chamar reset do filtro ao cancelar", async () => {
-    render(<ConteudoRelatorio />);
+    renderWithProvider(<ConteudoRelatorio />);
 
     fireEvent.click(screen.getByTestId("filtro-normal"));
     await waitFor(() => {
@@ -234,7 +255,7 @@ describe("ConteudoRelatorio", () => {
   });
 
   it("deve limpar legenda ao receber dados nulos em uma nova busca", async () => {
-    render(<ConteudoRelatorio />);
+    renderWithProvider(<ConteudoRelatorio />);
 
     fireEvent.click(screen.getByTestId("filtro-normal"));
     await waitFor(() => {
@@ -258,7 +279,7 @@ describe("ConteudoRelatorio", () => {
   });
 
   it("deve exibir alerta quando filtro informar erro de validação de turma", async () => {
-    render(<ConteudoRelatorio />);
+    renderWithProvider(<ConteudoRelatorio />);
 
     fireEvent.click(screen.getByTestId("filtro-erro-turma"));
 

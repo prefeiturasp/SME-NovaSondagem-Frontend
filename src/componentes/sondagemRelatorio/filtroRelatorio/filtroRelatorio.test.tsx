@@ -230,6 +230,8 @@ describe("FiltroRelatorio", () => {
         token: "fake-token",
       });
       expect(onErroValidacaoTurma).toHaveBeenCalledWith("Turma inválida");
+      // serviço não deve ser chamado quando turma inválida
+      expect(ComponenteCurricularService).not.toHaveBeenCalled();
     });
   });
 
@@ -262,6 +264,10 @@ describe("FiltroRelatorio", () => {
 
     await changeSelect("sondagem-select-turma", 30);
     await waitFor(() => expect(validarTurma).toHaveBeenCalled());
+    expect(ComponenteCurricularService).toHaveBeenCalledWith({
+      token: "fake-token",
+      modalidade: 1,
+    });
 
     await changeSelect("sondagem-select-componente-curricular", 40);
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
@@ -285,9 +291,8 @@ describe("FiltroRelatorio", () => {
         }),
       );
       expect(onDadosCarregados).toHaveBeenCalled();
-      expect(onDadosCarregados).toHaveBeenNthCalledWith(1, null);
-      expect(onDadosCarregados).toHaveBeenNthCalledWith(
-        2,
+      expect(onDadosCarregados).toHaveBeenCalledWith(null);
+      expect(onDadosCarregados).toHaveBeenLastCalledWith(
         expect.objectContaining({
           tituloTabelaRespostas: "Leitura",
         }),
