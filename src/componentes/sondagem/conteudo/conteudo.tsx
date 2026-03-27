@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Button,
   Card,
@@ -18,6 +18,8 @@ import { useSelector } from "react-redux";
 import Alerta from "../../../componentes/biblioteca/Alerta";
 import type { LegendasProps } from "../../../core/dto/legendaProps";
 import Legendas from "../legendas/legendas";
+import { LEGENDA_EJA_CAPACIDADE_LEITORA } from "../legendas/legendaEjaCapacidadeLeitora";
+import { classificarTipoLegenda } from "../legendas/legendaClassifier";
 import NovaSondagemServico from "../../../core/servico/servico";
 import { Auditoria } from "../auditoria/auditoria";
 import { validarTurma } from "../../../services/turmaService";
@@ -78,8 +80,6 @@ const Conteudo: React.FC = () => {
   const [loadingSalvar, setLoadingSalvar] = useState<boolean>(false);
   const [componenteBimestres, setComponenteBimestres] =
     useState<boolean>(false);
-  const [naoExibirTituloTabelaRespostas, setNaoExibirTituloTabelaRespostas] =
-    useState<boolean>(false);
 
   const [formFiltro] = Form.useForm();
   const [formListaDinamica] = Form.useForm();
@@ -103,21 +103,18 @@ const Conteudo: React.FC = () => {
 
   const obterDisciplinas = useCallback(async () => {
     try {
-      const resposta = await NovaSondagemServico.get("/ComponenteCurricular", {
-        headers: { "X-Token-Principal": usuario?.token },
-      });
+      const resposta = await NovaSondagemServico.get(
+        `/ComponenteCurricular?IdModalidade=${modalidade}`,
+        {
+          headers: { "X-Token-Principal": usuario?.token },
+        },
+      );
 
       if (resposta?.data?.length > 0) {
         setDesabilitarDisciplina(false);
-        const dadosMapeados = resposta.data
-          .map((item: any) => ({
-            value: item.id,
-            label: item.nome,
-          }))
-          .sort((a: any, b: any) =>
-            a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }),
-          );
-        setListaDisciplinas(dadosMapeados);
+        const { mapIdNameAndSort } =
+          await import("../../../services/helpers/mapToOptions");
+        setListaDisciplinas(mapIdNameAndSort(resposta.data, "nome"));
       } else {
         setDesabilitarDisciplina(true);
         setListaDisciplinas([]);
@@ -126,7 +123,7 @@ const Conteudo: React.FC = () => {
       console.error("Erro ao obter disciplinas:", error);
       message.error("Erro ao carregar dados da disciplina.");
     }
-  }, [formFiltro]);
+  }, [formFiltro, modalidade]);
 
   const obterProficiencia = useCallback(
     async (idDisciplina: number) => {
@@ -146,11 +143,9 @@ const Conteudo: React.FC = () => {
 
         if (resposta?.data?.length > 0) {
           setDesabilitarProficiencia(false);
-          const dadosMapeados = resposta.data.map((item: any) => ({
-            value: item.id,
-            label: item.nome,
-          }));
-          setListaProficiencia(dadosMapeados);
+          const { mapIdNameAndSort } =
+            await import("../../../services/helpers/mapToOptions");
+          setListaProficiencia(mapIdNameAndSort(resposta.data, "nome"));
         } else {
           setDesabilitarProficiencia(true);
           setListaProficiencia([]);
@@ -163,42 +158,38 @@ const Conteudo: React.FC = () => {
     [formFiltro, usuario?.token, modalidade],
   );
 
-  const obterBimestre = useCallback(
-    async (proficienciaId?: number) => {
-      try {
-        const resposta = await NovaSondagemServico.get("/Bimestre", {
-          headers: { "X-Token-Principal": usuario?.token },
-        });
+  const obterBimestre = useCallback(async () => {
+    if (!modalidade) {
+      return;
+    }
 
-        if (resposta?.data?.length > 0) {
-          setDesabilitarBimestre(false);
-          const dadosMapeados = resposta.data
-            .map((item: any) => ({
-              value: item.id,
-              label: item.descricao,
-              codBimestreEnsinoEol: item.codBimestreEnsinoEol,
-            }))
-            .sort(
-              (a: any, b: any) =>
-                a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
-            );
-          setListaBimestre(dadosMapeados);
+    try {
+      const resposta = await NovaSondagemServico.get("/Bimestre", {
+        headers: { "X-Token-Principal": usuario?.token },
+        params: { modalidade },
+      });
 
-          if (proficienciaId === Proficiencia.CapacidadeLeitora)
-            setListaBimestre(
-              dadosMapeados.filter((bimestre: any) => bimestre.value === 3),
-            );
-        } else {
-          setDesabilitarBimestre(true);
-          setListaBimestre([]);
-        }
-      } catch (error: any) {
-        console.error("Erro ao obter bimestres:", error);
-        message.error("Erro ao carregar dados do bimestre.");
+      if (resposta?.data?.length > 0) {
+        setDesabilitarBimestre(false);
+        const dadosMapeados = resposta.data
+          .map((item: any) => ({
+            value: item.id,
+            label: item.descricao,
+            codBimestreEnsinoEol: item.codBimestreEnsinoEol,
+          }))
+          .sort(
+            (a: any, b: any) => a.codBimestreEnsinoEol - b.codBimestreEnsinoEol,
+          );
+        setListaBimestre(dadosMapeados);
+      } else {
+        setDesabilitarBimestre(true);
+        setListaBimestre([]);
       }
-    },
-    [formFiltro, proficienciaSelecionada],
-  );
+    } catch (error: any) {
+      console.error("Erro ao obter bimestres:", error);
+      message.error("Erro ao carregar dados do bimestre.");
+    }
+  }, [modalidade, usuario?.token]);
 
   const resetando = useCallback(() => {
     formFiltro.resetFields();
@@ -234,7 +225,7 @@ const Conteudo: React.FC = () => {
         const valido = await verificarModalidadeTurma();
         setModalidadeAnoValidos(valido);
 
-        if (valido && turma !== 0) {
+        if (valido && modalidade && turma !== 0) {
           obterDisciplinas();
         } else if (turma === 0) {
           resetando();
@@ -286,12 +277,6 @@ const Conteudo: React.FC = () => {
           ].includes(proficienciaId),
       );
 
-      setNaoExibirTituloTabelaRespostas(
-        modalidade === Modalidade.EJA &&
-          ano === Ano.PrimeiroAno &&
-          proficienciaId === Proficiencia.LeituraEJA,
-      );
-
       if (
         [
           Proficiencia.LeituraEJA,
@@ -299,7 +284,7 @@ const Conteudo: React.FC = () => {
           Proficiencia.CapacidadeLeitora,
         ].includes(proficienciaId)
       ) {
-        obterBimestre(proficienciaId);
+        obterBimestre();
       } else {
         setDesabilitarBimestre(true);
         setBimestreSelecionado(null);
@@ -313,24 +298,6 @@ const Conteudo: React.FC = () => {
       setBimestreSelecionado(bimestreId);
     }
   };
-
-  const proficienciaJaCarregada = useRef(false);
-
-  useEffect(() => {
-    if (
-      modalidade &&
-      disciplinaSelecionada &&
-      listaProficiencia.length === 0 &&
-      !proficienciaJaCarregada.current
-    ) {
-      proficienciaJaCarregada.current = true;
-      obterProficiencia(disciplinaSelecionada);
-    }
-  }, [modalidade, disciplinaSelecionada, listaProficiencia.length]);
-
-  useEffect(() => {
-    proficienciaJaCarregada.current = false;
-  }, [disciplinaSelecionada]);
 
   const executarBusca = async () => {
     if (
@@ -388,58 +355,23 @@ const Conteudo: React.FC = () => {
 
       const dadosLegenda =
         resposta.data.estudantes[0].coluna[0].opcaoResposta.map(
-          (legenda: any) => ({
-            corFundo: legenda.corFundo,
-            descricaoLegenda: legenda.descricaoOpcaoResposta,
-            textoLegenda: legenda.legenda,
-          }),
+          (legenda: any) => {
+            const tipo = classificarTipoLegenda(legenda.legenda);
+
+            return {
+              corFundo: legenda.corFundo,
+              descricaoLegenda: legenda.descricaoOpcaoResposta,
+              textoLegenda: legenda.legenda,
+              tipo,
+            };
+          },
         );
 
       if (
         modalidade === Modalidade.EJA &&
         profId === Proficiencia.CapacidadeLeitora
       )
-        setDadosLegenda([
-          {
-            descricaoLegenda: "Localização",
-            textoLegenda:
-              "Capacidade de recuperar informações explícitas no texto",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Inferência",
-            textoLegenda:
-              "Capacidade de compreender informações implícitas no texto",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Reflexão",
-            textoLegenda:
-              "(Apreciação e réplica do leitor em relação ao texto) relacionadas aos aspectos discursivos da reconstituição dos sentidos do texto.",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Adequada",
-            textoLegenda:
-              "Recuperou, compreendeu ou refletiu corretamente sobre a informação",
-            corFundo: "#7ED957",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Inadequada",
-            textoLegenda:
-              "Não recuperou, compreendeu ou refletiu corretamente sobre a informação",
-            corFundo: "#FFDE59",
-            corTexto: "#363636",
-          },
-          {
-            descricaoLegenda: "Não Resolveu",
-            textoLegenda:
-              "Não conseguiu realizar a leitura e/ou compreensão de textos",
-            corFundo: "#F18888",
-            corTexto: "#FFFFFF",
-          },
-        ]);
+        setDadosLegenda(LEGENDA_EJA_CAPACIDADE_LEITORA);
       else setDadosLegenda(dadosLegenda);
 
       setDadosLista(resposta.data);
@@ -730,7 +662,7 @@ const Conteudo: React.FC = () => {
             dados={dadosLista}
             formListaDinamica={formListaDinamica}
             podeSalvar={podeSalvar}
-            naoExibirTituloTabelaRespostas={naoExibirTituloTabelaRespostas}
+            token={usuario?.token ?? ""}
           />
         </Spin>
         <Legendas

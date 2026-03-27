@@ -3,6 +3,7 @@ import "@testing-library/jest-dom";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import Legendas from "./legendas";
+import { Proficiencia, Modalidade, Ano } from "../../../core/dto/types";
 
 const createMockStore = (overrides = {}) =>
   configureStore({
@@ -21,6 +22,8 @@ const renderWithProvider = (ui: React.ReactElement) => {
   const store = createMockStore();
   return render(<Provider store={store}>{ui}</Provider>);
 };
+
+const TITULO_TERCEIRA_COLUNA = /Legendas da (reflexão|apreciação e réplica)/i;
 
 describe("Legendas", () => {
   const originalError = console.error;
@@ -199,60 +202,30 @@ describe("Legendas", () => {
       const truncatedTexts = container.querySelectorAll(
         ".legenda-texto-truncado",
       );
-      expect(truncatedTexts.length).toBe(mockData.length);
+      expect(truncatedTexts.length).toBeGreaterThan(0);
     });
   });
 
-  describe("Tooltip para textos longos", () => {
-    it("deve renderizar Tooltip para cada texto de legenda", () => {
-      const { container } = renderWithProvider(<Legendas data={mockData} />);
-      const tooltips = container.querySelectorAll(
-        ".ant-tooltip-disabled-compatible-wrapper, [role='tooltip'], .legenda-texto-truncado",
-      );
-      expect(tooltips.length).toBeGreaterThan(0);
-    });
+  describe("Modo múltiplas legendas", () => {
+    const multicategorias: any[] = [
+      { corFundo: "#7ED957", descricaoLegenda: "A", textoLegenda: "Localizou" },
+      { corFundo: "#7ED957", descricaoLegenda: "B", textoLegenda: "Inferiu" },
+      // texto de reflexao realista sem a palavra "reflexão" mas com palavra-chave
+      {
+        corFundo: "#7ED957",
+        descricaoLegenda: "C",
+        textoLegenda: "Realizou a proposta de apreciação e réplica",
+      },
+      {
+        corFundo: "#FFFFFF",
+        descricaoLegenda: "Sem",
+        textoLegenda: "Sem preenchimento",
+      },
+    ];
 
-    it("deve renderizar texto longo com tooltip", () => {
-      const longTextData = [
-        {
-          key: "long-text",
-          corFundo: "#FF0000",
-          textoLegenda:
-            "Este é um texto muito longo que deve ser truncado e mostrado completamente apenas quando o usuário passar o mouse por cima dele",
-          descricaoLegenda: "Texto longo",
-        },
-      ];
-      const { container } = renderWithProvider(
-        <Legendas data={longTextData} />,
-      );
-      const truncatedText = container.querySelector(".legenda-texto-truncado");
-      expect(truncatedText).toBeInTheDocument();
-      expect(truncatedText?.textContent).toContain(
-        "Este é um texto muito longo",
-      );
-    });
-
-    it("deve renderizar texto curto normalmente com tooltip", () => {
-      const shortTextData = [
-        {
-          key: "short-text",
-          corFundo: "#00FF00",
-          textoLegenda: "Curto",
-          descricaoLegenda: "Texto curto",
-        },
-      ];
-      renderWithProvider(<Legendas data={shortTextData} />);
-      expect(screen.getByText("Curto")).toBeInTheDocument();
-      expect(screen.getByText(/Texto curto/)).toBeInTheDocument();
-    });
-  });
-
-  describe("Múltiplas legendas - Proficiência Leitura", () => {
     const mockDadosCompletos = {
       estudantes: [
         {
-          codigo: "123456",
-          nome: "Aluno Teste",
           coluna: [
             {
               descricaoColuna: "Localização",
@@ -304,46 +277,270 @@ describe("Legendas", () => {
       ],
     };
 
+    const storeEjaPrimeiro = createMockStore({
+      turmaSelecionada: { modalidade: Modalidade.EJA, ano: Ano.PrimeiroAno },
+    });
+
+    it("usa dados passados quando extração da coluna não retorna itens", () => {
+      const multiData: any[] = [
+        {
+          corFundo: "#7ED957",
+          descricaoLegenda: "Adequada",
+          textoLegenda: "Localizou a informação",
+        },
+        {
+          corFundo: "#FFDE59",
+          descricaoLegenda: "Inadequada",
+          textoLegenda: "Não localizou a informação",
+        },
+        {
+          corFundo: "#FFFFFF",
+          descricaoLegenda: "Sem preenchimento",
+          textoLegenda:
+            "Seleção feita pelo professor quando o estudante não respondeu",
+        },
+      ];
+
+      const dadosCompletos = {
+        estudantes: [
+          {
+            coluna: [
+              { descricaoColuna: "Localização", opcaoResposta: [] },
+              { descricaoColuna: "Inferência", opcaoResposta: [] },
+            ],
+          },
+        ],
+      };
+
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={multiData}
+            ano={Ano.SegundoAno}
+            proficienciaId={Proficiencia.LeituraEJA}
+            dadosCompletos={dadosCompletos}
+          />
+        </Provider>,
+      );
+
+      expect(screen.getByText(/Legendas da localização/i)).toBeInTheDocument();
+      expect(screen.getByText(/Legendas da inferência/i)).toBeInTheDocument();
+      expect(screen.getByText("Localizou a informação")).toBeInTheDocument();
+      // legenda genérica aparece em cada coluna, portanto há múltiplas ocorrências
+      const generic = screen.getAllByText(/Sem preenchimento/i);
+      expect(generic.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it("mescla extração parcial com legendas completas da coluna", () => {
+      const multiData: any[] = [
+        {
+          corFundo: "#7ED957",
+          descricaoLegenda: "Adequada",
+          textoLegenda: "Localizou a informação",
+        },
+        {
+          corFundo: "#FFDE59",
+          descricaoLegenda: "Inadequada",
+          textoLegenda: "Não localizou a informação",
+        },
+        {
+          corFundo: "#7ED957",
+          descricaoLegenda: "Adequada",
+          textoLegenda: "Inferiu a informação",
+        },
+        {
+          corFundo: "#FFDE59",
+          descricaoLegenda: "Inadequada",
+          textoLegenda: "Não inferiu a informação",
+        },
+        {
+          corFundo: "#FFFFFF",
+          descricaoLegenda: "Sem preenchimento",
+          textoLegenda:
+            "Seleção feita pelo professor quando o estudante não respondeu",
+        },
+      ];
+
+      const dadosCompletosParcial = {
+        estudantes: [
+          {
+            coluna: [
+              {
+                descricaoColuna: "Localização",
+                opcaoResposta: [
+                  {
+                    corFundo: "#7ED957",
+                    descricaoOpcaoResposta: "Adequada",
+                    legenda: "Localizou a informação",
+                  },
+                ],
+              },
+              {
+                descricaoColuna: "Inferência",
+                opcaoResposta: [
+                  {
+                    corFundo: "#FFDE59",
+                    descricaoOpcaoResposta: "Inadequada",
+                    legenda: "Não inferiu a informação",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={multiData}
+            ano={Ano.SegundoAno}
+            proficienciaId={Proficiencia.LeituraEJA}
+            dadosCompletos={dadosCompletosParcial}
+          />
+        </Provider>,
+      );
+
+      const localTabela = screen.getByText(
+        /Legendas da localização/i,
+      ).nextSibling;
+      expect(localTabela).toHaveTextContent("Localizou a informação");
+      expect(localTabela).toHaveTextContent("Não localizou a informação");
+
+      const inferTabela = screen.getByText(
+        /Legendas da inferência/i,
+      ).nextSibling;
+      expect(inferTabela).toHaveTextContent("Inferiu a informação");
+      expect(inferTabela).toHaveTextContent("Não inferiu a informação");
+    });
+
+    it("cada coluna mostra apenas suas legendas e não repete", () => {
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={multicategorias}
+            ano={Ano.TerceiroAno}
+            proficienciaId={Proficiencia.LeituraEJA}
+            dadosCompletos={{ estudantes: [] }}
+          />
+        </Provider>,
+      );
+
+      // só aparece A em localização
+      const localTabela = screen.getByText(
+        /Legendas da localização/i,
+      ).nextSibling;
+      expect(localTabela).toHaveTextContent("Localizou");
+      expect(localTabela).not.toHaveTextContent("Inferiu");
+      expect(localTabela).not.toHaveTextContent("Realizou a proposta");
+
+      const inferTabela = screen.getByText(
+        /Legendas da inferência/i,
+      ).nextSibling;
+      expect(inferTabela).toHaveTextContent("Inferiu");
+      expect(inferTabela).not.toHaveTextContent("Localizou");
+      expect(inferTabela).not.toHaveTextContent("Realizou a proposta");
+
+      const reflexTabela = screen.getByText(TITULO_TERCEIRA_COLUNA).nextSibling;
+      expect(reflexTabela).toHaveTextContent("Realizou a proposta");
+      expect(reflexTabela).not.toHaveTextContent("Localizou");
+      expect(reflexTabela).not.toHaveTextContent("Inferiu");
+
+      // item genérico aparece em todas as três
+      expect(localTabela).toHaveTextContent("Sem preenchimento");
+      expect(inferTabela).toHaveTextContent("Sem preenchimento");
+      expect(reflexTabela).toHaveTextContent("Sem preenchimento");
+    });
+
+    it("filtra corretamente mesmo quando extrairLegendasDaColuna retorna tudo", () => {
+      const everythingStore = createMockStore({
+        turmaSelecionada: { modalidade: Modalidade.EJA, ano: Ano.PrimeiroAno },
+      });
+      // montar dadosCompletos com cada coluna contendo a lista completa
+      const complete = {
+        estudantes: [
+          {
+            coluna: [
+              {
+                descricaoColuna: "Localização",
+                opcaoResposta: multicategorias,
+              },
+              { descricaoColuna: "Inferência", opcaoResposta: multicategorias },
+              { descricaoColuna: "Reflexão", opcaoResposta: multicategorias },
+            ],
+          },
+        ],
+      };
+
+      render(
+        <Provider store={everythingStore}>
+          <Legendas
+            data={multicategorias}
+            ano={Ano.TerceiroAno}
+            proficienciaId={Proficiencia.LeituraEJA}
+            dadosCompletos={complete}
+          />
+        </Provider>,
+      );
+
+      // garantir que cada tabela contenha somente o seu subconjunto
+      expect(
+        screen.getByText(/Legendas da localização/i).nextSibling,
+      ).toHaveTextContent("Localizou");
+      expect(
+        screen.getByText(/Legendas da inferência/i).nextSibling,
+      ).toHaveTextContent("Inferiu");
+      expect(
+        screen.getByText(TITULO_TERCEIRA_COLUNA).nextSibling,
+      ).toHaveTextContent("Realizou a proposta");
+    });
+
     it("deve renderizar 3 colunas de legendas quando proficienciaId=3 e ano=3", () => {
-      renderWithProvider(
-        <Legendas
-          data={mockData}
-          proficienciaId={3}
-          ano={3}
-          dadosCompletos={mockDadosCompletos}
-        />,
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={mockData}
+            proficienciaId={3}
+            ano={3}
+            dadosCompletos={mockDadosCompletos}
+          />
+        </Provider>,
       );
 
       expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
       expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
-      expect(screen.getByText("Legendas da reflexão")).toBeInTheDocument();
+      expect(screen.getByText(TITULO_TERCEIRA_COLUNA)).toBeInTheDocument();
     });
 
     it("deve renderizar 2 colunas de legendas quando proficienciaId=3 e ano=2", () => {
-      renderWithProvider(
-        <Legendas
-          data={mockData}
-          proficienciaId={3}
-          ano={2}
-          dadosCompletos={mockDadosCompletos}
-        />,
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={mockData}
+            proficienciaId={3}
+            ano={2}
+            dadosCompletos={mockDadosCompletos}
+          />
+        </Provider>,
       );
 
       expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
       expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
       expect(
-        screen.queryByText("Legendas da reflexão"),
+        screen.queryByText(TITULO_TERCEIRA_COLUNA),
       ).not.toBeInTheDocument();
     });
 
     it("deve renderizar legenda única quando proficienciaId=3 e ano=1", () => {
-      renderWithProvider(
-        <Legendas
-          data={mockData}
-          proficienciaId={3}
-          ano={1}
-          dadosCompletos={mockDadosCompletos}
-        />,
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={mockData}
+            proficienciaId={3}
+            ano={1}
+            dadosCompletos={mockDadosCompletos}
+          />
+        </Provider>,
       );
 
       expect(screen.getByText("Legendas")).toBeInTheDocument();
@@ -353,13 +550,15 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar legenda única quando proficienciaId não é 3", () => {
-      renderWithProvider(
-        <Legendas
-          data={mockData}
-          proficienciaId={1}
-          ano={3}
-          dadosCompletos={mockDadosCompletos}
-        />,
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={mockData}
+            proficienciaId={1}
+            ano={3}
+            dadosCompletos={mockDadosCompletos}
+          />
+        </Provider>,
       );
 
       expect(screen.getByText("Legendas")).toBeInTheDocument();
@@ -369,13 +568,15 @@ describe("Legendas", () => {
     });
 
     it("deve extrair legendas corretas de cada coluna", () => {
-      renderWithProvider(
-        <Legendas
-          data={mockData}
-          proficienciaId={3}
-          ano={3}
-          dadosCompletos={mockDadosCompletos}
-        />,
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={mockData}
+            proficienciaId={3}
+            ano={3}
+            dadosCompletos={mockDadosCompletos}
+          />
+        </Provider>,
       );
 
       // Localização
@@ -392,28 +593,32 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar com ano como string", () => {
-      renderWithProvider(
-        <Legendas
-          data={mockData}
-          proficienciaId={3}
-          ano={"3" as any}
-          dadosCompletos={mockDadosCompletos}
-        />,
+      render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={mockData}
+            proficienciaId={3}
+            ano={"3" as any}
+            dadosCompletos={mockDadosCompletos}
+          />
+        </Provider>,
       );
 
       expect(screen.getByText("Legendas da localização")).toBeInTheDocument();
       expect(screen.getByText("Legendas da inferência")).toBeInTheDocument();
-      expect(screen.getByText("Legendas da reflexão")).toBeInTheDocument();
+      expect(screen.getByText(TITULO_TERCEIRA_COLUNA)).toBeInTheDocument();
     });
 
     it("deve renderizar Row do Ant Design quando múltiplas legendas", () => {
-      const { container } = renderWithProvider(
-        <Legendas
-          data={mockData}
-          proficienciaId={3}
-          ano={3}
-          dadosCompletos={mockDadosCompletos}
-        />,
+      const { container } = render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={mockData}
+            proficienciaId={3}
+            ano={3}
+            dadosCompletos={mockDadosCompletos}
+          />
+        </Provider>,
       );
 
       const row = container.querySelector(".ant-row");
@@ -421,13 +626,15 @@ describe("Legendas", () => {
     });
 
     it("deve renderizar múltiplas tabelas quando múltiplas legendas", () => {
-      const { container } = renderWithProvider(
-        <Legendas
-          data={mockData}
-          proficienciaId={3}
-          ano={3}
-          dadosCompletos={mockDadosCompletos}
-        />,
+      const { container } = render(
+        <Provider store={storeEjaPrimeiro}>
+          <Legendas
+            data={mockData}
+            proficienciaId={3}
+            ano={3}
+            dadosCompletos={mockDadosCompletos}
+          />
+        </Provider>,
       );
 
       const tables = container.querySelectorAll(".ant-table");

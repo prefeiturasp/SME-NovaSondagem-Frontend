@@ -6,6 +6,19 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import SondagemListaDinamica from "./sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
+import { parametroQuestionarioService } from "../../../services/parametroQuestionarioService/parametroQuestionarioService";
+
+jest.mock(
+  "../../../services/parametroQuestionarioService/parametroQuestionarioService",
+  () => ({
+    parametroQuestionarioService: jest.fn(),
+  }),
+);
+
+const mockParametroQuestionarioService =
+  parametroQuestionarioService as jest.MockedFunction<
+    typeof parametroQuestionarioService
+  >;
 
 const createMockStore = (overrides = {}) =>
   configureStore({
@@ -202,6 +215,7 @@ const mockDadosEscrita: DadosTabelaDinamica = {
     },
   ],
   questaoId: 0,
+  questionarioId: 1,
 };
 
 const mockDadosReescrita: DadosTabelaDinamica = {
@@ -238,6 +252,7 @@ const mockDadosReescrita: DadosTabelaDinamica = {
     },
   ],
   questaoId: 0,
+  questionarioId: 2,
 };
 
 const WrapperComponent = ({
@@ -250,7 +265,11 @@ const WrapperComponent = ({
   const store = createMockStore();
   return (
     <Provider store={store}>
-      <SondagemListaDinamica dados={dados} formListaDinamica={form} />
+      <SondagemListaDinamica
+        dados={dados}
+        formListaDinamica={form}
+        token="token-teste"
+      />
     </Provider>
   );
 };
@@ -271,9 +290,36 @@ describe("SondagemListaDinamica", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockParametroQuestionarioService.mockImplementation(
+      async ({ idQuestionario }) => [
+        {
+          id: 1,
+          idQuestionario,
+          valor: idQuestionario === 1 ? "true" : "false",
+          tipo: "PossuiLinguaPortuguesaSegundaLingua",
+        },
+        {
+          id: 2,
+          idQuestionario,
+          valor: "true",
+          tipo: "ExibirTituloTabelaSondagem",
+        },
+      ],
+    );
   });
 
   describe("Renderização básica", () => {
+    it("deve chamar parametroQuestionarioService com questionarioId e token", async () => {
+      render(<WrapperComponent dados={mockDadosEscrita} />);
+
+      await waitFor(() => {
+        expect(mockParametroQuestionarioService).toHaveBeenCalledWith({
+          idQuestionario: 1,
+          token: "token-teste",
+        });
+      });
+    });
+
     it("deve renderizar mensagem quando não há dados", () => {
       render(<WrapperComponent dados={null} />);
       expect(
@@ -287,6 +333,7 @@ describe("SondagemListaDinamica", () => {
         estudantes: [],
         sondagemId: 0,
         questaoId: 0,
+        questionarioId: 0,
       };
       render(<WrapperComponent dados={dadosVazios} />);
       expect(
@@ -317,12 +364,15 @@ describe("SondagemListaDinamica", () => {
       expect(screen.queryByText("LP como 2ª língua?")).not.toBeInTheDocument();
     });
 
-    it("deve renderizar checkbox LP para cada estudante", () => {
+    it("deve renderizar checkbox LP para cada estudante", async () => {
       const { container } = render(
         <WrapperComponent dados={mockDadosEscrita} />,
       );
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-      expect(checkboxes.length).toBeGreaterThan(0);
+
+      await waitFor(() => {
+        const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+        expect(checkboxes.length).toBeGreaterThan(0);
+      });
     });
 
     it("deve marcar checkbox LP conforme valor inicial do estudante", async () => {
@@ -724,12 +774,15 @@ describe("SondagemListaDinamica", () => {
   });
 
   describe("Checkbox LP (Língua Portuguesa)", () => {
-    it("deve renderizar checkbox LP quando estudante tem lp=true", () => {
+    it("deve renderizar checkbox LP quando estudante tem lp=true", async () => {
       const { container } = render(
         <WrapperComponent dados={mockDadosEscrita} />,
       );
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-      expect(checkboxes.length).toBeGreaterThan(0);
+
+      await waitFor(() => {
+        const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+        expect(checkboxes.length).toBeGreaterThan(0);
+      });
     });
 
     it("deve marcar checkbox quando estudante tem lp=true", async () => {
@@ -946,6 +999,7 @@ describe("SondagemListaDinamica", () => {
         tituloTabelaRespostas: "escrita",
         estudantes: [],
         questaoId: 0,
+        questionarioId: 0,
       };
 
       const { container } = render(<WrapperComponent dados={dadosVazios} />);
@@ -1087,6 +1141,7 @@ describe("SondagemListaDinamica", () => {
         tituloTabelaRespostas: "escrita",
         estudantes: [],
         questaoId: 0,
+        questionarioId: 0,
       };
 
       render(<WrapperComponent dados={emptyDados} />);
@@ -1103,6 +1158,7 @@ describe("SondagemListaDinamica", () => {
         tituloTabelaRespostas: "escrita",
         estudantes: [],
         questaoId: 0,
+        questionarioId: 0,
       };
 
       render(<WrapperComponent dados={emptyDados} />);
@@ -1421,6 +1477,7 @@ describe("SondagemListaDinamica", () => {
                 ],
               }}
               formListaDinamica={form}
+              token="token-teste"
             />
           </Provider>
         );
@@ -1460,6 +1517,7 @@ describe("SondagemListaDinamica", () => {
                 ],
               }}
               formListaDinamica={form}
+              token="token-teste"
             />
           </Provider>
         );
