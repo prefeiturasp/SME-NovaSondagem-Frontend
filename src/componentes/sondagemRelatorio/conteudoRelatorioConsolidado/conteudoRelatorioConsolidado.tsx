@@ -1,59 +1,48 @@
-import React, { useState, useRef, useEffect } from "react";
-import ListaDinamicaRelatorio from "../listaDinamicaRelatorio/listaDinamicaRelatorio";
+import React, { useRef, useState } from "react";
+import { Button, Card, Dropdown, Form, notification } from "antd";
+import "./conteudoRelatorio.css";
+import FiltroRelatorioConsolidado from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
+import type { FiltroRelatorioConsolidadoRef } from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
+import TabelaRelatorioConsolidado from "../tabelaRelatorioConsolidado/tabelaRelatorioConsolidado";
+import styled from "styled-components";
+import { useSelector } from "react-redux";
 import type {
   DadosTabelaDinamica,
-  LegendaQuestionario,
-  ValoresFiltroRelatorio,
+  ValoresFiltroRelatorioConsolidado,
 } from "../../../core/dto/typesRelatorio";
-import { Button, Card, Spin, Form, Row, Dropdown, notification } from "antd";
-import "./conteudoRelatorio.css";
-import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
-import styled from "styled-components";
-import Legendas from "../../sondagem/legendas/legendas";
-import { LEGENDA_EJA_CAPACIDADE_LEITORA } from "../../sondagem/legendas/legendaEjaCapacidadeLeitora";
-import { classificarTipoLegenda } from "../../sondagem/legendas/legendaClassifier";
-import type { LegendasProps } from "../../../core/dto/legendaProps";
-import { Modalidade, Proficiencia } from "../../../core/dto/types";
-import Alerta from "../../biblioteca/Alerta";
-import RelatorioExportService from "../../../services/relatorioExportService/RelatorioExportService";
-import { useSelector } from "react-redux";
+import RelatorioConsolidadoExportService from "../../../services/relatorioExportService/RelatorioConsolidadoExportService";
 
 export const Icon = styled.i``;
 
 const ConteudoRelatorioConsolidado: React.FC = () => {
   const [formFiltro] = Form.useForm();
-  const filtroRef = useRef<{ reset: () => void } | null>(null);
+  const filtroRef = useRef<FiltroRelatorioConsolidadoRef | null>(null);
   const [dados, setDados] = useState<DadosTabelaDinamica | null>(null);
-  const [filtros, setFiltros] = useState<ValoresFiltroRelatorio | null>(null);
+  const [filtros, setFiltros] =
+    useState<ValoresFiltroRelatorioConsolidado | null>(null);
+  const [loadingGerar, setLoadingGerar] = useState(false);
   const usuario = useSelector((store: any) => store.usuario);
 
-  const [dadosLegenda, setDadosLegenda] = useState<LegendasProps[] | null>(
-    null,
-  );
-
-  const [loading] = useState(false);
-  const [loadingGerar, setLoadingGerar] = useState<boolean>(false);
-
-  const [erroValidacaoTurma, setErroValidacaoTurma] = useState<string | null>(
-    null,
+  const filtrosObrigatoriosPreenchidos = Boolean(
+    filtros?.anoLetivo &&
+    filtros?.modalidade &&
+    filtros?.dre &&
+    filtros?.ue &&
+    filtros?.bimestre !== undefined &&
+    filtros?.ano !== undefined &&
+    filtros?.componenteCurricular &&
+    filtros?.proficiencia,
   );
 
   const GerarDados = async (formato: "pdf" | "excel") => {
-    if (!filtros || !dados) return;
+    if (!filtros || !filtrosObrigatoriosPreenchidos) return;
 
     setLoadingGerar(true);
     try {
       const extensaoRelatorio = formato === "pdf" ? 1 : 4;
-      const sucesso = await RelatorioExportService({
-        extensaoRelatorio: extensaoRelatorio,
-        turmaId: filtros.turma as number,
-        proficienciaId: filtros.proficiencia as number,
-        componenteCurricularId: filtros.componenteCurricular as number,
-        modalidade: filtros.modalidade as number,
-        anoLetivo: filtros.anoLetivo as number,
-        semestreId: filtros.semestreId ?? null,
-        bimestreId: filtros.bimestre ?? null,
-        ueCodigo: String(filtros.ue),
+      const sucesso = await RelatorioConsolidadoExportService({
+        extensaoRelatorio,
+        filtros,
         token: usuario?.token,
       });
 
@@ -61,21 +50,21 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
         notification.success({
           message: "Sucesso",
           description:
-            "Solicitação de geração do relatório gerada com sucesso. Em breve você receberá uma notificação com o resultado.",
+            "Solicitação de geração do relatório consolidado gerada com sucesso. Em breve você receberá uma notificação com o resultado.",
           duration: 4,
         });
       } else {
         notification.error({
           message: "Erro",
-          description: "Falha ao gerar relatório. Tente novamente.",
+          description: "Falha ao gerar relatório consolidado. Tente novamente.",
           duration: 4,
         });
       }
     } catch (error) {
-      console.error("Erro ao gerar relatório:", error);
+      console.error("Erro ao gerar relatório consolidado:", error);
       notification.error({
         message: "Erro",
-        description: "Ocorreu um erro ao gerar o relatório.",
+        description: "Ocorreu um erro ao gerar o relatório consolidado.",
         duration: 4,
       });
     } finally {
@@ -83,66 +72,19 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     }
   };
 
-  const CancelarCadastroSondagem = async () => {
+  const CancelarCadastroSondagem = () => {
     formFiltro.resetFields();
     filtroRef.current?.reset();
     setDados(null);
-    setDadosLegenda(null);
+    setFiltros(null);
   };
 
   const voltarSondagem = () => {
     globalThis.location.href = "/";
   };
 
-  useEffect(() => {
-    if (dados) {
-      const legendaQuestionario = Array.isArray(dados.legenda)
-        ? dados.legenda
-        : [];
-
-      const dadosLegenda: LegendasProps[] = legendaQuestionario.map(
-        (legenda: LegendaQuestionario) => {
-          const tipo = classificarTipoLegenda(legenda.legenda);
-
-          return {
-            corFundo: legenda.corFundo,
-            corTexto: legenda.corTexto,
-            descricaoLegenda: legenda.descricaoOpcaoResposta,
-            textoLegenda: legenda.legenda,
-            tipo,
-          };
-        },
-      );
-
-      if (
-        filtros?.modalidade === Modalidade.EJA &&
-        filtros?.proficiencia === Proficiencia.CapacidadeLeitora
-      )
-        setDadosLegenda(LEGENDA_EJA_CAPACIDADE_LEITORA);
-      else setDadosLegenda(dadosLegenda);
-    } else {
-      setDadosLegenda(null);
-    }
-  }, [dados, filtros?.modalidade, filtros?.proficiencia]);
-
   return (
     <>
-      <div
-        className="grupoAlertas"
-        style={{ display: erroValidacaoTurma ? "block" : "none" }}
-      >
-        <Row gutter={16} className="p-0">
-          <Alerta
-            alerta={{
-              tipo: "warning",
-              id: "SegundoAlerta",
-              mensagem: erroValidacaoTurma ?? "",
-              estiloTitulo: { fontSize: "18px" },
-            }}
-            className="mb-2 larguraAlerta"
-          />
-        </Row>
-      </div>
       <div className="linhaTituloBotao">
         <div className="tituloSondagem">Sondagem Consolidado</div>
         <div>
@@ -174,13 +116,13 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
               onClick: ({ key }) => void GerarDados(key as "pdf" | "excel"),
             }}
             trigger={["click"]}
-            disabled={!dados}
+            disabled={!filtrosObrigatoriosPreenchidos}
           >
             <Button
               id="sondagem-button-gerar"
               className="sondagemBotaoEstilo"
               loading={loadingGerar}
-              disabled={!dados || loadingGerar}
+              disabled={!filtrosObrigatoriosPreenchidos || loadingGerar}
               icon={<Icon className="fa fa-print iconBotaoGerar" />}
             >
               Gerar
@@ -195,23 +137,13 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
             estudantes da Unidade Educacional selecionada.
           </p>
         </div>
-        <FiltroRelatorio
+        <FiltroRelatorioConsolidado
           ref={filtroRef}
           form={formFiltro}
           onDadosCarregados={setDados}
           onFiltrosAlterados={setFiltros}
-          onErroValidacaoTurma={setErroValidacaoTurma}
         />
-        <Spin spinning={loading} tip="Carregando dados...">
-          <ListaDinamicaRelatorio dados={dados} />
-        </Spin>
-
-        <Legendas
-          data={dadosLegenda || []}
-          ano={filtros?.ano ?? undefined}
-          proficienciaId={filtros?.proficiencia ?? undefined}
-          dadosCompletos={dados}
-        />
+        <TabelaRelatorioConsolidado dados={dados} />
       </Card>
     </>
   );

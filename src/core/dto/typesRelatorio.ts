@@ -54,6 +54,21 @@ export type ValoresFiltroRelatorio = {
   ano?: number;
 };
 
+export type ValoresFiltroRelatorioConsolidado = {
+  anoLetivo?: number;
+  modalidade?: number;
+  dre?: number;
+  ue?: number;
+  bimestre?: number | null;
+  ano?: number;
+  componenteCurricular?: number;
+  proficiencia?: number;
+  genero?: string;
+  raca?: string;
+  programasAtendimentos?: string;
+  lpSegundaLingua?: boolean;
+};
+
 export interface LegendaQuestionario {
   id: number;
   ordem: number;
