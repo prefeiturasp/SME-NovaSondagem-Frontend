@@ -53,6 +53,14 @@
   font-weight: 500;
 }
 
+.tooltip-remanejado-icon {
+  margin-left: 6px;
+  font-size: 8px;
+  color: #6933ff;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
 .estudantesConfig {
   display: flex;
   justify-content: space-between;
