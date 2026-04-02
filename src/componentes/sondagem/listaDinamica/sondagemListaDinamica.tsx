@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Checkbox, ConfigProvider, Form, Space, Table } from "antd";
+import { Checkbox, ConfigProvider, Form, Space, Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import SelectColorido from "../selectColorido";
 import { LogoAcessibilidade, LogoAEE, LogoPAP } from "../shared/logos";
+import { montarMensagemTooltipRemanejado } from "../shared/remanejamentoTooltip";
 import type { DadosTabelaDinamica, Estudante } from "../../../core/dto/types";
 import "./sondagemListaDinamica.css";
 import { parametroQuestionarioService } from "../../../services/parametroQuestionarioService/parametroQuestionarioService";
@@ -178,20 +179,28 @@ const SondagemListaDinamica: React.FC<
     key: "estudante",
     width: mostrarColunaLP ? "40%" : "50%",
     fixed: "left",
-    render: (_, record) => (
-      <Space direction="vertical" size={0} className="width100">
-        <div className="estudantesConfig">
-          <span className="fontWeight500">
-            {record.numeroAlunoChamada} - {record.nome}
-          </span>
-          <Space size={4}>
-            {record.pap && <LogoPAP />}
-            {record.aee && <LogoAEE />}
-            {record.possuiDeficiencia && <LogoAcessibilidade />}
-          </Space>
-        </div>
-      </Space>
-    ),
+    render: (_, record) => {
+      const mensagemTooltip = montarMensagemTooltipRemanejado(record);
+      return (
+        <Space direction="vertical" size={0} className="width100">
+          <div className="estudantesConfig">
+            <span className="fontWeight500">
+              {record.numeroAlunoChamada} - {record.nome}
+              {mensagemTooltip ? (
+                <Tooltip title={mensagemTooltip} placement="topLeft">
+                  <i className="fa fa-circle tooltip-remanejado-icon" />
+                </Tooltip>
+              ) : null}
+            </span>
+            <Space size={4}>
+              {record.pap && <LogoPAP />}
+              {record.aee && <LogoAEE />}
+              {record.possuiDeficiencia && <LogoAcessibilidade />}
+            </Space>
+          </div>
+        </Space>
+      );
+    },
   });
 
   if (dados?.estudantes?.[0]?.coluna) {
