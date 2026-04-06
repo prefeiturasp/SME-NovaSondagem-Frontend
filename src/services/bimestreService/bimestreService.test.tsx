@@ -31,6 +31,21 @@ describe("BimestreService", () => {
     ]);
   });
 
+  it("deve enviar modalidade quando informada", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({
+      data: [{ id: 1, descricao: "1º Bimestre" }],
+    });
+
+    const resultado = await BimestreService({ token, modalidade: 3 });
+
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith("/Bimestre", {
+      headers: { "X-Token-Principal": token },
+      params: { modalidade: 3 },
+    });
+
+    expect(resultado).toEqual([{ value: 1, label: "1º Bimestre" }]);
+  });
+
   it("deve retornar null quando API retornar lista vazia", async () => {
     (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({
       data: [],
