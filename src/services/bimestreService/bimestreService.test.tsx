@@ -5,7 +5,7 @@ jest.mock("../../core/servico/servico");
 
 describe("BimestreService", () => {
   const token = "token-teste";
-  const modalidade = "Fundamental";
+  const modalidade = 1;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -21,18 +21,31 @@ describe("BimestreService", () => {
 
     const resultado = await BimestreService({ token, modalidade });
 
-    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      `/Bimestre?modalidade=${modalidade}`,
-      {
-        headers: { "X-Token-Principal": token },
-      },
-    );
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith("/Bimestre", {
+      headers: { "X-Token-Principal": token },
+      params: { modalidade },
+    });
 
     // Deve preservar a ordem recebida da API
     expect(resultado).toEqual([
       { value: 2, label: "2º Bimestre" },
       { value: 1, label: "1º Bimestre" },
     ]);
+  });
+
+  it("deve enviar modalidade quando informada", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({
+      data: [{ id: 1, descricao: "1º Bimestre" }],
+    });
+
+    const resultado = await BimestreService({ token, modalidade: 3 });
+
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith("/Bimestre", {
+      headers: { "X-Token-Principal": token },
+      params: { modalidade: 3 },
+    });
+
+    expect(resultado).toEqual([{ value: 1, label: "1º Bimestre" }]);
   });
 
   it("deve retornar null quando API retornar lista vazia", async () => {

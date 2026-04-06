@@ -141,7 +141,7 @@ describe("FiltroRelatorio", () => {
     ]);
     (ModalidadeService as jest.Mock).mockResolvedValue([
       { value: 1, label: "Ensino Fundamental" },
-      { value: 3, label: "EJA" },
+      { value: 3, label: "Educação de Jovens e Adultos" },
       { value: 5, label: "Infantil" },
     ]);
     (DreService as jest.Mock).mockResolvedValue([
@@ -159,6 +159,7 @@ describe("FiltroRelatorio", () => {
     ]);
     (BimestreService as jest.Mock).mockResolvedValue([
       { value: 1, label: "1º Bimestre" },
+      { value: 2, label: "2º Bimestre" },
     ]);
     (DadosRelatorioService as jest.Mock).mockResolvedValue({
       tituloTabelaRespostas: "Leitura",
@@ -274,8 +275,8 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
-    await waitFor(() => expect(BimestreService).toHaveBeenCalled());
-    await changeSelect("sondagem-select-bimestre", "null");
+    expect(BimestreService).not.toHaveBeenCalled();
+    await changeSelect("sondagem-select-semestre", "null");
 
     await waitFor(() => {
       expect(DadosRelatorioService).toHaveBeenCalledWith(
@@ -359,7 +360,7 @@ describe("FiltroRelatorio", () => {
     });
   });
 
-  it("exibe bimestre para modalidade diferente de 5", async () => {
+  it("exibe semestre para modalidade diferente de 5", async () => {
     renderWithForm();
 
     const changeSelect = async (testId: string, value: string | number) => {
@@ -387,17 +388,17 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
-    await waitFor(() => expect(BimestreService).toHaveBeenCalled());
+    expect(BimestreService).not.toHaveBeenCalled();
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("sondagem-select-bimestre"),
+        screen.getByTestId("sondagem-select-semestre"),
       ).toBeInTheDocument();
     });
 
     expect(screen.getByText("Todos")).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Todos" })).toHaveValue("Todos");
-    expect(screen.getByRole("option", { name: "1º Bimestre" })).toHaveValue(
+    expect(screen.getByRole("option", { name: "1º Semestre" })).toHaveValue(
       "1",
     );
   });
@@ -421,6 +422,7 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(UeService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-ue", 20);
+    await changeSelect("sondagem-select-semestre", 1);
     await waitFor(() => expect(TurmaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-turma", 30);
@@ -458,7 +460,7 @@ describe("FiltroRelatorio", () => {
     await changeSelect("sondagem-select-ano-letivo", 2026);
     await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
 
-    await changeSelect("sondagem-select-modalidade", 1);
+    await changeSelect("sondagem-select-modalidade", 5);
     await waitFor(() => expect(DreService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-dre", 10);
@@ -493,7 +495,7 @@ describe("FiltroRelatorio", () => {
     await changeSelect("sondagem-select-ano-letivo", 2026);
     await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
 
-    await changeSelect("sondagem-select-modalidade", 1);
+    await changeSelect("sondagem-select-modalidade", 5);
     await waitFor(() => expect(DreService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-dre", 10);
@@ -514,6 +516,155 @@ describe("FiltroRelatorio", () => {
       expect(BimestreService).toHaveBeenCalled();
       expect(screen.getByTestId("sondagem-select-bimestre")).toBeDisabled();
       expect(DadosRelatorioService).not.toHaveBeenCalled();
+    });
+  });
+
+  it("para modalidade 3 exibe semestre antes de turma e usa periodo ao buscar turmas", async () => {
+    renderWithForm();
+
+    const changeSelect = async (testId: string, value: string | number) => {
+      const select = screen.getByTestId(testId);
+      await waitFor(() => expect(select).not.toBeDisabled());
+      fireEvent.change(select, { target: { value: String(value) } });
+    };
+
+    await changeSelect("sondagem-select-ano-letivo", 2026);
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-modalidade", 3);
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-dre", 10);
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-ue", 20);
+
+    const semestreSelect = screen.getByTestId("sondagem-select-semestre");
+    const turmaSelect = screen.getByTestId("sondagem-select-turma");
+
+    expect(semestreSelect).toBeInTheDocument();
+    expect(turmaSelect).toBeDisabled();
+    expect(
+      semestreSelect.compareDocumentPosition(turmaSelect) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.queryByText("Todos")).not.toBeInTheDocument();
+
+    await changeSelect("sondagem-select-semestre", 1);
+
+    await waitFor(() => {
+      expect(TurmaService).toHaveBeenCalledWith({
+        token: "fake-token",
+        urId: 20,
+        modalidade: 3,
+        anoLetivo: 2026,
+        periodo: 1,
+      });
+    });
+  });
+
+  it("para modalidade 3 usa o semestre selecionado na busca do relatório", async () => {
+    renderWithForm();
+
+    const changeSelect = async (testId: string, value: string | number) => {
+      const select = screen.getByTestId(testId);
+      await waitFor(() => expect(select).not.toBeDisabled());
+      fireEvent.change(select, { target: { value: String(value) } });
+    };
+
+    await changeSelect("sondagem-select-ano-letivo", 2026);
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-modalidade", 3);
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-dre", 10);
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-ue", 20);
+    await changeSelect("sondagem-select-semestre", 2);
+    await waitFor(() => expect(TurmaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-turma", 30);
+    await waitFor(() => expect(validarTurma).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-componente-curricular", 40);
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-proficiencia", 3);
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("sondagem-select-bimestre"),
+      ).toBeInTheDocument(),
+    );
+
+    expect(BimestreService).toHaveBeenCalledWith({
+      token: "fake-token",
+      modalidade: 3,
+    });
+    expect(screen.getByRole("option", { name: "1º Bimestre" })).toHaveValue(
+      "1",
+    );
+    expect(screen.getByRole("option", { name: "2º Bimestre" })).toHaveValue(
+      "2",
+    );
+
+    await changeSelect("sondagem-select-bimestre", 1);
+
+    await waitFor(() => {
+      expect(DadosRelatorioService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          modalidade: 3,
+          turmaId: 30,
+          componenteCurricularId: 40,
+          proficienciaId: 3,
+          semestreId: 2,
+          bimestreId: 1,
+          token: "fake-token",
+        }),
+      );
+    });
+  });
+
+  it("para modalidade 3 exibe bimestre ao final", async () => {
+    renderWithForm();
+
+    const changeSelect = async (testId: string, value: string | number) => {
+      const select = screen.getByTestId(testId);
+      await waitFor(() => expect(select).not.toBeDisabled());
+      fireEvent.change(select, { target: { value: String(value) } });
+    };
+
+    await changeSelect("sondagem-select-ano-letivo", 2026);
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-modalidade", 3);
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-dre", 10);
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-ue", 20);
+    await changeSelect("sondagem-select-semestre", 2);
+    await waitFor(() => expect(TurmaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-turma", 30);
+    await waitFor(() => expect(validarTurma).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-componente-curricular", 40);
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    await changeSelect("sondagem-select-proficiencia", 3);
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("sondagem-select-bimestre"),
+      ).toBeInTheDocument();
+    });
+
+    expect(BimestreService).toHaveBeenCalledWith({
+      token: "fake-token",
+      modalidade: 3,
     });
   });
 });
