@@ -275,8 +275,8 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
-    await waitFor(() => expect(BimestreService).toHaveBeenCalled());
-    await changeSelect("sondagem-select-bimestre", "null");
+    expect(BimestreService).not.toHaveBeenCalled();
+    await changeSelect("sondagem-select-semestre", "null");
 
     await waitFor(() => {
       expect(DadosRelatorioService).toHaveBeenCalledWith(
@@ -360,7 +360,7 @@ describe("FiltroRelatorio", () => {
     });
   });
 
-  it("exibe bimestre para modalidade diferente de 5", async () => {
+  it("exibe semestre para modalidade diferente de 5", async () => {
     renderWithForm();
 
     const changeSelect = async (testId: string, value: string | number) => {
@@ -388,17 +388,17 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-proficiencia", 3);
-    await waitFor(() => expect(BimestreService).toHaveBeenCalled());
+    expect(BimestreService).not.toHaveBeenCalled();
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("sondagem-select-bimestre"),
+        screen.getByTestId("sondagem-select-semestre"),
       ).toBeInTheDocument();
     });
 
     expect(screen.getByText("Todos")).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Todos" })).toHaveValue("Todos");
-    expect(screen.getByRole("option", { name: "1º Bimestre" })).toHaveValue(
+    expect(screen.getByRole("option", { name: "1º Semestre" })).toHaveValue(
       "1",
     );
   });
@@ -422,6 +422,7 @@ describe("FiltroRelatorio", () => {
     await waitFor(() => expect(UeService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-ue", 20);
+    await changeSelect("sondagem-select-semestre", 1);
     await waitFor(() => expect(TurmaService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-turma", 30);
@@ -459,7 +460,7 @@ describe("FiltroRelatorio", () => {
     await changeSelect("sondagem-select-ano-letivo", 2026);
     await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
 
-    await changeSelect("sondagem-select-modalidade", 1);
+    await changeSelect("sondagem-select-modalidade", 5);
     await waitFor(() => expect(DreService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-dre", 10);
@@ -494,7 +495,7 @@ describe("FiltroRelatorio", () => {
     await changeSelect("sondagem-select-ano-letivo", 2026);
     await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
 
-    await changeSelect("sondagem-select-modalidade", 1);
+    await changeSelect("sondagem-select-modalidade", 5);
     await waitFor(() => expect(DreService).toHaveBeenCalled());
 
     await changeSelect("sondagem-select-dre", 10);

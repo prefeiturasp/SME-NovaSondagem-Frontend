@@ -5,7 +5,7 @@ jest.mock("../../core/servico/servico");
 
 describe("BimestreService", () => {
   const token = "token-teste";
-  const modalidade = "Fundamental";
+  const modalidade = 1;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -21,12 +21,10 @@ describe("BimestreService", () => {
 
     const resultado = await BimestreService({ token, modalidade });
 
-    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      `/Bimestre?modalidade=${modalidade}`,
-      {
-        headers: { "X-Token-Principal": token },
-      },
-    );
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith("/Bimestre", {
+      headers: { "X-Token-Principal": token },
+      params: { modalidade },
+    });
 
     // Deve preservar a ordem recebida da API
     expect(resultado).toEqual([
