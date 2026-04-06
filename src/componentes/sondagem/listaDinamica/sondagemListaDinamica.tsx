@@ -223,7 +223,9 @@ const SondagemListaDinamica: React.FC<
           }));
 
           const isDisabled =
-            !podeSalvar || !colunaEstudante.periodoBimestreAtivo;
+            !podeSalvar ||
+            !colunaEstudante.periodoBimestreAtivo ||
+            record.estudanteRemanejado != null;
 
           return (
             <>
