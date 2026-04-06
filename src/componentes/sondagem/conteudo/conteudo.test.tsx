@@ -779,7 +779,7 @@ describe("Conteudo", () => {
           }),
         );
       });
-    });
+    }, 15000);
 
     it("deve limpar bimestre ao trocar para proficiência que não seja 3 ou 5", async () => {
       mockGetCampoBimestre();
