@@ -43,6 +43,14 @@
   font-size: 16px;
 }
 
+.tooltip-remanejado-icon {
+  margin-left: 6px;
+  font-size: 8px;
+  color: #6933ff;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
 .estudantes-config-relatorio {
   display: flex;
   justify-content: space-between;

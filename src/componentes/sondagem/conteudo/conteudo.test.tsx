@@ -2623,4 +2623,152 @@ describe("Conteudo", () => {
       });
     });
   });
+
+  describe("Branches adicionais de cobertura", () => {
+    it("exibe erro quando falha ao obter disciplinas", async () => {
+      (NovaSondagemServico.get as jest.Mock).mockRejectedValueOnce(
+        new Error("falha disciplinas"),
+      );
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(message.error).toHaveBeenCalledWith(
+          "Erro ao carregar dados da disciplina.",
+        );
+      });
+    });
+
+    it("exibe erro quando falha ao obter proficiência", async () => {
+      (NovaSondagemServico.get as jest.Mock).mockImplementation(
+        (url: string) => {
+          if (url.startsWith("/ComponenteCurricular")) {
+            return Promise.resolve({ data: mockDisciplinas });
+          }
+          if (url.startsWith("/Proficiencia/")) {
+            return Promise.reject(new Error("falha proficiência"));
+          }
+          return Promise.resolve({ data: [] });
+        },
+      );
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          expect.stringContaining("/ComponenteCurricular"),
+          expect.any(Object),
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        expect(message.error).toHaveBeenCalledWith(
+          "Erro ao carregar dados da proficiencia.",
+        );
+      });
+    });
+
+    it("refaz a busca ao clicar em cancelar com filtros selecionados", async () => {
+      (NovaSondagemServico.get as jest.Mock).mockImplementation(
+        (url: string) => {
+          if (url.startsWith("/ComponenteCurricular")) {
+            return Promise.resolve({ data: mockDisciplinas });
+          }
+          if (url.startsWith("/Proficiencia/")) {
+            return Promise.resolve({ data: mockProficiencias });
+          }
+          if (url === "/Questionario") {
+            return Promise.resolve({ data: mockQuestionario });
+          }
+          return Promise.resolve({ data: [] });
+        },
+      );
+
+      const store = createMockStoreWithUser({
+        logado: true,
+        token: "mock-token",
+        turmaSelecionada: criarTurma(),
+      });
+
+      const { container } = renderWithProvider(<Conteudo />, store);
+
+      await waitFor(() => {
+        expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+          expect.stringContaining("/ComponenteCurricular"),
+          expect.any(Object),
+        );
+      });
+
+      const disciplinaSelect = container.querySelector(
+        "#sondagem-select-componente-curricular",
+      );
+      if (disciplinaSelect) {
+        fireEvent.mouseDown(disciplinaSelect);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Português") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      const proficienciaSelect = container.querySelector(
+        "#sondagem-select-proficiencia",
+      );
+      if (proficienciaSelect) {
+        fireEvent.mouseDown(proficienciaSelect);
+      }
+
+      await waitFor(() => {
+        const option = screen.queryByText("Escrita") as HTMLElement;
+        if (option) {
+          fireEvent.click(option);
+        }
+      });
+
+      await waitFor(() => {
+        const chamadasQuestionario = (
+          NovaSondagemServico.get as jest.Mock
+        ).mock.calls.filter(([url]: [string]) => url === "/Questionario");
+        expect(chamadasQuestionario.length).toBeGreaterThanOrEqual(1);
+      });
+
+      fireEvent.click(screen.getByText(BOTOES.CANCELAR));
+
+      await waitFor(() => {
+        const chamadasQuestionario = (
+          NovaSondagemServico.get as jest.Mock
+        ).mock.calls.filter(([url]: [string]) => url === "/Questionario");
+        expect(chamadasQuestionario.length).toBeGreaterThanOrEqual(2);
+      });
+    });
+  });
 });
