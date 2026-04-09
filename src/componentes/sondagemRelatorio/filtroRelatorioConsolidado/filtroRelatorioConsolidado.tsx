@@ -16,8 +16,11 @@ import BimestreService from "../../../services/bimestreService/bimestreService";
 import BuscarDadosRelatorioConsolidadoService from "../../../services/buscarDadosRelatorioConsolidado/buscarDadosRelatorioConsolidado";
 import ComponenteCurricularService from "../../../services/componenteCurricularService/componenteCurricularService";
 import DreService from "../../../services/dre/dreService";
+import GeneroSexoService from "../../../services/generoSexoService/generoSexoService";
 import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import ProficienciaService from "../../../services/proficienciaService/ProficienciaService";
+import ProgramaAtendimentoService from "../../../services/programaAtendimentoService/programaAtendimentoService";
+import RacaCorService from "../../../services/racaCorService/racaCorService";
 import UeService from "../../../services/ue/ueService";
 import "./filtroRelatorioConsolidado.css";
 
@@ -50,27 +53,6 @@ const opcoesAno: SelectOption[] = [
   { value: 9, label: "9º ANO" },
 ];
 
-const opcoesGenero: SelectOption[] = [
-  { value: "F", label: "Feminino" },
-  { value: "M", label: "Masculino" },
-  { value: "N", label: "Não informado" },
-];
-
-const opcoesRaca: SelectOption[] = [
-  { value: "amarela", label: "Amarela" },
-  { value: "branca", label: "Branca" },
-  { value: "indigena", label: "Indígena" },
-  { value: "parda", label: "Parda" },
-  { value: "preta", label: "Preta" },
-  { value: "nao-informada", label: "Não informada" },
-];
-
-const opcoesProgramasAtendimentos: SelectOption[] = [
-  { value: "pap", label: "PAP" },
-  { value: "aee", label: "AEE" },
-  { value: "nenhum", label: "Nenhum" },
-];
-
 const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   FiltroRelatorioConsolidadoRef,
   FiltroRelatorioConsolidadoProps
@@ -87,6 +69,11 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     [],
   );
   const [listaBimestres, setListaBimestres] = useState<SelectOption[]>([]);
+  const [listaGeneros, setListaGeneros] = useState<SelectOption[]>([]);
+  const [listaRacas, setListaRacas] = useState<SelectOption[]>([]);
+  const [listaProgramasAtendimentos, setListaProgramasAtendimentos] = useState<
+    SelectOption[]
+  >([]);
 
   const [desabilitarModalidade, setDesabilitarModalidade] = useState(true);
   const [desabilitarDre, setDesabilitarDre] = useState(true);
@@ -155,6 +142,17 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const obterAnosLetivos = async (token: string) => {
     const resposta = await AnoLetivoService({ token });
     setListaAnosLetivos(resposta ?? []);
+  };
+
+  const obterOpcoesFixas = async (token: string) => {
+    const [generos, racas, programas] = await Promise.all([
+      GeneroSexoService({ token }),
+      RacaCorService({ token }),
+      ProgramaAtendimentoService({ token }),
+    ]);
+    setListaGeneros(generos ?? []);
+    setListaRacas(racas ?? []);
+    setListaProgramasAtendimentos(programas ?? []);
   };
 
   const onChangeAnoLetivo = async (value: number) => {
@@ -236,7 +234,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
         token: usuario?.token,
         modalidade: String(value),
       }),
-      BimestreService({ token: usuario?.token }),
+      BimestreService({ token: usuario?.token, modalidade: value }),
     ]);
 
     setListaDres(dres ?? []);
@@ -399,6 +397,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   useEffect(() => {
     if (usuario?.token) {
       void obterAnosLetivos(usuario.token);
+      void obterOpcoesFixas(usuario.token);
     }
   }, [usuario?.token]);
 
@@ -544,7 +543,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
           >
             <Select
               id="sondagem-consolidado-select-genero"
-              options={opcoesGenero}
+              options={listaGeneros}
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}
             />
@@ -555,7 +554,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
           <Form.Item name="raca" label="Raça" className="labelSelectSondagem">
             <Select
               id="sondagem-consolidado-select-raca"
-              options={opcoesRaca}
+              options={listaRacas}
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}
             />
@@ -570,7 +569,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
           >
             <Select
               id="sondagem-consolidado-select-programas-atendimentos"
-              options={opcoesProgramasAtendimentos}
+              options={listaProgramasAtendimentos}
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}
             />
