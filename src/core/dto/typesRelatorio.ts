@@ -60,12 +60,12 @@ export type ValoresFiltroRelatorioConsolidado = {
   dre?: number;
   ue?: number;
   bimestre?: number | null;
-  ano?: number;
+  ano?: number[];
   componenteCurricular?: number;
   proficiencia?: number;
   genero?: string;
   raca?: string;
-  programasAtendimentos?: string;
+  programa?: string[];
   lpSegundaLingua?: boolean;
 };
 

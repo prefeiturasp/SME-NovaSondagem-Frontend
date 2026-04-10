@@ -30,7 +30,7 @@ const BuscarDadosRelatorioConsolidadoService = async ({
           proficiencia: filtros.proficiencia,
           genero: filtros.genero,
           raca: filtros.raca,
-          programasAtendimentos: filtros.programasAtendimentos,
+          programa: filtros.programa,
           lpSegundaLingua: filtros.lpSegundaLingua,
         },
       },

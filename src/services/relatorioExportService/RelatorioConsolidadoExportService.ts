@@ -31,8 +31,10 @@ const RelatorioConsolidadoExportService = async ({
     if (filtros.bimestre !== null && filtros.bimestre !== undefined) {
       params.append("bimestre", String(filtros.bimestre));
     }
-    if (filtros.ano !== undefined) {
-      params.append("ano", String(filtros.ano));
+    if (Array.isArray(filtros.ano) && filtros.ano.length > 0) {
+      filtros.ano.forEach((ano) => {
+        params.append("ano", String(ano));
+      });
     }
     if (filtros.componenteCurricular !== undefined) {
       params.append(
@@ -49,8 +51,10 @@ const RelatorioConsolidadoExportService = async ({
     if (filtros.raca) {
       params.append("raca", filtros.raca);
     }
-    if (filtros.programasAtendimentos) {
-      params.append("programasAtendimentos", filtros.programasAtendimentos);
+    if (Array.isArray(filtros.programa) && filtros.programa.length > 0) {
+      filtros.programa.forEach((programa) => {
+        params.append("programa", programa);
+      });
     }
     params.append("lpSegundaLingua", String(Boolean(filtros.lpSegundaLingua)));
 

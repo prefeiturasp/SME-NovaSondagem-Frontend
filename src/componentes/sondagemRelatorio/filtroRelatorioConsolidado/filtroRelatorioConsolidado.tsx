@@ -19,7 +19,6 @@ import DreService from "../../../services/dre/dreService";
 import GeneroSexoService from "../../../services/generoSexoService/generoSexoService";
 import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import ProficienciaService from "../../../services/proficienciaService/ProficienciaService";
-import ProgramaAtendimentoService from "../../../services/programaAtendimentoService/programaAtendimentoService";
 import RacaCorService from "../../../services/racaCorService/racaCorService";
 import UeService from "../../../services/ue/ueService";
 import "./filtroRelatorioConsolidado.css";
@@ -45,12 +44,16 @@ const opcoesAno: SelectOption[] = [
   { value: 1, label: "1º ANO" },
   { value: 2, label: "2º ANO" },
   { value: 3, label: "3º ANO" },
-  { value: 4, label: "4º ANO" },
-  { value: 5, label: "5º ANO" },
-  { value: 6, label: "6º ANO" },
-  { value: 7, label: "7º ANO" },
-  { value: 8, label: "8º ANO" },
-  { value: 9, label: "9º ANO" },
+];
+
+const opcoesAgrupamentoDados: SelectOption[] = [
+  { value: "porQuestoes", label: "Por questões" },
+];
+
+const opcoesPrograma: SelectOption[] = [
+  { value: "pap", label: "PAP" },
+  { value: "aee", label: "AEE" },
+  { value: "deficiente", label: "Deficiencia" },
 ];
 
 const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
@@ -71,9 +74,6 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const [listaBimestres, setListaBimestres] = useState<SelectOption[]>([]);
   const [listaGeneros, setListaGeneros] = useState<SelectOption[]>([]);
   const [listaRacas, setListaRacas] = useState<SelectOption[]>([]);
-  const [listaProgramasAtendimentos, setListaProgramasAtendimentos] = useState<
-    SelectOption[]
-  >([]);
 
   const [desabilitarModalidade, setDesabilitarModalidade] = useState(true);
   const [desabilitarDre, setDesabilitarDre] = useState(true);
@@ -102,7 +102,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: valores.proficiencia,
       genero: valores.genero,
       raca: valores.raca,
-      programasAtendimentos: valores.programasAtendimentos,
+      programa: valores.programa,
       lpSegundaLingua: Boolean(valores.lpSegundaLingua),
     };
   };
@@ -116,7 +116,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       filtros.dre &&
       filtros.ue &&
       filtros.bimestre !== undefined &&
-      filtros.ano !== undefined &&
+      Array.isArray(filtros.ano) &&
+      filtros.ano.length > 0 &&
       filtros.componenteCurricular &&
       filtros.proficiencia,
     );
@@ -145,14 +146,12 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   };
 
   const obterOpcoesFixas = async (token: string) => {
-    const [generos, racas, programas] = await Promise.all([
+    const [generos, racas] = await Promise.all([
       GeneroSexoService({ token }),
       RacaCorService({ token }),
-      ProgramaAtendimentoService({ token }),
     ]);
     setListaGeneros(generos ?? []);
     setListaRacas(racas ?? []);
-    setListaProgramasAtendimentos(programas ?? []);
   };
 
   const onChangeAnoLetivo = async (value: number) => {
@@ -167,7 +166,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ano: undefined,
       genero: undefined,
       raca: undefined,
-      programasAtendimentos: undefined,
+      programa: undefined,
       lpSegundaLingua: false,
     });
 
@@ -208,7 +207,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ano: undefined,
       genero: undefined,
       raca: undefined,
-      programasAtendimentos: undefined,
+      programa: undefined,
       lpSegundaLingua: false,
     });
 
@@ -258,7 +257,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       genero: undefined,
       raca: undefined,
-      programasAtendimentos: undefined,
+      programa: undefined,
       lpSegundaLingua: false,
     });
 
@@ -294,33 +293,21 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       genero: undefined,
       raca: undefined,
-      programasAtendimentos: undefined,
+      programa: undefined,
       lpSegundaLingua: false,
     });
 
     setListaProficiencias([]);
     setDesabilitarBimestre(false);
-    setDesabilitarAno(true);
+    setDesabilitarAno(false);
     setDesabilitarComponenteCurricular(true);
     setDesabilitarProficiencia(true);
   };
 
   const onChangeBimestre = () => {
     limparResultadoRelatorio();
-    form.setFieldsValue({
-      ano: undefined,
-      componenteCurricular: undefined,
-      proficiencia: undefined,
-      genero: undefined,
-      raca: undefined,
-      programasAtendimentos: undefined,
-      lpSegundaLingua: false,
-    });
-
-    setListaProficiencias([]);
     setDesabilitarAno(false);
-    setDesabilitarComponenteCurricular(true);
-    setDesabilitarProficiencia(true);
+    void tentarBuscarDadosConsolidado();
   };
 
   const onChangeAno = () => {
@@ -330,7 +317,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       genero: undefined,
       raca: undefined,
-      programasAtendimentos: undefined,
+      programa: undefined,
       lpSegundaLingua: false,
     });
 
@@ -345,7 +332,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       genero: undefined,
       raca: undefined,
-      programasAtendimentos: undefined,
+      programa: undefined,
       lpSegundaLingua: false,
     });
 
@@ -405,13 +392,30 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     <Form
       form={form}
       layout="vertical"
-      initialValues={{ lpSegundaLingua: false }}
+      initialValues={{
+        lpSegundaLingua: false,
+        agrupamentoDados: "porQuestoes",
+      }}
     >
       <Row gutter={16}>
         <Col xs={24} sm={24} md={12} lg={6} xl={6}>
           <Form.Item
+            name="agrupamentoDados"
+            label="* Agrupamento de dados"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-consolidado-select-agrupamento-dados"
+              options={opcoesAgrupamentoDados}
+              placeholder="Selecione"
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+          <Form.Item
             name="anoLetivo"
-            label="Ano letivo"
+            label="* Ano letivo"
             className="labelSelectSondagem"
           >
             <Select
@@ -426,7 +430,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
         <Col xs={24} sm={24} md={12} lg={6} xl={6}>
           <Form.Item
             name="modalidade"
-            label="Modalidade"
+            label="* Etapa/Modalidade"
             className="labelSelectSondagem"
           >
             <Select
@@ -454,7 +458,9 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
             />
           </Form.Item>
         </Col>
+      </Row>
 
+      <Row gutter={16}>
         <Col xs={24} sm={24} md={12} lg={6} xl={6}>
           <Form.Item
             name="ue"
@@ -467,6 +473,51 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
               placeholder="Selecione"
               onChange={onChangeUe}
               disabled={desabilitarUe}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+          <Form.Item name="ano" label="Ano" className="labelSelectSondagem">
+            <Select
+              id="sondagem-consolidado-select-ano"
+              options={opcoesAno}
+              placeholder="Selecione"
+              onChange={onChangeAno}
+              mode="multiple"
+              disabled={desabilitarAno}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+          <Form.Item
+            name="componenteCurricular"
+            label="* Componente curricular"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-consolidado-select-componente-curricular"
+              options={listaComponentesCurriculares}
+              placeholder="Selecione"
+              onChange={onChangeComponenteCurricular}
+              disabled={desabilitarComponenteCurricular}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+          <Form.Item
+            name="proficiencia"
+            label="* Proficiência"
+            className="labelSelectSondagem"
+          >
+            <Select
+              id="sondagem-consolidado-select-proficiencia"
+              options={listaProficiencias}
+              placeholder="Selecione"
+              onChange={onChangeProficiencia}
+              disabled={desabilitarProficiencia}
             />
           </Form.Item>
         </Col>
@@ -489,52 +540,6 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
           </Form.Item>
         </Col>
 
-        <Col xs={24} sm={24} md={12} lg={6} xl={6}>
-          <Form.Item name="ano" label="Ano" className="labelSelectSondagem">
-            <Select
-              id="sondagem-consolidado-select-ano"
-              options={opcoesAno}
-              placeholder="Selecione"
-              onChange={onChangeAno}
-              disabled={desabilitarAno}
-            />
-          </Form.Item>
-        </Col>
-
-        <Col xs={24} sm={24} md={12} lg={6} xl={6}>
-          <Form.Item
-            name="componenteCurricular"
-            label="Componente curricular"
-            className="labelSelectSondagem"
-          >
-            <Select
-              id="sondagem-consolidado-select-componente-curricular"
-              options={listaComponentesCurriculares}
-              placeholder="Selecione"
-              onChange={onChangeComponenteCurricular}
-              disabled={desabilitarComponenteCurricular}
-            />
-          </Form.Item>
-        </Col>
-
-        <Col xs={24} sm={24} md={12} lg={6} xl={6}>
-          <Form.Item
-            name="proficiencia"
-            label="Proficiência"
-            className="labelSelectSondagem"
-          >
-            <Select
-              id="sondagem-consolidado-select-proficiencia"
-              options={listaProficiencias}
-              placeholder="Selecione"
-              onChange={onChangeProficiencia}
-              disabled={desabilitarProficiencia}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-
-      <Row gutter={16}>
         <Col xs={24} sm={24} md={12} lg={6} xl={6}>
           <Form.Item
             name="genero"
@@ -563,13 +568,14 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
 
         <Col xs={24} sm={24} md={12} lg={6} xl={6}>
           <Form.Item
-            name="programasAtendimentos"
+            name="programa"
             label="Programas e Atendimentos"
             className="labelSelectSondagem"
           >
             <Select
               id="sondagem-consolidado-select-programas-atendimentos"
-              options={listaProgramasAtendimentos}
+              options={opcoesPrograma}
+              mode="multiple"
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}
             />
