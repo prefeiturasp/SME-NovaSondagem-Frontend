@@ -60,7 +60,7 @@ describe("RelatorioConsolidadoExportService", () => {
         ano: [],
         componenteCurricular: undefined,
         proficiencia: undefined,
-        genero: null,
+        genero: undefined,
         raca: undefined,
         programa: [],
         lpSegundaLingua: false,

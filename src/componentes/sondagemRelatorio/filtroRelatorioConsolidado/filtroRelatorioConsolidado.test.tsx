@@ -1,9 +1,8 @@
-import React, { createRef } from "react";
+import { createRef } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Form } from "antd";
-import FiltroRelatorioConsolidado, {
-  FiltroRelatorioConsolidadoRef,
-} from "./filtroRelatorioConsolidado";
+import FiltroRelatorioConsolidado from "./filtroRelatorioConsolidado";
+import type { FiltroRelatorioConsolidadoRef } from "./filtroRelatorioConsolidado";
 import AnoLetivoService from "../../../services/anoLetivo/anoLetivoService";
 import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import DreService from "../../../services/dre/dreService";

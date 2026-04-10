@@ -11,6 +11,9 @@ describe("TabelaRelatorioConsolidado", () => {
     render(
       <TabelaRelatorioConsolidado
         dados={{
+          tituloTabelaRespostas: "Consolidado",
+          estudantes: [],
+          legenda: [],
           titulo: "Consolidado",
           questoes: [],
         }}
@@ -28,6 +31,9 @@ describe("TabelaRelatorioConsolidado", () => {
     render(
       <TabelaRelatorioConsolidado
         dados={{
+          tituloTabelaRespostas: "Título Consolidado",
+          estudantes: [],
+          legenda: [],
           titulo: "Título Consolidado",
           questoes: [
             {

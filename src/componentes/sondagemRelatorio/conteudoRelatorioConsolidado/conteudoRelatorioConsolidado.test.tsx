@@ -1,4 +1,3 @@
-import React from "react";
 import {
   act,
   fireEvent,
@@ -139,7 +138,13 @@ describe("ConteudoRelatorioConsolidado", () => {
     render(<ConteudoRelatorioConsolidado />);
 
     act(() => {
-      mockFiltroProps.onDadosCarregados({ titulo: "x", questoes: [] });
+      mockFiltroProps.onDadosCarregados({
+        tituloTabelaRespostas: "x",
+        estudantes: [],
+        legenda: [],
+        titulo: "x",
+        questoes: [],
+      });
       mockFiltroProps.onFiltrosAlterados({
         anoLetivo: 2026,
         modalidade: 1,
