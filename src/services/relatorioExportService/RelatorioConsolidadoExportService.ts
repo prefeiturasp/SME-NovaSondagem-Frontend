@@ -45,11 +45,11 @@ const RelatorioConsolidadoExportService = async ({
     if (filtros.proficiencia !== undefined) {
       params.append("proficiencia", String(filtros.proficiencia));
     }
-    if (filtros.genero) {
-      params.append("genero", filtros.genero);
+    if (filtros.genero !== undefined && filtros.genero !== null) {
+      params.append("genero", String(filtros.genero));
     }
-    if (filtros.raca) {
-      params.append("raca", filtros.raca);
+    if (filtros.raca !== undefined && filtros.raca !== null) {
+      params.append("raca", String(filtros.raca));
     }
     if (Array.isArray(filtros.programa) && filtros.programa.length > 0) {
       filtros.programa.forEach((programa) => {

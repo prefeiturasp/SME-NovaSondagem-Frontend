@@ -66,7 +66,17 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
 }) => {
   const blocos = montarBlocos(dados);
 
-  if (!blocos.length) return null;
+  if (!dados) return null;
+
+  if (!blocos.length) {
+    return (
+      <div className="tabelaRelatorioConsolidado">
+        <div className="consolidado-vazio">
+          Nenhuma informação encontrada para os filtros informados
+        </div>
+      </div>
+    );
+  }
 
   const renderDescricao = (linha: LinhaConsolidada) => {
     if (linha.descricao === "Total") {
