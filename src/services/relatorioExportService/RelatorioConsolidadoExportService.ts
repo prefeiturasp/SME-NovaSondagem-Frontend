@@ -7,56 +7,67 @@ interface RelatorioConsolidadoExportParams {
   token: string;
 }
 
+const adicionarParametroSeDefinido = (
+  params: URLSearchParams,
+  chave: string,
+  valor: string | number | null | undefined,
+) => {
+  if (valor !== undefined && valor !== null) {
+    params.append(chave, String(valor));
+  }
+};
+
+const adicionarArrayParametros = (
+  params: URLSearchParams,
+  chave: string,
+  valores?: Array<string | number>,
+) => {
+  if (!Array.isArray(valores) || !valores.length) return;
+
+  valores.forEach((valor) => {
+    params.append(chave, String(valor));
+  });
+};
+
+const montarParametrosExportacaoConsolidado = (
+  extensaoRelatorio: 1 | 4,
+  filtros: ValoresFiltroRelatorioConsolidado,
+) => {
+  const params = new URLSearchParams();
+  params.append("extensaoRelatorio", String(extensaoRelatorio));
+
+  adicionarParametroSeDefinido(params, "anoLetivo", filtros.anoLetivo);
+  adicionarParametroSeDefinido(params, "modalidade", filtros.modalidade);
+  adicionarParametroSeDefinido(params, "dre", filtros.dre);
+  adicionarParametroSeDefinido(params, "ue", filtros.ue);
+  adicionarParametroSeDefinido(params, "bimestre", filtros.bimestre);
+  adicionarParametroSeDefinido(
+    params,
+    "componenteCurricular",
+    filtros.componenteCurricular,
+  );
+  adicionarParametroSeDefinido(params, "proficiencia", filtros.proficiencia);
+  adicionarParametroSeDefinido(params, "genero", filtros.genero);
+  adicionarParametroSeDefinido(params, "raca", filtros.raca);
+
+  adicionarArrayParametros(params, "ano", filtros.ano);
+  adicionarArrayParametros(params, "programa", filtros.programa);
+
+  params.append("lpSegundaLingua", String(Boolean(filtros.lpSegundaLingua)));
+
+  return params;
+};
+
 const RelatorioConsolidadoExportService = async ({
   extensaoRelatorio,
   filtros,
   token,
 }: RelatorioConsolidadoExportParams): Promise<boolean> => {
   try {
-    const params = new URLSearchParams();
-    params.append("extensaoRelatorio", String(extensaoRelatorio));
-
-    if (filtros.anoLetivo !== undefined) {
-      params.append("anoLetivo", String(filtros.anoLetivo));
-    }
-    if (filtros.modalidade !== undefined) {
-      params.append("modalidade", String(filtros.modalidade));
-    }
-    if (filtros.dre !== undefined) {
-      params.append("dre", String(filtros.dre));
-    }
-    if (filtros.ue !== undefined) {
-      params.append("ue", String(filtros.ue));
-    }
-    if (filtros.bimestre !== null && filtros.bimestre !== undefined) {
-      params.append("bimestre", String(filtros.bimestre));
-    }
-    if (Array.isArray(filtros.ano) && filtros.ano.length > 0) {
-      filtros.ano.forEach((ano) => {
-        params.append("ano", String(ano));
-      });
-    }
-    if (filtros.componenteCurricular !== undefined) {
-      params.append(
-        "componenteCurricular",
-        String(filtros.componenteCurricular),
-      );
-    }
-    if (filtros.proficiencia !== undefined) {
-      params.append("proficiencia", String(filtros.proficiencia));
-    }
-    if (filtros.genero !== undefined && filtros.genero !== null) {
-      params.append("genero", String(filtros.genero));
-    }
-    if (filtros.raca !== undefined && filtros.raca !== null) {
-      params.append("raca", String(filtros.raca));
-    }
-    if (Array.isArray(filtros.programa) && filtros.programa.length > 0) {
-      filtros.programa.forEach((programa) => {
-        params.append("programa", programa);
-      });
-    }
-    params.append("lpSegundaLingua", String(Boolean(filtros.lpSegundaLingua)));
+    const params = montarParametrosExportacaoConsolidado(
+      extensaoRelatorio,
+      filtros,
+    );
 
     await NovaSondagemServico.get(
       `/sondagem/relatorio/consolidado/exportar?${params.toString()}`,
@@ -66,7 +77,7 @@ const RelatorioConsolidadoExportService = async ({
     );
 
     return true;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao exportar relatório consolidado:", error);
     return false;
   }

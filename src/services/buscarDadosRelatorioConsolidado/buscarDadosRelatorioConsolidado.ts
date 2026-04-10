@@ -1,9 +1,9 @@
-import { notification } from "antd";
 import type {
   DadosTabelaDinamica,
   ValoresFiltroRelatorioConsolidado,
 } from "../../core/dto/typesRelatorio";
 import NovaSondagemServico from "../../core/servico/servico";
+import { notificarErroRelatorio } from "../helpers/notificarErroRelatorio";
 
 interface BuscarDadosRelatorioConsolidadoParams {
   filtros: ValoresFiltroRelatorioConsolidado;
@@ -60,28 +60,13 @@ const BuscarDadosRelatorioConsolidadoService = async ({
     }
 
     return null;
-  } catch (error: any) {
-    console.error("Erro ao carregar dados do relatório consolidado:", error);
-
-    const errorMessage =
-      error.response?.data?.title ??
-      error.response?.data?.message ??
-      "Erro ao carregar dados do relatório consolidado. Tente novamente.";
-
-    const errorDetails = error.response?.data?.errors
-      ? Object.entries(error.response.data.errors)
-          .map(
-            ([key, value]: [string, any]) =>
-              `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
-          )
-          .join("\n")
-      : null;
-
-    notification.error({
-      message: "Erro ao carregar dados do relatório consolidado",
-      description: errorDetails ?? errorMessage,
-      duration: 5,
-      placement: "topRight",
+  } catch (error: unknown) {
+    notificarErroRelatorio({
+      error,
+      mensagemConsole: "Erro ao carregar dados do relatório consolidado:",
+      tituloNotificacao: "Erro ao carregar dados do relatório consolidado",
+      mensagemPadrao:
+        "Erro ao carregar dados do relatório consolidado. Tente novamente.",
     });
 
     return null;

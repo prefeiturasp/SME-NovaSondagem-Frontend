@@ -1,18 +1,16 @@
 import React, { useRef, useState } from "react";
-import { Button, Card, Dropdown, Form, notification } from "antd";
+import { Card, Form, notification } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorioConsolidado from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import type { FiltroRelatorioConsolidadoRef } from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import TabelaRelatorioConsolidado from "../tabelaRelatorioConsolidado/tabelaRelatorioConsolidado";
-import styled from "styled-components";
 import { useSelector } from "react-redux";
 import type {
   DadosTabelaDinamica,
   ValoresFiltroRelatorioConsolidado,
 } from "../../../core/dto/typesRelatorio";
 import RelatorioConsolidadoExportService from "../../../services/relatorioExportService/RelatorioConsolidadoExportService";
-
-export const Icon = styled.i``;
+import CabecalhoRelatorioAcoes from "../cabecalhoRelatorioAcoes/cabecalhoRelatorioAcoes";
 
 const ConteudoRelatorioConsolidado: React.FC = () => {
   const [formFiltro] = Form.useForm();
@@ -86,51 +84,15 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
 
   return (
     <>
-      <div className="linhaTituloBotao">
-        <div className="tituloSondagem">Sondagem Consolidado</div>
-        <div>
-          <Button
-            id="sondagem-button-voltar"
-            className="sondagemBotaoEstilo"
-            onClick={() => {
-              voltarSondagem();
-            }}
-            icon={<Icon className={`fa fa-arrow-left iconBotaoVoltar`} />}
-          ></Button>
-
-          <Button
-            id="sondagem-button-cancelar"
-            className="sondagemBotaoEstilo"
-            onClick={() => {
-              CancelarCadastroSondagem();
-            }}
-          >
-            Cancelar
-          </Button>
-
-          <Dropdown
-            menu={{
-              items: [
-                { key: "pdf", label: "Relatório em PDF" },
-                { key: "excel", label: "Relatório em .xlsx (Excel)" },
-              ],
-              onClick: ({ key }) => void GerarDados(key as "pdf" | "excel"),
-            }}
-            trigger={["click"]}
-            disabled={!filtrosObrigatoriosPreenchidos}
-          >
-            <Button
-              id="sondagem-button-gerar"
-              className="sondagemBotaoEstilo"
-              loading={loadingGerar}
-              disabled={!filtrosObrigatoriosPreenchidos || loadingGerar}
-              icon={<Icon className="fa fa-print iconBotaoGerar" />}
-            >
-              Gerar
-            </Button>
-          </Dropdown>
-        </div>
-      </div>
+      <CabecalhoRelatorioAcoes
+        titulo="Sondagem Consolidado"
+        onVoltar={voltarSondagem}
+        onCancelar={CancelarCadastroSondagem}
+        onGerar={GerarDados}
+        menuGerarDesabilitado={!filtrosObrigatoriosPreenchidos}
+        botaoGerarDesabilitado={!filtrosObrigatoriosPreenchidos || loadingGerar}
+        loadingGerar={loadingGerar}
+      />
       <Card className="CardSondagemEfeitosRelatorio">
         <div className="textoSondagemEstilo">
           <p>
