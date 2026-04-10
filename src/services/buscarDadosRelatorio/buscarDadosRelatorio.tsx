@@ -24,7 +24,7 @@ const DadosRelatorioService = async ({
   anoLetivo,
   semestreId,
   ueCodigo,
-  bimestreId,
+  bimestreId = null,
   token,
 }: ValidarDadosRelatorioParams): Promise<DadosTabelaDinamica | null> => {
   try {

@@ -457,6 +457,10 @@ const Conteudo: React.FC = () => {
     const data = {
       sondagemId: dadosLista?.sondagemId ?? 0,
       turmaId: turma,
+      ueId: String(turmaSelecionada?.unidadeEscolar ?? ""),
+      dreId: String(turmaSelecionada?.dre ?? ""),
+      anoLetivo: Number(turmaSelecionada?.anoLetivo ?? ano ?? 0),
+      modalidadeId: String(turmaSelecionada?.modalidade ?? ""),
       alunos: dadosParaSalvar,
     };
 

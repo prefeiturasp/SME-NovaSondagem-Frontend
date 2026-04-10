@@ -21,9 +21,13 @@ export interface Coluna {
   resposta: Resposta | Resposta[];
 }
 
+export interface EstudanteRemanejadoInfo {
+  data?: string;
+}
+
 export interface Estudante {
   linguaPortuguesaSegundaLingua: boolean;
-  numeroAlunoChamada: number;
+  numeroAlunoChamada: number | string;
   codigo: number;
   nome: string;
   pap: boolean;
@@ -33,6 +37,7 @@ export interface Estudante {
   raca: string;
   genero: string;
   coluna: Coluna[];
+  estudanteRemanejado?: EstudanteRemanejadoInfo | null;
 }
 
 export interface DadosTabelaDinamica {

@@ -76,7 +76,7 @@ describe("DadosRelatorioService", () => {
     expect(resultado).toBeNull();
   });
 
-  it("deve aceitar chamada sem bimestreId e manter retorno com dados", async () => {
+  it("deve enviar bimestreId como null quando não informado e manter retorno com dados", async () => {
     const dadosMock = {
       tituloTabelaRespostas: "Leitura",
       estudantes: [],
@@ -94,7 +94,7 @@ describe("DadosRelatorioService", () => {
       expect.objectContaining({
         params: expect.objectContaining({
           semestreId: undefined,
-          bimestreId: undefined,
+          bimestreId: null,
         }),
       }),
     );

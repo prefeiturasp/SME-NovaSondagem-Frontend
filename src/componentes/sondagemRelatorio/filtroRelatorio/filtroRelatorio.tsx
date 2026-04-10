@@ -30,6 +30,18 @@ type FiltroRelatorioProps = {
   onErroValidacaoTurma: (mensagem: string | null) => void;
 };
 
+const MODALIDADE_EJA = 3;
+const MODALIDADE_INFANTIL = 5;
+const OPCOES_SEMESTRE = [
+  { value: null, label: "Todos" },
+  { value: 1, label: "1º Semestre" },
+  { value: 2, label: "2º Semestre" },
+];
+const OPCOES_PERIODO_EJA = [
+  { value: 1, label: "1º Semestre" },
+  { value: 2, label: "2º Semestre" },
+];
+
 const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   { reset: () => void },
   FiltroRelatorioProps
@@ -99,6 +111,29 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     onErroValidacaoTurma(null);
   };
 
+  const obterTurmas = async (
+    ueId: number,
+    modalidade: number,
+    anoLetivo: number,
+    periodo?: number,
+  ) => {
+    const turmas = await TurmaService({
+      token: usuario?.token,
+      urId: ueId,
+      modalidade,
+      anoLetivo,
+      periodo,
+    });
+
+    if (turmas) {
+      setListaTurmas(turmas);
+      setDesabilitarTurma(false);
+    } else {
+      setListaTurmas([]);
+      setDesabilitarTurma(true);
+    }
+  };
+
   const onChangeAnoLetivo = async (value: number) => {
     limparResultadoRelatorio();
     form.setFieldsValue({
@@ -118,6 +153,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     setDesabilitarUE(true);
     setDesabilitarTurma(true);
     setSelectedModalidade(null);
+    setSelectedProficiencia(null);
 
     if (!value) return;
 
@@ -161,14 +197,6 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     setSelectedModalidade(modalidadeSelecionada);
     setSelectedProficiencia(null);
 
-    let ehEja = 5;
-
-    if (modalidadeSelecionada === ehEja) {
-      setDesabilitarSemestre(true);
-    } else {
-      setDesabilitarSemestre(false);
-    }
-
     const ano = form.getFieldValue("anoLetivo");
     if (modalidadeSelecionada === null || !ano) return;
 
@@ -201,6 +229,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     setDesabilitarProficiencia(true);
     setDesabilitarBimestre(true);
     setDesabilitarSemestre(true);
+    setSelectedProficiencia(null);
 
     const ano = form.getFieldValue("anoLetivo");
     const modalidade = form.getFieldValue("modalidade");
@@ -237,41 +266,43 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     setDesabilitarProficiencia(true);
     setDesabilitarBimestre(true);
     setDesabilitarSemestre(true);
+    setSelectedProficiencia(null);
 
     const ano = form.getFieldValue("anoLetivo");
     const modalidade = form.getFieldValue("modalidade");
     if (!value || !ano || !modalidade) return;
 
-    const turmas = await TurmaService({
-      token: usuario?.token,
-      urId: value,
-      modalidade,
-      anoLetivo: ano,
-    });
-    if (turmas) {
-      setListaTurmas(turmas);
-      setDesabilitarTurma(false);
+    if (modalidade === MODALIDADE_EJA) {
+      setListaSemestres(OPCOES_PERIODO_EJA);
+      setDesabilitarSemestre(false);
+      return;
     }
+
+    await obterTurmas(value, modalidade, ano);
   };
 
   const onChangeTurma = async (turma: number) => {
     limparResultadoRelatorio();
+    const modalidade = form.getFieldValue("modalidade");
+
     form.setFieldsValue({
       componenteCurricular: undefined,
       proficiencia: undefined,
-      semestre: undefined,
+      ...(modalidade === MODALIDADE_EJA ? {} : { semestre: undefined }),
       bimestre: undefined,
     });
-    const modalidade = form.getFieldValue("modalidade");
 
     setListaComponentesCurriculares([]);
     setListaProficiencias([]);
     setListaBimestres([]);
-    setListaSemestres([]);
+    if (modalidade !== MODALIDADE_EJA) {
+      setListaSemestres([]);
+    }
     setDesabilitarComponenteCurricular(true);
     setDesabilitarProficiencia(true);
     setDesabilitarBimestre(true);
-    setDesabilitarSemestre(true);
+    setDesabilitarSemestre(modalidade !== MODALIDADE_EJA);
+    setSelectedProficiencia(null);
 
     const resultado = await validarTurma({
       turmaId: turma,
@@ -293,19 +324,23 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
 
   const onChangeComponenteCurricular = async (value: number) => {
     limparResultadoRelatorio();
+    const modalidade = form.getFieldValue("modalidade");
+
     form.setFieldsValue({
       proficiencia: undefined,
-      semestre: undefined,
+      ...(modalidade === MODALIDADE_EJA ? {} : { semestre: undefined }),
       bimestre: undefined,
     });
     setListaProficiencias([]);
     setListaBimestres([]);
-    setListaSemestres([]);
+    if (modalidade !== MODALIDADE_EJA) {
+      setListaSemestres([]);
+    }
     setDesabilitarProficiencia(true);
     setDesabilitarBimestre(true);
-    setDesabilitarSemestre(true);
+    setDesabilitarSemestre(modalidade !== MODALIDADE_EJA);
+    setSelectedProficiencia(null);
 
-    const modalidade = form.getFieldValue("modalidade");
     if (!value || !modalidade) return;
 
     const proficiencias = await ProficienciaService({
@@ -324,36 +359,74 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
 
   const onChangeProficiencia = (value: number | string | null) => {
     limparResultadoRelatorio();
+    const proficienciaSelecionada = normalizarNumero(value);
+    const isEja = selectedModalidade === MODALIDADE_EJA;
+
     form.setFieldsValue({
-      semestre: undefined,
+      ...(isEja ? {} : { semestre: undefined }),
       bimestre: undefined,
     });
 
     setListaBimestres([]);
-    setListaSemestres([]);
     setDesabilitarBimestre(true);
-    setDesabilitarSemestre(true);
+    if (!isEja) {
+      setListaSemestres([]);
+      setDesabilitarSemestre(true);
+    }
 
-    const proficienciaSelecionada = normalizarNumero(value);
     setSelectedProficiencia(proficienciaSelecionada);
 
-    if (selectedModalidade === 5) {
+    if (selectedModalidade === MODALIDADE_EJA) {
+      setDesabilitarBimestre(false);
+      setDesabilitarSemestre(false);
+
+      if (proficienciaSelecionada !== null) {
+        obterBimestres(usuario?.token, MODALIDADE_EJA);
+      }
+      return;
+    }
+
+    if (selectedModalidade === MODALIDADE_INFANTIL) {
       setDesabilitarBimestre(false);
       setDesabilitarSemestre(true);
       obterBimestres(usuario?.token);
     } else {
       setDesabilitarSemestre(false);
       setDesabilitarBimestre(true);
-      setListaSemestres([
-        { value: null, label: "Todos" },
-        { value: 1, label: "1º Semestre" },
-        { value: 2, label: "2º Semestre" },
-      ]);
+      setListaSemestres(OPCOES_SEMESTRE);
     }
   };
 
-  const onChangeSemestre = (value: number | null) => {
+  const onChangeSemestre = async (value: number | null) => {
     limparResultadoRelatorio();
+
+    if (selectedModalidade === MODALIDADE_EJA) {
+      form.setFieldsValue({
+        turma: undefined,
+        componenteCurricular: undefined,
+        proficiencia: undefined,
+        bimestre: undefined,
+      });
+      setListaTurmas([]);
+      setListaComponentesCurriculares([]);
+      setListaProficiencias([]);
+      setListaBimestres([]);
+      setDesabilitarTurma(true);
+      setDesabilitarComponenteCurricular(true);
+      setDesabilitarProficiencia(true);
+      setDesabilitarBimestre(true);
+      setSelectedProficiencia(null);
+
+      const ano = form.getFieldValue("anoLetivo");
+      const ue = form.getFieldValue("ue");
+      const periodoSelecionado = normalizarNumero(value);
+
+      if (!ano || !ue || periodoSelecionado === null) return;
+
+      await obterTurmas(ue, MODALIDADE_EJA, ano, periodoSelecionado);
+      return;
+    }
+
     const valores = {
       ...form.getFieldsValue(),
       semestreId: value,
@@ -362,9 +435,16 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
   };
   const onChangeBimestre = (value: number | null) => {
     limparResultadoRelatorio();
+    const semestreSelecionado = normalizarNumero(
+      form.getFieldValue("semestre"),
+    );
     const valores = {
       ...form.getFieldsValue(),
       bimestre: value,
+      semestreId:
+        selectedModalidade === MODALIDADE_EJA
+          ? semestreSelecionado
+          : form.getFieldValue("semestreId"),
     } as ValoresFiltroRelatorio;
     void buscarDados(valores);
   };
@@ -381,6 +461,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     setListaComponentesCurriculares([]);
     setListaProficiencias([]);
     setListaBimestres([]);
+    setListaSemestres([]);
 
     setDesabilitarDRE(true);
     setDesabilitarUE(true);
@@ -389,7 +470,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     setDesabilitarComponenteCurricular(true);
     setDesabilitarProficiencia(true);
     setDesabilitarBimestre(true);
-    setDesabilitarSemestre(false);
+    setDesabilitarSemestre(true);
   };
 
   useImperativeHandle(ref, () => ({
@@ -422,10 +503,17 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
   };
 
-  const obterBimestres = async (token: string) => {
-    const resposta = await BimestreService({ token });
+  const obterBimestres = async (token: string, modalidade?: number) => {
+    const resposta = await BimestreService({
+      token,
+      ...(modalidade === MODALIDADE_EJA ? { modalidade } : {}),
+    });
+
     if (resposta) {
-      setListaBimestres([{ value: null, label: "Todos" }, ...resposta]);
+      const listaComTodos = [{ value: null, label: "Todos" }, ...resposta];
+      setListaBimestres(
+        modalidade === MODALIDADE_EJA ? resposta : listaComTodos,
+      );
       setDesabilitarBimestre(false);
     } else {
       setListaBimestres([]);
@@ -437,6 +525,9 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     const ano = listaTurmas.find((turma) => turma.value === valores.turma)?.ano;
     valores.ano = ano;
     const isInfantil = valores.modalidade === 5;
+    const usaBimestre =
+      valores.modalidade === MODALIDADE_INFANTIL ||
+      valores.modalidade === MODALIDADE_EJA;
 
     const dados = await DadosRelatorioService({
       turmaId: valores.turma as number,
@@ -445,7 +536,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       modalidade: valores.modalidade as number,
       ano: ano as number,
       anoLetivo: valores.anoLetivo as number,
-      bimestreId: isInfantil ? (valores.bimestre ?? null) : null,
+      bimestreId: usaBimestre ? (valores.bimestre ?? null) : null,
       semestreId: isInfantil ? null : (valores.semestreId ?? null),
       ueCodigo: String(valores.ue),
       token: usuario?.token,
@@ -454,12 +545,16 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     onFiltrosAlterados(valores);
   };
 
-  const isInfantil = selectedModalidade === 5;
+  const isEja = selectedModalidade === MODALIDADE_EJA;
+  const isInfantil = selectedModalidade === MODALIDADE_INFANTIL;
   const temProficienciaSelecionada = selectedProficiencia !== null;
-  const showBimestre =
-    selectedModalidade !== null && isInfantil && temProficienciaSelecionada;
-  const showSemestre =
-    selectedModalidade !== null && !isInfantil && temProficienciaSelecionada;
+  const showSemestreAntesTurma = isEja;
+  const showBimestre = (isInfantil || isEja) && temProficienciaSelecionada;
+  const showSemestreDepoisProficiencia =
+    selectedModalidade !== null &&
+    !isInfantil &&
+    !isEja &&
+    temProficienciaSelecionada;
 
   return (
     <Form form={form} layout="vertical">
@@ -530,6 +625,24 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
           </Form.Item>
         </Col>
 
+        {showSemestreAntesTurma && (
+          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+            <Form.Item
+              name="semestre"
+              label="Semestre"
+              className="labelSelectSondagem"
+            >
+              <Select
+                id="sondagem-select-semestre"
+                options={listaSemestres}
+                placeholder="Selecione"
+                onChange={onChangeSemestre}
+                disabled={desabilitarSemestre}
+              />
+            </Form.Item>
+          </Col>
+        )}
+
         <Col xs={24} sm={24} md={8} lg={8} xl={8}>
           <Form.Item name="turma" label="Turma" className="labelSelectSondagem">
             <Select
@@ -542,24 +655,44 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
           </Form.Item>
         </Col>
 
-        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-          <Form.Item
-            name="componenteCurricular"
-            label="Componente curricular"
-            className="labelSelectSondagem"
-          >
-            <Select
-              id="sondagem-select-componente-curricular"
-              options={listaComponentesCurriculares}
-              placeholder="Selecione"
-              onChange={onChangeComponenteCurricular}
-              disabled={desabilitarComponenteCurricular}
-            />
-          </Form.Item>
-        </Col>
+        {!showSemestreAntesTurma && (
+          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+            <Form.Item
+              name="componenteCurricular"
+              label="Componente curricular"
+              className="labelSelectSondagem"
+            >
+              <Select
+                id="sondagem-select-componente-curricular"
+                options={listaComponentesCurriculares}
+                placeholder="Selecione"
+                onChange={onChangeComponenteCurricular}
+                disabled={desabilitarComponenteCurricular}
+              />
+            </Form.Item>
+          </Col>
+        )}
       </Row>
 
       <Row gutter={16}>
+        {showSemestreAntesTurma && (
+          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+            <Form.Item
+              name="componenteCurricular"
+              label="Componente curricular"
+              className="labelSelectSondagem"
+            >
+              <Select
+                id="sondagem-select-componente-curricular"
+                options={listaComponentesCurriculares}
+                placeholder="Selecione"
+                onChange={onChangeComponenteCurricular}
+                disabled={desabilitarComponenteCurricular}
+              />
+            </Form.Item>
+          </Col>
+        )}
+
         <Col xs={24} sm={24} md={8} lg={8} xl={8}>
           <Form.Item
             name="proficiencia"
@@ -594,7 +727,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
           </Col>
         )}
 
-        {showSemestre && (
+        {showSemestreDepoisProficiencia && (
           <Col xs={24} sm={24} md={8} lg={8} xl={8}>
             <Form.Item
               name="semestre"
