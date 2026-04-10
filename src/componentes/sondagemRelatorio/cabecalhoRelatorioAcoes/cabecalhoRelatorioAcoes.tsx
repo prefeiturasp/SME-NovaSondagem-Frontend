@@ -47,7 +47,9 @@ const CabecalhoRelatorioAcoes: React.FC<CabecalhoRelatorioAcoesProps> = ({
         <Dropdown
           menu={{
             items: opcoesGeracao,
-            onClick: ({ key }) => void onGerar(key as "pdf" | "excel"),
+            onClick: ({ key }) => {
+              onGerar(key as "pdf" | "excel");
+            },
           }}
           trigger={["click"]}
           disabled={menuGerarDesabilitado}
