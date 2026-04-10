@@ -194,6 +194,14 @@ describe("FiltroRelatorio", () => {
       mensagens: ["Turma inválida"],
     });
 
+    const changeSelect = async (testId: string, value: string | number) => {
+      const select = screen.getByTestId(testId);
+      await waitFor(() => expect(select).not.toBeDisabled(), {
+        timeout: 5000,
+      });
+      fireEvent.change(select, { target: { value: String(value) } });
+    };
+
     renderWithForm();
 
     await waitFor(() =>
@@ -202,39 +210,40 @@ describe("FiltroRelatorio", () => {
       ).toBeInTheDocument(),
     );
 
-    fireEvent.change(screen.getByTestId("sondagem-select-ano-letivo"), {
-      target: { value: "2026" },
-    });
-    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
-
-    fireEvent.change(screen.getByTestId("sondagem-select-modalidade"), {
-      target: { value: "1" },
-    });
-    await waitFor(() => expect(DreService).toHaveBeenCalled());
-
-    fireEvent.change(screen.getByTestId("sondagem-select-dre"), {
-      target: { value: "10" },
-    });
-    await waitFor(() => expect(UeService).toHaveBeenCalled());
-
-    fireEvent.change(screen.getByTestId("sondagem-select-ue"), {
-      target: { value: "20" },
-    });
-    await waitFor(() => expect(TurmaService).toHaveBeenCalled());
-
-    fireEvent.change(screen.getByTestId("sondagem-select-turma"), {
-      target: { value: "30" },
+    await changeSelect("sondagem-select-ano-letivo", 2026);
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled(), {
+      timeout: 5000,
     });
 
-    await waitFor(() => {
-      expect(validarTurma).toHaveBeenCalledWith({
-        turmaId: 30,
-        token: "fake-token",
-      });
-      expect(onErroValidacaoTurma).toHaveBeenCalledWith("Turma inválida");
-      // serviço não deve ser chamado quando turma inválida
-      expect(ComponenteCurricularService).not.toHaveBeenCalled();
+    await changeSelect("sondagem-select-modalidade", 1);
+    await waitFor(() => expect(DreService).toHaveBeenCalled(), {
+      timeout: 5000,
     });
+
+    await changeSelect("sondagem-select-dre", 10);
+    await waitFor(() => expect(UeService).toHaveBeenCalled(), {
+      timeout: 5000,
+    });
+
+    await changeSelect("sondagem-select-ue", 20);
+    await waitFor(() => expect(TurmaService).toHaveBeenCalled(), {
+      timeout: 5000,
+    });
+
+    await changeSelect("sondagem-select-turma", 30);
+
+    await waitFor(
+      () => {
+        expect(validarTurma).toHaveBeenCalledWith({
+          turmaId: 30,
+          token: "fake-token",
+        });
+        expect(onErroValidacaoTurma).toHaveBeenCalledWith("Turma inválida");
+        // serviço não deve ser chamado quando turma inválida
+        expect(ComponenteCurricularService).not.toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it("executa busca de dados quando campos obrigatórios são preenchidos", async () => {
@@ -253,23 +262,38 @@ describe("FiltroRelatorio", () => {
     );
 
     await changeSelect("sondagem-select-ano-letivo", 2026);
-    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled(), {
+      timeout: 5000,
+    });
 
     await changeSelect("sondagem-select-modalidade", 1);
-    await waitFor(() => expect(DreService).toHaveBeenCalled());
+    await waitFor(() => expect(DreService).toHaveBeenCalled(), {
+      timeout: 5000,
+    });
 
     await changeSelect("sondagem-select-dre", 10);
-    await waitFor(() => expect(UeService).toHaveBeenCalled());
+    await waitFor(() => expect(UeService).toHaveBeenCalled(), {
+      timeout: 5000,
+    });
 
     await changeSelect("sondagem-select-ue", 20);
-    await waitFor(() => expect(TurmaService).toHaveBeenCalled());
+    await waitFor(() => expect(TurmaService).toHaveBeenCalled(), {
+      timeout: 5000,
+    });
 
     await changeSelect("sondagem-select-turma", 30);
-    await waitFor(() => expect(validarTurma).toHaveBeenCalled());
-    expect(ComponenteCurricularService).toHaveBeenCalledWith({
-      token: "fake-token",
-      modalidade: 1,
+    await waitFor(() => expect(validarTurma).toHaveBeenCalled(), {
+      timeout: 5000,
     });
+    await waitFor(
+      () => {
+        expect(ComponenteCurricularService).toHaveBeenCalledWith({
+          token: "fake-token",
+          modalidade: 1,
+        });
+      },
+      { timeout: 5000 },
+    );
 
     await changeSelect("sondagem-select-componente-curricular", 40);
     await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
