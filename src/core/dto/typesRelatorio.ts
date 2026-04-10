@@ -39,6 +39,33 @@ export interface DadosTabelaDinamica {
   tituloTabelaRespostas: string;
   estudantes: Estudante[];
   legenda: LegendaQuestionario[];
+  titulo?: string;
+  questoes?: QuestaoConsolidada[];
+}
+
+export interface RespostaConsolidada {
+  resposta: string;
+  anosTurma: number[];
+  total: number;
+  percentual: number;
+  ordem: number;
+  corFundo: string;
+  corTexto: string;
+}
+
+export interface TotalPorAnoTurmaConsolidado {
+  anoTurma: number;
+  total: number;
+  percentual: number;
+}
+
+export interface QuestaoConsolidada {
+  questaoId: number;
+  questaoNome: string;
+  respostas: RespostaConsolidada[];
+  totaisPorAnoTurma: TotalPorAnoTurmaConsolidado[];
+  totalEstudantes: number;
+  percentualTotal: number;
 }
 
 export type ValoresFiltroRelatorio = {
@@ -56,15 +83,15 @@ export type ValoresFiltroRelatorio = {
 
 export type ValoresFiltroRelatorioConsolidado = {
   anoLetivo?: number;
-  modalidade?: number;
-  dre?: number;
-  ue?: number;
+  modalidade?: number | string;
+  dre?: number | string;
+  ue?: number | string;
   bimestre?: number | null;
   ano?: number[];
   componenteCurricular?: number;
   proficiencia?: number;
-  genero?: string;
-  raca?: string;
+  genero?: number | string;
+  raca?: number | string;
   programa?: string[];
   lpSegundaLingua?: boolean;
 };

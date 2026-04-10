@@ -549,8 +549,10 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
             <Select
               id="sondagem-consolidado-select-genero"
               options={listaGeneros}
+              allowClear
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}
+              onClear={() => void tentarBuscarDadosConsolidado()}
             />
           </Form.Item>
         </Col>
@@ -560,8 +562,10 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
             <Select
               id="sondagem-consolidado-select-raca"
               options={listaRacas}
+              allowClear
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}
+              onClear={() => void tentarBuscarDadosConsolidado()}
             />
           </Form.Item>
         </Col>

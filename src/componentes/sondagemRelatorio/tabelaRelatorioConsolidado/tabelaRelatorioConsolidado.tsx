@@ -6,13 +6,12 @@ interface TabelaRelatorioConsolidadoProps {
   dados: DadosTabelaDinamica | null;
 }
 
-type NivelLinha = "adequada" | "inadequada" | "nao-respondeu" | "normal";
-
 interface LinhaConsolidada {
-  nivel: NivelLinha;
   descricao: string;
-  estudantes: string;
-  percentual: string;
+  estudantes: number;
+  percentual: number;
+  corFundo?: string;
+  corTexto?: string;
 }
 
 interface BlocoConsolidado {
@@ -20,86 +19,46 @@ interface BlocoConsolidado {
   linhas: LinhaConsolidada[];
 }
 
-const obterBlocosMock = (): BlocoConsolidado[] => {
-  return [
-    {
-      titulo: "Localização",
-      linhas: [
-        {
-          nivel: "adequada",
-          descricao: "Adequada",
-          estudantes: "132.000",
-          percentual: "28,2%",
-        },
-        {
-          nivel: "inadequada",
-          descricao: "Inadequada",
-          estudantes: "276.000",
-          percentual: "38,4%",
-        },
-        {
-          nivel: "nao-respondeu",
-          descricao: "Não respondeu",
-          estudantes: "Vazio",
-          percentual: "Vazio",
-        },
-        {
-          nivel: "normal",
-          descricao: "Sem preenchimento",
-          estudantes: "276.000",
-          percentual: "38,4%",
-        },
-        {
-          nivel: "normal",
-          descricao: "Total",
-          estudantes: "841.060",
-          percentual: "99,15%",
-        },
-      ],
-    },
-    {
-      titulo: "Inferência",
-      linhas: [
-        {
-          nivel: "adequada",
-          descricao: "Adequada",
-          estudantes: "Vazio",
-          percentual: "Vazio",
-        },
-        {
-          nivel: "inadequada",
-          descricao: "Inadequada",
-          estudantes: "276.000",
-          percentual: "38,4%",
-        },
-        {
-          nivel: "nao-respondeu",
-          descricao: "Não respondeu",
-          estudantes: "240.060",
-          percentual: "15,9%",
-        },
-        {
-          nivel: "normal",
-          descricao: "Sem preenchimento",
-          estudantes: "276.000",
-          percentual: "38,4%",
-        },
-        {
-          nivel: "normal",
-          descricao: "Total",
-          estudantes: "841.060",
-          percentual: "99,15%",
-        },
-      ],
-    },
-  ];
+const montarBlocos = (
+  dados: DadosTabelaDinamica | null,
+): BlocoConsolidado[] => {
+  const questoes = dados?.questoes ?? [];
+
+  return questoes.map((questao) => {
+    const respostasOrdenadas = [...questao.respostas].sort(
+      (a, b) => a.ordem - b.ordem,
+    );
+
+    const linhas: LinhaConsolidada[] = respostasOrdenadas.map((resposta) => ({
+      descricao: resposta.resposta,
+      estudantes: resposta.total,
+      percentual: resposta.percentual,
+      corFundo: resposta.corFundo,
+      corTexto: resposta.corTexto,
+    }));
+
+    linhas.push({
+      descricao: "Total",
+      estudantes: questao.totalEstudantes,
+      percentual: questao.percentualTotal,
+    });
+
+    return {
+      titulo: questao.questaoNome,
+      linhas,
+    };
+  });
 };
 
-const montarBlocos = (
-  _dados: DadosTabelaDinamica | null,
-): BlocoConsolidado[] => {
-  // Enquanto o endpoint definitivo nao estiver pronto, usamos mock para estruturar a tela.
-  return obterBlocosMock();
+const formatarInteiro = (valor: number) =>
+  new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(valor);
+
+const formatarPercentual = (valor: number) => {
+  const texto = valor.toLocaleString("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+  return `${texto}%`;
 };
 
 const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
@@ -110,25 +69,18 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
   if (!blocos.length) return null;
 
   const renderDescricao = (linha: LinhaConsolidada) => {
-    if (linha.nivel === "adequada") {
+    if (linha.descricao === "Total") {
       return (
-        <span className="consolidado-pill consolidado-pill--adequada">
-          {linha.descricao}
-        </span>
+        <span className="consolidado-descricao-normal">{linha.descricao}</span>
       );
     }
 
-    if (linha.nivel === "inadequada") {
+    if (linha.corFundo && linha.corTexto) {
       return (
-        <span className="consolidado-pill consolidado-pill--inadequada">
-          {linha.descricao}
-        </span>
-      );
-    }
-
-    if (linha.nivel === "nao-respondeu") {
-      return (
-        <span className="consolidado-pill consolidado-pill--nao-respondeu">
+        <span
+          className="consolidado-pill"
+          style={{ backgroundColor: linha.corFundo, color: linha.corTexto }}
+        >
           {linha.descricao}
         </span>
       );
@@ -139,8 +91,8 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
     );
   };
 
-  const getValorClassName = (valor: string, descricao: string) => {
-    if (valor === "Vazio") return "consolidado-valor consolidado-valor--vazio";
+  const getValorClassName = (valor: number, descricao: string) => {
+    if (valor === 0) return "consolidado-valor consolidado-valor--vazio";
     if (descricao === "Total")
       return "consolidado-valor consolidado-valor--total";
     return "consolidado-valor";
@@ -148,9 +100,9 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
 
   return (
     <div className="tabelaRelatorioConsolidado">
-      <div className="consolidado-legenda-data">
-        Data da última consolidação: 00/00/0000 às 00:00
-      </div>
+      {dados?.titulo ? (
+        <div className="consolidado-titulo">{dados.titulo}</div>
+      ) : null}
 
       {blocos.map((bloco) => (
         <div key={bloco.titulo} className="consolidado-bloco">
@@ -172,7 +124,7 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
                       linha.descricao,
                     )}
                   >
-                    {linha.estudantes}
+                    {formatarInteiro(linha.estudantes)}
                   </td>
                   <td
                     className={getValorClassName(
@@ -180,7 +132,7 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
                       linha.descricao,
                     )}
                   >
-                    {linha.percentual}
+                    {formatarPercentual(linha.percentual)}
                   </td>
                 </tr>
               ))}

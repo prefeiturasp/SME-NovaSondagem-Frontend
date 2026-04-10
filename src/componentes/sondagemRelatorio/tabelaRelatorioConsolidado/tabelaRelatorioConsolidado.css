@@ -3,6 +3,13 @@
   position: relative;
 }
 
+.consolidado-titulo {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #3d3d3d;
+}
+
 .consolidado-legenda-data {
   float: right;
   margin-bottom: 10px;
@@ -63,6 +70,7 @@
 
 .consolidado-tabela tr:last-child td {
   border-bottom: none;
+  text-align: center;
 }
 
 .consolidado-tabela th:last-child,

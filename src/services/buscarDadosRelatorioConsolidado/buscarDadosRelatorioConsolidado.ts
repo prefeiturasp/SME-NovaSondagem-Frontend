@@ -15,23 +15,42 @@ const BuscarDadosRelatorioConsolidadoService = async ({
   token,
 }: BuscarDadosRelatorioConsolidadoParams): Promise<DadosTabelaDinamica | null> => {
   try {
+    const programas = filtros.programa ?? [];
+    const possuiFiltroPrograma = programas.length > 0;
+    const generoId =
+      filtros.genero !== undefined &&
+      filtros.genero !== null &&
+      filtros.genero !== ""
+        ? Number(filtros.genero)
+        : undefined;
+    const racaId =
+      filtros.raca !== undefined && filtros.raca !== null && filtros.raca !== ""
+        ? Number(filtros.raca)
+        : undefined;
+
     const resposta = await NovaSondagemServico.get(
-      "/sondagem/relatorio/consolidado",
+      "/Relatorio/consoliado/ano",
       {
         headers: { "X-Token-Principal": token },
+        paramsSerializer: {
+          indexes: null,
+        },
         params: {
-          anoLetivo: filtros.anoLetivo,
-          modalidade: filtros.modalidade,
-          dre: filtros.dre,
-          ue: filtros.ue,
-          bimestre: filtros.bimestre,
-          ano: filtros.ano,
-          componenteCurricular: filtros.componenteCurricular,
-          proficiencia: filtros.proficiencia,
-          genero: filtros.genero,
-          raca: filtros.raca,
-          programa: filtros.programa,
-          lpSegundaLingua: filtros.lpSegundaLingua,
+          AnoLetivo: filtros.anoLetivo,
+          Dre: filtros.dre,
+          Ue: filtros.ue,
+          Modalidade: filtros.modalidade,
+          ProficienciaId: filtros.proficiencia,
+          ComponenteCurricularId: filtros.componenteCurricular,
+          AnoTurma: filtros.ano,
+          BimestreId: filtros.bimestre ?? undefined,
+          GeneroId: Number.isNaN(generoId) ? undefined : generoId,
+          RacaId: Number.isNaN(racaId) ? undefined : racaId,
+          Pap: possuiFiltroPrograma ? programas.includes("pap") : undefined,
+          Aee: possuiFiltroPrograma ? programas.includes("aee") : undefined,
+          Deficiente: possuiFiltroPrograma
+            ? programas.includes("deficiente")
+            : undefined,
         },
       },
     );

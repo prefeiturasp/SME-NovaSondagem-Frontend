@@ -29,7 +29,8 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     filtros?.dre &&
     filtros?.ue &&
     filtros?.bimestre !== undefined &&
-    filtros?.ano !== undefined &&
+    Array.isArray(filtros?.ano) &&
+    filtros.ano.length > 0 &&
     filtros?.componenteCurricular &&
     filtros?.proficiencia,
   );
