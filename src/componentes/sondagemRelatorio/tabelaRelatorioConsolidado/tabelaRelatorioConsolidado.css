@@ -1,0 +1,137 @@
+.tabelaRelatorioConsolidado {
+  margin-top: 16px;
+  position: relative;
+}
+
+.consolidado-titulo {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #3d3d3d;
+}
+
+.consolidado-vazio {
+  margin-top: 8px;
+  padding: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  background: #f7f7f7;
+  color: #5c5c5c;
+  font-size: 14px;
+  text-align: center;
+}
+
+.consolidado-legenda-data {
+  float: right;
+  margin-bottom: 10px;
+  background: #6a35d4;
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+.consolidado-bloco {
+  clear: both;
+  margin-top: 10px;
+  margin-bottom: 24px;
+}
+
+.consolidado-tabela {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  background: #f7f7f7;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.consolidado-tabela th,
+.consolidado-tabela td {
+  border-right: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  text-align: center;
+  color: #3d3d3d;
+  padding: 8px 10px;
+}
+
+.consolidado-tabela th {
+  background: #efefef;
+  font-weight: 700;
+}
+
+.consolidado-tabela th:first-child,
+.consolidado-tabela td:first-child {
+  text-align: left;
+  width: 33%;
+}
+
+.consolidado-tabela th:nth-child(2),
+.consolidado-tabela td:nth-child(2) {
+  width: 33%;
+}
+
+.consolidado-tabela th:nth-child(3),
+.consolidado-tabela td:nth-child(3) {
+  width: 34%;
+}
+
+.consolidado-tabela tr:last-child td {
+  border-bottom: none;
+  text-align: center;
+}
+
+.consolidado-tabela th:last-child,
+.consolidado-tabela td:last-child {
+  border-right: none;
+}
+
+.consolidado-pill {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.consolidado-pill--adequada {
+  background: #6eca4f;
+}
+
+.consolidado-pill--inadequada {
+  background: #ecd34a;
+  color: #2f2f2f;
+}
+
+.consolidado-pill--nao-respondeu {
+  background: #e78282;
+}
+
+.consolidado-descricao-normal {
+  font-weight: 600;
+}
+
+.consolidado-valor {
+  font-weight: 500;
+}
+
+.consolidado-valor--vazio {
+  color: #a8a8a8;
+}
+
+.consolidado-valor--total {
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .consolidado-tabela th,
+  .consolidado-tabela td {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+}

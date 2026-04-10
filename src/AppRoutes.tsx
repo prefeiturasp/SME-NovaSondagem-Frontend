@@ -5,12 +5,13 @@ import Home from "./paginas/home/home";
 import type { RootState } from "./types/redux";
 import { useSelector } from "react-redux";
 import Relatorio from "./paginas/relatorio/relatorio";
+import RelatorioConsolidado from "./paginas/relatorio/relatorioConsolidado";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const isAuthenticated = useSelector(
-    (state: RootState) => state.usuario?.logado ?? false
+    (state: RootState) => state.usuario?.logado ?? false,
   );
   const [isLoading, setIsLoading] = useState(true);
 
@@ -26,6 +27,7 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
 const AppRoutes: React.FC = () => (
   <Routes>
     <Route path="/relatorio" element={<Relatorio />} />
+    <Route path="/relatorio/consolidado" element={<RelatorioConsolidado />} />
     <Route path="/sem-acesso" element={<SemAcesso />} />
     <Route
       path="/"
