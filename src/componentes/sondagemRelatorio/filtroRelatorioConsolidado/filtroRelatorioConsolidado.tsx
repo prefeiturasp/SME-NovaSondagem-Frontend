@@ -38,6 +38,7 @@ type FiltroRelatorioConsolidadoProps = {
   onFiltrosAlterados: (
     filtros: ValoresFiltroRelatorioConsolidado | null,
   ) => void;
+  onLoading?: (loading: boolean) => void;
 };
 
 const opcoesAno: SelectOption[] = [
@@ -59,7 +60,7 @@ const opcoesPrograma: SelectOption[] = [
 const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   FiltroRelatorioConsolidadoRef,
   FiltroRelatorioConsolidadoProps
-> = ({ form, onDadosCarregados, onFiltrosAlterados }, ref) => {
+> = ({ form, onDadosCarregados, onFiltrosAlterados, onLoading }, ref) => {
   const usuario = useSelector((store: any) => store.usuario);
 
   const [listaAnosLetivos, setListaAnosLetivos] = useState<SelectOption[]>([]);
@@ -124,20 +125,27 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   };
 
   const tentarBuscarDadosConsolidado = async () => {
-    const filtros = mapearFiltrosFormulario();
+    onLoading?.(true);
+    try {
+      onDadosCarregados(null);
 
-    if (!camposObrigatoriosPreenchidos(filtros)) {
-      limparResultadoRelatorio();
-      return;
+      const filtros = mapearFiltrosFormulario();
+
+      if (!camposObrigatoriosPreenchidos(filtros)) {
+        onFiltrosAlterados(null);
+        return;
+      }
+
+      const dados = await BuscarDadosRelatorioConsolidadoService({
+        filtros,
+        token: usuario?.token,
+      });
+
+      onDadosCarregados(dados);
+      onFiltrosAlterados(filtros);
+    } finally {
+      onLoading?.(false);
     }
-
-    const dados = await BuscarDadosRelatorioConsolidadoService({
-      filtros,
-      token: usuario?.token,
-    });
-
-    onDadosCarregados(dados);
-    onFiltrosAlterados(filtros);
   };
 
   const obterAnosLetivos = async (token: string) => {

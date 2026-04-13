@@ -19,6 +19,7 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
   const [filtros, setFiltros] =
     useState<ValoresFiltroRelatorioConsolidado | null>(null);
   const [loadingGerar, setLoadingGerar] = useState(false);
+  const [isLoadingTabela, setIsLoadingTabela] = useState(false);
   const usuario = useSelector((store: any) => store.usuario);
 
   const filtrosObrigatoriosPreenchidos = Boolean(
@@ -105,8 +106,9 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
           form={formFiltro}
           onDadosCarregados={setDados}
           onFiltrosAlterados={setFiltros}
+          onLoading={setIsLoadingTabela}
         />
-        <TabelaRelatorioConsolidado dados={dados} />
+        <TabelaRelatorioConsolidado dados={dados} isLoading={isLoadingTabela} />
       </Card>
     </>
   );

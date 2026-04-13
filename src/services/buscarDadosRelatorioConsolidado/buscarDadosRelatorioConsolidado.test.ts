@@ -64,6 +64,7 @@ describe("BuscarDadosRelatorioConsolidadoService", () => {
           Pap: true,
           Aee: false,
           Deficiente: true,
+          PossuiLinguaPortuguesaSegundaLingua: false,
         },
       },
     );

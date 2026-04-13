@@ -1,9 +1,11 @@
 import React from "react";
+import { Spin } from "antd";
 import type { DadosTabelaDinamica } from "../../../core/dto/typesRelatorio";
 import "./tabelaRelatorioConsolidado.css";
 
 interface TabelaRelatorioConsolidadoProps {
   dados: DadosTabelaDinamica | null;
+  isLoading?: boolean;
 }
 
 interface LinhaConsolidada {
@@ -63,8 +65,19 @@ const formatarPercentual = (valor: number) => {
 
 const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
   dados,
+  isLoading = false,
 }) => {
   const blocos = montarBlocos(dados);
+
+  if (isLoading) {
+    return (
+      <div className="tabelaRelatorioConsolidado">
+        <div style={{ textAlign: "center", padding: "20px" }}>
+          <Spin size="large" />
+        </div>
+      </div>
+    );
+  }
 
   if (!dados) return null;
 
