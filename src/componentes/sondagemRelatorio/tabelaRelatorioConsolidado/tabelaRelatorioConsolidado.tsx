@@ -110,10 +110,6 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
 
   return (
     <div className="tabelaRelatorioConsolidado">
-      {dados?.titulo ? (
-        <div className="consolidado-titulo">{dados.titulo}</div>
-      ) : null}
-
       {blocos.map((bloco) => (
         <div key={bloco.titulo} className="consolidado-bloco">
           <table className="consolidado-tabela">

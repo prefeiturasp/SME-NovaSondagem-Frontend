@@ -68,7 +68,6 @@ describe("TabelaRelatorioConsolidado", () => {
       />,
     );
 
-    expect(screen.getByText("Título Consolidado")).toBeInTheDocument();
     expect(screen.getByText("Questão 1")).toBeInTheDocument();
 
     const adequadas = screen.getAllByText("Adequada");
