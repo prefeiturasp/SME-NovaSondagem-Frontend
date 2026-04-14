@@ -51,6 +51,7 @@ const BuscarDadosRelatorioConsolidadoService = async ({
           Deficiente: possuiFiltroPrograma
             ? programas.includes("deficiente")
             : undefined,
+          PossuiLinguaPortuguesaSegundaLingua: filtros.lpSegundaLingua,
         },
       },
     );
