@@ -100,6 +100,32 @@ describe("BuscarDadosRelatorioConsolidadoService", () => {
     );
   });
 
+  it("deve omitir Dre e Ue quando são undefined", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({
+      data: null,
+    });
+
+    const resultado = await BuscarDadosRelatorioConsolidadoService({
+      filtros: {
+        ...filtrosBase,
+        dre: undefined,
+        ue: undefined,
+      },
+      token: "token-teste",
+    });
+
+    expect(resultado).toBeNull();
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+      "/Relatorio/consoliado/ano",
+      expect.objectContaining({
+        params: expect.not.objectContaining({
+          Dre: expect.anything(),
+          Ue: expect.anything(),
+        }),
+      }),
+    );
+  });
+
   it("deve notificar erro e retornar null quando requisição falhar", async () => {
     const erro = new Error("falha");
     (NovaSondagemServico.get as jest.Mock).mockRejectedValueOnce(erro);
