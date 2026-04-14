@@ -95,8 +95,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     const filtros: ValoresFiltroRelatorioConsolidado = {
       anoLetivo: valores.anoLetivo,
       modalidade: valores.modalidade,
-      dre: valores.dre,
-      ue: valores.ue,
+      dre: valores.dre === "todas" ? undefined : valores.dre,
+      ue: valores.ue === "todas" ? undefined : valores.ue,
       bimestre: valores.bimestre,
       ano: valores.ano,
       componenteCurricular: valores.componenteCurricular,
@@ -119,8 +119,6 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     return Boolean(
       filtros.anoLetivo &&
       filtros.modalidade &&
-      filtros.dre &&
-      filtros.ue &&
       filtros.bimestre !== undefined &&
       Array.isArray(filtros.ano) &&
       filtros.ano.length > 0 &&
@@ -249,7 +247,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       BimestreService({ token: usuario?.token, modalidade: value }),
     ]);
 
-    setListaDres(dres ?? []);
+    setListaDres(dres ? [{ value: "todas", label: "Todas" }, ...dres] : []);
     setListaComponentesCurriculares(componentes ?? []);
     setListaBimestres(
       bimestres ? [{ value: null, label: "Todos" }, ...bimestres] : [],
@@ -260,10 +258,10 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setDesabilitarBimestre(!bimestres || bimestres.length === 0);
   };
 
-  const onChangeDre = async (value: number) => {
+  const onChangeDre = async (value: number | string) => {
     limparResultadoRelatorio();
     form.setFieldsValue({
-      ue: undefined,
+      ue: value === "todas" ? "todas" : undefined,
       bimestre: undefined,
       ano: undefined,
       componenteCurricular: undefined,
@@ -282,18 +280,28 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setDesabilitarComponenteCurricular(true);
     setDesabilitarProficiencia(true);
 
+    // Se "todas" foi selecionado, não busca UEs e habilita campos seguintes
+    if (value === "todas") {
+      setListaUes([{ value: "todas", label: "Todas" }]);
+      setDesabilitarUe(false);
+      setDesabilitarBimestre(false);
+      setDesabilitarAno(false);
+      setDesabilitarComponenteCurricular(false);
+      return;
+    }
+
     const anoLetivo = form.getFieldValue("anoLetivo");
     const modalidade = form.getFieldValue("modalidade");
     if (!value || !anoLetivo || !modalidade) return;
 
     const ues = await UeService({
       token: usuario?.token,
-      dreId: value,
+      dreId: value as number,
       anoLetivo,
       modalidade,
     });
 
-    setListaUes(ues ?? []);
+    setListaUes(ues ? [{ value: "todas", label: "Todas" }, ...ues] : []);
     setDesabilitarUe(false);
   };
 
