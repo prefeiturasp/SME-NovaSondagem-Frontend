@@ -305,7 +305,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setDesabilitarUe(false);
   };
 
-  const onChangeUe = (value?: number | string) => {
+  const onChangeUe = () => {
     limparResultadoRelatorio();
     form.setFieldsValue({
       bimestre: undefined,
