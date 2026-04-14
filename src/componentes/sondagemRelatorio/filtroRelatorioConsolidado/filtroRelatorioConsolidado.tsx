@@ -92,7 +92,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
 
   const mapearFiltrosFormulario = (): ValoresFiltroRelatorioConsolidado => {
     const valores = form.getFieldsValue();
-    return {
+    const filtros: ValoresFiltroRelatorioConsolidado = {
       anoLetivo: valores.anoLetivo,
       modalidade: valores.modalidade,
       dre: valores.dre,
@@ -104,8 +104,13 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       genero: valores.genero,
       raca: valores.raca,
       programa: valores.programa,
-      lpSegundaLingua: Boolean(valores.lpSegundaLingua),
     };
+
+    if (valores.lpSegundaLingua) {
+      filtros.lpSegundaLingua = true;
+    }
+
+    return filtros;
   };
 
   const camposObrigatoriosPreenchidos = (

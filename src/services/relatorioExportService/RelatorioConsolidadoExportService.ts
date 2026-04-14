@@ -53,7 +53,9 @@ const montarParametrosExportacaoConsolidado = (
   adicionarArrayParametros(params, "ano", filtros.ano);
   adicionarArrayParametros(params, "programa", filtros.programa);
 
-  params.append("lpSegundaLingua", String(Boolean(filtros.lpSegundaLingua)));
+  if (filtros.lpSegundaLingua) {
+    params.append("lpSegundaLingua", "true");
+  }
 
   return params;
 };

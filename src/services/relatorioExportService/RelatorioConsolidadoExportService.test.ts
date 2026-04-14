@@ -70,7 +70,7 @@ describe("RelatorioConsolidadoExportService", () => {
 
     expect(resultado).toBe(true);
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/sondagem/relatorio/consolidado/exportar?extensaoRelatorio=4&anoLetivo=2026&lpSegundaLingua=false",
+      "/sondagem/relatorio/consolidado/exportar?extensaoRelatorio=4&anoLetivo=2026",
       {
         headers: { "X-Token-Principal": "token-teste" },
       },
