@@ -4,9 +4,11 @@ import "./conteudoRelatorio.css";
 import FiltroRelatorioConsolidado from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import type { FiltroRelatorioConsolidadoRef } from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import TabelaRelatorioConsolidado from "../tabelaRelatorioConsolidado/tabelaRelatorioConsolidado";
+import TabelaRelatorioConsolidadoPorRacas from "../tabelaRelatorioConsolidadoPorRacas/tabelaRelatorioConsolidadoPorRacas";
 import { useSelector } from "react-redux";
 import type {
   DadosTabelaDinamica,
+  DadosRelatorioConsolidadoPorRacas,
   ValoresFiltroRelatorioConsolidado,
 } from "../../../core/dto/typesRelatorio";
 import RelatorioConsolidadoExportService from "../../../services/relatorioExportService/RelatorioConsolidadoExportService";
@@ -16,6 +18,8 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
   const [formFiltro] = Form.useForm();
   const filtroRef = useRef<FiltroRelatorioConsolidadoRef | null>(null);
   const [dados, setDados] = useState<DadosTabelaDinamica | null>(null);
+  const [dadosPorRacas, setDadosPorRacas] =
+    useState<DadosRelatorioConsolidadoPorRacas | null>(null);
   const [filtros, setFiltros] =
     useState<ValoresFiltroRelatorioConsolidado | null>(null);
   const [loadingGerar, setLoadingGerar] = useState(false);
@@ -76,6 +80,7 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     formFiltro.resetFields();
     filtroRef.current?.reset();
     setDados(null);
+    setDadosPorRacas(null);
     setFiltros(null);
   };
 
@@ -105,10 +110,21 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
           ref={filtroRef}
           form={formFiltro}
           onDadosCarregados={setDados}
+          onDadosPorRacasCarregados={setDadosPorRacas}
           onFiltrosAlterados={setFiltros}
           onLoading={setIsLoadingTabela}
         />
-        <TabelaRelatorioConsolidado dados={dados} isLoading={isLoadingTabela} />
+        {filtros?.agrupamentoDados === "porRacas" ? (
+          <TabelaRelatorioConsolidadoPorRacas
+            dados={dadosPorRacas}
+            isLoading={isLoadingTabela}
+          />
+        ) : (
+          <TabelaRelatorioConsolidado
+            dados={dados}
+            isLoading={isLoadingTabela}
+          />
+        )}
       </Card>
     </>
   );

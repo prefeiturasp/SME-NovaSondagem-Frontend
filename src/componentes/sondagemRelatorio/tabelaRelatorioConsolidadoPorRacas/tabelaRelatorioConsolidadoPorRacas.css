@@ -1,0 +1,109 @@
+.tabelaRelatorioConsolidadoPorRacas {
+  margin-top: 16px;
+  position: relative;
+}
+
+.consolidado-racas-vazio {
+  margin-top: 8px;
+  padding: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  background: #f7f7f7;
+  color: #5c5c5c;
+  font-size: 14px;
+  text-align: center;
+}
+
+.consolidado-racas-bloco {
+  margin-bottom: 24px;
+}
+
+.consolidado-racas-wrapper {
+  overflow-x: auto;
+}
+
+.consolidado-racas-tabela {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #f7f7f7;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.consolidado-racas-tabela th,
+.consolidado-racas-tabela td {
+  border-right: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  text-align: center;
+  color: #3d3d3d;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+.consolidado-racas-tabela th {
+  background: #efefef;
+  font-weight: 700;
+}
+
+.consolidado-racas-th-localizacao {
+  text-align: left !important;
+  min-width: 180px;
+}
+
+.consolidado-racas-tabela td:first-child {
+  text-align: left;
+  min-width: 180px;
+}
+
+.consolidado-racas-tabela th:last-child,
+.consolidado-racas-tabela td:last-child {
+  border-right: none;
+}
+
+.consolidado-racas-tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.consolidado-racas-pill {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+  font-weight: 700;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.consolidado-racas-descricao-normal {
+  font-weight: 600;
+}
+
+.consolidado-racas-valor {
+  vertical-align: middle;
+}
+
+.consolidado-racas-valor--vazio {
+  color: #a8a8a8;
+  font-style: italic;
+}
+
+.consolidado-racas-valor--total {
+  font-weight: 700;
+}
+
+.consolidado-racas-numero {
+  display: block;
+  font-weight: 700;
+}
+
+.consolidado-racas-percentual {
+  display: block;
+  font-size: 12px;
+  color: #5c5c5c;
+}
+
+.consolidado-racas-linha-total td {
+  background: #f0f0f0;
+  font-weight: 700;
+}

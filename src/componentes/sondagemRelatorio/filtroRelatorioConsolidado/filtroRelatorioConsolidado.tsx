@@ -9,11 +9,13 @@ import type { FormInstance } from "antd";
 import { useSelector } from "react-redux";
 import type {
   DadosTabelaDinamica,
+  DadosRelatorioConsolidadoPorRacas,
   ValoresFiltroRelatorioConsolidado,
 } from "../../../core/dto/typesRelatorio";
 import AnoLetivoService from "../../../services/anoLetivo/anoLetivoService";
 import BimestreService from "../../../services/bimestreService/bimestreService";
 import BuscarDadosRelatorioConsolidadoService from "../../../services/buscarDadosRelatorioConsolidado/buscarDadosRelatorioConsolidado";
+import BuscarDadosRelatorioConsolidadoPorRacasService from "../../../services/buscarDadosRelatorioConsolidadoPorRacas/buscarDadosRelatorioConsolidadoPorRacas";
 import ComponenteCurricularService from "../../../services/componenteCurricularService/componenteCurricularService";
 import DreService from "../../../services/dre/dreService";
 import GeneroSexoService from "../../../services/generoSexoService/generoSexoService";
@@ -35,6 +37,9 @@ export type FiltroRelatorioConsolidadoRef = {
 type FiltroRelatorioConsolidadoProps = {
   form: FormInstance;
   onDadosCarregados: (dados: DadosTabelaDinamica | null) => void;
+  onDadosPorRacasCarregados: (
+    dados: DadosRelatorioConsolidadoPorRacas | null,
+  ) => void;
   onFiltrosAlterados: (
     filtros: ValoresFiltroRelatorioConsolidado | null,
   ) => void;
@@ -49,6 +54,7 @@ const opcoesAno: SelectOption[] = [
 
 const opcoesAgrupamentoDados: SelectOption[] = [
   { value: "porQuestoes", label: "Por questões" },
+  { value: "porRacas", label: "Por raças" },
 ];
 
 const opcoesPrograma: SelectOption[] = [
@@ -60,7 +66,16 @@ const opcoesPrograma: SelectOption[] = [
 const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   FiltroRelatorioConsolidadoRef,
   FiltroRelatorioConsolidadoProps
-> = ({ form, onDadosCarregados, onFiltrosAlterados, onLoading }, ref) => {
+> = (
+  {
+    form,
+    onDadosCarregados,
+    onDadosPorRacasCarregados,
+    onFiltrosAlterados,
+    onLoading,
+  },
+  ref,
+) => {
   const usuario = useSelector((store: any) => store.usuario);
 
   const [listaAnosLetivos, setListaAnosLetivos] = useState<SelectOption[]>([]);
@@ -87,6 +102,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
 
   const limparResultadoRelatorio = () => {
     onDadosCarregados(null);
+    onDadosPorRacasCarregados(null);
     onFiltrosAlterados(null);
   };
 
@@ -104,6 +120,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       genero: valores.genero,
       raca: valores.raca,
       programa: valores.programa,
+      agrupamentoDados: valores.agrupamentoDados,
     };
 
     if (valores.lpSegundaLingua) {
@@ -131,6 +148,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     onLoading?.(true);
     try {
       onDadosCarregados(null);
+      onDadosPorRacasCarregados(null);
 
       const filtros = mapearFiltrosFormulario();
 
@@ -139,12 +157,20 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
         return;
       }
 
-      const dados = await BuscarDadosRelatorioConsolidadoService({
-        filtros,
-        token: usuario?.token,
-      });
+      if (filtros.agrupamentoDados === "porRacas") {
+        const dados = await BuscarDadosRelatorioConsolidadoPorRacasService({
+          filtros,
+          token: usuario?.token,
+        });
+        onDadosPorRacasCarregados(dados);
+      } else {
+        const dados = await BuscarDadosRelatorioConsolidadoService({
+          filtros,
+          token: usuario?.token,
+        });
+        onDadosCarregados(dados);
+      }
 
-      onDadosCarregados(dados);
       onFiltrosAlterados(filtros);
     } finally {
       onLoading?.(false);

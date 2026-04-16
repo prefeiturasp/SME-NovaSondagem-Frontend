@@ -99,7 +99,38 @@ export type ValoresFiltroRelatorioConsolidado = {
   raca?: number | string;
   programa?: string[];
   lpSegundaLingua?: boolean;
+  agrupamentoDados?: string;
 };
+
+export interface RacaConsolidada {
+  raca: string;
+  quantidade: number;
+  percentual: number;
+}
+
+export interface RespostaConsolidadaPorRaca {
+  resposta: string;
+  racas: RacaConsolidada[];
+  total: number;
+  percentual: number;
+  ordem: number;
+  corFundo: string;
+  corTexto: string;
+}
+
+export interface QuestaoConsolidadaPorRaca {
+  questaoId: number;
+  questaoNome: string;
+  respostas: RespostaConsolidadaPorRaca[];
+  totaisPorRaca: RacaConsolidada[];
+  totalEstudantes: number;
+  percentualTotal: number;
+}
+
+export interface DadosRelatorioConsolidadoPorRacas {
+  titulo: string;
+  questoes: QuestaoConsolidadaPorRaca[];
+}
 
 export interface LegendaQuestionario {
   id: number;
