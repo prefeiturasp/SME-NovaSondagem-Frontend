@@ -38,55 +38,27 @@
   margin-bottom: 24px;
 }
 
-.consolidado-tabela {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  table-layout: fixed;
+.consolidado-ant-table .ant-table {
   background: #f7f7f7;
-  border: 1px solid #e8e8e8;
   border-radius: 6px;
-  overflow: hidden;
 }
 
-.consolidado-tabela th,
-.consolidado-tabela td {
-  border-right: 1px solid #e8e8e8;
-  border-bottom: 1px solid #e8e8e8;
-  text-align: center;
-  color: #3d3d3d;
-  padding: 8px 10px;
-}
-
-.consolidado-tabela th {
+.consolidado-ant-table .ant-table-thead > tr > th {
   background: #efefef;
+  color: #3d3d3d;
   font-weight: 700;
 }
 
-.consolidado-tabela th:first-child,
-.consolidado-tabela td:first-child {
-  text-align: left;
-  width: 33%;
+.consolidado-ant-table .ant-table-tbody > tr > td {
+  color: #3d3d3d;
 }
 
-.consolidado-tabela th:nth-child(2),
-.consolidado-tabela td:nth-child(2) {
-  width: 33%;
+.consolidado-ant-table .ant-table-tbody > tr.ant-table-row:hover > td {
+  background: #f5f5f5;
 }
 
-.consolidado-tabela th:nth-child(3),
-.consolidado-tabela td:nth-child(3) {
-  width: 34%;
-}
-
-.consolidado-tabela tr:last-child td {
-  border-bottom: none;
-  text-align: center;
-}
-
-.consolidado-tabela th:last-child,
-.consolidado-tabela td:last-child {
-  border-right: none;
+.consolidado-linha-total > td {
+  background: #f0f0f0;
 }
 
 .consolidado-pill {
@@ -129,8 +101,8 @@
 }
 
 @media (max-width: 768px) {
-  .consolidado-tabela th,
-  .consolidado-tabela td {
+  .consolidado-ant-table .ant-table-thead > tr > th,
+  .consolidado-ant-table .ant-table-tbody > tr > td {
     font-size: 12px;
     padding: 8px 6px;
   }

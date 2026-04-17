@@ -7,6 +7,14 @@ describe("TabelaRelatorioConsolidado", () => {
     expect(container.firstChild).toBeNull();
   });
 
+  it("deve exibir loading quando isLoading for true", () => {
+    const { container } = render(
+      <TabelaRelatorioConsolidado dados={null} isLoading />,
+    );
+
+    expect(container.querySelector(".ant-spin")).toBeInTheDocument();
+  });
+
   it("deve exibir mensagem de vazio quando questoes vier vazio", () => {
     render(
       <TabelaRelatorioConsolidado

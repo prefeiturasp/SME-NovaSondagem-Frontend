@@ -126,6 +126,8 @@ jest.mock("react-redux", () => ({
 describe("FiltroRelatorioConsolidado", () => {
   const { useSelector } = require("react-redux");
   const onDadosCarregados = jest.fn();
+  const onDadosPorGenerosCarregados = jest.fn();
+  const onDadosPorRacasCarregados = jest.fn();
   const onFiltrosAlterados = jest.fn();
 
   const renderComForm = () => {
@@ -139,6 +141,8 @@ describe("FiltroRelatorioConsolidado", () => {
             ref={ref}
             form={form}
             onDadosCarregados={onDadosCarregados}
+            onDadosPorGenerosCarregados={onDadosPorGenerosCarregados}
+            onDadosPorRacasCarregados={onDadosPorRacasCarregados}
             onFiltrosAlterados={onFiltrosAlterados}
           />
           <button
@@ -324,6 +328,8 @@ describe("FiltroRelatorioConsolidado", () => {
         screen.getByTestId("sondagem-consolidado-select-modalidade"),
       ).toBeDisabled();
       expect(onDadosCarregados).toHaveBeenCalledWith(null);
+      expect(onDadosPorGenerosCarregados).toHaveBeenCalledWith(null);
+      expect(onDadosPorRacasCarregados).toHaveBeenCalledWith(null);
       expect(onFiltrosAlterados).toHaveBeenCalledWith(null);
     });
   });

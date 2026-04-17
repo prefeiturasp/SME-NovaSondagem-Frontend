@@ -4,9 +4,13 @@ import "./conteudoRelatorio.css";
 import FiltroRelatorioConsolidado from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import type { FiltroRelatorioConsolidadoRef } from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import TabelaRelatorioConsolidado from "../tabelaRelatorioConsolidado/tabelaRelatorioConsolidado";
+import TabelaRelatorioConsolidadoPorGeneros from "../tabelaRelatorioConsolidadoPorGeneros/tabelaRelatorioConsolidadoPorGeneros";
+import TabelaRelatorioConsolidadoPorRacas from "../tabelaRelatorioConsolidadoPorRacas/tabelaRelatorioConsolidadoPorRacas";
 import { useSelector } from "react-redux";
 import type {
+  DadosRelatorioConsolidadoPorGeneros,
   DadosTabelaDinamica,
+  DadosRelatorioConsolidadoPorRacas,
   ValoresFiltroRelatorioConsolidado,
 } from "../../../core/dto/typesRelatorio";
 import RelatorioConsolidadoExportService from "../../../services/relatorioExportService/RelatorioConsolidadoExportService";
@@ -16,6 +20,10 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
   const [formFiltro] = Form.useForm();
   const filtroRef = useRef<FiltroRelatorioConsolidadoRef | null>(null);
   const [dados, setDados] = useState<DadosTabelaDinamica | null>(null);
+  const [dadosPorGeneros, setDadosPorGeneros] =
+    useState<DadosRelatorioConsolidadoPorGeneros | null>(null);
+  const [dadosPorRacas, setDadosPorRacas] =
+    useState<DadosRelatorioConsolidadoPorRacas | null>(null);
   const [filtros, setFiltros] =
     useState<ValoresFiltroRelatorioConsolidado | null>(null);
   const [loadingGerar, setLoadingGerar] = useState(false);
@@ -76,12 +84,34 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     formFiltro.resetFields();
     filtroRef.current?.reset();
     setDados(null);
+    setDadosPorGeneros(null);
+    setDadosPorRacas(null);
     setFiltros(null);
   };
 
   const voltarSondagem = () => {
     globalThis.location.href = "/";
   };
+
+  let tabelaRelatorio = (
+    <TabelaRelatorioConsolidado dados={dados} isLoading={isLoadingTabela} />
+  );
+
+  if (filtros?.agrupamentoDados === "porGenero") {
+    tabelaRelatorio = (
+      <TabelaRelatorioConsolidadoPorGeneros
+        dados={dadosPorGeneros}
+        isLoading={isLoadingTabela}
+      />
+    );
+  } else if (filtros?.agrupamentoDados === "porRacas") {
+    tabelaRelatorio = (
+      <TabelaRelatorioConsolidadoPorRacas
+        dados={dadosPorRacas}
+        isLoading={isLoadingTabela}
+      />
+    );
+  }
 
   return (
     <>
@@ -105,10 +135,12 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
           ref={filtroRef}
           form={formFiltro}
           onDadosCarregados={setDados}
+          onDadosPorGenerosCarregados={setDadosPorGeneros}
+          onDadosPorRacasCarregados={setDadosPorRacas}
           onFiltrosAlterados={setFiltros}
           onLoading={setIsLoadingTabela}
         />
-        <TabelaRelatorioConsolidado dados={dados} isLoading={isLoadingTabela} />
+        {tabelaRelatorio}
       </Card>
     </>
   );
