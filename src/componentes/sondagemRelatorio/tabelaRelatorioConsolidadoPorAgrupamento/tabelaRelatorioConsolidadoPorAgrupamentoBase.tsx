@@ -203,7 +203,7 @@ export const criarTabelaRelatorioConsolidadoPorAgrupamento = <
                   ),
               };
 
-              itens.forEach((item) => {
+              for (const item of itens) {
                 const dado = obterItemPorNome(
                   config.obterItensResposta(resposta),
                   item.nome,
@@ -218,7 +218,7 @@ export const criarTabelaRelatorioConsolidadoPorAgrupamento = <
                   config.classNamePercentual,
                   config.classNameValorVazio,
                 );
-              });
+              }
 
               return linhaBase;
             },
@@ -236,7 +236,7 @@ export const criarTabelaRelatorioConsolidadoPorAgrupamento = <
             isTotal: true,
           };
 
-          itens.forEach((item) => {
+          for (const item of itens) {
             const total = obterItemPorNome(
               config.obterTotais(questao),
               item.nome,
@@ -250,7 +250,7 @@ export const criarTabelaRelatorioConsolidadoPorAgrupamento = <
               config.classNamePercentual,
               config.classNameValorVazio,
             );
-          });
+          }
 
           linhas.push(linhaTotal);
 
