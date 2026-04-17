@@ -132,6 +132,36 @@ export interface DadosRelatorioConsolidadoPorRacas {
   questoes: QuestaoConsolidadaPorRaca[];
 }
 
+export interface GeneroConsolidado {
+  genero: string;
+  quantidade: number;
+  percentual: number;
+}
+
+export interface RespostaConsolidadaPorGenero {
+  resposta: string;
+  generos: GeneroConsolidado[];
+  total: number;
+  percentual: number;
+  ordem: number;
+  corFundo: string;
+  corTexto: string;
+}
+
+export interface QuestaoConsolidadaPorGenero {
+  questaoId: number;
+  questaoNome: string;
+  respostas: RespostaConsolidadaPorGenero[];
+  totaisPorGenero: GeneroConsolidado[];
+  totalEstudantes: number;
+  percentualTotal: number;
+}
+
+export interface DadosRelatorioConsolidadoPorGeneros {
+  titulo: string;
+  questoes: QuestaoConsolidadaPorGenero[];
+}
+
 export interface LegendaQuestionario {
   id: number;
   ordem: number;

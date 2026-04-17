@@ -1,14 +1,14 @@
 import React from "react";
 import { Spin, Table } from "antd";
 import type {
-  DadosRelatorioConsolidadoPorRacas,
-  QuestaoConsolidadaPorRaca,
-  RacaConsolidada,
+  DadosRelatorioConsolidadoPorGeneros,
+  GeneroConsolidado,
+  QuestaoConsolidadaPorGenero,
 } from "../../../core/dto/typesRelatorio";
-import "./tabelaRelatorioConsolidadoPorRacas.css";
+import "./tabelaRelatorioConsolidadoPorGeneros.css";
 
-interface TabelaRelatorioConsolidadoPorRacasProps {
-  dados: DadosRelatorioConsolidadoPorRacas | null;
+interface TabelaRelatorioConsolidadoPorGenerosProps {
+  dados: DadosRelatorioConsolidadoPorGeneros | null;
   isLoading?: boolean;
 }
 
@@ -29,45 +29,45 @@ const formatarPercentual = (valor: number) => {
   return `${texto}%`;
 };
 
-const obterRacasUnicas = (questao: QuestaoConsolidadaPorRaca): string[] => {
-  const racasSet = new Set<string>();
-  questao.totaisPorRaca.forEach((t) => racasSet.add(t.raca));
+const obterGenerosUnicos = (questao: QuestaoConsolidadaPorGenero): string[] => {
+  const generosSet = new Set<string>();
+  questao.totaisPorGenero.forEach((t) => generosSet.add(t.genero));
   questao.respostas.forEach((r) =>
-    r.racas.forEach((rc) => racasSet.add(rc.raca)),
+    r.generos.forEach((g) => generosSet.add(g.genero)),
   );
-  return Array.from(racasSet);
+  return Array.from(generosSet);
 };
 
-const obterQuantidadePorRaca = (
-  racas: RacaConsolidada[],
-  nomRaca: string,
-): RacaConsolidada | undefined => {
-  return racas.find((r) => r.raca === nomRaca);
+const obterQuantidadePorGenero = (
+  generos: GeneroConsolidado[],
+  nomGenero: string,
+): GeneroConsolidado | undefined => {
+  return generos.find((g) => g.genero === nomGenero);
 };
 
 const renderValor = (quantidade?: number, percentual?: number) => {
   if (!quantidade) {
-    return <span className="consolidado-racas-valor--vazio">Vazio</span>;
+    return <span className="consolidado-generos-valor--vazio">Vazio</span>;
   }
 
   return (
-    <span className="consolidado-racas-valor">
-      <span className="consolidado-racas-numero">
+    <span className="consolidado-generos-valor">
+      <span className="consolidado-generos-numero">
         {formatarInteiro(quantidade)}
       </span>
-      <span className="consolidado-racas-percentual">
+      <span className="consolidado-generos-percentual">
         {formatarPercentual(percentual ?? 0)}
       </span>
     </span>
   );
 };
 
-const TabelaRelatorioConsolidadoPorRacas: React.FC<
-  TabelaRelatorioConsolidadoPorRacasProps
+const TabelaRelatorioConsolidadoPorGeneros: React.FC<
+  TabelaRelatorioConsolidadoPorGenerosProps
 > = ({ dados, isLoading = false }) => {
   if (isLoading) {
     return (
-      <div className="tabelaRelatorioConsolidadoPorRacas">
+      <div className="tabelaRelatorioConsolidadoPorGeneros">
         <div style={{ textAlign: "center", padding: "20px" }}>
           <Spin size="large" />
         </div>
@@ -81,8 +81,8 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
 
   if (!questoes.length) {
     return (
-      <div className="tabelaRelatorioConsolidadoPorRacas">
-        <div className="consolidado-racas-vazio">
+      <div className="tabelaRelatorioConsolidadoPorGeneros">
+        <div className="consolidado-generos-vazio">
           Nenhuma informação encontrada para os filtros informados
         </div>
       </div>
@@ -90,11 +90,11 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
   }
 
   return (
-    <div className="tabelaRelatorioConsolidadoPorRacas">
+    <div className="tabelaRelatorioConsolidadoPorGeneros">
       {questoes.map((questao) => {
-        const racas = obterRacasUnicas(questao).map((raca, indice) => ({
-          id: `raca-${indice}`,
-          nome: raca,
+        const generos = obterGenerosUnicos(questao).map((genero, indice) => ({
+          id: `genero-${indice}`,
+          nome: genero,
         }));
         const respostasOrdenadas = [...questao.respostas].sort(
           (a, b) => a.ordem - b.ordem,
@@ -107,12 +107,12 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
             key: "descricao",
             width: 260,
             align: "center" as const,
-            className: "consolidado-racas-coluna-localizacao",
+            className: "consolidado-generos-coluna-localizacao",
           },
-          ...racas.map((raca) => ({
-            title: raca.nome,
-            dataIndex: raca.id,
-            key: raca.id,
+          ...generos.map((genero) => ({
+            title: `Gênero: ${genero.nome}`,
+            dataIndex: genero.id,
+            key: genero.id,
             align: "center" as const,
             width: 180,
           })),
@@ -125,7 +125,7 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
               descricao:
                 resposta.corFundo && resposta.corTexto ? (
                   <span
-                    className="consolidado-racas-pill"
+                    className="consolidado-generos-pill"
                     style={{
                       backgroundColor: resposta.corFundo,
                       color: resposta.corTexto,
@@ -134,15 +134,18 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
                     {resposta.resposta}
                   </span>
                 ) : (
-                  <span className="consolidado-racas-descricao-normal">
+                  <span className="consolidado-generos-descricao-normal">
                     {resposta.resposta}
                   </span>
                 ),
             };
 
-            racas.forEach((raca) => {
-              const dado = obterQuantidadePorRaca(resposta.racas, raca.nome);
-              linhaBase[raca.id] = renderValor(
+            generos.forEach((genero) => {
+              const dado = obterQuantidadePorGenero(
+                resposta.generos,
+                genero.nome,
+              );
+              linhaBase[genero.id] = renderValor(
                 dado?.quantidade,
                 dado?.percentual,
               );
@@ -155,19 +158,19 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
         const linhaTotal: LinhaTabelaConsolidado = {
           key: `${questao.questaoId}-total`,
           descricao: (
-            <span className="consolidado-racas-descricao-normal consolidado-racas-total-centralizado">
+            <span className="consolidado-generos-descricao-normal consolidado-generos-total-centralizado">
               Total
             </span>
           ),
           isTotal: true,
         };
 
-        racas.forEach((raca) => {
-          const total = obterQuantidadePorRaca(
-            questao.totaisPorRaca,
-            raca.nome,
+        generos.forEach((genero) => {
+          const total = obterQuantidadePorGenero(
+            questao.totaisPorGenero,
+            genero.nome,
           );
-          linhaTotal[raca.id] = renderValor(
+          linhaTotal[genero.id] = renderValor(
             total?.quantidade,
             total?.percentual,
           );
@@ -176,9 +179,9 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
         linhas.push(linhaTotal);
 
         return (
-          <div key={questao.questaoId} className="consolidado-racas-bloco">
+          <div key={questao.questaoId} className="consolidado-generos-bloco">
             <Table
-              className="consolidado-racas-ant-table"
+              className="consolidado-generos-ant-table"
               columns={colunas}
               dataSource={linhas}
               pagination={false}
@@ -186,7 +189,7 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
               size="middle"
               scroll={{ x: "max-content" }}
               rowClassName={(record) =>
-                record.isTotal ? "consolidado-racas-linha-total" : ""
+                record.isTotal ? "consolidado-generos-linha-total" : ""
               }
             />
           </div>
@@ -196,4 +199,4 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<
   );
 };
 
-export default TabelaRelatorioConsolidadoPorRacas;
+export default TabelaRelatorioConsolidadoPorGeneros;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Spin } from "antd";
+import { Spin, Table } from "antd";
 import type { DadosTabelaDinamica } from "../../../core/dto/typesRelatorio";
 import "./tabelaRelatorioConsolidado.css";
 
@@ -20,6 +20,14 @@ interface BlocoConsolidado {
   titulo: string;
   linhas: LinhaConsolidada[];
 }
+
+type LinhaTabelaConsolidado = {
+  key: string;
+  descricao: React.ReactNode;
+  estudantes: React.ReactNode;
+  percentual: React.ReactNode;
+  isTotal?: boolean;
+};
 
 const montarBlocos = (
   dados: DadosTabelaDinamica | null,
@@ -125,38 +133,65 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
     <div className="tabelaRelatorioConsolidado">
       {blocos.map((bloco) => (
         <div key={bloco.titulo} className="consolidado-bloco">
-          <table className="consolidado-tabela">
-            <thead>
-              <tr>
-                <th>{bloco.titulo}</th>
-                <th>Estudantes</th>
-                <th>%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bloco.linhas.map((linha) => (
-                <tr key={`${bloco.titulo}-${linha.descricao}`}>
-                  <td>{renderDescricao(linha)}</td>
-                  <td
+          <Table
+            className="consolidado-ant-table"
+            pagination={false}
+            bordered
+            size="middle"
+            columns={[
+              {
+                title: bloco.titulo,
+                dataIndex: "descricao",
+                key: "descricao",
+                width: "33%",
+                align: "left",
+              },
+              {
+                title: "Estudantes",
+                dataIndex: "estudantes",
+                key: "estudantes",
+                width: "33%",
+                align: "center",
+              },
+              {
+                title: "%",
+                dataIndex: "percentual",
+                key: "percentual",
+                width: "34%",
+                align: "center",
+              },
+            ]}
+            dataSource={bloco.linhas.map(
+              (linha): LinhaTabelaConsolidado => ({
+                key: `${bloco.titulo}-${linha.descricao}`,
+                descricao: renderDescricao(linha),
+                estudantes: (
+                  <span
                     className={getValorClassName(
                       linha.estudantes,
                       linha.descricao,
                     )}
                   >
                     {formatarInteiro(linha.estudantes)}
-                  </td>
-                  <td
+                  </span>
+                ),
+                percentual: (
+                  <span
                     className={getValorClassName(
                       linha.percentual,
                       linha.descricao,
                     )}
                   >
                     {formatarPercentual(linha.percentual)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>
+                ),
+                isTotal: linha.descricao === "Total",
+              }),
+            )}
+            rowClassName={(record) =>
+              record.isTotal ? "consolidado-linha-total" : ""
+            }
+          />
         </div>
       ))}
     </div>
