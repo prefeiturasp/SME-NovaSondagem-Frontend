@@ -93,6 +93,26 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     globalThis.location.href = "/";
   };
 
+  let tabelaRelatorio = (
+    <TabelaRelatorioConsolidado dados={dados} isLoading={isLoadingTabela} />
+  );
+
+  if (filtros?.agrupamentoDados === "porGenero") {
+    tabelaRelatorio = (
+      <TabelaRelatorioConsolidadoPorGeneros
+        dados={dadosPorGeneros}
+        isLoading={isLoadingTabela}
+      />
+    );
+  } else if (filtros?.agrupamentoDados === "porRacas") {
+    tabelaRelatorio = (
+      <TabelaRelatorioConsolidadoPorRacas
+        dados={dadosPorRacas}
+        isLoading={isLoadingTabela}
+      />
+    );
+  }
+
   return (
     <>
       <CabecalhoRelatorioAcoes
@@ -120,22 +140,7 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
           onFiltrosAlterados={setFiltros}
           onLoading={setIsLoadingTabela}
         />
-        {filtros?.agrupamentoDados === "porGenero" ? (
-          <TabelaRelatorioConsolidadoPorGeneros
-            dados={dadosPorGeneros}
-            isLoading={isLoadingTabela}
-          />
-        ) : filtros?.agrupamentoDados === "porRacas" ? (
-          <TabelaRelatorioConsolidadoPorRacas
-            dados={dadosPorRacas}
-            isLoading={isLoadingTabela}
-          />
-        ) : (
-          <TabelaRelatorioConsolidado
-            dados={dados}
-            isLoading={isLoadingTabela}
-          />
-        )}
+        {tabelaRelatorio}
       </Card>
     </>
   );

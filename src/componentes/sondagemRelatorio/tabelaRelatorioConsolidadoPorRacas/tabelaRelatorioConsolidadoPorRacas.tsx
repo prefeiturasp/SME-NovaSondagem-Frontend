@@ -1,199 +1,49 @@
 import React from "react";
-import { Spin, Table } from "antd";
 import type {
   DadosRelatorioConsolidadoPorRacas,
   QuestaoConsolidadaPorRaca,
   RacaConsolidada,
+  RespostaConsolidadaPorRaca,
 } from "../../../core/dto/typesRelatorio";
+import { criarTabelaRelatorioConsolidadoPorAgrupamento } from "../tabelaRelatorioConsolidadoPorAgrupamento/tabelaRelatorioConsolidadoPorAgrupamentoBase";
 import "./tabelaRelatorioConsolidadoPorRacas.css";
 
 interface TabelaRelatorioConsolidadoPorRacasProps {
   dados: DadosRelatorioConsolidadoPorRacas | null;
   isLoading?: boolean;
 }
-
-type LinhaTabelaConsolidado = {
-  key: string;
-  descricao: React.ReactNode;
-  isTotal?: boolean;
-} & Record<string, React.ReactNode | boolean | string>;
-
-const formatarInteiro = (valor: number) =>
-  new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(valor);
-
-const formatarPercentual = (valor: number) => {
-  const texto = valor.toLocaleString("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
+const TabelaRelatorioConsolidadoPorRacas: React.FC<TabelaRelatorioConsolidadoPorRacasProps> =
+  criarTabelaRelatorioConsolidadoPorAgrupamento<
+    DadosRelatorioConsolidadoPorRacas,
+    QuestaoConsolidadaPorRaca,
+    RespostaConsolidadaPorRaca,
+    RacaConsolidada
+  >({
+    classNameContainer: "tabelaRelatorioConsolidadoPorRacas",
+    classNameVazio: "consolidado-racas-vazio",
+    classNameBloco: "consolidado-racas-bloco",
+    classNameTabela: "consolidado-racas-ant-table",
+    classNameColunaDescricao: "consolidado-racas-coluna-localizacao",
+    classNameDescricaoNormal: "consolidado-racas-descricao-normal",
+    classNameDescricaoTotal: "consolidado-racas-total-centralizado",
+    classNameLinhaTotal: "consolidado-racas-linha-total",
+    classNamePill: "consolidado-racas-pill",
+    classNameValor: "consolidado-racas-valor",
+    classNameNumero: "consolidado-racas-numero",
+    classNamePercentual: "consolidado-racas-percentual",
+    classNameValorVazio: "consolidado-racas-valor--vazio",
+    tituloColuna: (nome) => nome,
+    obterQuestoes: (dados) => dados.questoes ?? [],
+    obterRespostas: (questao) => questao.respostas,
+    obterTotais: (questao) => questao.totaisPorRaca,
+    obterItensResposta: (resposta) => resposta.racas,
+    obterNomeItem: (item) => item.raca,
+    obterOrdemResposta: (resposta) => resposta.ordem,
+    obterTextoResposta: (resposta) => resposta.resposta,
+    obterCorFundo: (resposta) => resposta.corFundo,
+    obterCorTexto: (resposta) => resposta.corTexto,
+    obterQuestaoId: (questao) => questao.questaoId,
+    obterQuestaoNome: (questao) => questao.questaoNome,
   });
-  return `${texto}%`;
-};
-
-const obterRacasUnicas = (questao: QuestaoConsolidadaPorRaca): string[] => {
-  const racasSet = new Set<string>();
-  questao.totaisPorRaca.forEach((t) => racasSet.add(t.raca));
-  questao.respostas.forEach((r) =>
-    r.racas.forEach((rc) => racasSet.add(rc.raca)),
-  );
-  return Array.from(racasSet);
-};
-
-const obterQuantidadePorRaca = (
-  racas: RacaConsolidada[],
-  nomRaca: string,
-): RacaConsolidada | undefined => {
-  return racas.find((r) => r.raca === nomRaca);
-};
-
-const renderValor = (quantidade?: number, percentual?: number) => {
-  if (!quantidade) {
-    return <span className="consolidado-racas-valor--vazio">Vazio</span>;
-  }
-
-  return (
-    <span className="consolidado-racas-valor">
-      <span className="consolidado-racas-numero">
-        {formatarInteiro(quantidade)}
-      </span>
-      <span className="consolidado-racas-percentual">
-        {formatarPercentual(percentual ?? 0)}
-      </span>
-    </span>
-  );
-};
-
-const TabelaRelatorioConsolidadoPorRacas: React.FC<
-  TabelaRelatorioConsolidadoPorRacasProps
-> = ({ dados, isLoading = false }) => {
-  if (isLoading) {
-    return (
-      <div className="tabelaRelatorioConsolidadoPorRacas">
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          <Spin size="large" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!dados) return null;
-
-  const questoes = dados.questoes ?? [];
-
-  if (!questoes.length) {
-    return (
-      <div className="tabelaRelatorioConsolidadoPorRacas">
-        <div className="consolidado-racas-vazio">
-          Nenhuma informação encontrada para os filtros informados
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="tabelaRelatorioConsolidadoPorRacas">
-      {questoes.map((questao) => {
-        const racas = obterRacasUnicas(questao).map((raca, indice) => ({
-          id: `raca-${indice}`,
-          nome: raca,
-        }));
-        const respostasOrdenadas = [...questao.respostas].sort(
-          (a, b) => a.ordem - b.ordem,
-        );
-
-        const colunas = [
-          {
-            title: questao.questaoNome,
-            dataIndex: "descricao",
-            key: "descricao",
-            width: 260,
-            align: "center" as const,
-            className: "consolidado-racas-coluna-localizacao",
-          },
-          ...racas.map((raca) => ({
-            title: raca.nome,
-            dataIndex: raca.id,
-            key: raca.id,
-            align: "center" as const,
-            width: 180,
-          })),
-        ];
-
-        const linhas: LinhaTabelaConsolidado[] = respostasOrdenadas.map(
-          (resposta) => {
-            const linhaBase: LinhaTabelaConsolidado = {
-              key: `${questao.questaoId}-${resposta.ordem}`,
-              descricao:
-                resposta.corFundo && resposta.corTexto ? (
-                  <span
-                    className="consolidado-racas-pill"
-                    style={{
-                      backgroundColor: resposta.corFundo,
-                      color: resposta.corTexto,
-                    }}
-                  >
-                    {resposta.resposta}
-                  </span>
-                ) : (
-                  <span className="consolidado-racas-descricao-normal">
-                    {resposta.resposta}
-                  </span>
-                ),
-            };
-
-            racas.forEach((raca) => {
-              const dado = obterQuantidadePorRaca(resposta.racas, raca.nome);
-              linhaBase[raca.id] = renderValor(
-                dado?.quantidade,
-                dado?.percentual,
-              );
-            });
-
-            return linhaBase;
-          },
-        );
-
-        const linhaTotal: LinhaTabelaConsolidado = {
-          key: `${questao.questaoId}-total`,
-          descricao: (
-            <span className="consolidado-racas-descricao-normal consolidado-racas-total-centralizado">
-              Total
-            </span>
-          ),
-          isTotal: true,
-        };
-
-        racas.forEach((raca) => {
-          const total = obterQuantidadePorRaca(
-            questao.totaisPorRaca,
-            raca.nome,
-          );
-          linhaTotal[raca.id] = renderValor(
-            total?.quantidade,
-            total?.percentual,
-          );
-        });
-
-        linhas.push(linhaTotal);
-
-        return (
-          <div key={questao.questaoId} className="consolidado-racas-bloco">
-            <Table
-              className="consolidado-racas-ant-table"
-              columns={colunas}
-              dataSource={linhas}
-              pagination={false}
-              bordered
-              size="middle"
-              scroll={{ x: "max-content" }}
-              rowClassName={(record) =>
-                record.isTotal ? "consolidado-racas-linha-total" : ""
-              }
-            />
-          </div>
-        );
-      })}
-    </div>
-  );
-};
 
 export default TabelaRelatorioConsolidadoPorRacas;
