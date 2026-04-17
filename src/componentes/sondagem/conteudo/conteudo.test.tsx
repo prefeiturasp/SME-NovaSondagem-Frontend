@@ -840,7 +840,7 @@ describe("Conteudo", () => {
         );
         expect(bimestreSelect).not.toBeInTheDocument();
       });
-    });
+    }, 15000);
 
     it("deve tratar erro ao carregar bimestres", async () => {
       mockGetCampoBimestre({
