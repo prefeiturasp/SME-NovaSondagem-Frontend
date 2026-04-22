@@ -8,6 +8,7 @@ import { Checkbox, Col, Form, Row, Select } from "antd";
 import type { FormInstance } from "antd";
 import { useSelector } from "react-redux";
 import type {
+  DadosRelatorioConsolidadoPorBimestres,
   DadosRelatorioConsolidadoPorGeneros,
   DadosTabelaDinamica,
   DadosRelatorioConsolidadoPorRacaGenero,
@@ -17,6 +18,7 @@ import type {
 import AnoLetivoService from "../../../services/anoLetivo/anoLetivoService";
 import BimestreService from "../../../services/bimestreService/bimestreService";
 import BuscarDadosRelatorioConsolidadoService from "../../../services/buscarDadosRelatorioConsolidado/buscarDadosRelatorioConsolidado";
+import BuscarDadosRelatorioConsolidadoPorBimestresService from "../../../services/buscarDadosRelatorioConsolidadoPorBimestres/buscarDadosRelatorioConsolidadoPorBimestres";
 import BuscarDadosRelatorioConsolidadoPorGenerosService from "../../../services/buscarDadosRelatorioConsolidadoPorGeneros/buscarDadosRelatorioConsolidadoPorGeneros";
 import BuscarDadosRelatorioConsolidadoPorRacaGeneroService from "../../../services/buscarDadosRelatorioConsolidadoPorRacaGenero/buscarDadosRelatorioConsolidadoPorRacaGenero";
 import BuscarDadosRelatorioConsolidadoPorRacasService from "../../../services/buscarDadosRelatorioConsolidadoPorRacas/buscarDadosRelatorioConsolidadoPorRacas";
@@ -44,6 +46,9 @@ type FiltroRelatorioConsolidadoProps = {
   onDadosPorGenerosCarregados: (
     dados: DadosRelatorioConsolidadoPorGeneros | null,
   ) => void;
+  onDadosPorBimestresCarregados: (
+    dados: DadosRelatorioConsolidadoPorBimestres | null,
+  ) => void;
   onDadosPorRacasCarregados: (
     dados: DadosRelatorioConsolidadoPorRacas | null,
   ) => void;
@@ -65,6 +70,7 @@ const opcoesAno: SelectOption[] = [
 const opcoesAgrupamentoDados: SelectOption[] = [
   { value: "porQuestoes", label: "Por questões" },
   { value: "porGenero", label: "Por gênero" },
+  { value: "porBimestres", label: "Por bimestres" },
   { value: "porRacas", label: "Por raças" },
   { value: "porRacaGenero", label: "Por raça e gênero" },
 ];
@@ -85,6 +91,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     form,
     onDadosCarregados,
     onDadosPorGenerosCarregados,
+    onDadosPorBimestresCarregados,
     onDadosPorRacasCarregados,
     onDadosPorRacaGeneroCarregados,
     onFiltrosAlterados,
@@ -119,6 +126,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const limparResultadoRelatorio = () => {
     onDadosCarregados(null);
     onDadosPorGenerosCarregados(null);
+    onDadosPorBimestresCarregados(null);
     onDadosPorRacasCarregados(null);
     onDadosPorRacaGeneroCarregados(null);
     onFiltrosAlterados(null);
@@ -161,10 +169,12 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const camposObrigatoriosPreenchidos = (
     filtros: ValoresFiltroRelatorioConsolidado,
   ) => {
+    const exigeBimestre = filtros.agrupamentoDados !== "porBimestres";
+
     return Boolean(
       filtros.anoLetivo &&
       filtros.modalidade &&
-      filtros.bimestre !== undefined &&
+      (!exigeBimestre || filtros.bimestre !== undefined) &&
       filtros.componenteCurricular &&
       filtros.proficiencia,
     );
@@ -175,6 +185,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     try {
       onDadosCarregados(null);
       onDadosPorGenerosCarregados(null);
+      onDadosPorBimestresCarregados(null);
       onDadosPorRacasCarregados(null);
       onDadosPorRacaGeneroCarregados(null);
 
@@ -191,6 +202,12 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
           token: usuario?.token,
         });
         onDadosPorGenerosCarregados(dados);
+      } else if (filtros.agrupamentoDados === "porBimestres") {
+        const dados = await BuscarDadosRelatorioConsolidadoPorBimestresService({
+          filtros,
+          token: usuario?.token,
+        });
+        onDadosPorBimestresCarregados(dados);
       } else if (filtros.agrupamentoDados === "porRacas") {
         const dados = await BuscarDadosRelatorioConsolidadoPorRacasService({
           filtros,
@@ -496,6 +513,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       programa: undefined,
       lpSegundaLingua: false,
     });
+
+    void tentarBuscarDadosConsolidado();
   };
 
   const reset = () => {

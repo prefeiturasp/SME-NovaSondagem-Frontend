@@ -162,6 +162,36 @@ export interface DadosRelatorioConsolidadoPorGeneros {
   questoes: QuestaoConsolidadaPorGenero[];
 }
 
+export interface BimestreConsolidado {
+  bimestre: string;
+  quantidade: number;
+  percentual: number;
+}
+
+export interface RespostaConsolidadaPorBimestre {
+  resposta: string;
+  bimestres: BimestreConsolidado[];
+  total: number;
+  percentual: number;
+  ordem: number;
+  corFundo: string;
+  corTexto: string;
+}
+
+export interface QuestaoConsolidadaPorBimestre {
+  questaoId: number;
+  questaoNome: string;
+  respostas: RespostaConsolidadaPorBimestre[];
+  totaisPorBimestre: BimestreConsolidado[];
+  totalEstudantes: number;
+  percentualTotal: number;
+}
+
+export interface DadosRelatorioConsolidadoPorBimestres {
+  titulo: string;
+  questoes: QuestaoConsolidadaPorBimestre[];
+}
+
 export interface RacaConsolidadaPorGenero {
   raca: string;
   quantidade: number;

@@ -4,11 +4,13 @@ import "./conteudoRelatorio.css";
 import FiltroRelatorioConsolidado from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import type { FiltroRelatorioConsolidadoRef } from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import TabelaRelatorioConsolidado from "../tabelaRelatorioConsolidado/tabelaRelatorioConsolidado";
+import TabelaRelatorioConsolidadoPorBimestres from "../tabelaRelatorioConsolidadoPorBimestres/tabelaRelatorioConsolidadoPorBimestres";
 import TabelaRelatorioConsolidadoPorGeneros from "../tabelaRelatorioConsolidadoPorGeneros/tabelaRelatorioConsolidadoPorGeneros";
 import TabelaRelatorioConsolidadoPorRacaGenero from "../tabelaRelatorioConsolidadoPorRacaGenero/tabelaRelatorioConsolidadoPorRacaGenero";
 import TabelaRelatorioConsolidadoPorRacas from "../tabelaRelatorioConsolidadoPorRacas/tabelaRelatorioConsolidadoPorRacas";
 import { useSelector } from "react-redux";
 import type {
+  DadosRelatorioConsolidadoPorBimestres,
   DadosRelatorioConsolidadoPorGeneros,
   DadosRelatorioConsolidadoPorRacaGenero,
   DadosTabelaDinamica,
@@ -24,6 +26,8 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
   const [dados, setDados] = useState<DadosTabelaDinamica | null>(null);
   const [dadosPorGeneros, setDadosPorGeneros] =
     useState<DadosRelatorioConsolidadoPorGeneros | null>(null);
+  const [dadosPorBimestres, setDadosPorBimestres] =
+    useState<DadosRelatorioConsolidadoPorBimestres | null>(null);
   const [dadosPorRacas, setDadosPorRacas] =
     useState<DadosRelatorioConsolidadoPorRacas | null>(null);
   const [dadosPorRacaGenero, setDadosPorRacaGenero] =
@@ -87,6 +91,7 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     filtroRef.current?.reset();
     setDados(null);
     setDadosPorGeneros(null);
+    setDadosPorBimestres(null);
     setDadosPorRacas(null);
     setDadosPorRacaGenero(null);
     setFiltros(null);
@@ -104,6 +109,13 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     tabelaRelatorio = (
       <TabelaRelatorioConsolidadoPorGeneros
         dados={dadosPorGeneros}
+        isLoading={isLoadingTabela}
+      />
+    );
+  } else if (filtros?.agrupamentoDados === "porBimestres") {
+    tabelaRelatorio = (
+      <TabelaRelatorioConsolidadoPorBimestres
+        dados={dadosPorBimestres}
         isLoading={isLoadingTabela}
       />
     );
@@ -146,6 +158,7 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
           form={formFiltro}
           onDadosCarregados={setDados}
           onDadosPorGenerosCarregados={setDadosPorGeneros}
+          onDadosPorBimestresCarregados={setDadosPorBimestres}
           onDadosPorRacasCarregados={setDadosPorRacas}
           onDadosPorRacaGeneroCarregados={setDadosPorRacaGenero}
           onFiltrosAlterados={setFiltros}

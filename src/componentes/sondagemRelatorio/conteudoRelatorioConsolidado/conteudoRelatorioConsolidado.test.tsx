@@ -49,6 +49,18 @@ jest.mock(
 );
 
 jest.mock(
+  "../tabelaRelatorioConsolidadoPorBimestres/tabelaRelatorioConsolidadoPorBimestres",
+  () =>
+    function TabelaBimestresMock({ dados }: any) {
+      return (
+        <div data-testid="tabela-bimestres-mock">
+          {dados ? "com-dados-bimestres" : "sem-dados-bimestres"}
+        </div>
+      );
+    },
+);
+
+jest.mock(
   "../tabelaRelatorioConsolidadoPorRacaGenero/tabelaRelatorioConsolidadoPorRacaGenero",
   () =>
     function TabelaRacaGeneroMock({ dados }: any) {
@@ -237,6 +249,32 @@ describe("ConteudoRelatorioConsolidado", () => {
     await waitFor(() => {
       expect(screen.getByTestId("tabela-raca-genero-mock")).toHaveTextContent(
         "com-dados-raca-genero",
+      );
+    });
+  });
+
+  it("deve renderizar tabela de bimestres quando agrupamento for porBimestres", async () => {
+    render(<ConteudoRelatorioConsolidado />);
+
+    act(() => {
+      mockFiltroProps.onDadosPorBimestresCarregados({
+        titulo: "Consolidado por bimestres",
+        questoes: [],
+      });
+      mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porBimestres",
+        anoLetivo: 2026,
+        modalidade: 1,
+        dre: 10,
+        ue: 20,
+        componenteCurricular: 3,
+        proficiencia: 4,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("tabela-bimestres-mock")).toHaveTextContent(
+        "com-dados-bimestres",
       );
     });
   });
