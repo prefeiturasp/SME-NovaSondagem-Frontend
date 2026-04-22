@@ -48,10 +48,6 @@ const normalizarChaveTexto = (valor: string) =>
 const normalizarRacaParaChave = (raca: string) => {
   const valor = normalizarChaveTexto(raca);
 
-  if (["nao informada", "nao informado"].includes(valor)) {
-    return "nao-informada";
-  }
-
   if (valor === "recusou informar") {
     return "preferiu-nao-informar";
   }
@@ -68,7 +64,8 @@ const normalizarRacaParaExibicao = (raca: string) => {
     parda: "Parda",
     preta: "Preta",
     indigena: "Indígena",
-    "nao-informada": "Não informada",
+    "nao informada": "Não informada",
+    "nao informado": "Não informado",
     "preferiu-nao-informar": "Preferiu não informar",
   };
 

@@ -261,6 +261,7 @@ describe("TabelaRelatorioConsolidadoPorRacaGenero", () => {
     );
 
     expect(screen.getAllByText("Não informada").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Não informado").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Preferiu não informar").length).toBeGreaterThan(
       0,
     );
