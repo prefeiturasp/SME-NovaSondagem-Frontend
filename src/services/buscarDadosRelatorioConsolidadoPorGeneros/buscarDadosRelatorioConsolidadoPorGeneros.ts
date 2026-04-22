@@ -15,7 +15,7 @@ const BuscarDadosRelatorioConsolidadoPorGenerosService = async ({
 }: BuscarDadosRelatorioConsolidadoPorGenerosParams): Promise<DadosRelatorioConsolidadoPorGeneros | null> => {
   return buscarDadosRelatorioConsolidadoAgrupado<DadosRelatorioConsolidadoPorGeneros>(
     {
-      endpoint: "/Relatorio/consoliado/genero",
+      endpoint: "/Relatorio/consolidado/genero",
       filtros,
       token,
       mensagemConsole:

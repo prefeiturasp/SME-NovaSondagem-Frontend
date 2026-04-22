@@ -1,4 +1,4 @@
-import BuscarDadosRelatorioConsolidadoPorGenerosService from "./buscarDadosRelatorioConsolidadoPorGeneros";
+import BuscarDadosRelatorioConsolidadoPorRacaGeneroService from "./buscarDadosRelatorioConsolidadoPorRacaGenero";
 import buscarDadosRelatorioConsolidadoAgrupado from "../helpers/buscarDadosRelatorioConsolidadoAgrupado";
 
 jest.mock("../helpers/buscarDadosRelatorioConsolidadoAgrupado", () => ({
@@ -6,12 +6,12 @@ jest.mock("../helpers/buscarDadosRelatorioConsolidadoAgrupado", () => ({
   default: jest.fn(),
 }));
 
-describe("BuscarDadosRelatorioConsolidadoPorGenerosService", () => {
+describe("BuscarDadosRelatorioConsolidadoPorRacaGeneroService", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("deve delegar a busca para o helper compartilhado com endpoint de gênero", async () => {
+  it("deve delegar a busca para o helper compartilhado com endpoint de raça e gênero", async () => {
     const retornoMock = { titulo: "ok", questoes: [] };
     (
       buscarDadosRelatorioConsolidadoAgrupado as jest.Mock
@@ -20,22 +20,24 @@ describe("BuscarDadosRelatorioConsolidadoPorGenerosService", () => {
     const filtros = { anoLetivo: 2026 };
     const token = "token-teste";
 
-    const resultado = await BuscarDadosRelatorioConsolidadoPorGenerosService({
-      filtros,
-      token,
-    });
+    const resultado = await BuscarDadosRelatorioConsolidadoPorRacaGeneroService(
+      {
+        filtros,
+        token,
+      },
+    );
 
     expect(resultado).toEqual(retornoMock);
     expect(buscarDadosRelatorioConsolidadoAgrupado).toHaveBeenCalledWith({
-      endpoint: "/Relatorio/consolidado/genero",
+      endpoint: "/Relatorio/consolidado/raca-genero",
       filtros,
       token,
       mensagemConsole:
-        "Erro ao carregar dados do relatório consolidado por gênero:",
+        "Erro ao carregar dados do relatório consolidado por raça e gênero:",
       tituloNotificacao:
-        "Erro ao carregar dados do relatório consolidado por gênero",
+        "Erro ao carregar dados do relatório consolidado por raça e gênero",
       mensagemPadrao:
-        "Erro ao carregar dados do relatório consolidado por gênero. Tente novamente.",
+        "Erro ao carregar dados do relatório consolidado por raça e gênero. Tente novamente.",
     });
   });
 });

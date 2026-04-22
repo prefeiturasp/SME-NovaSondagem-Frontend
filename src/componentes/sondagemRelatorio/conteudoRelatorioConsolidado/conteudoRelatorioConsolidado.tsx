@@ -4,11 +4,15 @@ import "./conteudoRelatorio.css";
 import FiltroRelatorioConsolidado from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import type { FiltroRelatorioConsolidadoRef } from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import TabelaRelatorioConsolidado from "../tabelaRelatorioConsolidado/tabelaRelatorioConsolidado";
+import TabelaRelatorioConsolidadoPorBimestres from "../tabelaRelatorioConsolidadoPorBimestres/tabelaRelatorioConsolidadoPorBimestres";
 import TabelaRelatorioConsolidadoPorGeneros from "../tabelaRelatorioConsolidadoPorGeneros/tabelaRelatorioConsolidadoPorGeneros";
+import TabelaRelatorioConsolidadoPorRacaGenero from "../tabelaRelatorioConsolidadoPorRacaGenero/tabelaRelatorioConsolidadoPorRacaGenero";
 import TabelaRelatorioConsolidadoPorRacas from "../tabelaRelatorioConsolidadoPorRacas/tabelaRelatorioConsolidadoPorRacas";
 import { useSelector } from "react-redux";
 import type {
+  DadosRelatorioConsolidadoPorBimestres,
   DadosRelatorioConsolidadoPorGeneros,
+  DadosRelatorioConsolidadoPorRacaGenero,
   DadosTabelaDinamica,
   DadosRelatorioConsolidadoPorRacas,
   ValoresFiltroRelatorioConsolidado,
@@ -22,8 +26,12 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
   const [dados, setDados] = useState<DadosTabelaDinamica | null>(null);
   const [dadosPorGeneros, setDadosPorGeneros] =
     useState<DadosRelatorioConsolidadoPorGeneros | null>(null);
+  const [dadosPorBimestres, setDadosPorBimestres] =
+    useState<DadosRelatorioConsolidadoPorBimestres | null>(null);
   const [dadosPorRacas, setDadosPorRacas] =
     useState<DadosRelatorioConsolidadoPorRacas | null>(null);
+  const [dadosPorRacaGenero, setDadosPorRacaGenero] =
+    useState<DadosRelatorioConsolidadoPorRacaGenero | null>(null);
   const [filtros, setFiltros] =
     useState<ValoresFiltroRelatorioConsolidado | null>(null);
   const [loadingGerar, setLoadingGerar] = useState(false);
@@ -36,8 +44,6 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     filtros?.dre &&
     filtros?.ue &&
     filtros?.bimestre !== undefined &&
-    Array.isArray(filtros?.ano) &&
-    filtros.ano.length > 0 &&
     filtros?.componenteCurricular &&
     filtros?.proficiencia,
   );
@@ -85,7 +91,9 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     filtroRef.current?.reset();
     setDados(null);
     setDadosPorGeneros(null);
+    setDadosPorBimestres(null);
     setDadosPorRacas(null);
+    setDadosPorRacaGenero(null);
     setFiltros(null);
   };
 
@@ -104,10 +112,24 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
         isLoading={isLoadingTabela}
       />
     );
+  } else if (filtros?.agrupamentoDados === "porBimestres") {
+    tabelaRelatorio = (
+      <TabelaRelatorioConsolidadoPorBimestres
+        dados={dadosPorBimestres}
+        isLoading={isLoadingTabela}
+      />
+    );
   } else if (filtros?.agrupamentoDados === "porRacas") {
     tabelaRelatorio = (
       <TabelaRelatorioConsolidadoPorRacas
         dados={dadosPorRacas}
+        isLoading={isLoadingTabela}
+      />
+    );
+  } else if (filtros?.agrupamentoDados === "porRacaGenero") {
+    tabelaRelatorio = (
+      <TabelaRelatorioConsolidadoPorRacaGenero
+        dados={dadosPorRacaGenero}
         isLoading={isLoadingTabela}
       />
     );
@@ -136,7 +158,9 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
           form={formFiltro}
           onDadosCarregados={setDados}
           onDadosPorGenerosCarregados={setDadosPorGeneros}
+          onDadosPorBimestresCarregados={setDadosPorBimestres}
           onDadosPorRacasCarregados={setDadosPorRacas}
+          onDadosPorRacaGeneroCarregados={setDadosPorRacaGenero}
           onFiltrosAlterados={setFiltros}
           onLoading={setIsLoadingTabela}
         />

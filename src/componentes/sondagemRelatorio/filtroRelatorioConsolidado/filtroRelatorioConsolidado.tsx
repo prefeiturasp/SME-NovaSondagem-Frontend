@@ -8,15 +8,19 @@ import { Checkbox, Col, Form, Row, Select } from "antd";
 import type { FormInstance } from "antd";
 import { useSelector } from "react-redux";
 import type {
+  DadosRelatorioConsolidadoPorBimestres,
   DadosRelatorioConsolidadoPorGeneros,
   DadosTabelaDinamica,
+  DadosRelatorioConsolidadoPorRacaGenero,
   DadosRelatorioConsolidadoPorRacas,
   ValoresFiltroRelatorioConsolidado,
 } from "../../../core/dto/typesRelatorio";
 import AnoLetivoService from "../../../services/anoLetivo/anoLetivoService";
 import BimestreService from "../../../services/bimestreService/bimestreService";
 import BuscarDadosRelatorioConsolidadoService from "../../../services/buscarDadosRelatorioConsolidado/buscarDadosRelatorioConsolidado";
+import BuscarDadosRelatorioConsolidadoPorBimestresService from "../../../services/buscarDadosRelatorioConsolidadoPorBimestres/buscarDadosRelatorioConsolidadoPorBimestres";
 import BuscarDadosRelatorioConsolidadoPorGenerosService from "../../../services/buscarDadosRelatorioConsolidadoPorGeneros/buscarDadosRelatorioConsolidadoPorGeneros";
+import BuscarDadosRelatorioConsolidadoPorRacaGeneroService from "../../../services/buscarDadosRelatorioConsolidadoPorRacaGenero/buscarDadosRelatorioConsolidadoPorRacaGenero";
 import BuscarDadosRelatorioConsolidadoPorRacasService from "../../../services/buscarDadosRelatorioConsolidadoPorRacas/buscarDadosRelatorioConsolidadoPorRacas";
 import ComponenteCurricularService from "../../../services/componenteCurricularService/componenteCurricularService";
 import DreService from "../../../services/dre/dreService";
@@ -42,8 +46,14 @@ type FiltroRelatorioConsolidadoProps = {
   onDadosPorGenerosCarregados: (
     dados: DadosRelatorioConsolidadoPorGeneros | null,
   ) => void;
+  onDadosPorBimestresCarregados: (
+    dados: DadosRelatorioConsolidadoPorBimestres | null,
+  ) => void;
   onDadosPorRacasCarregados: (
     dados: DadosRelatorioConsolidadoPorRacas | null,
+  ) => void;
+  onDadosPorRacaGeneroCarregados: (
+    dados: DadosRelatorioConsolidadoPorRacaGenero | null,
   ) => void;
   onFiltrosAlterados: (
     filtros: ValoresFiltroRelatorioConsolidado | null,
@@ -60,14 +70,18 @@ const opcoesAno: SelectOption[] = [
 const opcoesAgrupamentoDados: SelectOption[] = [
   { value: "porQuestoes", label: "Por questões" },
   { value: "porGenero", label: "Por gênero" },
+  { value: "porBimestres", label: "Por bimestres" },
   { value: "porRacas", label: "Por raças" },
+  { value: "porRacaGenero", label: "Por raça e gênero" },
 ];
 
 const opcoesPrograma: SelectOption[] = [
   { value: "pap", label: "PAP" },
   { value: "aee", label: "AEE" },
-  { value: "deficiente", label: "Deficiencia" },
+  { value: "deficiente", label: "Deficiência" },
 ];
+
+const opcaoTodas: SelectOption = { value: "todas", label: "Todas" };
 
 const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   FiltroRelatorioConsolidadoRef,
@@ -77,7 +91,9 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     form,
     onDadosCarregados,
     onDadosPorGenerosCarregados,
+    onDadosPorBimestresCarregados,
     onDadosPorRacasCarregados,
+    onDadosPorRacaGeneroCarregados,
     onFiltrosAlterados,
     onLoading,
   },
@@ -110,9 +126,21 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const limparResultadoRelatorio = () => {
     onDadosCarregados(null);
     onDadosPorGenerosCarregados(null);
+    onDadosPorBimestresCarregados(null);
     onDadosPorRacasCarregados(null);
+    onDadosPorRacaGeneroCarregados(null);
     onFiltrosAlterados(null);
   };
+
+  const modalidadeSelecionada = () => Number(form.getFieldValue("modalidade"));
+
+  const anoDeveFicarDesabilitado = () => modalidadeSelecionada() === 3;
+
+  const filtrarModalidadesPermitidas = (modalidades: SelectOption[]) =>
+    modalidades.filter((modalidade) => {
+      const id = Number(modalidade.value);
+      return id === 3 || id === 5;
+    });
 
   const mapearFiltrosFormulario = (): ValoresFiltroRelatorioConsolidado => {
     const valores = form.getFieldsValue();
@@ -125,8 +153,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ano: valores.ano,
       componenteCurricular: valores.componenteCurricular,
       proficiencia: valores.proficiencia,
-      genero: valores.genero,
-      raca: valores.raca,
+      genero: valores.genero === "todas" ? undefined : valores.genero,
+      raca: valores.raca === "todas" ? undefined : valores.raca,
       programa: valores.programa,
       agrupamentoDados: valores.agrupamentoDados,
     };
@@ -141,12 +169,12 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const camposObrigatoriosPreenchidos = (
     filtros: ValoresFiltroRelatorioConsolidado,
   ) => {
+    const exigeBimestre = filtros.agrupamentoDados !== "porBimestres";
+
     return Boolean(
       filtros.anoLetivo &&
       filtros.modalidade &&
-      filtros.bimestre !== undefined &&
-      Array.isArray(filtros.ano) &&
-      filtros.ano.length > 0 &&
+      (!exigeBimestre || filtros.bimestre !== undefined) &&
       filtros.componenteCurricular &&
       filtros.proficiencia,
     );
@@ -157,7 +185,9 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     try {
       onDadosCarregados(null);
       onDadosPorGenerosCarregados(null);
+      onDadosPorBimestresCarregados(null);
       onDadosPorRacasCarregados(null);
+      onDadosPorRacaGeneroCarregados(null);
 
       const filtros = mapearFiltrosFormulario();
 
@@ -172,12 +202,26 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
           token: usuario?.token,
         });
         onDadosPorGenerosCarregados(dados);
+      } else if (filtros.agrupamentoDados === "porBimestres") {
+        const dados = await BuscarDadosRelatorioConsolidadoPorBimestresService({
+          filtros,
+          token: usuario?.token,
+        });
+        onDadosPorBimestresCarregados(dados);
       } else if (filtros.agrupamentoDados === "porRacas") {
         const dados = await BuscarDadosRelatorioConsolidadoPorRacasService({
           filtros,
           token: usuario?.token,
         });
         onDadosPorRacasCarregados(dados);
+      } else if (filtros.agrupamentoDados === "porRacaGenero") {
+        const dados = await BuscarDadosRelatorioConsolidadoPorRacaGeneroService(
+          {
+            filtros,
+            token: usuario?.token,
+          },
+        );
+        onDadosPorRacaGeneroCarregados(dados);
       } else {
         const dados = await BuscarDadosRelatorioConsolidadoService({
           filtros,
@@ -202,8 +246,41 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       GeneroSexoService({ token }),
       RacaCorService({ token }),
     ]);
-    setListaGeneros(generos ?? []);
-    setListaRacas(racas ?? []);
+    setListaGeneros([opcaoTodas, ...(generos ?? [])]);
+    setListaRacas([opcaoTodas, ...(racas ?? [])]);
+  };
+
+  const onChangeAgrupamentoDados = () => {
+    limparResultadoRelatorio();
+    form.setFieldsValue({
+      anoLetivo: undefined,
+      modalidade: undefined,
+      dre: undefined,
+      ue: undefined,
+      componenteCurricular: undefined,
+      proficiencia: undefined,
+      bimestre: undefined,
+      ano: undefined,
+      genero: "todas",
+      raca: "todas",
+      programa: undefined,
+      lpSegundaLingua: false,
+    });
+
+    setListaModalidades([]);
+    setListaDres([]);
+    setListaUes([]);
+    setListaComponentesCurriculares([]);
+    setListaProficiencias([]);
+    setListaBimestres([]);
+
+    setDesabilitarModalidade(true);
+    setDesabilitarDre(true);
+    setDesabilitarUe(true);
+    setDesabilitarComponenteCurricular(true);
+    setDesabilitarProficiencia(true);
+    setDesabilitarAno(true);
+    setDesabilitarBimestre(true);
   };
 
   const onChangeAnoLetivo = async (value: number) => {
@@ -216,8 +293,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       bimestre: undefined,
       ano: undefined,
-      genero: undefined,
-      raca: undefined,
+      genero: "todas",
+      raca: "todas",
       programa: undefined,
       lpSegundaLingua: false,
     });
@@ -244,8 +321,11 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       anoLetivo: value,
     });
 
-    setListaModalidades(modalidades ?? []);
-    setDesabilitarModalidade(false);
+    const modalidadesPermitidas = filtrarModalidadesPermitidas(
+      modalidades ?? [],
+    );
+    setListaModalidades(modalidadesPermitidas);
+    setDesabilitarModalidade(modalidadesPermitidas.length === 0);
   };
 
   const onChangeModalidade = async (value: number) => {
@@ -257,8 +337,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       bimestre: undefined,
       ano: undefined,
-      genero: undefined,
-      raca: undefined,
+      genero: "todas",
+      raca: "todas",
       programa: undefined,
       lpSegundaLingua: false,
     });
@@ -295,7 +375,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     );
     setDesabilitarDre(false);
     setDesabilitarComponenteCurricular(true);
-    setDesabilitarAno(true);
+    setDesabilitarAno(anoDeveFicarDesabilitado());
     setDesabilitarBimestre(!bimestres || bimestres.length === 0);
   };
 
@@ -307,8 +387,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ano: undefined,
       componenteCurricular: undefined,
       proficiencia: undefined,
-      genero: undefined,
-      raca: undefined,
+      genero: "todas",
+      raca: "todas",
       programa: undefined,
       lpSegundaLingua: false,
     });
@@ -326,7 +406,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       setListaUes([{ value: "todas", label: "Todas" }]);
       setDesabilitarUe(false);
       setDesabilitarBimestre(false);
-      setDesabilitarAno(false);
+      setDesabilitarAno(anoDeveFicarDesabilitado());
       setDesabilitarComponenteCurricular(false);
       return;
     }
@@ -353,22 +433,22 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ano: undefined,
       componenteCurricular: undefined,
       proficiencia: undefined,
-      genero: undefined,
-      raca: undefined,
+      genero: "todas",
+      raca: "todas",
       programa: undefined,
       lpSegundaLingua: false,
     });
 
     setListaProficiencias([]);
     setDesabilitarBimestre(false);
-    setDesabilitarAno(false);
+    setDesabilitarAno(anoDeveFicarDesabilitado());
     setDesabilitarComponenteCurricular(true);
     setDesabilitarProficiencia(true);
   };
 
   const onChangeBimestre = () => {
     limparResultadoRelatorio();
-    setDesabilitarAno(false);
+    setDesabilitarAno(anoDeveFicarDesabilitado());
     void tentarBuscarDadosConsolidado();
   };
 
@@ -377,8 +457,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     form.setFieldsValue({
       componenteCurricular: undefined,
       proficiencia: undefined,
-      genero: undefined,
-      raca: undefined,
+      genero: "todas",
+      raca: "todas",
       programa: undefined,
       lpSegundaLingua: false,
     });
@@ -391,30 +471,49 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const onChangeComponenteCurricular = async (value: number) => {
     limparResultadoRelatorio();
     form.setFieldsValue({
+      bimestre: undefined,
       proficiencia: undefined,
-      genero: undefined,
-      raca: undefined,
+      genero: "todas",
+      raca: "todas",
       programa: undefined,
       lpSegundaLingua: false,
     });
 
     setListaProficiencias([]);
     setDesabilitarProficiencia(true);
+    setListaBimestres([]);
+    setDesabilitarBimestre(true);
 
     const modalidade = form.getFieldValue("modalidade");
     if (!value || !modalidade) return;
 
-    const proficiencias = await ProficienciaService({
-      token: usuario?.token,
-      idDisciplina: value,
-      modalidade,
-    });
+    const [proficiencias, bimestres] = await Promise.all([
+      ProficienciaService({
+        token: usuario?.token,
+        idDisciplina: value,
+        modalidade,
+      }),
+      BimestreService({ token: usuario?.token, modalidade }),
+    ]);
 
     setListaProficiencias(proficiencias ?? []);
     setDesabilitarProficiencia(!proficiencias || proficiencias.length === 0);
+    setListaBimestres(
+      bimestres ? [{ value: null, label: "Todos" }, ...bimestres] : [],
+    );
+    setDesabilitarBimestre(!bimestres || bimestres.length === 0);
   };
 
   const onChangeProficiencia = () => {
+    limparResultadoRelatorio();
+    form.setFieldsValue({
+      bimestre: undefined,
+      genero: "todas",
+      raca: "todas",
+      programa: undefined,
+      lpSegundaLingua: false,
+    });
+
     void tentarBuscarDadosConsolidado();
   };
 
@@ -457,6 +556,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       initialValues={{
         lpSegundaLingua: false,
         agrupamentoDados: "porQuestoes",
+        genero: "todas",
+        raca: "todas",
       }}
     >
       <Row gutter={16}>
@@ -470,6 +571,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
               id="sondagem-consolidado-select-agrupamento-dados"
               options={opcoesAgrupamentoDados}
               placeholder="Selecione"
+              onChange={onChangeAgrupamentoDados}
             />
           </Form.Item>
         </Col>
@@ -611,10 +713,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
             <Select
               id="sondagem-consolidado-select-genero"
               options={listaGeneros}
-              allowClear
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}
-              onClear={() => void tentarBuscarDadosConsolidado()}
             />
           </Form.Item>
         </Col>
@@ -624,10 +724,8 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
             <Select
               id="sondagem-consolidado-select-raca"
               options={listaRacas}
-              allowClear
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}
-              onClear={() => void tentarBuscarDadosConsolidado()}
             />
           </Form.Item>
         </Col>

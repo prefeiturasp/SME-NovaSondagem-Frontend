@@ -49,6 +49,30 @@ jest.mock(
 );
 
 jest.mock(
+  "../tabelaRelatorioConsolidadoPorBimestres/tabelaRelatorioConsolidadoPorBimestres",
+  () =>
+    function TabelaBimestresMock({ dados }: any) {
+      return (
+        <div data-testid="tabela-bimestres-mock">
+          {dados ? "com-dados-bimestres" : "sem-dados-bimestres"}
+        </div>
+      );
+    },
+);
+
+jest.mock(
+  "../tabelaRelatorioConsolidadoPorRacaGenero/tabelaRelatorioConsolidadoPorRacaGenero",
+  () =>
+    function TabelaRacaGeneroMock({ dados }: any) {
+      return (
+        <div data-testid="tabela-raca-genero-mock">
+          {dados ? "com-dados-raca-genero" : "sem-dados-raca-genero"}
+        </div>
+      );
+    },
+);
+
+jest.mock(
   "../cabecalhoRelatorioAcoes/cabecalhoRelatorioAcoes",
   () =>
     function CabecalhoMock(props: any) {
@@ -134,6 +158,40 @@ describe("ConteudoRelatorioConsolidado", () => {
     });
   });
 
+  it("deve permitir gerar relatório sem ano preenchido", async () => {
+    (RelatorioConsolidadoExportService as jest.Mock).mockResolvedValueOnce(
+      true,
+    );
+
+    render(<ConteudoRelatorioConsolidado />);
+
+    act(() => {
+      mockFiltroProps.onFiltrosAlterados({
+        anoLetivo: 2026,
+        modalidade: 1,
+        dre: 10,
+        ue: 20,
+        bimestre: 2,
+        componenteCurricular: 3,
+        proficiencia: 4,
+      });
+    });
+
+    fireEvent.click(screen.getByTestId("acao-gerar"));
+
+    await waitFor(() => {
+      expect(RelatorioConsolidadoExportService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          extensaoRelatorio: 1,
+          token: "token-teste",
+          filtros: expect.not.objectContaining({
+            ano: expect.anything(),
+          }),
+        }),
+      );
+    });
+  });
+
   it("deve executar cancelamento limpando filtro e dados", async () => {
     render(<ConteudoRelatorioConsolidado />);
 
@@ -164,6 +222,60 @@ describe("ConteudoRelatorioConsolidado", () => {
     await waitFor(() => {
       expect(mockReset).toHaveBeenCalled();
       expect(screen.getByTestId("tabela-mock")).toHaveTextContent("sem-dados");
+    });
+  });
+
+  it("deve renderizar tabela de raça e gênero quando agrupamento for porRacaGenero", async () => {
+    render(<ConteudoRelatorioConsolidado />);
+
+    act(() => {
+      mockFiltroProps.onDadosPorRacaGeneroCarregados({
+        titulo: "Consolidado por raça e gênero",
+        questoes: [],
+      });
+      mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porRacaGenero",
+        anoLetivo: 2026,
+        modalidade: 1,
+        dre: 10,
+        ue: 20,
+        bimestre: 2,
+        ano: [1],
+        componenteCurricular: 3,
+        proficiencia: 4,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("tabela-raca-genero-mock")).toHaveTextContent(
+        "com-dados-raca-genero",
+      );
+    });
+  });
+
+  it("deve renderizar tabela de bimestres quando agrupamento for porBimestres", async () => {
+    render(<ConteudoRelatorioConsolidado />);
+
+    act(() => {
+      mockFiltroProps.onDadosPorBimestresCarregados({
+        titulo: "Consolidado por bimestres",
+        questoes: [],
+      });
+      mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porBimestres",
+        anoLetivo: 2026,
+        modalidade: 1,
+        dre: 10,
+        ue: 20,
+        componenteCurricular: 3,
+        proficiencia: 4,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("tabela-bimestres-mock")).toHaveTextContent(
+        "com-dados-bimestres",
+      );
     });
   });
 });

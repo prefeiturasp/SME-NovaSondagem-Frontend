@@ -46,7 +46,7 @@ describe("BuscarDadosRelatorioConsolidadoService", () => {
 
     expect(resultado).toEqual(dadosMock);
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/Relatorio/consoliado/ano",
+      "/Relatorio/consolidado/ano",
       {
         headers: { "X-Token-Principal": "token-teste" },
         paramsSerializer: { indexes: null },
@@ -87,7 +87,7 @@ describe("BuscarDadosRelatorioConsolidadoService", () => {
 
     expect(resultado).toBeNull();
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/Relatorio/consoliado/ano",
+      "/Relatorio/consolidado/ano",
       expect.objectContaining({
         params: expect.objectContaining({
           Pap: undefined,
@@ -116,7 +116,7 @@ describe("BuscarDadosRelatorioConsolidadoService", () => {
 
     expect(resultado).toBeNull();
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/Relatorio/consoliado/ano",
+      "/Relatorio/consolidado/ano",
       expect.objectContaining({
         params: expect.not.objectContaining({
           Dre: expect.anything(),

@@ -162,6 +162,92 @@ export interface DadosRelatorioConsolidadoPorGeneros {
   questoes: QuestaoConsolidadaPorGenero[];
 }
 
+export interface BimestreConsolidado {
+  bimestre: string;
+  quantidade: number;
+  percentual: number;
+}
+
+export interface RespostaConsolidadaPorBimestre {
+  resposta: string;
+  bimestres: BimestreConsolidado[];
+  total: number;
+  percentual: number;
+  ordem: number;
+  corFundo: string;
+  corTexto: string;
+}
+
+export interface QuestaoConsolidadaPorBimestre {
+  questaoId: number;
+  questaoNome: string;
+  respostas: RespostaConsolidadaPorBimestre[];
+  totaisPorBimestre: BimestreConsolidado[];
+  totalEstudantes: number;
+  percentualTotal: number;
+}
+
+export interface DadosRelatorioConsolidadoPorBimestres {
+  titulo: string;
+  questoes: QuestaoConsolidadaPorBimestre[];
+}
+
+export interface RacaConsolidadaPorGenero {
+  raca: string;
+  quantidade: number;
+  percentual: number;
+}
+
+export interface GeneroConsolidadoComRacas {
+  genero: string;
+  totalGenero?: number;
+  percentualGenero?: number;
+  racas: RacaConsolidadaPorGenero[];
+}
+
+export interface TotalGeneroConsolidado {
+  genero: string;
+  sigla?: string;
+  quantidade: number;
+  percentual: number;
+}
+
+export interface RacaGeneroConsolidado {
+  genero: string;
+  raca: string;
+  quantidade: number;
+  percentual: number;
+}
+
+export interface RespostaConsolidadaPorRacaGenero {
+  resposta: string;
+  generosComRacas?: GeneroConsolidadoComRacas[];
+  generos?: GeneroConsolidadoComRacas[];
+  racasGeneros?: RacaGeneroConsolidado[];
+  total: number;
+  percentual: number;
+  ordem: number;
+  corFundo: string;
+  corTexto: string;
+}
+
+export interface QuestaoConsolidadaPorRacaGenero {
+  questaoId: number;
+  questaoNome: string;
+  respostas: RespostaConsolidadaPorRacaGenero[];
+  totaisPorGenero?: TotalGeneroConsolidado[];
+  totaisPorRaca?: RacaConsolidadaPorGenero[];
+  totaisPorGeneroComRacas?: GeneroConsolidadoComRacas[];
+  totaisPorRacaGenero?: RacaGeneroConsolidado[];
+  totalEstudantes: number;
+  percentualTotal: number;
+}
+
+export interface DadosRelatorioConsolidadoPorRacaGenero {
+  titulo: string;
+  questoes: QuestaoConsolidadaPorRacaGenero[];
+}
+
 export interface LegendaQuestionario {
   id: number;
   ordem: number;

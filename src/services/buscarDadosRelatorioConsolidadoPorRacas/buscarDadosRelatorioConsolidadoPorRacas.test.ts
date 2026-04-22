@@ -27,7 +27,7 @@ describe("BuscarDadosRelatorioConsolidadoPorRacasService", () => {
 
     expect(resultado).toEqual(retornoMock);
     expect(buscarDadosRelatorioConsolidadoAgrupado).toHaveBeenCalledWith({
-      endpoint: "/Relatorio/consoliado/raca",
+      endpoint: "/Relatorio/consolidado/raca",
       filtros,
       token,
       mensagemConsole:
