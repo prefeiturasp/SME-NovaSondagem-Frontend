@@ -146,6 +146,40 @@ describe("ConteudoRelatorioConsolidado", () => {
     });
   });
 
+  it("deve permitir gerar relatório sem ano preenchido", async () => {
+    (RelatorioConsolidadoExportService as jest.Mock).mockResolvedValueOnce(
+      true,
+    );
+
+    render(<ConteudoRelatorioConsolidado />);
+
+    act(() => {
+      mockFiltroProps.onFiltrosAlterados({
+        anoLetivo: 2026,
+        modalidade: 1,
+        dre: 10,
+        ue: 20,
+        bimestre: 2,
+        componenteCurricular: 3,
+        proficiencia: 4,
+      });
+    });
+
+    fireEvent.click(screen.getByTestId("acao-gerar"));
+
+    await waitFor(() => {
+      expect(RelatorioConsolidadoExportService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          extensaoRelatorio: 1,
+          token: "token-teste",
+          filtros: expect.not.objectContaining({
+            ano: expect.anything(),
+          }),
+        }),
+      );
+    });
+  });
+
   it("deve executar cancelamento limpando filtro e dados", async () => {
     render(<ConteudoRelatorioConsolidado />);
 

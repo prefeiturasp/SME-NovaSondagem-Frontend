@@ -185,7 +185,7 @@ describe("FiltroRelatorioConsolidado", () => {
       { value: 2, label: "Branca" },
     ]);
     (ModalidadeService as jest.Mock).mockResolvedValue([
-      { value: 1, label: "Fundamental" },
+      { value: 5, label: "Ensino Fundamental" },
     ]);
     (DreService as jest.Mock).mockResolvedValue([{ value: 10, label: "DRE" }]);
     (UeService as jest.Mock).mockResolvedValue([{ value: 20, label: "UE" }]);
@@ -244,18 +244,18 @@ describe("FiltroRelatorioConsolidado", () => {
     fireEvent.change(
       screen.getByTestId("sondagem-consolidado-select-modalidade"),
       {
-        target: { value: "1" },
+        target: { value: "5" },
       },
     );
     await waitFor(() => {
       expect(DreService).toHaveBeenCalled();
       expect(ComponenteCurricularService).toHaveBeenCalledWith({
         token: "token-teste",
-        modalidade: "1",
+        modalidade: "5",
       });
       expect(BimestreService).toHaveBeenCalledWith({
         token: "token-teste",
-        modalidade: "1",
+        modalidade: "5",
       });
     });
 
@@ -267,13 +267,6 @@ describe("FiltroRelatorioConsolidado", () => {
     fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ue"), {
       target: { value: "20" },
     });
-
-    fireEvent.change(
-      screen.getByTestId("sondagem-consolidado-select-bimestre"),
-      {
-        target: { value: "1" },
-      },
-    );
 
     fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ano"), {
       target: { value: "1" },
@@ -295,13 +288,20 @@ describe("FiltroRelatorioConsolidado", () => {
       },
     );
 
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-bimestre"),
+      {
+        target: { value: "1" },
+      },
+    );
+
     await waitFor(() => {
       expect(BuscarDadosRelatorioConsolidadoService).toHaveBeenCalledWith(
         expect.objectContaining({
           token: "token-teste",
           filtros: expect.objectContaining({
             anoLetivo: "2026",
-            modalidade: "1",
+            modalidade: "5",
             dre: "10",
             ue: "20",
             bimestre: "1",
@@ -379,7 +379,7 @@ describe("FiltroRelatorioConsolidado", () => {
     fireEvent.change(
       screen.getByTestId("sondagem-consolidado-select-modalidade"),
       {
-        target: { value: "1" },
+        target: { value: "5" },
       },
     );
     await waitFor(() => expect(DreService).toHaveBeenCalled());
@@ -392,13 +392,6 @@ describe("FiltroRelatorioConsolidado", () => {
     fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ue"), {
       target: { value: "20" },
     });
-
-    fireEvent.change(
-      screen.getByTestId("sondagem-consolidado-select-bimestre"),
-      {
-        target: { value: "1" },
-      },
-    );
 
     fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ano"), {
       target: { value: "1" },
@@ -420,6 +413,13 @@ describe("FiltroRelatorioConsolidado", () => {
       },
     );
 
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-bimestre"),
+      {
+        target: { value: "1" },
+      },
+    );
+
     await waitFor(() => {
       expect(
         BuscarDadosRelatorioConsolidadoPorRacaGeneroService,
@@ -429,7 +429,7 @@ describe("FiltroRelatorioConsolidado", () => {
           filtros: expect.objectContaining({
             agrupamentoDados: "porRacaGenero",
             anoLetivo: "2026",
-            modalidade: "1",
+            modalidade: "5",
             dre: "10",
             ue: "20",
             bimestre: "1",
