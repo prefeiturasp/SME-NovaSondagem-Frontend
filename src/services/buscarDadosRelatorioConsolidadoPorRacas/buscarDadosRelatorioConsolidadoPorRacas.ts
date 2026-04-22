@@ -15,7 +15,7 @@ const BuscarDadosRelatorioConsolidadoPorRacasService = async ({
 }: BuscarDadosRelatorioConsolidadoPorRacasParams): Promise<DadosRelatorioConsolidadoPorRacas | null> => {
   return buscarDadosRelatorioConsolidadoAgrupado<DadosRelatorioConsolidadoPorRacas>(
     {
-      endpoint: "/Relatorio/consoliado/raca",
+      endpoint: "/Relatorio/consolidado/raca",
       filtros,
       token,
       mensagemConsole:

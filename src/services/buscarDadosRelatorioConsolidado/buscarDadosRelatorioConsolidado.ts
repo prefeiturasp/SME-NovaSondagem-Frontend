@@ -29,7 +29,7 @@ const BuscarDadosRelatorioConsolidadoService = async ({
         : undefined;
 
     const resposta = await NovaSondagemServico.get(
-      "/Relatorio/consoliado/ano",
+      "/Relatorio/consolidado/ano",
       {
         headers: { "X-Token-Principal": token },
         paramsSerializer: {

@@ -5,10 +5,12 @@ import FiltroRelatorioConsolidado from "../filtroRelatorioConsolidado/filtroRela
 import type { FiltroRelatorioConsolidadoRef } from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import TabelaRelatorioConsolidado from "../tabelaRelatorioConsolidado/tabelaRelatorioConsolidado";
 import TabelaRelatorioConsolidadoPorGeneros from "../tabelaRelatorioConsolidadoPorGeneros/tabelaRelatorioConsolidadoPorGeneros";
+import TabelaRelatorioConsolidadoPorRacaGenero from "../tabelaRelatorioConsolidadoPorRacaGenero/tabelaRelatorioConsolidadoPorRacaGenero";
 import TabelaRelatorioConsolidadoPorRacas from "../tabelaRelatorioConsolidadoPorRacas/tabelaRelatorioConsolidadoPorRacas";
 import { useSelector } from "react-redux";
 import type {
   DadosRelatorioConsolidadoPorGeneros,
+  DadosRelatorioConsolidadoPorRacaGenero,
   DadosTabelaDinamica,
   DadosRelatorioConsolidadoPorRacas,
   ValoresFiltroRelatorioConsolidado,
@@ -24,6 +26,8 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     useState<DadosRelatorioConsolidadoPorGeneros | null>(null);
   const [dadosPorRacas, setDadosPorRacas] =
     useState<DadosRelatorioConsolidadoPorRacas | null>(null);
+  const [dadosPorRacaGenero, setDadosPorRacaGenero] =
+    useState<DadosRelatorioConsolidadoPorRacaGenero | null>(null);
   const [filtros, setFiltros] =
     useState<ValoresFiltroRelatorioConsolidado | null>(null);
   const [loadingGerar, setLoadingGerar] = useState(false);
@@ -86,6 +90,7 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     setDados(null);
     setDadosPorGeneros(null);
     setDadosPorRacas(null);
+    setDadosPorRacaGenero(null);
     setFiltros(null);
   };
 
@@ -108,6 +113,13 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
     tabelaRelatorio = (
       <TabelaRelatorioConsolidadoPorRacas
         dados={dadosPorRacas}
+        isLoading={isLoadingTabela}
+      />
+    );
+  } else if (filtros?.agrupamentoDados === "porRacaGenero") {
+    tabelaRelatorio = (
+      <TabelaRelatorioConsolidadoPorRacaGenero
+        dados={dadosPorRacaGenero}
         isLoading={isLoadingTabela}
       />
     );
@@ -137,6 +149,7 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
           onDadosCarregados={setDados}
           onDadosPorGenerosCarregados={setDadosPorGeneros}
           onDadosPorRacasCarregados={setDadosPorRacas}
+          onDadosPorRacaGeneroCarregados={setDadosPorRacaGenero}
           onFiltrosAlterados={setFiltros}
           onLoading={setIsLoadingTabela}
         />

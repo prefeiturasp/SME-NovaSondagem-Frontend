@@ -13,6 +13,7 @@ import BimestreService from "../../../services/bimestreService/bimestreService";
 import GeneroSexoService from "../../../services/generoSexoService/generoSexoService";
 import RacaCorService from "../../../services/racaCorService/racaCorService";
 import BuscarDadosRelatorioConsolidadoService from "../../../services/buscarDadosRelatorioConsolidado/buscarDadosRelatorioConsolidado";
+import BuscarDadosRelatorioConsolidadoPorRacaGeneroService from "../../../services/buscarDadosRelatorioConsolidadoPorRacaGenero/buscarDadosRelatorioConsolidadoPorRacaGenero";
 
 jest.mock("antd", () => {
   const actual = jest.requireActual("antd");
@@ -119,6 +120,14 @@ jest.mock(
   }),
 );
 
+jest.mock(
+  "../../../services/buscarDadosRelatorioConsolidadoPorRacaGenero/buscarDadosRelatorioConsolidadoPorRacaGenero",
+  () => ({
+    __esModule: true,
+    default: jest.fn(),
+  }),
+);
+
 jest.mock("react-redux", () => ({
   useSelector: jest.fn(),
 }));
@@ -128,6 +137,7 @@ describe("FiltroRelatorioConsolidado", () => {
   const onDadosCarregados = jest.fn();
   const onDadosPorGenerosCarregados = jest.fn();
   const onDadosPorRacasCarregados = jest.fn();
+  const onDadosPorRacaGeneroCarregados = jest.fn();
   const onFiltrosAlterados = jest.fn();
 
   const renderComForm = () => {
@@ -143,6 +153,7 @@ describe("FiltroRelatorioConsolidado", () => {
             onDadosCarregados={onDadosCarregados}
             onDadosPorGenerosCarregados={onDadosPorGenerosCarregados}
             onDadosPorRacasCarregados={onDadosPorRacasCarregados}
+            onDadosPorRacaGeneroCarregados={onDadosPorRacaGeneroCarregados}
             onFiltrosAlterados={onFiltrosAlterados}
           />
           <button
@@ -189,6 +200,12 @@ describe("FiltroRelatorioConsolidado", () => {
     ]);
     (BuscarDadosRelatorioConsolidadoService as jest.Mock).mockResolvedValue({
       titulo: "Consolidado",
+      questoes: [],
+    });
+    (
+      BuscarDadosRelatorioConsolidadoPorRacaGeneroService as jest.Mock
+    ).mockResolvedValue({
+      titulo: "Consolidado por raça e gênero",
       questoes: [],
     });
   });
@@ -330,7 +347,99 @@ describe("FiltroRelatorioConsolidado", () => {
       expect(onDadosCarregados).toHaveBeenCalledWith(null);
       expect(onDadosPorGenerosCarregados).toHaveBeenCalledWith(null);
       expect(onDadosPorRacasCarregados).toHaveBeenCalledWith(null);
+      expect(onDadosPorRacaGeneroCarregados).toHaveBeenCalledWith(null);
       expect(onFiltrosAlterados).toHaveBeenCalledWith(null);
+    });
+  });
+
+  it("deve buscar no serviço de raça e gênero quando agrupamento for porRacaGenero", async () => {
+    renderComForm();
+
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("sondagem-consolidado-select-agrupamento-dados"),
+      ).toBeInTheDocument(),
+    );
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-agrupamento-dados"),
+      {
+        target: { value: "porRacaGenero" },
+      },
+    );
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      {
+        target: { value: "2026" },
+      },
+    );
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-modalidade"),
+      {
+        target: { value: "1" },
+      },
+    );
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-dre"), {
+      target: { value: "10" },
+    });
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ue"), {
+      target: { value: "20" },
+    });
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-bimestre"),
+      {
+        target: { value: "1" },
+      },
+    );
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ano"), {
+      target: { value: "1" },
+    });
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-componente-curricular"),
+      {
+        target: { value: "3" },
+      },
+    );
+
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-proficiencia"),
+      {
+        target: { value: "4" },
+      },
+    );
+
+    await waitFor(() => {
+      expect(
+        BuscarDadosRelatorioConsolidadoPorRacaGeneroService,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          token: "token-teste",
+          filtros: expect.objectContaining({
+            agrupamentoDados: "porRacaGenero",
+            anoLetivo: "2026",
+            modalidade: "1",
+            dre: "10",
+            ue: "20",
+            bimestre: "1",
+            ano: ["1"],
+            componenteCurricular: "3",
+            proficiencia: "4",
+          }),
+        }),
+      );
+      expect(onDadosPorRacaGeneroCarregados).toHaveBeenCalled();
     });
   });
 });

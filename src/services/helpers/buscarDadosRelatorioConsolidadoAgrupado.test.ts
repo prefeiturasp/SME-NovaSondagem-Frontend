@@ -19,7 +19,7 @@ describe("buscarDadosRelatorioConsolidadoAgrupado", () => {
     });
 
     const resultado = await buscarDadosRelatorioConsolidadoAgrupado({
-      endpoint: "/Relatorio/consoliado/genero",
+      endpoint: "/Relatorio/consolidado/genero",
       filtros: {
         anoLetivo: 2026,
         dre: "1",
@@ -42,7 +42,7 @@ describe("buscarDadosRelatorioConsolidadoAgrupado", () => {
 
     expect(resultado).toEqual(retornoApi);
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/Relatorio/consoliado/genero",
+      "/Relatorio/consolidado/genero",
       {
         headers: { "X-Token-Principal": "token-teste" },
         paramsSerializer: {
@@ -74,7 +74,7 @@ describe("buscarDadosRelatorioConsolidadoAgrupado", () => {
     });
 
     await buscarDadosRelatorioConsolidadoAgrupado({
-      endpoint: "/Relatorio/consoliado/raca",
+      endpoint: "/Relatorio/consolidado/raca",
       filtros: {
         genero: "abc",
         raca: "",
@@ -86,7 +86,7 @@ describe("buscarDadosRelatorioConsolidadoAgrupado", () => {
     });
 
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/Relatorio/consoliado/raca",
+      "/Relatorio/consolidado/raca",
       expect.objectContaining({
         params: expect.objectContaining({
           GeneroId: undefined,
@@ -101,7 +101,7 @@ describe("buscarDadosRelatorioConsolidadoAgrupado", () => {
     (NovaSondagemServico.get as jest.Mock).mockRejectedValueOnce(erroMock);
 
     const resultado = await buscarDadosRelatorioConsolidadoAgrupado({
-      endpoint: "/Relatorio/consoliado/raca",
+      endpoint: "/Relatorio/consolidado/raca",
       filtros: {
         programa: [],
       },

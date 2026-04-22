@@ -49,6 +49,18 @@ jest.mock(
 );
 
 jest.mock(
+  "../tabelaRelatorioConsolidadoPorRacaGenero/tabelaRelatorioConsolidadoPorRacaGenero",
+  () =>
+    function TabelaRacaGeneroMock({ dados }: any) {
+      return (
+        <div data-testid="tabela-raca-genero-mock">
+          {dados ? "com-dados-raca-genero" : "sem-dados-raca-genero"}
+        </div>
+      );
+    },
+);
+
+jest.mock(
   "../cabecalhoRelatorioAcoes/cabecalhoRelatorioAcoes",
   () =>
     function CabecalhoMock(props: any) {
@@ -164,6 +176,34 @@ describe("ConteudoRelatorioConsolidado", () => {
     await waitFor(() => {
       expect(mockReset).toHaveBeenCalled();
       expect(screen.getByTestId("tabela-mock")).toHaveTextContent("sem-dados");
+    });
+  });
+
+  it("deve renderizar tabela de raça e gênero quando agrupamento for porRacaGenero", async () => {
+    render(<ConteudoRelatorioConsolidado />);
+
+    act(() => {
+      mockFiltroProps.onDadosPorRacaGeneroCarregados({
+        titulo: "Consolidado por raça e gênero",
+        questoes: [],
+      });
+      mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porRacaGenero",
+        anoLetivo: 2026,
+        modalidade: 1,
+        dre: 10,
+        ue: 20,
+        bimestre: 2,
+        ano: [1],
+        componenteCurricular: 3,
+        proficiencia: 4,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("tabela-raca-genero-mock")).toHaveTextContent(
+        "com-dados-raca-genero",
+      );
     });
   });
 });
