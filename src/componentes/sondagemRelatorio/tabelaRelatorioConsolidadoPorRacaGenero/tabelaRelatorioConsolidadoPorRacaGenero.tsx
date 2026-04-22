@@ -278,6 +278,199 @@ const obterEstruturaColunas = (questao: QuestaoConsolidadaPorRacaGenero) => {
   };
 };
 
+const criarColunasQuestao = (
+  questao: QuestaoConsolidadaPorRacaGenero,
+  generos: string[],
+  racasPorGenero: Map<string, string[]>,
+): ColumnsType<LinhaTabelaConsolidadoRacaGenero> => {
+  const colunas: ColumnsType<LinhaTabelaConsolidadoRacaGenero> = [
+    {
+      title: questao.questaoNome,
+      dataIndex: "descricao",
+      key: "descricao",
+      width: 260,
+      align: "center",
+      className: "consolidado-raca-genero-coluna-localizacao",
+    },
+  ];
+
+  for (const genero of generos) {
+    const filhos: ColumnType<LinhaTabelaConsolidadoRacaGenero>[] = [];
+    const racas = racasPorGenero.get(genero) ?? [];
+
+    for (const raca of racas) {
+      filhos.push({
+        title: raca,
+        dataIndex: chaveCelula(genero, raca),
+        key: chaveCelula(genero, raca),
+        align: "center",
+        width: 180,
+      });
+    }
+
+    colunas.push({
+      title: `Gênero: ${genero}`,
+      key: `genero-${genero}`,
+      align: "center",
+      children: filhos,
+    } as ColumnGroupType<LinhaTabelaConsolidadoRacaGenero>);
+  }
+
+  return colunas;
+};
+
+const preencherValoresLinha = (
+  linha: LinhaTabelaConsolidadoRacaGenero,
+  generos: string[],
+  racasPorGenero: Map<string, string[]>,
+  mapaValores: Record<string, CelulaValor>,
+) => {
+  for (const genero of generos) {
+    const racas = racasPorGenero.get(genero) ?? [];
+
+    for (const raca of racas) {
+      const chave = chaveCelula(genero, raca);
+      linha[chave] = renderValor(
+        mapaValores[chave],
+        "consolidado-raca-genero-valor",
+        "consolidado-raca-genero-numero",
+        "consolidado-raca-genero-percentual",
+        "consolidado-raca-genero-valor--vazio",
+      );
+    }
+  }
+};
+
+const criarLinhaResposta = (
+  questao: QuestaoConsolidadaPorRacaGenero,
+  resposta: RespostaConsolidadaPorRacaGenero,
+  generos: string[],
+  racasPorGenero: Map<string, string[]>,
+): LinhaTabelaConsolidadoRacaGenero => {
+  const linha: LinhaTabelaConsolidadoRacaGenero = {
+    key: `${questao.questaoId}-${resposta.ordem}`,
+    descricao:
+      resposta.corFundo && resposta.corTexto ? (
+        <span
+          className="consolidado-raca-genero-pill"
+          style={{
+            backgroundColor: resposta.corFundo,
+            color: resposta.corTexto,
+          }}
+        >
+          {resposta.resposta}
+        </span>
+      ) : (
+        <span className="consolidado-raca-genero-descricao-normal">
+          {resposta.resposta}
+        </span>
+      ),
+  };
+
+  preencherValoresLinha(
+    linha,
+    generos,
+    racasPorGenero,
+    montarMapaResposta(resposta),
+  );
+
+  return linha;
+};
+
+const montarMapaTotais = (
+  totaisNormalizados: GeneroConsolidadoComRacas[],
+): Record<string, CelulaValor> => {
+  const mapaTotais: Record<string, CelulaValor> = {};
+
+  for (const grupoGenero of totaisNormalizados) {
+    for (const raca of grupoGenero.racas) {
+      mapaTotais[chaveCelula(grupoGenero.genero, raca.raca)] = {
+        quantidade: raca.quantidade,
+        percentual: raca.percentual,
+      };
+    }
+  }
+
+  return mapaTotais;
+};
+
+const criarLinhaTotal = (
+  questao: QuestaoConsolidadaPorRacaGenero,
+  generos: string[],
+  racasPorGenero: Map<string, string[]>,
+  totaisNormalizados: GeneroConsolidadoComRacas[],
+): LinhaTabelaConsolidadoRacaGenero => {
+  const linhaTotal: LinhaTabelaConsolidadoRacaGenero = {
+    key: `${questao.questaoId}-total`,
+    descricao: (
+      <span className="consolidado-raca-genero-descricao-total">Total</span>
+    ),
+    isTotal: true,
+  };
+
+  preencherValoresLinha(
+    linhaTotal,
+    generos,
+    racasPorGenero,
+    montarMapaTotais(totaisNormalizados),
+  );
+
+  return linhaTotal;
+};
+
+const criarLinhasQuestao = (
+  questao: QuestaoConsolidadaPorRacaGenero,
+  respostasOrdenadas: RespostaConsolidadaPorRacaGenero[],
+  generos: string[],
+  racasPorGenero: Map<string, string[]>,
+  totaisNormalizados: GeneroConsolidadoComRacas[],
+): LinhaTabelaConsolidadoRacaGenero[] => {
+  const linhas = respostasOrdenadas.map((resposta) =>
+    criarLinhaResposta(questao, resposta, generos, racasPorGenero),
+  );
+
+  linhas.push(
+    criarLinhaTotal(questao, generos, racasPorGenero, totaisNormalizados),
+  );
+
+  return linhas;
+};
+
+const renderBlocoQuestao = (questao: QuestaoConsolidadaPorRacaGenero) => {
+  const respostasOrdenadas = [...questao.respostas].sort(
+    (a, b) => a.ordem - b.ordem,
+  );
+
+  const { generos, racasPorGenero, totaisNormalizados } =
+    obterEstruturaColunas(questao);
+
+  const colunas = criarColunasQuestao(questao, generos, racasPorGenero);
+  const linhas = criarLinhasQuestao(
+    questao,
+    respostasOrdenadas,
+    generos,
+    racasPorGenero,
+    totaisNormalizados,
+  );
+
+  return (
+    <div key={questao.questaoId} className="consolidado-raca-genero-bloco">
+      <Table
+        className="consolidado-raca-genero-ant-table"
+        columns={colunas}
+        dataSource={linhas}
+        pagination={false}
+        bordered
+        size="middle"
+        scroll={{ x: "max-content" }}
+        rowClassName={(record) =>
+          record.isTotal ? "consolidado-raca-genero-linha-total" : ""
+        }
+      />
+    </div>
+  );
+};
+
 const TabelaRelatorioConsolidadoPorRacaGenero: React.FC<
   TabelaRelatorioConsolidadoPorRacaGeneroProps
 > = ({ dados, isLoading = false }) => {
@@ -307,140 +500,7 @@ const TabelaRelatorioConsolidadoPorRacaGenero: React.FC<
 
   return (
     <div className="tabelaRelatorioConsolidadoPorRacaGenero">
-      {questoes.map((questao) => {
-        const respostasOrdenadas = [...questao.respostas].sort(
-          (a, b) => a.ordem - b.ordem,
-        );
-
-        const { generos, racasPorGenero, totaisNormalizados } =
-          obterEstruturaColunas(questao);
-
-        const colunas: ColumnsType<LinhaTabelaConsolidadoRacaGenero> = [
-          {
-            title: questao.questaoNome,
-            dataIndex: "descricao",
-            key: "descricao",
-            width: 260,
-            align: "center",
-            className: "consolidado-raca-genero-coluna-localizacao",
-          },
-          ...generos.map((genero) => {
-            const filhos: ColumnType<LinhaTabelaConsolidadoRacaGenero>[] = (
-              racasPorGenero.get(genero) ?? []
-            ).map((raca) => ({
-              title: raca,
-              dataIndex: chaveCelula(genero, raca),
-              key: chaveCelula(genero, raca),
-              align: "center",
-              width: 180,
-            }));
-
-            return {
-              title: `Gênero: ${genero}`,
-              key: `genero-${genero}`,
-              align: "center",
-              children: filhos,
-            } as ColumnGroupType<LinhaTabelaConsolidadoRacaGenero>;
-          }),
-        ];
-
-        const linhas: LinhaTabelaConsolidadoRacaGenero[] =
-          respostasOrdenadas.map((resposta) => {
-            const linha: LinhaTabelaConsolidadoRacaGenero = {
-              key: `${questao.questaoId}-${resposta.ordem}`,
-              descricao:
-                resposta.corFundo && resposta.corTexto ? (
-                  <span
-                    className="consolidado-raca-genero-pill"
-                    style={{
-                      backgroundColor: resposta.corFundo,
-                      color: resposta.corTexto,
-                    }}
-                  >
-                    {resposta.resposta}
-                  </span>
-                ) : (
-                  <span className="consolidado-raca-genero-descricao-normal">
-                    {resposta.resposta}
-                  </span>
-                ),
-            };
-
-            const mapaResposta = montarMapaResposta(resposta);
-
-            generos.forEach((genero) => {
-              const racas = racasPorGenero.get(genero) ?? [];
-              racas.forEach((raca) => {
-                const chave = chaveCelula(genero, raca);
-                linha[chave] = renderValor(
-                  mapaResposta[chave],
-                  "consolidado-raca-genero-valor",
-                  "consolidado-raca-genero-numero",
-                  "consolidado-raca-genero-percentual",
-                  "consolidado-raca-genero-valor--vazio",
-                );
-              });
-            });
-
-            return linha;
-          });
-
-        const linhaTotal: LinhaTabelaConsolidadoRacaGenero = {
-          key: `${questao.questaoId}-total`,
-          descricao: (
-            <span className="consolidado-raca-genero-descricao-total">
-              Total
-            </span>
-          ),
-          isTotal: true,
-        };
-
-        const mapaTotais: Record<string, CelulaValor> = {};
-        totaisNormalizados.forEach((grupoGenero) => {
-          grupoGenero.racas.forEach((raca) => {
-            mapaTotais[chaveCelula(grupoGenero.genero, raca.raca)] = {
-              quantidade: raca.quantidade,
-              percentual: raca.percentual,
-            };
-          });
-        });
-
-        generos.forEach((genero) => {
-          const racas = racasPorGenero.get(genero) ?? [];
-          racas.forEach((raca) => {
-            const chave = chaveCelula(genero, raca);
-            linhaTotal[chave] = renderValor(
-              mapaTotais[chave],
-              "consolidado-raca-genero-valor",
-              "consolidado-raca-genero-numero",
-              "consolidado-raca-genero-percentual",
-              "consolidado-raca-genero-valor--vazio",
-            );
-          });
-        });
-
-        linhas.push(linhaTotal);
-
-        return (
-          <div
-            key={questao.questaoId}
-            className="consolidado-raca-genero-bloco"
-          >
-            <Table
-              className="consolidado-raca-genero-ant-table"
-              columns={colunas}
-              dataSource={linhas}
-              pagination={false}
-              bordered
-              size="middle"
-              scroll={{ x: "max-content" }}
-              rowClassName={(record) =>
-                record.isTotal ? "consolidado-raca-genero-linha-total" : ""
-              }
-            />
-          </div>
-        );
-      })}
+      {questoes.map(renderBlocoQuestao)}
     </div>
   );
 };
