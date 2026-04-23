@@ -49,6 +49,10 @@
   font-weight: 700;
 }
 
+.consolidado-ant-table .ant-table-thead > tr > th.ant-table-cell-scrollbar {
+  background: #efefef;
+}
+
 .consolidado-ant-table .ant-table-tbody > tr > td {
   color: #3d3d3d;
 }

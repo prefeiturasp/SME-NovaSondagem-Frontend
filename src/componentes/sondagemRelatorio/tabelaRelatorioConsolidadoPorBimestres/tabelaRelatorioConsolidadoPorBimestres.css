@@ -30,6 +30,13 @@
   text-align: center;
 }
 
+.consolidado-bimestres-ant-table
+  .ant-table-thead
+  > tr
+  > th.ant-table-cell-scrollbar {
+  background: #efefef;
+}
+
 .consolidado-bimestres-ant-table .ant-table-tbody > tr > td {
   text-align: center;
   color: #3d3d3d;

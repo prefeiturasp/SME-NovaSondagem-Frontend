@@ -31,7 +31,7 @@ type ConfigTabelaPorAgrupamento<
   classNameNumero: string;
   classNamePercentual: string;
   classNameValorVazio: string;
-  tituloColuna: (nome: string) => string;
+  tituloColuna: (nome: string) => React.ReactNode;
   obterQuestoes: (dados: Dados) => Questao[];
   obterRespostas: (questao: Questao) => Resposta[];
   obterTotais: (questao: Questao) => Item[];

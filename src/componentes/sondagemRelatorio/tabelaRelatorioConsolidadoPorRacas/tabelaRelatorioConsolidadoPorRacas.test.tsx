@@ -126,4 +126,41 @@ describe("TabelaRelatorioConsolidadoPorRacas", () => {
 
     expect(screen.getAllByText("Vazio").length).toBeGreaterThan(0);
   });
+
+  it("deve manter header vazio quando a raça vier vazia", () => {
+    const { container } = render(
+      <TabelaRelatorioConsolidadoPorRacas
+        dados={{
+          titulo: "Consolidado por Raças",
+          questoes: [
+            {
+              questaoId: 3,
+              questaoNome: "Questão 3",
+              totalEstudantes: 4,
+              percentualTotal: 100,
+              totaisPorRaca: [{ raca: "", quantidade: 4, percentual: 100 }],
+              respostas: [
+                {
+                  resposta: "Resposta",
+                  racas: [{ raca: "", quantidade: 4, percentual: 100 }],
+                  total: 4,
+                  percentual: 100,
+                  ordem: 1,
+                  corFundo: "#00ff00",
+                  corTexto: "#000000",
+                },
+              ],
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.queryByText("Não informada")).not.toBeInTheDocument();
+    expect(
+      Array.from(container.querySelectorAll("th")).some(
+        (coluna) => coluna.textContent?.trim() === "",
+      ),
+    ).toBe(true);
+  });
 });
