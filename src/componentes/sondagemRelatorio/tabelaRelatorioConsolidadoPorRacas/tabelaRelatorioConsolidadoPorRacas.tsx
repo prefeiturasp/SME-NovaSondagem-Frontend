@@ -14,12 +14,8 @@ interface TabelaRelatorioConsolidadoPorRacasProps {
 }
 
 const formatarTituloRaca = (nome: string) => {
-  const nomeNormalizado = nome?.trim();
-  return nomeNormalizado ? (
-    nomeNormalizado
-  ) : (
-    <span aria-hidden="true">&nbsp;</span>
-  );
+  const nomeNormalizado = nome.trim();
+  return nomeNormalizado || <span aria-hidden="true">&nbsp;</span>;
 };
 
 const TabelaRelatorioConsolidadoPorRacas: React.FC<TabelaRelatorioConsolidadoPorRacasProps> =
