@@ -268,4 +268,51 @@ describe("TabelaRelatorioConsolidadoPorRacaGenero", () => {
     expect(screen.queryByText("NAO INFORMADA")).not.toBeInTheDocument();
     expect(screen.queryByText("RECUSOU INFORMAR")).not.toBeInTheDocument();
   });
+
+  it("deve manter header vazio para raça vazia", () => {
+    const { container } = render(
+      <TabelaRelatorioConsolidadoPorRacaGenero
+        dados={{
+          titulo: "Consolidado por Raça e Gênero",
+          questoes: [
+            {
+              questaoId: 4,
+              questaoNome: "Questão 4",
+              totalEstudantes: 6,
+              percentualTotal: 100,
+              totaisPorGeneroComRacas: [
+                {
+                  genero: "Não informado",
+                  racas: [{ raca: "", quantidade: 6, percentual: 100 }],
+                },
+              ],
+              respostas: [
+                {
+                  resposta: "PS",
+                  ordem: 1,
+                  total: 6,
+                  percentual: 100,
+                  corFundo: "#ff3131",
+                  corTexto: "#ffffff",
+                  generosComRacas: [
+                    {
+                      genero: "Não informado",
+                      racas: [{ raca: "", quantidade: 6, percentual: 100 }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.queryByText("Não informada")).not.toBeInTheDocument();
+    expect(
+      Array.from(container.querySelectorAll("th")).some(
+        (coluna) => coluna.textContent?.trim() === "",
+      ),
+    ).toBe(true);
+  });
 });

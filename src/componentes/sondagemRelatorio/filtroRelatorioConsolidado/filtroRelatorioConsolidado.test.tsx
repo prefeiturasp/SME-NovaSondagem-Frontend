@@ -305,13 +305,6 @@ describe("FiltroRelatorioConsolidado", () => {
       },
     );
 
-    fireEvent.change(
-      screen.getByTestId("sondagem-consolidado-select-bimestre"),
-      {
-        target: { value: "1" },
-      },
-    );
-
     await waitFor(() => {
       expect(BuscarDadosRelatorioConsolidadoService).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -321,7 +314,6 @@ describe("FiltroRelatorioConsolidado", () => {
             modalidade: "5",
             dre: "10",
             ue: "20",
-            bimestre: "1",
             ano: ["1"],
             componenteCurricular: "3",
             proficiencia: "4",
@@ -431,13 +423,6 @@ describe("FiltroRelatorioConsolidado", () => {
       },
     );
 
-    fireEvent.change(
-      screen.getByTestId("sondagem-consolidado-select-bimestre"),
-      {
-        target: { value: "1" },
-      },
-    );
-
     await waitFor(() => {
       expect(
         BuscarDadosRelatorioConsolidadoPorRacaGeneroService,
@@ -450,7 +435,6 @@ describe("FiltroRelatorioConsolidado", () => {
             modalidade: "5",
             dre: "10",
             ue: "20",
-            bimestre: "1",
             ano: ["1"],
             componenteCurricular: "3",
             proficiencia: "4",
@@ -542,5 +526,122 @@ describe("FiltroRelatorioConsolidado", () => {
       );
       expect(onDadosPorBimestresCarregados).toHaveBeenCalled();
     });
+  });
+
+  it("deve buscar novamente ao alterar bimestre após proficiência selecionada", async () => {
+    renderComForm();
+
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      ).toBeInTheDocument(),
+    );
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      {
+        target: { value: "2026" },
+      },
+    );
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-modalidade"),
+      {
+        target: { value: "5" },
+      },
+    );
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-dre"), {
+      target: { value: "10" },
+    });
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ue"), {
+      target: { value: "20" },
+    });
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ano"), {
+      target: { value: "1" },
+    });
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-componente-curricular"),
+      {
+        target: { value: "3" },
+      },
+    );
+
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-proficiencia"),
+      {
+        target: { value: "4" },
+      },
+    );
+
+    await waitFor(() => {
+      expect(BuscarDadosRelatorioConsolidadoService).toHaveBeenCalledTimes(1);
+    });
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-bimestre"),
+      {
+        target: { value: "1" },
+      },
+    );
+
+    await waitFor(() => {
+      expect(BuscarDadosRelatorioConsolidadoService).toHaveBeenCalledTimes(2);
+      expect(BuscarDadosRelatorioConsolidadoService).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          filtros: expect.objectContaining({
+            bimestre: "1",
+            proficiencia: "4",
+          }),
+        }),
+      );
+    });
+  });
+
+  it("deve ocultar PAP em programas quando modalidade for EJA (id 3)", async () => {
+    (ModalidadeService as jest.Mock).mockResolvedValueOnce([
+      { value: 3, label: "Educação de Jovens e Adultos" },
+      { value: 5, label: "Ensino Fundamental" },
+    ]);
+
+    renderComForm();
+
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      ).toBeInTheDocument(),
+    );
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      {
+        target: { value: "2026" },
+      },
+    );
+
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-modalidade"),
+      {
+        target: { value: "3" },
+      },
+    );
+
+    const selectProgramas = screen.getByTestId(
+      "sondagem-consolidado-select-programas-atendimentos",
+    );
+
+    expect(selectProgramas).not.toHaveTextContent("PAP");
+    expect(selectProgramas).toHaveTextContent("AEE");
+    expect(selectProgramas).toHaveTextContent("Deficiência");
   });
 });

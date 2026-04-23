@@ -136,6 +136,11 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
 
   const anoDeveFicarDesabilitado = () => modalidadeSelecionada() === 3;
 
+  const opcoesProgramaDisponiveis =
+    modalidadeSelecionada() === 3
+      ? opcoesPrograma.filter((opcao) => opcao.value !== "pap")
+      : opcoesPrograma;
+
   const filtrarModalidadesPermitidas = (modalidades: SelectOption[]) =>
     modalidades.filter((modalidade) => {
       const id = Number(modalidade.value);
@@ -169,12 +174,9 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const camposObrigatoriosPreenchidos = (
     filtros: ValoresFiltroRelatorioConsolidado,
   ) => {
-    const exigeBimestre = filtros.agrupamentoDados !== "porBimestres";
-
     return Boolean(
       filtros.anoLetivo &&
       filtros.modalidade &&
-      (!exigeBimestre || filtros.bimestre !== undefined) &&
       filtros.componenteCurricular &&
       filtros.proficiencia,
     );
@@ -738,7 +740,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
           >
             <Select
               id="sondagem-consolidado-select-programas-atendimentos"
-              options={opcoesPrograma}
+              options={opcoesProgramaDisponiveis}
               mode="multiple"
               placeholder="Selecione"
               onChange={() => void tentarBuscarDadosConsolidado()}

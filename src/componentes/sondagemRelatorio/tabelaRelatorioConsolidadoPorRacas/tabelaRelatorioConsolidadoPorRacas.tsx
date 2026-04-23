@@ -12,6 +12,12 @@ interface TabelaRelatorioConsolidadoPorRacasProps {
   dados: DadosRelatorioConsolidadoPorRacas | null;
   isLoading?: boolean;
 }
+
+const formatarTituloRaca = (nome: string) => {
+  const nomeNormalizado = nome.trim();
+  return nomeNormalizado || <span aria-hidden="true">&nbsp;</span>;
+};
+
 const TabelaRelatorioConsolidadoPorRacas: React.FC<TabelaRelatorioConsolidadoPorRacasProps> =
   criarTabelaRelatorioConsolidadoPorAgrupamento<
     DadosRelatorioConsolidadoPorRacas,
@@ -32,7 +38,7 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<TabelaRelatorioConsolidadoPor
     classNameNumero: "consolidado-racas-numero",
     classNamePercentual: "consolidado-racas-percentual",
     classNameValorVazio: "consolidado-racas-valor--vazio",
-    tituloColuna: (nome) => nome,
+    tituloColuna: formatarTituloRaca,
     obterQuestoes: (dados) => dados.questoes ?? [],
     obterRespostas: (questao) => questao.respostas,
     obterTotais: (questao) => questao.totaisPorRaca,

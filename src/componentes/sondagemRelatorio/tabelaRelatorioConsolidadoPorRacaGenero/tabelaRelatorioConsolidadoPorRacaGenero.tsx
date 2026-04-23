@@ -59,6 +59,7 @@ const normalizarRacaParaExibicao = (raca: string) => {
   const chave = normalizarRacaParaChave(raca);
 
   const mapaNomes: Record<string, string> = {
+    "": "Não informada",
     amarela: "Amarela",
     branca: "Branca",
     parda: "Parda",
@@ -70,6 +71,11 @@ const normalizarRacaParaExibicao = (raca: string) => {
   };
 
   return mapaNomes[chave] ?? normalizarEspacos(raca);
+};
+
+const normalizarRacaParaColuna = (raca: string) => {
+  const racaNormalizada = raca.trim();
+  return racaNormalizada ? normalizarRacaParaExibicao(raca) : "";
 };
 
 const normalizarGenerosComRacas = (
@@ -103,7 +109,7 @@ const normalizarGenerosComRacas = (
 
     grupoGenero.racas.forEach((itemRaca) => {
       const racaChave = normalizarRacaParaChave(itemRaca.raca);
-      const racaNome = normalizarRacaParaExibicao(itemRaca.raca);
+      const racaNome = normalizarRacaParaColuna(itemRaca.raca);
       const atual = itemGenero.racas.get(racaChave);
 
       itemGenero.racas.set(racaChave, {
@@ -141,7 +147,7 @@ const criarMapaGenerosComRacas = (
     const genero = normalizarEspacos(item.genero || "Não informado");
     const generoChave = normalizarChaveTexto(genero);
     const racaChave = normalizarRacaParaChave(item.raca);
-    const racaNome = normalizarRacaParaExibicao(item.raca);
+    const racaNome = normalizarRacaParaColuna(item.raca);
 
     if (!mapa.has(generoChave)) {
       mapa.set(generoChave, {
@@ -199,6 +205,15 @@ const normalizarTotaisQuestao = (
 
 const chaveCelula = (genero: string, raca: string) =>
   `${normalizarChaveTexto(genero)}__${normalizarRacaParaChave(raca)}`;
+
+const renderTituloRaca = (raca: string) => {
+  const racaNormalizada = raca.trim();
+  return racaNormalizada ? (
+    normalizarRacaParaExibicao(raca)
+  ) : (
+    <span aria-hidden="true">&nbsp;</span>
+  );
+};
 
 const renderValor = (
   dado: CelulaValor | undefined,
@@ -300,7 +315,7 @@ const criarColunasQuestao = (
 
     for (const raca of racas) {
       filhos.push({
-        title: raca,
+        title: renderTituloRaca(raca),
         dataIndex: chaveCelula(genero, raca),
         key: chaveCelula(genero, raca),
         align: "center",
