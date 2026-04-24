@@ -305,6 +305,7 @@ const criarColunasQuestao = (
       key: "descricao",
       width: 260,
       align: "center",
+      fixed: "left" as const,
       className: "consolidado-raca-genero-coluna-localizacao",
     },
   ];
@@ -476,7 +477,7 @@ const renderBlocoQuestao = (questao: QuestaoConsolidadaPorRacaGenero) => {
         dataSource={linhas}
         pagination={false}
         bordered
-        size="middle"
+        size="small"
         scroll={{ x: "max-content" }}
         rowClassName={(record) =>
           record.isTotal ? "consolidado-raca-genero-linha-total" : ""
