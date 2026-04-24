@@ -137,7 +137,7 @@ const TabelaRelatorioConsolidado: React.FC<TabelaRelatorioConsolidadoProps> = ({
             className="consolidado-ant-table"
             pagination={false}
             bordered
-            size="middle"
+            size="small"
             columns={[
               {
                 title: bloco.titulo,

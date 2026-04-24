@@ -38,6 +38,7 @@ const TabelaRelatorioConsolidadoPorRacas: React.FC<TabelaRelatorioConsolidadoPor
     classNameNumero: "consolidado-racas-numero",
     classNamePercentual: "consolidado-racas-percentual",
     classNameValorVazio: "consolidado-racas-valor--vazio",
+    fixarPrimeiraColuna: true,
     tituloColuna: formatarTituloRaca,
     obterQuestoes: (dados) => dados.questoes ?? [],
     obterRespostas: (questao) => questao.respostas,

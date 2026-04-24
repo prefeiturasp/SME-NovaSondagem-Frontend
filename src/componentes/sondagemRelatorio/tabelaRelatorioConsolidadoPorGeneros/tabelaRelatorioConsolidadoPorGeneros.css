@@ -19,33 +19,47 @@
 }
 
 .consolidado-generos-ant-table .ant-table {
-  background: #f7f7f7;
-  border-radius: 6px;
+  background: #ffffff;
+  border-radius: 0;
+}
+
+.consolidado-generos-ant-table .ant-table-container {
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .consolidado-generos-ant-table .ant-table-thead > tr > th {
-  background: #efefef;
+  background: #dadada;
   color: #3d3d3d;
   font-weight: 700;
+  font-size: 13px;
+  padding: 8px 12px;
   text-align: center;
+  border-bottom: 2px solid #e8e8e8;
 }
 
 .consolidado-generos-ant-table
   .ant-table-thead
   > tr
   > th.ant-table-cell-scrollbar {
-  background: #efefef;
+  background: #dadada;
 }
 
 .consolidado-generos-ant-table .ant-table-tbody > tr > td {
   text-align: center;
   color: #3d3d3d;
+  background: #ffffff;
+  padding: 5px 12px;
+  font-size: 13px;
   white-space: nowrap;
   vertical-align: middle;
 }
 
-.consolidado-generos-ant-table .ant-table-tbody > tr.ant-table-row:hover > td {
-  background: #f5f5f5;
+.consolidado-generos-ant-table
+  .ant-table-tbody
+  > tr:not(.consolidado-generos-linha-total).ant-table-row:hover
+  > td {
+  background: #fafafa !important;
 }
 
 .consolidado-generos-pill {
@@ -66,7 +80,7 @@
 }
 
 .consolidado-generos-valor--vazio {
-  color: #a8a8a8;
+  color: #b0b0b0;
   font-style: italic;
 }
 
@@ -86,8 +100,12 @@
 }
 
 .consolidado-generos-linha-total > td {
-  background: #f0f0f0;
+  background: #f5f5f5 !important;
   font-weight: 700;
+}
+
+.consolidado-generos-linha-total:hover > td {
+  background: #f0f0f0 !important;
 }
 
 .consolidado-generos-total-centralizado {

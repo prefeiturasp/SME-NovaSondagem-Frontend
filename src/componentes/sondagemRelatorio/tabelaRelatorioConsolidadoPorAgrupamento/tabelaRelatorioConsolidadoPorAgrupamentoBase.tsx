@@ -31,6 +31,7 @@ type ConfigTabelaPorAgrupamento<
   classNameNumero: string;
   classNamePercentual: string;
   classNameValorVazio: string;
+  fixarPrimeiraColuna?: boolean;
   tituloColuna: (nome: string) => React.ReactNode;
   obterQuestoes: (dados: Dados) => Questao[];
   obterRespostas: (questao: Questao) => Resposta[];
@@ -170,6 +171,7 @@ export const criarTabelaRelatorioConsolidadoPorAgrupamento = <
               width: 260,
               align: "center" as const,
               className: config.classNameColunaDescricao,
+              ...(config.fixarPrimeiraColuna ? { fixed: "left" as const } : {}),
             },
             ...itens.map((item) => ({
               title: config.tituloColuna(item.nome),
@@ -265,7 +267,7 @@ export const criarTabelaRelatorioConsolidadoPorAgrupamento = <
                 dataSource={linhas}
                 pagination={false}
                 bordered
-                size="middle"
+                size="small"
                 scroll={{ x: "max-content" }}
                 rowClassName={(record) =>
                   record.isTotal ? config.classNameLinhaTotal : ""
