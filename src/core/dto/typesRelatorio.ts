@@ -92,6 +92,7 @@ export type ValoresFiltroRelatorioConsolidado = {
   dre?: number | string;
   ue?: number | string;
   bimestre?: number | null;
+  semestreId?: number;
   ano?: number[];
   componenteCurricular?: number;
   proficiencia?: number;
