@@ -43,6 +43,7 @@ const BuscarDadosRelatorioConsolidadoService = async ({
           ProficienciaId: filtros.proficiencia,
           ComponenteCurricularId: filtros.componenteCurricular,
           AnoTurma: filtros.ano,
+          SemestreId: filtros.semestreId,
           BimestreId: filtros.bimestre ?? undefined,
           GeneroId: Number.isNaN(generoId) ? undefined : generoId,
           RacaId: Number.isNaN(racaId) ? undefined : racaId,

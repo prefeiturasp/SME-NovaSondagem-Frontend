@@ -67,6 +67,12 @@ const opcoesAno: SelectOption[] = [
   { value: 3, label: "3º ANO" },
 ];
 
+const opcoesSemestre: SelectOption[] = [
+  { value: "todas", label: "Todos" },
+  { value: 1, label: "1º Semestre" },
+  { value: 2, label: "2º Semestre" },
+];
+
 const opcoesAgrupamentoDados: SelectOption[] = [
   { value: "porQuestoes", label: "Por questões" },
   { value: "porGenero", label: "Por gênero" },
@@ -133,8 +139,9 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   };
 
   const modalidadeSelecionada = () => Number(form.getFieldValue("modalidade"));
+  const modalidadeEhEja = () => modalidadeSelecionada() === 3;
 
-  const anoDeveFicarDesabilitado = () => modalidadeSelecionada() === 3;
+  const anoDeveFicarDesabilitado = () => modalidadeEhEja();
 
   const opcoesProgramaDisponiveis =
     modalidadeSelecionada() === 3
@@ -149,13 +156,17 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
 
   const mapearFiltrosFormulario = (): ValoresFiltroRelatorioConsolidado => {
     const valores = form.getFieldsValue();
+    const semestreId =
+      valores.semestreId === "todas" ? undefined : Number(valores.semestreId);
+
     const filtros: ValoresFiltroRelatorioConsolidado = {
       anoLetivo: valores.anoLetivo,
       modalidade: valores.modalidade,
       dre: valores.dre === "todas" ? undefined : valores.dre,
       ue: valores.ue === "todas" ? undefined : valores.ue,
       bimestre: valores.bimestre,
-      ano: valores.ano,
+      ano: modalidadeEhEja() ? undefined : valores.ano,
+      semestreId,
       componenteCurricular: valores.componenteCurricular,
       proficiencia: valores.proficiencia,
       genero: valores.genero === "todas" ? undefined : valores.genero,
@@ -263,6 +274,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       bimestre: undefined,
       ano: undefined,
+      semestreId: "todas",
       genero: "todas",
       raca: "todas",
       programa: undefined,
@@ -295,6 +307,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       bimestre: undefined,
       ano: undefined,
+      semestreId: "todas",
       genero: "todas",
       raca: "todas",
       programa: undefined,
@@ -339,6 +352,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       bimestre: undefined,
       ano: undefined,
+      semestreId: "todas",
       genero: "todas",
       raca: "todas",
       programa: undefined,
@@ -387,6 +401,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ue: value === "todas" ? "todas" : undefined,
       bimestre: undefined,
       ano: undefined,
+      semestreId: "todas",
       componenteCurricular: undefined,
       proficiencia: undefined,
       genero: "todas",
@@ -433,6 +448,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     form.setFieldsValue({
       bimestre: undefined,
       ano: undefined,
+      semestreId: "todas",
       componenteCurricular: undefined,
       proficiencia: undefined,
       genero: "todas",
@@ -444,7 +460,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setListaProficiencias([]);
     setDesabilitarBimestre(false);
     setDesabilitarAno(anoDeveFicarDesabilitado());
-    setDesabilitarComponenteCurricular(true);
+    setDesabilitarComponenteCurricular(!modalidadeEhEja());
     setDesabilitarProficiencia(true);
   };
 
@@ -468,6 +484,11 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setListaProficiencias([]);
     setDesabilitarComponenteCurricular(false);
     setDesabilitarProficiencia(true);
+  };
+
+  const onChangeSemestre = () => {
+    limparResultadoRelatorio();
+    void tentarBuscarDadosConsolidado();
   };
 
   const onChangeComponenteCurricular = async (value: number) => {
@@ -558,6 +579,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       initialValues={{
         lpSegundaLingua: false,
         agrupamentoDados: "porQuestoes",
+        semestreId: "todas",
         genero: "todas",
         raca: "todas",
       }}
@@ -643,18 +665,35 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
           </Form.Item>
         </Col>
 
-        <Col xs={24} sm={24} md={12} lg={6} xl={6}>
-          <Form.Item name="ano" label="Ano" className="labelSelectSondagem">
-            <Select
-              id="sondagem-consolidado-select-ano"
-              options={opcoesAno}
-              placeholder="Selecione"
-              onChange={onChangeAno}
-              mode="multiple"
-              disabled={desabilitarAno}
-            />
-          </Form.Item>
-        </Col>
+        {modalidadeEhEja() ? (
+          <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+            <Form.Item
+              name="semestreId"
+              label="Semestre"
+              className="labelSelectSondagem"
+            >
+              <Select
+                id="sondagem-consolidado-select-semestre"
+                options={opcoesSemestre}
+                placeholder="Selecione"
+                onChange={onChangeSemestre}
+              />
+            </Form.Item>
+          </Col>
+        ) : (
+          <Col xs={24} sm={24} md={12} lg={6} xl={6}>
+            <Form.Item name="ano" label="Ano" className="labelSelectSondagem">
+              <Select
+                id="sondagem-consolidado-select-ano"
+                options={opcoesAno}
+                placeholder="Selecione"
+                onChange={onChangeAno}
+                mode="multiple"
+                disabled={desabilitarAno}
+              />
+            </Form.Item>
+          </Col>
+        )}
 
         <Col xs={24} sm={24} md={12} lg={6} xl={6}>
           <Form.Item

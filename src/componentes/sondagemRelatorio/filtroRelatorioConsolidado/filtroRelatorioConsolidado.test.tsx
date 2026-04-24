@@ -644,4 +644,137 @@ describe("FiltroRelatorioConsolidado", () => {
     expect(selectProgramas).toHaveTextContent("AEE");
     expect(selectProgramas).toHaveTextContent("Deficiência");
   });
+
+  it("deve exibir semestre e habilitar componente curricular na EJA após selecionar UE", async () => {
+    (ModalidadeService as jest.Mock).mockResolvedValueOnce([
+      { value: 3, label: "Educação de Jovens e Adultos" },
+      { value: 5, label: "Ensino Fundamental" },
+    ]);
+
+    renderComForm();
+
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      ).toBeInTheDocument(),
+    );
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      {
+        target: { value: "2026" },
+      },
+    );
+
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-modalidade"),
+      {
+        target: { value: "3" },
+      },
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("sondagem-consolidado-select-ano"),
+      ).toBeNull();
+      expect(
+        screen.getByTestId("sondagem-consolidado-select-semestre"),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-dre"), {
+      target: { value: "10" },
+    });
+
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ue"), {
+      target: { value: "20" },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("sondagem-consolidado-select-componente-curricular"),
+      ).not.toBeDisabled();
+    });
+  });
+
+  it("deve enviar semestreId quando selecionado na EJA", async () => {
+    (ModalidadeService as jest.Mock).mockResolvedValueOnce([
+      { value: 3, label: "Educação de Jovens e Adultos" },
+      { value: 5, label: "Ensino Fundamental" },
+    ]);
+
+    renderComForm();
+
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      ).toBeInTheDocument(),
+    );
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-ano-letivo"),
+      {
+        target: { value: "2026" },
+      },
+    );
+    await waitFor(() => expect(ModalidadeService).toHaveBeenCalled());
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-modalidade"),
+      {
+        target: { value: "3" },
+      },
+    );
+
+    await waitFor(() => expect(DreService).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-dre"), {
+      target: { value: "10" },
+    });
+    await waitFor(() => expect(UeService).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ue"), {
+      target: { value: "20" },
+    });
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-semestre"),
+      {
+        target: { value: "2" },
+      },
+    );
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-componente-curricular"),
+      {
+        target: { value: "3" },
+      },
+    );
+    await waitFor(() => expect(ProficienciaService).toHaveBeenCalled());
+
+    fireEvent.change(
+      screen.getByTestId("sondagem-consolidado-select-proficiencia"),
+      {
+        target: { value: "4" },
+      },
+    );
+
+    await waitFor(() => {
+      expect(BuscarDadosRelatorioConsolidadoService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filtros: expect.objectContaining({
+            modalidade: "3",
+            componenteCurricular: "3",
+            proficiencia: "4",
+            semestreId: 2,
+            ano: undefined,
+          }),
+        }),
+      );
+    });
+  });
 });

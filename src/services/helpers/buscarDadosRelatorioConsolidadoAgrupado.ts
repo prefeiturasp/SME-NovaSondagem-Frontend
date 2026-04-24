@@ -34,6 +34,7 @@ const montarParametrosRelatorioConsolidado = (
     ProficienciaId: filtros.proficiencia,
     ComponenteCurricularId: filtros.componenteCurricular,
     AnoTurma: filtros.ano,
+    SemestreId: filtros.semestreId,
     BimestreId: filtros.bimestre ?? undefined,
     GeneroId: paraNumeroOpcional(filtros.genero),
     RacaId: paraNumeroOpcional(filtros.raca),

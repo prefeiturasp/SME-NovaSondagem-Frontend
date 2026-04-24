@@ -58,6 +58,7 @@ describe("BuscarDadosRelatorioConsolidadoService", () => {
           ProficienciaId: 4,
           ComponenteCurricularId: 3,
           AnoTurma: [1, 2],
+          SemestreId: undefined,
           BimestreId: 2,
           GeneroId: 5,
           RacaId: 6,
