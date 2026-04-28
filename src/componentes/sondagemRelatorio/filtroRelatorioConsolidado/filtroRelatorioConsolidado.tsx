@@ -74,10 +74,10 @@ const opcoesSemestre: SelectOption[] = [
 ];
 
 const opcoesAgrupamentoDados: SelectOption[] = [
-  { value: "porQuestoes", label: "Por questões" },
+  { value: "porQuestoes", label: "Por questão" },
   { value: "porGenero", label: "Por gênero" },
-  { value: "porBimestres", label: "Por bimestres" },
-  { value: "porRacas", label: "Por raças" },
+  { value: "porBimestres", label: "Por bimestre" },
+  { value: "porRacas", label: "Por raça" },
   { value: "porRacaGenero", label: "Por raça e gênero" },
 ];
 
@@ -88,6 +88,7 @@ const opcoesPrograma: SelectOption[] = [
 ];
 
 const opcaoTodas: SelectOption = { value: "todas", label: "Todas" };
+const opcaoTodosGenero: SelectOption = { value: "todas", label: "Todos" };
 
 const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   FiltroRelatorioConsolidadoRef,
@@ -259,7 +260,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       GeneroSexoService({ token }),
       RacaCorService({ token }),
     ]);
-    setListaGeneros([opcaoTodas, ...(generos ?? [])]);
+    setListaGeneros([opcaoTodosGenero, ...(generos ?? [])]);
     setListaRacas([opcaoTodas, ...(racas ?? [])]);
   };
 
@@ -272,7 +273,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ue: undefined,
       componenteCurricular: undefined,
       proficiencia: undefined,
-      bimestre: undefined,
+      bimestre: null,
       ano: undefined,
       semestreId: "todas",
       genero: "todas",
@@ -305,7 +306,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ue: undefined,
       componenteCurricular: undefined,
       proficiencia: undefined,
-      bimestre: undefined,
+      bimestre: null,
       ano: undefined,
       semestreId: "todas",
       genero: "todas",
@@ -350,7 +351,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ue: undefined,
       componenteCurricular: undefined,
       proficiencia: undefined,
-      bimestre: undefined,
+      bimestre: null,
       ano: undefined,
       semestreId: "todas",
       genero: "todas",
@@ -399,7 +400,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     limparResultadoRelatorio();
     form.setFieldsValue({
       ue: value === "todas" ? "todas" : undefined,
-      bimestre: undefined,
+      bimestre: null,
       ano: undefined,
       semestreId: "todas",
       componenteCurricular: undefined,
@@ -446,7 +447,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const onChangeUe = () => {
     limparResultadoRelatorio();
     form.setFieldsValue({
-      bimestre: undefined,
+      bimestre: null,
       ano: undefined,
       semestreId: "todas",
       componenteCurricular: undefined,
@@ -494,7 +495,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const onChangeComponenteCurricular = async (value: number) => {
     limparResultadoRelatorio();
     form.setFieldsValue({
-      bimestre: undefined,
+      bimestre: null,
       proficiencia: undefined,
       genero: "todas",
       raca: "todas",
@@ -530,7 +531,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const onChangeProficiencia = () => {
     limparResultadoRelatorio();
     form.setFieldsValue({
-      bimestre: undefined,
+      bimestre: null,
       genero: "todas",
       raca: "todas",
       programa: undefined,
@@ -579,6 +580,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       initialValues={{
         lpSegundaLingua: false,
         agrupamentoDados: "porQuestoes",
+        bimestre: null,
         semestreId: "todas",
         genero: "todas",
         raca: "todas",
