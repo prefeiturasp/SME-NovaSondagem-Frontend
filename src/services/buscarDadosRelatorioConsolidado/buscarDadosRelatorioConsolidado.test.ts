@@ -127,6 +127,32 @@ describe("BuscarDadosRelatorioConsolidadoService", () => {
     );
   });
 
+  it("não deve enviar SemestreId quando modalidade for 5", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({
+      data: null,
+    });
+
+    const resultado = await BuscarDadosRelatorioConsolidadoService({
+      filtros: {
+        ...filtrosBase,
+        modalidade: 5,
+        semestreId: Number.NaN,
+      },
+      token: "token-teste",
+    });
+
+    expect(resultado).toBeNull();
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+      "/Relatorio/consolidado/ano",
+      expect.objectContaining({
+        params: expect.objectContaining({
+          Modalidade: 5,
+          SemestreId: undefined,
+        }),
+      }),
+    );
+  });
+
   it("deve notificar erro e retornar null quando requisição falhar", async () => {
     const erro = new Error("falha");
     (NovaSondagemServico.get as jest.Mock).mockRejectedValueOnce(erro);

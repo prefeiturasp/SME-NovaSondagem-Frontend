@@ -25,6 +25,9 @@ const montarParametrosRelatorioConsolidado = (
 ) => {
   const programas = filtros.programa ?? [];
   const possuiFiltroPrograma = programas.length > 0;
+  const modalidadeNumero = paraNumeroOpcional(filtros.modalidade);
+  const semestreId =
+    modalidadeNumero === 5 ? undefined : paraNumeroOpcional(filtros.semestreId);
 
   return {
     AnoLetivo: filtros.anoLetivo,
@@ -34,7 +37,7 @@ const montarParametrosRelatorioConsolidado = (
     ProficienciaId: filtros.proficiencia,
     ComponenteCurricularId: filtros.componenteCurricular,
     AnoTurma: filtros.ano,
-    SemestreId: filtros.semestreId,
+    SemestreId: semestreId,
     BimestreId: filtros.bimestre ?? undefined,
     GeneroId: paraNumeroOpcional(filtros.genero),
     RacaId: paraNumeroOpcional(filtros.raca),

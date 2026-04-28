@@ -10,6 +10,15 @@ interface BuscarDadosRelatorioConsolidadoParams {
   token: string;
 }
 
+const paraNumeroOpcional = (
+  valor: number | string | null | undefined,
+): number | undefined => {
+  if (valor === undefined || valor === null || valor === "") return undefined;
+
+  const convertido = Number(valor);
+  return Number.isNaN(convertido) ? undefined : convertido;
+};
+
 const BuscarDadosRelatorioConsolidadoService = async ({
   filtros,
   token,
@@ -17,16 +26,13 @@ const BuscarDadosRelatorioConsolidadoService = async ({
   try {
     const programas = filtros.programa ?? [];
     const possuiFiltroPrograma = programas.length > 0;
-    const generoId =
-      filtros.genero !== undefined &&
-      filtros.genero !== null &&
-      filtros.genero !== ""
-        ? Number(filtros.genero)
-        : undefined;
-    const racaId =
-      filtros.raca !== undefined && filtros.raca !== null && filtros.raca !== ""
-        ? Number(filtros.raca)
-        : undefined;
+    const generoId = paraNumeroOpcional(filtros.genero);
+    const racaId = paraNumeroOpcional(filtros.raca);
+    const modalidadeNumero = paraNumeroOpcional(filtros.modalidade);
+    const semestreId =
+      modalidadeNumero === 5
+        ? undefined
+        : paraNumeroOpcional(filtros.semestreId);
 
     const resposta = await NovaSondagemServico.get(
       "/Relatorio/consolidado/ano",
@@ -43,10 +49,10 @@ const BuscarDadosRelatorioConsolidadoService = async ({
           ProficienciaId: filtros.proficiencia,
           ComponenteCurricularId: filtros.componenteCurricular,
           AnoTurma: filtros.ano,
-          SemestreId: filtros.semestreId,
+          SemestreId: semestreId,
           BimestreId: filtros.bimestre ?? undefined,
-          GeneroId: Number.isNaN(generoId) ? undefined : generoId,
-          RacaId: Number.isNaN(racaId) ? undefined : racaId,
+          GeneroId: generoId,
+          RacaId: racaId,
           Pap: possuiFiltroPrograma ? programas.includes("pap") : undefined,
           Aee: possuiFiltroPrograma ? programas.includes("aee") : undefined,
           Deficiente: possuiFiltroPrograma

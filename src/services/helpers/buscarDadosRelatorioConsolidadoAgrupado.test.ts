@@ -98,6 +98,34 @@ describe("buscarDadosRelatorioConsolidadoAgrupado", () => {
     );
   });
 
+  it("não deve enviar SemestreId quando modalidade for 5", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({
+      data: null,
+    });
+
+    await buscarDadosRelatorioConsolidadoAgrupado({
+      endpoint: "/Relatorio/consolidado/raca",
+      filtros: {
+        modalidade: 5,
+        semestreId: Number.NaN,
+      },
+      token: "token-teste",
+      mensagemConsole: "erro console",
+      tituloNotificacao: "erro titulo",
+      mensagemPadrao: "erro padrao",
+    });
+
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+      "/Relatorio/consolidado/raca",
+      expect.objectContaining({
+        params: expect.objectContaining({
+          Modalidade: 5,
+          SemestreId: undefined,
+        }),
+      }),
+    );
+  });
+
   it("deve notificar erro e retornar null quando ocorrer exceção", async () => {
     const erroMock = new Error("falha");
     (NovaSondagemServico.get as jest.Mock).mockRejectedValueOnce(erroMock);
