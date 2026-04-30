@@ -5,6 +5,7 @@ export type LinhaTabelaConsolidado = {
   key: string;
   descricao: React.ReactNode;
   isTotal?: boolean;
+  hasPill?: boolean;
 } & Record<string, React.ReactNode | string>;
 
 type ItemAgrupamento = {
@@ -171,6 +172,11 @@ export const criarTabelaRelatorioConsolidadoPorAgrupamento = <
               width: 260,
               align: "center" as const,
               className: config.classNameColunaDescricao,
+              onCell: (record: LinhaTabelaConsolidado) => ({
+                className: record.hasPill
+                  ? `${config.classNameColunaDescricao} ${config.classNameColunaDescricao}--pill`
+                  : config.classNameColunaDescricao,
+              }),
               ...(config.fixarPrimeiraColuna ? { fixed: "left" as const } : {}),
             },
             ...itens.map((item) => ({
@@ -186,6 +192,9 @@ export const criarTabelaRelatorioConsolidadoPorAgrupamento = <
             (resposta) => {
               const linhaBase: LinhaTabelaConsolidado = {
                 key: `${config.obterQuestaoId(questao)}-${config.obterOrdemResposta(resposta)}`,
+                hasPill:
+                  !!config.obterCorFundo(resposta) &&
+                  !!config.obterCorTexto(resposta),
                 descricao:
                   config.obterCorFundo(resposta) &&
                   config.obterCorTexto(resposta) ? (
