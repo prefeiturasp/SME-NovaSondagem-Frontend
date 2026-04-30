@@ -19,6 +19,7 @@ type LinhaTabelaConsolidadoRacaGenero = {
   key: string;
   descricao: React.ReactNode;
   isTotal?: boolean;
+  hasPill?: boolean;
 } & Record<string, React.ReactNode | string>;
 
 interface TabelaRelatorioConsolidadoPorRacaGeneroProps {
@@ -307,6 +308,11 @@ const criarColunasQuestao = (
       align: "center",
       fixed: "left" as const,
       className: "consolidado-raca-genero-coluna-localizacao",
+      onCell: (record: LinhaTabelaConsolidadoRacaGenero) => ({
+        className: record.hasPill
+          ? "consolidado-raca-genero-coluna-localizacao consolidado-raca-genero-coluna-localizacao--pill"
+          : "consolidado-raca-genero-coluna-localizacao",
+      }),
     },
   ];
 
@@ -365,6 +371,7 @@ const criarLinhaResposta = (
 ): LinhaTabelaConsolidadoRacaGenero => {
   const linha: LinhaTabelaConsolidadoRacaGenero = {
     key: `${questao.questaoId}-${resposta.ordem}`,
+    hasPill: !!resposta.corFundo && !!resposta.corTexto,
     descricao:
       resposta.corFundo && resposta.corTexto ? (
         <span

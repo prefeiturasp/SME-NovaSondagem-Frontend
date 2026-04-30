@@ -73,6 +73,14 @@
 
 .consolidado-bimestres-ant-table
   .ant-table-tbody
+  > tr
+  > td.consolidado-bimestres-coluna-localizacao--pill {
+  position: relative;
+  padding: 0 !important;
+}
+
+.consolidado-bimestres-ant-table
+  .ant-table-tbody
   > tr:not(.consolidado-bimestres-linha-total).ant-table-row:hover
   > td {
   background: #fafafa !important;
@@ -82,7 +90,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: -4px -1px;
+  position: absolute;
+  inset: 3px 6px;
   border-radius: 5px;
   font-weight: 700;
   padding: 4px 10px;
