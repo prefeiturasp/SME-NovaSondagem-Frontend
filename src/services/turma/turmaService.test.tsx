@@ -70,6 +70,26 @@ describe("TurmaService", () => {
     expect(resultado).toEqual([{ value: 10, label: "3ºB", ano: 3 }]);
   });
 
+  it("deve enviar periodo quando informado", async () => {
+    (axios.get as jest.Mock).mockResolvedValueOnce({
+      data: [{ codigo: 20, nome: "4ºC", ano: 4 }],
+    });
+
+    const resultado = await TurmaService({
+      token,
+      urId,
+      modalidade,
+      anoLetivo,
+      periodo: 2,
+    });
+
+    expect(axios.get).toHaveBeenCalledWith(
+      `${baseUrl}/v1/abrangencias/false/dres/ues/${urId}/turmas?anoLetivo=${anoLetivo}&modalidade=${modalidade}&consideraNovosAnosInfantil=true&periodo=2`,
+      expect.any(Object),
+    );
+    expect(resultado).toEqual([{ value: 20, label: "4ºC", ano: 4 }]);
+  });
+
   it("deve retornar null quando API retornar lista vazia", async () => {
     (axios.get as jest.Mock).mockResolvedValueOnce({
       data: [],

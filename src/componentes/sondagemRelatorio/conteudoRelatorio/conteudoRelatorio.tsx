@@ -5,10 +5,9 @@ import type {
   LegendaQuestionario,
   ValoresFiltroRelatorio,
 } from "../../../core/dto/typesRelatorio";
-import { Button, Card, Spin, Form, Row, Dropdown, notification } from "antd";
+import { Card, Spin, Form, Row, notification } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
-import styled from "styled-components";
 import Legendas from "../../sondagem/legendas/legendas";
 import { LEGENDA_EJA_CAPACIDADE_LEITORA } from "../../sondagem/legendas/legendaEjaCapacidadeLeitora";
 import { classificarTipoLegenda } from "../../sondagem/legendas/legendaClassifier";
@@ -17,8 +16,7 @@ import { Modalidade, Proficiencia } from "../../../core/dto/types";
 import Alerta from "../../biblioteca/Alerta";
 import RelatorioExportService from "../../../services/relatorioExportService/RelatorioExportService";
 import { useSelector } from "react-redux";
-
-export const Icon = styled.i``;
+import CabecalhoRelatorioAcoes from "../cabecalhoRelatorioAcoes/cabecalhoRelatorioAcoes";
 
 const ConteudoRelatorio: React.FC = () => {
   const [formFiltro] = Form.useForm();
@@ -143,51 +141,17 @@ const ConteudoRelatorio: React.FC = () => {
           />
         </Row>
       </div>
-      <div className="linhaTituloBotao">
-        <div className="tituloSondagem">Sondagem por turma</div>
-        <div>
-          <Button
-            id="sondagem-button-voltar"
-            className="sondagemBotaoEstilo"
-            onClick={() => {
-              voltarSondagem();
-            }}
-            icon={<Icon className={`fa fa-arrow-left iconBotaoVoltar`} />}
-          ></Button>
-
-          <Button
-            id="sondagem-button-cancelar"
-            className="sondagemBotaoEstilo"
-            onClick={() => {
-              CancelarCadastroSondagem();
-            }}
-          >
-            Cancelar
-          </Button>
-
-          <Dropdown
-            menu={{
-              items: [
-                { key: "pdf", label: "Relatório em PDF" },
-                { key: "excel", label: "Relatório em .xlsx (Excel)" },
-              ],
-              onClick: ({ key }) => void GerarDados(key as "pdf" | "excel"),
-            }}
-            trigger={["click"]}
-            disabled={!dados}
-          >
-            <Button
-              id="sondagem-button-gerar"
-              className="sondagemBotaoEstilo"
-              loading={loadingGerar}
-              disabled={!dados || loadingGerar}
-              icon={<Icon className="fa fa-print iconBotaoGerar" />}
-            >
-              Gerar
-            </Button>
-          </Dropdown>
-        </div>
-      </div>
+      <CabecalhoRelatorioAcoes
+        titulo="Sondagem por turma"
+        onVoltar={voltarSondagem}
+        onCancelar={() => {
+          void CancelarCadastroSondagem();
+        }}
+        onGerar={GerarDados}
+        menuGerarDesabilitado={!dados}
+        botaoGerarDesabilitado={!dados || loadingGerar}
+        loadingGerar={loadingGerar}
+      />
       <Card className="CardSondagemEfeitosRelatorio">
         <div className="textoSondagemEstilo">
           <p>

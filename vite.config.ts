@@ -26,6 +26,8 @@ export default defineConfig({
       exposes: {
         "./Home": "./src/paginas/home/home.tsx",
         "./Relatorio": "./src/paginas/relatorio/relatorio.tsx",
+        "./relatorio/consolidado":
+          "./src/paginas/relatorio/relatorioConsolidado.tsx",
       },
       shared: {
         react: {

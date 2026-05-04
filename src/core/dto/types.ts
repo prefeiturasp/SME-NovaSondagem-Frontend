@@ -47,6 +47,10 @@ export interface Coluna {
   questaoSubrespostaId: number | null;
 }
 
+export interface EstudanteRemanejadoInfo {
+  data?: string;
+}
+
 export interface Estudante {
   linguaPortuguesaSegundaLingua: boolean;
   numeroAlunoChamada: number;
@@ -56,6 +60,7 @@ export interface Estudante {
   possuiDeficiencia: boolean;
   coluna: Coluna[];
   codigo: number;
+  estudanteRemanejado?: EstudanteRemanejadoInfo | null;
 }
 
 export interface DadosTabelaDinamica {

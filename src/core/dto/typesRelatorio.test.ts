@@ -1,22 +1,22 @@
 import type { ValoresFiltroRelatorio } from "./typesRelatorio";
 
 describe("typesRelatorio - ValoresFiltroRelatorio", () => {
-  it("deve aceitar semestreId no contrato de filtros", () => {
+  it("deve aceitar bimestre no contrato de filtros", () => {
     const filtros: ValoresFiltroRelatorio = {
       anoLetivo: 2026,
       modalidade: 1,
-      semestreId: 2,
+      bimestre: 2,
     };
 
-    expect(filtros.semestreId).toBe(2);
+    expect(filtros.bimestre).toBe(2);
   });
 
-  it("deve manter semestreId opcional", () => {
+  it("deve manter bimestre opcional", () => {
     const filtros: ValoresFiltroRelatorio = {
       anoLetivo: 2026,
       modalidade: 5,
     };
 
-    expect(filtros.semestreId).toBeUndefined();
+    expect(filtros.bimestre).toBeUndefined();
   });
 });
