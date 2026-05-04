@@ -6,6 +6,7 @@ interface TurmaParams {
   urId: number;
   modalidade: number;
   anoLetivo: number;
+  periodo?: number;
   consideraNovosAnosInfantil?: boolean;
 }
 
@@ -20,13 +21,23 @@ const TurmaService = async ({
   urId,
   modalidade,
   anoLetivo,
+  periodo,
   consideraNovosAnosInfantil = true,
 }: TurmaParams): Promise<TurmaResponse[] | null> => {
   try {
     const base = getSgpApiUrl();
+    const params = new URLSearchParams({
+      anoLetivo: String(anoLetivo),
+      modalidade: String(modalidade),
+      consideraNovosAnosInfantil: String(consideraNovosAnosInfantil),
+    });
+
+    if (periodo !== undefined) {
+      params.append("periodo", String(periodo));
+    }
 
     const resposta = await axios.get(
-      `${base}/v1/abrangencias/false/dres/ues/${urId}/turmas?anoLetivo=${anoLetivo}&modalidade=${modalidade}&consideraNovosAnosInfantil=${consideraNovosAnosInfantil}`,
+      `${base}/v1/abrangencias/false/dres/ues/${urId}/turmas?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

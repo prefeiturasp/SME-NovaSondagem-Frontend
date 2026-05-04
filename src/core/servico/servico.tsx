@@ -3,6 +3,7 @@ import apiNovaSondagem from "./api";
 interface ApiOptions {
   headers?: Record<string, any>;
   params?: Record<string, any>;
+  paramsSerializer?: any;
 }
 
 const NovaSondagemServico = {

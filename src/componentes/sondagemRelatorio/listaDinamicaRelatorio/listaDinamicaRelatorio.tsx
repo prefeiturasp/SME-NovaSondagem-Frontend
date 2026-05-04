@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, ConfigProvider, Space, Table } from "antd";
+import { Checkbox, ConfigProvider, Space, Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import CelulaColorida from "../celulaColorida/celulaColorida";
 import {
@@ -7,6 +7,7 @@ import {
   LogoAEE,
   LogoPAP,
 } from "../../sondagem/shared/logos";
+import { montarMensagemTooltipRemanejado } from "../../sondagem/shared/remanejamentoTooltip";
 import type {
   DadosTabelaDinamica,
   Estudante,
@@ -31,7 +32,19 @@ const ListaDinamicaRelatorio: React.FC<ListaDinamicaRelatorioProps> = ({
     width: 75,
     align: "center",
     fixed: "left",
-    render: (_, record) => <span>{record.numeroAlunoChamada}</span>,
+    render: (_, record) => {
+      const mensagemTooltip = montarMensagemTooltipRemanejado(record);
+      return (
+        <span>
+          {record.numeroAlunoChamada}
+          {mensagemTooltip ? (
+            <Tooltip title={mensagemTooltip} placement="topLeft">
+              <i className="fa fa-circle tooltip-remanejado-icon" />
+            </Tooltip>
+          ) : null}
+        </span>
+      );
+    },
   });
 
   columns.push({

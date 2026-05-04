@@ -117,4 +117,38 @@ describe("ListaDinamicaRelatorio", () => {
     expect(screen.queryAllByText("LP como 2ª língua?")).toHaveLength(0);
     expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
   });
+
+  it("não exibe ícone de remanejado quando estudanteRemanejado é null", () => {
+    render(<ListaDinamicaRelatorio dados={criarDados("Leitura")} />);
+
+    expect(document.querySelectorAll(".tooltip-remanejado-icon")).toHaveLength(
+      0,
+    );
+  });
+
+  it("exibe ícone de remanejado apenas nas linhas com estudanteRemanejado preenchido", () => {
+    const dadosBase = criarDados("Leitura");
+    const estudantes = [
+      ...dadosBase.estudantes,
+      {
+        ...dadosBase.estudantes[0],
+        codigo: 999,
+        nome: "Aluno remanejado",
+        estudanteRemanejado: { data: "2026-01-23T09:47:49.173Z" },
+      },
+    ];
+
+    render(
+      <ListaDinamicaRelatorio
+        dados={{
+          ...dadosBase,
+          estudantes,
+        }}
+      />,
+    );
+
+    expect(document.querySelectorAll(".tooltip-remanejado-icon")).toHaveLength(
+      1,
+    );
+  });
 });
