@@ -59,16 +59,13 @@ const RelatorioConsolidadoExportService = async ({
       filtros,
     );
 
-    await NovaSondagemServico.get(
-      "/Relatorio/consolidado/bimestre/exportar",
-      {
-        headers: { "X-Token-Principal": token },
-        paramsSerializer: {
-          indexes: null,
-        },
-        params,
+    await NovaSondagemServico.get("/Relatorio/consolidado/bimestre/exportar", {
+      headers: { "X-Token-Principal": token },
+      paramsSerializer: {
+        indexes: null,
       },
-    );
+      params,
+    });
 
     return true;
   } catch (error: unknown) {
