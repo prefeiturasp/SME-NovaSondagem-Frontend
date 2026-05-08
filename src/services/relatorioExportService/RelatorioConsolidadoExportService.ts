@@ -7,57 +7,45 @@ interface RelatorioConsolidadoExportParams {
   token: string;
 }
 
-const adicionarParametroSeDefinido = (
-  params: URLSearchParams,
-  chave: string,
-  valor: string | number | null | undefined,
-) => {
-  if (valor !== undefined && valor !== null) {
-    params.append(chave, String(valor));
-  }
-};
+const paraNumeroOpcional = (
+  valor: number | string | null | undefined,
+): number | undefined => {
+  if (valor === undefined || valor === null || valor === "") return undefined;
 
-const adicionarArrayParametros = (
-  params: URLSearchParams,
-  chave: string,
-  valores?: Array<string | number>,
-) => {
-  if (!Array.isArray(valores) || !valores.length) return;
-
-  valores.forEach((valor) => {
-    params.append(chave, String(valor));
-  });
+  const convertido = Number(valor);
+  return Number.isNaN(convertido) ? undefined : convertido;
 };
 
 const montarParametrosExportacaoConsolidado = (
   extensaoRelatorio: 1 | 4,
   filtros: ValoresFiltroRelatorioConsolidado,
 ) => {
-  const params = new URLSearchParams();
-  params.append("extensaoRelatorio", String(extensaoRelatorio));
+  const programas = filtros.programa ?? [];
+  const possuiFiltroPrograma = programas.length > 0;
+  const modalidadeNumero = paraNumeroOpcional(filtros.modalidade);
+  const semestreId =
+    modalidadeNumero === 5 ? undefined : paraNumeroOpcional(filtros.semestreId);
 
-  adicionarParametroSeDefinido(params, "anoLetivo", filtros.anoLetivo);
-  adicionarParametroSeDefinido(params, "modalidade", filtros.modalidade);
-  adicionarParametroSeDefinido(params, "dre", filtros.dre);
-  adicionarParametroSeDefinido(params, "ue", filtros.ue);
-  adicionarParametroSeDefinido(params, "bimestre", filtros.bimestre);
-  adicionarParametroSeDefinido(
-    params,
-    "componenteCurricular",
-    filtros.componenteCurricular,
-  );
-  adicionarParametroSeDefinido(params, "proficiencia", filtros.proficiencia);
-  adicionarParametroSeDefinido(params, "genero", filtros.genero);
-  adicionarParametroSeDefinido(params, "raca", filtros.raca);
-
-  adicionarArrayParametros(params, "ano", filtros.ano);
-  adicionarArrayParametros(params, "programa", filtros.programa);
-
-  if (filtros.lpSegundaLingua) {
-    params.append("lpSegundaLingua", "true");
-  }
-
-  return params;
+  return {
+    ExtensaoRelatorio: extensaoRelatorio,
+    AnoLetivo: filtros.anoLetivo,
+    Dre: filtros.dre,
+    Ue: filtros.ue,
+    Modalidade: filtros.modalidade,
+    ProficienciaId: filtros.proficiencia,
+    ComponenteCurricularId: filtros.componenteCurricular,
+    AnoTurma: filtros.ano,
+    SemestreId: semestreId,
+    BimestreId: filtros.bimestre ?? undefined,
+    GeneroId: paraNumeroOpcional(filtros.genero),
+    RacaId: paraNumeroOpcional(filtros.raca),
+    Pap: possuiFiltroPrograma ? programas.includes("pap") : undefined,
+    Aee: possuiFiltroPrograma ? programas.includes("aee") : undefined,
+    Deficiente: possuiFiltroPrograma
+      ? programas.includes("deficiente")
+      : undefined,
+    PossuiLinguaPortuguesaSegundaLingua: filtros.lpSegundaLingua,
+  };
 };
 
 const RelatorioConsolidadoExportService = async ({
@@ -72,9 +60,13 @@ const RelatorioConsolidadoExportService = async ({
     );
 
     await NovaSondagemServico.get(
-      `/sondagem/relatorio/consolidado/exportar?${params.toString()}`,
+      "/Relatorio/consolidado/bimestre/exportar",
       {
         headers: { "X-Token-Principal": token },
+        paramsSerializer: {
+          indexes: null,
+        },
+        params,
       },
     );
 

@@ -39,9 +39,30 @@ describe("RelatorioConsolidadoExportService", () => {
 
     expect(resultado).toBe(true);
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/sondagem/relatorio/consolidado/exportar?extensaoRelatorio=1&anoLetivo=2026&modalidade=1&dre=10&ue=20&bimestre=2&componenteCurricular=3&proficiencia=4&genero=5&raca=6&ano=1&ano=2&programa=pap&programa=aee&lpSegundaLingua=true",
+      "/Relatorio/consolidado/bimestre/exportar",
       {
         headers: { "X-Token-Principal": "token-teste" },
+        paramsSerializer: {
+          indexes: null,
+        },
+        params: {
+          ExtensaoRelatorio: 1,
+          AnoLetivo: 2026,
+          Dre: 10,
+          Ue: 20,
+          Modalidade: 1,
+          ProficienciaId: 4,
+          ComponenteCurricularId: 3,
+          AnoTurma: [1, 2],
+          SemestreId: undefined,
+          BimestreId: 2,
+          GeneroId: 5,
+          RacaId: 6,
+          Pap: true,
+          Aee: true,
+          Deficiente: false,
+          PossuiLinguaPortuguesaSegundaLingua: true,
+        },
       },
     );
   });
@@ -70,9 +91,30 @@ describe("RelatorioConsolidadoExportService", () => {
 
     expect(resultado).toBe(true);
     expect(NovaSondagemServico.get).toHaveBeenCalledWith(
-      "/sondagem/relatorio/consolidado/exportar?extensaoRelatorio=4&anoLetivo=2026",
+      "/Relatorio/consolidado/bimestre/exportar",
       {
         headers: { "X-Token-Principal": "token-teste" },
+        paramsSerializer: {
+          indexes: null,
+        },
+        params: {
+          ExtensaoRelatorio: 4,
+          AnoLetivo: 2026,
+          Dre: undefined,
+          Ue: undefined,
+          Modalidade: undefined,
+          ProficienciaId: undefined,
+          ComponenteCurricularId: undefined,
+          AnoTurma: [],
+          SemestreId: undefined,
+          BimestreId: undefined,
+          GeneroId: undefined,
+          RacaId: undefined,
+          Pap: undefined,
+          Aee: undefined,
+          Deficiente: undefined,
+          PossuiLinguaPortuguesaSegundaLingua: false,
+        },
       },
     );
   });

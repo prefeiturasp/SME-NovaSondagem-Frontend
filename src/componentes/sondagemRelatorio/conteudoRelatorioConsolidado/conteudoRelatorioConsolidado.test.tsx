@@ -133,7 +133,12 @@ describe("ConteudoRelatorioConsolidado", () => {
     render(<ConteudoRelatorioConsolidado />);
 
     act(() => {
+      mockFiltroProps.onDadosPorBimestresCarregados({
+        titulo: "Consolidado por bimestres",
+        questoes: [],
+      });
       mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porBimestres",
         anoLetivo: 2026,
         modalidade: 1,
         dre: 10,
@@ -166,7 +171,12 @@ describe("ConteudoRelatorioConsolidado", () => {
     render(<ConteudoRelatorioConsolidado />);
 
     act(() => {
+      mockFiltroProps.onDadosPorBimestresCarregados({
+        titulo: "Consolidado por bimestres",
+        questoes: [],
+      });
       mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porBimestres",
         anoLetivo: 2026,
         modalidade: 1,
         dre: 10,
