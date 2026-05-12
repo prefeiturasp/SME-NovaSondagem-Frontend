@@ -29,7 +29,6 @@ export const Icon = styled.i``;
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
-  const menuOculto = useSelector((store: any) => store.navegacao?.menuOculto ?? false);
   const turmaSelecionada = usuario?.turmaSelecionada;
   const turma = turmaSelecionada ? turmaSelecionada.turma : 0;
   const modalidade = usuario?.turmaSelecionada?.modalidade;
@@ -556,16 +555,14 @@ const Conteudo: React.FC = () => {
       <div className="linhaTituloBotao">
         <div className="tituloSondagem">Sondagem</div>
         <div>
-          {!menuOculto && (
-            <Button
-              id="sondagem-button-voltar"
-              className="sondagemBotaoEstilo"
-              onClick={() => {
-                voltarSondagem();
-              }}
-              icon={<Icon className={`fa fa-arrow-left iconBotaoVoltar`} />}
-            ></Button>
-          )}
+          <Button
+            id="sondagem-button-voltar"
+            className="sondagemBotaoEstilo"
+            onClick={() => {
+              voltarSondagem();
+            }}
+            icon={<Icon className={`fa fa-arrow-left iconBotaoVoltar`} />}
+          ></Button>
 
           <Button
             id="sondagem-button-cancelar"
