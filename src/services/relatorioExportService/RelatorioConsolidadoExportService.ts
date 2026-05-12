@@ -8,6 +8,26 @@ interface RelatorioConsolidadoExportParams {
   token: string;
 }
 
+const obterEndpointExportConsolidado = (agrupamentoDados?: string): string => {
+  if (agrupamentoDados === "porGenero") {
+    return "/Relatorio/consolidado/genero/exportar";
+  }
+
+  if (agrupamentoDados === "porRacas" || agrupamentoDados === "porRaca") {
+    return "/Relatorio/consolidado/raca/exportar";
+  }
+
+  if (agrupamentoDados === "porRacaGenero") {
+    return "/Relatorio/consolidado/raca-genero/exportar";
+  }
+
+  if (agrupamentoDados === "porQuestoes") {
+    return "/Relatorio/consolidado/ano/exportar";
+  }
+
+  return "/Relatorio/consolidado/bimestre/exportar";
+};
+
 const RelatorioConsolidadoExportService = async ({
   extensaoRelatorio,
   filtros,
@@ -19,7 +39,9 @@ const RelatorioConsolidadoExportService = async ({
       ...montarParametrosRelatorioConsolidado(filtros),
     };
 
-    await NovaSondagemServico.get("/Relatorio/consolidado/bimestre/exportar", {
+    const endpoint = obterEndpointExportConsolidado(filtros.agrupamentoDados);
+
+    await NovaSondagemServico.get(endpoint, {
       headers: { "X-Token-Principal": token },
       paramsSerializer: {
         indexes: null,

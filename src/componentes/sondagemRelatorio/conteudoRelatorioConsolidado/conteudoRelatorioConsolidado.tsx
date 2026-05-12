@@ -39,7 +39,14 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
 
   const podeExportarConsolidado = Boolean(
-    filtros?.agrupamentoDados === "porBimestres" && dadosPorBimestres,
+    filtros &&
+    ((filtros.agrupamentoDados === "porGenero" && dadosPorGeneros) ||
+      (filtros.agrupamentoDados === "porBimestres" && dadosPorBimestres) ||
+      (filtros.agrupamentoDados === "porRacas" && dadosPorRacas) ||
+      (filtros.agrupamentoDados === "porRacaGenero" && dadosPorRacaGenero) ||
+      ((filtros.agrupamentoDados === "porQuestoes" ||
+        !filtros.agrupamentoDados) &&
+        dados)),
   );
 
   const GerarDados = async (formato: "pdf" | "excel") => {

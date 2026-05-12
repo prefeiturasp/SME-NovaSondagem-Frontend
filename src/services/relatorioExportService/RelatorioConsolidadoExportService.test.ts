@@ -67,6 +67,82 @@ describe("RelatorioConsolidadoExportService", () => {
     );
   });
 
+  it("deve usar endpoint de gênero quando agrupamento for porGenero", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({ data: {} });
+
+    const resultado = await RelatorioConsolidadoExportService({
+      extensaoRelatorio: 1,
+      filtros: {
+        ...filtrosBase,
+        agrupamentoDados: "porGenero",
+      },
+      token: "token-teste",
+    });
+
+    expect(resultado).toBe(true);
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+      "/Relatorio/consolidado/genero/exportar",
+      expect.any(Object),
+    );
+  });
+
+  it("deve usar endpoint de raça quando agrupamento for porRacas", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({ data: {} });
+
+    const resultado = await RelatorioConsolidadoExportService({
+      extensaoRelatorio: 4,
+      filtros: {
+        ...filtrosBase,
+        agrupamentoDados: "porRacas",
+      },
+      token: "token-teste",
+    });
+
+    expect(resultado).toBe(true);
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+      "/Relatorio/consolidado/raca/exportar",
+      expect.any(Object),
+    );
+  });
+
+  it("deve usar endpoint de raça e gênero quando agrupamento for porRacaGenero", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({ data: {} });
+
+    const resultado = await RelatorioConsolidadoExportService({
+      extensaoRelatorio: 1,
+      filtros: {
+        ...filtrosBase,
+        agrupamentoDados: "porRacaGenero",
+      },
+      token: "token-teste",
+    });
+
+    expect(resultado).toBe(true);
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+      "/Relatorio/consolidado/raca-genero/exportar",
+      expect.any(Object),
+    );
+  });
+
+  it("deve usar endpoint de ano quando agrupamento for porQuestoes", async () => {
+    (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({ data: {} });
+
+    const resultado = await RelatorioConsolidadoExportService({
+      extensaoRelatorio: 4,
+      filtros: {
+        ...filtrosBase,
+        agrupamentoDados: "porQuestoes",
+      },
+      token: "token-teste",
+    });
+
+    expect(resultado).toBe(true);
+    expect(NovaSondagemServico.get).toHaveBeenCalledWith(
+      "/Relatorio/consolidado/ano/exportar",
+      expect.any(Object),
+    );
+  });
+
   it("deve omitir campos opcionais nulos/undefined e manter lpSegundaLingua", async () => {
     (NovaSondagemServico.get as jest.Mock).mockResolvedValueOnce({ data: {} });
 
