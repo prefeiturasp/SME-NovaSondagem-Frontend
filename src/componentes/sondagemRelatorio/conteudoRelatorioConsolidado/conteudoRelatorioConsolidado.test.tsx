@@ -108,6 +108,12 @@ jest.mock(
 describe("ConteudoRelatorioConsolidado", () => {
   const { useSelector } = require("react-redux");
 
+  // Mock data com pelo menos uma questão para passar na validação
+  const mockQuestao = {
+    questaoId: 1,
+    questaoNome: "Questão Teste",
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockReset.mockClear();
@@ -135,7 +141,7 @@ describe("ConteudoRelatorioConsolidado", () => {
     act(() => {
       mockFiltroProps.onDadosPorBimestresCarregados({
         titulo: "Consolidado por bimestres",
-        questoes: [],
+        questoes: [mockQuestao],
       });
       mockFiltroProps.onFiltrosAlterados({
         agrupamentoDados: "porBimestres",
@@ -173,7 +179,7 @@ describe("ConteudoRelatorioConsolidado", () => {
     act(() => {
       mockFiltroProps.onDadosPorBimestresCarregados({
         titulo: "Consolidado por bimestres",
-        questoes: [],
+        questoes: [mockQuestao],
       });
       mockFiltroProps.onFiltrosAlterados({
         agrupamentoDados: "porBimestres",
@@ -241,7 +247,7 @@ describe("ConteudoRelatorioConsolidado", () => {
     act(() => {
       mockFiltroProps.onDadosPorRacaGeneroCarregados({
         titulo: "Consolidado por raça e gênero",
-        questoes: [],
+        questoes: [mockQuestao],
       });
       mockFiltroProps.onFiltrosAlterados({
         agrupamentoDados: "porRacaGenero",
@@ -269,7 +275,7 @@ describe("ConteudoRelatorioConsolidado", () => {
     act(() => {
       mockFiltroProps.onDadosPorBimestresCarregados({
         titulo: "Consolidado por bimestres",
-        questoes: [],
+        questoes: [mockQuestao],
       });
       mockFiltroProps.onFiltrosAlterados({
         agrupamentoDados: "porBimestres",
@@ -299,7 +305,7 @@ describe("ConteudoRelatorioConsolidado", () => {
     act(() => {
       mockFiltroProps.onDadosPorRacaGeneroCarregados({
         titulo: "Consolidado por raça e gênero",
-        questoes: [],
+        questoes: [mockQuestao],
       });
       mockFiltroProps.onFiltrosAlterados({
         agrupamentoDados: "porRacaGenero",
@@ -341,7 +347,7 @@ describe("ConteudoRelatorioConsolidado", () => {
         estudantes: [],
         legenda: [],
         titulo: "Consolidado por questões",
-        questoes: [],
+        questoes: [mockQuestao],
       });
       mockFiltroProps.onFiltrosAlterados({
         agrupamentoDados: "porQuestoes",
