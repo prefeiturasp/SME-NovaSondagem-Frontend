@@ -38,15 +38,48 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
   const [isLoadingTabela, setIsLoadingTabela] = useState(false);
   const usuario = useSelector((store: any) => store.usuario);
 
+  // Funções auxiliares para verificar se os dados estão vazios
+  const temDados = (d: DadosTabelaDinamica | null): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const temDadosPorGeneros = (
+    d: DadosRelatorioConsolidadoPorGeneros | null,
+  ): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const temDadosPorBimestres = (
+    d: DadosRelatorioConsolidadoPorBimestres | null,
+  ): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const temDadosPorRacas = (
+    d: DadosRelatorioConsolidadoPorRacas | null,
+  ): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const temDadosPorRacaGenero = (
+    d: DadosRelatorioConsolidadoPorRacaGenero | null,
+  ): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
   const podeExportarConsolidado = Boolean(
     filtros &&
-    ((filtros.agrupamentoDados === "porGenero" && dadosPorGeneros) ||
-      (filtros.agrupamentoDados === "porBimestres" && dadosPorBimestres) ||
-      (filtros.agrupamentoDados === "porRacas" && dadosPorRacas) ||
-      (filtros.agrupamentoDados === "porRacaGenero" && dadosPorRacaGenero) ||
+    ((filtros.agrupamentoDados === "porGenero" &&
+      temDadosPorGeneros(dadosPorGeneros)) ||
+      (filtros.agrupamentoDados === "porBimestres" &&
+        temDadosPorBimestres(dadosPorBimestres)) ||
+      (filtros.agrupamentoDados === "porRacas" &&
+        temDadosPorRacas(dadosPorRacas)) ||
+      (filtros.agrupamentoDados === "porRacaGenero" &&
+        temDadosPorRacaGenero(dadosPorRacaGenero)) ||
       ((filtros.agrupamentoDados === "porQuestoes" ||
         !filtros.agrupamentoDados) &&
-        dados)),
+        temDados(dados))),
   );
 
   const GerarDados = async (formato: "pdf" | "excel") => {
