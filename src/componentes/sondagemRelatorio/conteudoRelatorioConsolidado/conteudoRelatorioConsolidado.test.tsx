@@ -108,6 +108,12 @@ jest.mock(
 describe("ConteudoRelatorioConsolidado", () => {
   const { useSelector } = require("react-redux");
 
+  // Mock data com pelo menos uma questão para passar na validação
+  const mockQuestao = {
+    questaoId: 1,
+    questaoNome: "Questão Teste",
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockReset.mockClear();
@@ -133,7 +139,12 @@ describe("ConteudoRelatorioConsolidado", () => {
     render(<ConteudoRelatorioConsolidado />);
 
     act(() => {
+      mockFiltroProps.onDadosPorBimestresCarregados({
+        titulo: "Consolidado por bimestres",
+        questoes: [mockQuestao],
+      });
       mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porBimestres",
         anoLetivo: 2026,
         modalidade: 1,
         dre: 10,
@@ -166,7 +177,12 @@ describe("ConteudoRelatorioConsolidado", () => {
     render(<ConteudoRelatorioConsolidado />);
 
     act(() => {
+      mockFiltroProps.onDadosPorBimestresCarregados({
+        titulo: "Consolidado por bimestres",
+        questoes: [mockQuestao],
+      });
       mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porBimestres",
         anoLetivo: 2026,
         modalidade: 1,
         dre: 10,
@@ -231,7 +247,7 @@ describe("ConteudoRelatorioConsolidado", () => {
     act(() => {
       mockFiltroProps.onDadosPorRacaGeneroCarregados({
         titulo: "Consolidado por raça e gênero",
-        questoes: [],
+        questoes: [mockQuestao],
       });
       mockFiltroProps.onFiltrosAlterados({
         agrupamentoDados: "porRacaGenero",
@@ -259,7 +275,7 @@ describe("ConteudoRelatorioConsolidado", () => {
     act(() => {
       mockFiltroProps.onDadosPorBimestresCarregados({
         titulo: "Consolidado por bimestres",
-        questoes: [],
+        questoes: [mockQuestao],
       });
       mockFiltroProps.onFiltrosAlterados({
         agrupamentoDados: "porBimestres",
@@ -276,6 +292,87 @@ describe("ConteudoRelatorioConsolidado", () => {
       expect(screen.getByTestId("tabela-bimestres-mock")).toHaveTextContent(
         "com-dados-bimestres",
       );
+    });
+  });
+
+  it("deve gerar relatório quando agrupamento for porRacaGenero", async () => {
+    (RelatorioConsolidadoExportService as jest.Mock).mockResolvedValueOnce(
+      true,
+    );
+
+    render(<ConteudoRelatorioConsolidado />);
+
+    act(() => {
+      mockFiltroProps.onDadosPorRacaGeneroCarregados({
+        titulo: "Consolidado por raça e gênero",
+        questoes: [mockQuestao],
+      });
+      mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porRacaGenero",
+        anoLetivo: 2026,
+        modalidade: 1,
+        dre: 10,
+        ue: 20,
+        componenteCurricular: 3,
+        proficiencia: 4,
+      });
+    });
+
+    fireEvent.click(screen.getByTestId("acao-gerar"));
+
+    await waitFor(() => {
+      expect(RelatorioConsolidadoExportService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          extensaoRelatorio: 1,
+          token: "token-teste",
+          filtros: expect.objectContaining({
+            agrupamentoDados: "porRacaGenero",
+          }),
+        }),
+      );
+      expect(notification.success).toHaveBeenCalled();
+    });
+  });
+
+  it("deve gerar relatório quando agrupamento for porQuestoes", async () => {
+    (RelatorioConsolidadoExportService as jest.Mock).mockResolvedValueOnce(
+      true,
+    );
+
+    render(<ConteudoRelatorioConsolidado />);
+
+    act(() => {
+      mockFiltroProps.onDadosCarregados({
+        tituloTabelaRespostas: "Consolidado por questões",
+        estudantes: [],
+        legenda: [],
+        titulo: "Consolidado por questões",
+        questoes: [mockQuestao],
+      });
+      mockFiltroProps.onFiltrosAlterados({
+        agrupamentoDados: "porQuestoes",
+        anoLetivo: 2026,
+        modalidade: 1,
+        dre: 10,
+        ue: 20,
+        componenteCurricular: 3,
+        proficiencia: 4,
+      });
+    });
+
+    fireEvent.click(screen.getByTestId("acao-gerar"));
+
+    await waitFor(() => {
+      expect(RelatorioConsolidadoExportService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          extensaoRelatorio: 1,
+          token: "token-teste",
+          filtros: expect.objectContaining({
+            agrupamentoDados: "porQuestoes",
+          }),
+        }),
+      );
+      expect(notification.success).toHaveBeenCalled();
     });
   });
 });

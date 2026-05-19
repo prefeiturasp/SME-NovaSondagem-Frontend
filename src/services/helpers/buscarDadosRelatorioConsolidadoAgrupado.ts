@@ -20,7 +20,7 @@ const paraNumeroOpcional = (
   return Number.isNaN(convertido) ? undefined : convertido;
 };
 
-const montarParametrosRelatorioConsolidado = (
+export const montarParametrosRelatorioConsolidado = (
   filtros: ValoresFiltroRelatorioConsolidado,
 ) => {
   const programas = filtros.programa ?? [];

@@ -1,5 +1,6 @@
 import NovaSondagemServico from "../../core/servico/servico";
 import type { ValoresFiltroRelatorioConsolidado } from "../../core/dto/typesRelatorio";
+import { montarParametrosRelatorioConsolidado } from "../helpers/buscarDadosRelatorioConsolidadoAgrupado";
 
 interface RelatorioConsolidadoExportParams {
   extensaoRelatorio: 1 | 4;
@@ -7,57 +8,24 @@ interface RelatorioConsolidadoExportParams {
   token: string;
 }
 
-const adicionarParametroSeDefinido = (
-  params: URLSearchParams,
-  chave: string,
-  valor: string | number | null | undefined,
-) => {
-  if (valor !== undefined && valor !== null) {
-    params.append(chave, String(valor));
-  }
-};
-
-const adicionarArrayParametros = (
-  params: URLSearchParams,
-  chave: string,
-  valores?: Array<string | number>,
-) => {
-  if (!Array.isArray(valores) || !valores.length) return;
-
-  valores.forEach((valor) => {
-    params.append(chave, String(valor));
-  });
-};
-
-const montarParametrosExportacaoConsolidado = (
-  extensaoRelatorio: 1 | 4,
-  filtros: ValoresFiltroRelatorioConsolidado,
-) => {
-  const params = new URLSearchParams();
-  params.append("extensaoRelatorio", String(extensaoRelatorio));
-
-  adicionarParametroSeDefinido(params, "anoLetivo", filtros.anoLetivo);
-  adicionarParametroSeDefinido(params, "modalidade", filtros.modalidade);
-  adicionarParametroSeDefinido(params, "dre", filtros.dre);
-  adicionarParametroSeDefinido(params, "ue", filtros.ue);
-  adicionarParametroSeDefinido(params, "bimestre", filtros.bimestre);
-  adicionarParametroSeDefinido(
-    params,
-    "componenteCurricular",
-    filtros.componenteCurricular,
-  );
-  adicionarParametroSeDefinido(params, "proficiencia", filtros.proficiencia);
-  adicionarParametroSeDefinido(params, "genero", filtros.genero);
-  adicionarParametroSeDefinido(params, "raca", filtros.raca);
-
-  adicionarArrayParametros(params, "ano", filtros.ano);
-  adicionarArrayParametros(params, "programa", filtros.programa);
-
-  if (filtros.lpSegundaLingua) {
-    params.append("lpSegundaLingua", "true");
+const obterEndpointExportConsolidado = (agrupamentoDados?: string): string => {
+  if (agrupamentoDados === "porGenero") {
+    return "/Relatorio/consolidado/genero/exportar";
   }
 
-  return params;
+  if (agrupamentoDados === "porRacas" || agrupamentoDados === "porRaca") {
+    return "/Relatorio/consolidado/raca/exportar";
+  }
+
+  if (agrupamentoDados === "porRacaGenero") {
+    return "/Relatorio/consolidado/raca-genero/exportar";
+  }
+
+  if (agrupamentoDados === "porQuestoes") {
+    return "/Relatorio/consolidado/ano/exportar";
+  }
+
+  return "/Relatorio/consolidado/bimestre/exportar";
 };
 
 const RelatorioConsolidadoExportService = async ({
@@ -66,17 +34,20 @@ const RelatorioConsolidadoExportService = async ({
   token,
 }: RelatorioConsolidadoExportParams): Promise<boolean> => {
   try {
-    const params = montarParametrosExportacaoConsolidado(
-      extensaoRelatorio,
-      filtros,
-    );
+    const params = {
+      ExtensaoRelatorio: extensaoRelatorio,
+      ...montarParametrosRelatorioConsolidado(filtros),
+    };
 
-    await NovaSondagemServico.get(
-      `/sondagem/relatorio/consolidado/exportar?${params.toString()}`,
-      {
-        headers: { "X-Token-Principal": token },
+    const endpoint = obterEndpointExportConsolidado(filtros.agrupamentoDados);
+
+    await NovaSondagemServico.get(endpoint, {
+      headers: { "X-Token-Principal": token },
+      paramsSerializer: {
+        indexes: null,
       },
-    );
+      params,
+    });
 
     return true;
   } catch (error: unknown) {

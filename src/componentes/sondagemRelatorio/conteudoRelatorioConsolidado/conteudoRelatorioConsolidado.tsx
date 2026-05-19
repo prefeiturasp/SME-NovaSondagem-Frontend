@@ -38,18 +38,52 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
   const [isLoadingTabela, setIsLoadingTabela] = useState(false);
   const usuario = useSelector((store: any) => store.usuario);
 
-  const filtrosObrigatoriosPreenchidos = Boolean(
-    filtros?.anoLetivo &&
-    filtros?.modalidade &&
-    filtros?.dre &&
-    filtros?.ue &&
-    filtros?.bimestre !== undefined &&
-    filtros?.componenteCurricular &&
-    filtros?.proficiencia,
+  // Funções auxiliares para verificar se os dados estão vazios
+  const temDados = (d: DadosTabelaDinamica | null): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const temDadosPorGeneros = (
+    d: DadosRelatorioConsolidadoPorGeneros | null,
+  ): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const temDadosPorBimestres = (
+    d: DadosRelatorioConsolidadoPorBimestres | null,
+  ): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const temDadosPorRacas = (
+    d: DadosRelatorioConsolidadoPorRacas | null,
+  ): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const temDadosPorRacaGenero = (
+    d: DadosRelatorioConsolidadoPorRacaGenero | null,
+  ): boolean => {
+    return d ? (d.questoes?.length ?? 0) > 0 : false;
+  };
+
+  const podeExportarConsolidado = Boolean(
+    filtros &&
+    ((filtros.agrupamentoDados === "porGenero" &&
+      temDadosPorGeneros(dadosPorGeneros)) ||
+      (filtros.agrupamentoDados === "porBimestres" &&
+        temDadosPorBimestres(dadosPorBimestres)) ||
+      (filtros.agrupamentoDados === "porRacas" &&
+        temDadosPorRacas(dadosPorRacas)) ||
+      (filtros.agrupamentoDados === "porRacaGenero" &&
+        temDadosPorRacaGenero(dadosPorRacaGenero)) ||
+      ((filtros.agrupamentoDados === "porQuestoes" ||
+        !filtros.agrupamentoDados) &&
+        temDados(dados))),
   );
 
   const GerarDados = async (formato: "pdf" | "excel") => {
-    if (!filtros || !filtrosObrigatoriosPreenchidos) return;
+    if (!filtros || !podeExportarConsolidado) return;
 
     setLoadingGerar(true);
     try {
@@ -142,8 +176,8 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
         onVoltar={voltarSondagem}
         onCancelar={CancelarCadastroSondagem}
         onGerar={GerarDados}
-        menuGerarDesabilitado={!filtrosObrigatoriosPreenchidos}
-        botaoGerarDesabilitado={!filtrosObrigatoriosPreenchidos || loadingGerar}
+        menuGerarDesabilitado={!podeExportarConsolidado}
+        botaoGerarDesabilitado={!podeExportarConsolidado || loadingGerar}
         loadingGerar={loadingGerar}
       />
       <Card className="CardSondagemEfeitosRelatorio">
