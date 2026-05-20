@@ -110,8 +110,22 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   const perfil = useSelector((store: any) => store.perfil?.perfilSelecionado);
 
   const usuarioEhProfessorOuCJ = () => {
-    const nomePerfil = perfil?.nomePerfil || "";
+    const nomePerfil = perfil?.nomePerfil ?? "";
     return nomePerfil === "Professor" || nomePerfil === "Professor CJ";
+  };
+
+  const obterListaDresComFiltro = (dres: SelectOption[] | null) => {
+    if (usuarioEhProfessorOuCJ()) {
+      return dres ?? [];
+    }
+    return dres ? [{ value: "todas", label: "Todas" }, ...dres] : [];
+  };
+
+  const obterListaUesComFiltro = (ues: SelectOption[] | null) => {
+    if (usuarioEhProfessorOuCJ()) {
+      return ues ?? [];
+    }
+    return ues ? [{ value: "todas", label: "Todas" }, ...ues] : [];
   };
 
   const [listaAnosLetivos, setListaAnosLetivos] = useState<SelectOption[]>([]);
@@ -391,12 +405,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       BimestreService({ token: usuario?.token, modalidade: value }),
     ]);
 
-    const listaComOpcaoTodas = usuarioEhProfessorOuCJ()
-      ? (dres ?? [])
-      : dres
-        ? [{ value: "todas", label: "Todas" }, ...dres]
-        : [];
-    setListaDres(listaComOpcaoTodas);
+    setListaDres(obterListaDresComFiltro(dres));
     setListaComponentesCurriculares(componentes ?? []);
     setListaBimestres(
       bimestres ? [{ value: null, label: "Todos" }, ...bimestres] : [],
@@ -451,12 +460,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       modalidade,
     });
 
-    const listaUesComOpcaoTodas = usuarioEhProfessorOuCJ()
-      ? (ues ?? [])
-      : ues
-        ? [{ value: "todas", label: "Todas" }, ...ues]
-        : [];
-    setListaUes(listaUesComOpcaoTodas);
+    setListaUes(obterListaUesComFiltro(ues));
     setDesabilitarUe(false);
   };
 
