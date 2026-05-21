@@ -107,6 +107,26 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   ref,
 ) => {
   const usuario = useSelector((store: any) => store.usuario);
+  const perfil = useSelector((store: any) => store.perfil?.perfilSelecionado);
+
+  const usuarioEhProfessorOuCJ = () => {
+    const nomePerfil = perfil?.nomePerfil ?? "";
+    return nomePerfil === "Professor" || nomePerfil === "Professor CJ";
+  };
+
+  const obterListaDresComFiltro = (dres: SelectOption[] | null) => {
+    if (usuarioEhProfessorOuCJ()) {
+      return dres ?? [];
+    }
+    return dres ? [{ value: "todas", label: "Todas" }, ...dres] : [];
+  };
+
+  const obterListaUesComFiltro = (ues: SelectOption[] | null) => {
+    if (usuarioEhProfessorOuCJ()) {
+      return ues ?? [];
+    }
+    return ues ? [{ value: "todas", label: "Todas" }, ...ues] : [];
+  };
 
   const [listaAnosLetivos, setListaAnosLetivos] = useState<SelectOption[]>([]);
   const [listaModalidades, setListaModalidades] = useState<SelectOption[]>([]);
@@ -385,7 +405,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       BimestreService({ token: usuario?.token, modalidade: value }),
     ]);
 
-    setListaDres(dres ? [{ value: "todas", label: "Todas" }, ...dres] : []);
+    setListaDres(obterListaDresComFiltro(dres));
     setListaComponentesCurriculares(componentes ?? []);
     setListaBimestres(
       bimestres ? [{ value: null, label: "Todos" }, ...bimestres] : [],
@@ -420,7 +440,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setDesabilitarProficiencia(true);
 
     // Se "todas" foi selecionado, não busca UEs e habilita campos seguintes
-    if (value === "todas") {
+    if (value === "todas" && !usuarioEhProfessorOuCJ()) {
       setListaUes([{ value: "todas", label: "Todas" }]);
       setDesabilitarUe(false);
       setDesabilitarBimestre(false);
@@ -440,7 +460,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       modalidade,
     });
 
-    setListaUes(ues ? [{ value: "todas", label: "Todas" }, ...ues] : []);
+    setListaUes(obterListaUesComFiltro(ues));
     setDesabilitarUe(false);
   };
 
