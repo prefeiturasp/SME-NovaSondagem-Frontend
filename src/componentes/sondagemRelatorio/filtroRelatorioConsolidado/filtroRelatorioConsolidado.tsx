@@ -68,7 +68,6 @@ const opcoesAno: SelectOption[] = [
 ];
 
 const opcoesSemestre: SelectOption[] = [
-  { value: "todas", label: "Todos" },
   { value: 1, label: "1º Semestre" },
   { value: 2, label: "2º Semestre" },
 ];
@@ -177,8 +176,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
 
   const mapearFiltrosFormulario = (): ValoresFiltroRelatorioConsolidado => {
     const valores = form.getFieldsValue();
-    const semestreId =
-      valores.semestreId === "todas" ? undefined : Number(valores.semestreId);
+    const semestreId = Number(valores.semestreId);
 
     const filtros: ValoresFiltroRelatorioConsolidado = {
       anoLetivo: valores.anoLetivo,
@@ -295,7 +293,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       bimestre: null,
       ano: undefined,
-      semestreId: "todas",
+      semestreId: 1,
       genero: "todas",
       raca: "todas",
       programa: undefined,
@@ -328,7 +326,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       bimestre: null,
       ano: undefined,
-      semestreId: "todas",
+      semestreId: 1,
       genero: "todas",
       raca: "todas",
       programa: undefined,
@@ -373,7 +371,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       proficiencia: undefined,
       bimestre: null,
       ano: undefined,
-      semestreId: "todas",
+      semestreId: 1,
       genero: "todas",
       raca: "todas",
       programa: undefined,
@@ -422,7 +420,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       ue: value === "todas" ? "todas" : undefined,
       bimestre: null,
       ano: undefined,
-      semestreId: "todas",
+      semestreId: 1,
       componenteCurricular: undefined,
       proficiencia: undefined,
       genero: "todas",
@@ -469,7 +467,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     form.setFieldsValue({
       bimestre: null,
       ano: undefined,
-      semestreId: "todas",
+      semestreId: 1,
       componenteCurricular: undefined,
       proficiencia: undefined,
       genero: "todas",
@@ -601,7 +599,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
         lpSegundaLingua: false,
         agrupamentoDados: "porQuestoes",
         bimestre: null,
-        semestreId: "todas",
+        semestreId: 1,
         genero: "todas",
         raca: "todas",
       }}
