@@ -29,7 +29,9 @@ export const Icon = styled.i``;
 
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
-  const menuOculto = useSelector((store: any) => store.navegacao?.menuOculto ?? false);
+  const menuOculto = useSelector(
+    (store: any) => store.navegacao?.menuOculto ?? false,
+  );
   const turmaSelecionada = usuario?.turmaSelecionada;
   const turma = turmaSelecionada ? turmaSelecionada.turma : 0;
   const modalidade = usuario?.turmaSelecionada?.modalidade;
@@ -435,6 +437,9 @@ const Conteudo: React.FC = () => {
             dadosFormulario[
               `linguaPortuguesaSegundaLingua_${estudanteIndex}`
             ] ?? estudante.linguaPortuguesaSegundaLingua,
+          pap: Boolean(estudante.pap),
+          aee: Boolean(estudante.aee),
+          deficiente: Boolean(estudante.possuiDeficiencia),
           respostas: estudante.coluna.map((coluna, colunaIndex) => ({
             bimestreId: coluna.idCiclo,
             questaoId:
