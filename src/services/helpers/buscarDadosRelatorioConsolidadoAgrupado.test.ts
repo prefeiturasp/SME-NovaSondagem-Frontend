@@ -62,7 +62,7 @@ describe("buscarDadosRelatorioConsolidadoAgrupado", () => {
           GeneroId: 10,
           RacaId: 11,
           Pap: true,
-          Aee: false,
+          Aee: undefined,
           Deficiente: true,
           PossuiLinguaPortuguesaSegundaLingua: true,
         },
