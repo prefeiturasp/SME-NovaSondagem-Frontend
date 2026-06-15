@@ -282,10 +282,10 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setListaRacas([opcaoTodas, ...(racas ?? [])]);
   };
 
-  const onChangeAgrupamentoDados = () => {
-    limparResultadoRelatorio();
+  const limparCamposDependentes = (
+    camposAdicionais: Partial<Record<string, unknown>> = {},
+  ) => {
     form.setFieldsValue({
-      anoLetivo: undefined,
       modalidade: undefined,
       dre: undefined,
       ue: undefined,
@@ -298,8 +298,11 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       raca: "todas",
       programa: undefined,
       lpSegundaLingua: false,
+      ...camposAdicionais,
     });
+  };
 
+  const resetarListasEControlesIniciais = () => {
     setListaModalidades([]);
     setListaDres([]);
     setListaUes([]);
@@ -316,37 +319,20 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setDesabilitarBimestre(true);
   };
 
-  const onChangeAnoLetivo = async (value: number) => {
+  const resetarFiltrosAgrupamentoEAnoLetivo = (
+    camposAdicionais: Partial<Record<string, unknown>> = {},
+  ) => {
     limparResultadoRelatorio();
-    form.setFieldsValue({
-      modalidade: undefined,
-      dre: undefined,
-      ue: undefined,
-      componenteCurricular: undefined,
-      proficiencia: undefined,
-      bimestre: null,
-      ano: undefined,
-      semestreId: 1,
-      genero: "todas",
-      raca: "todas",
-      programa: undefined,
-      lpSegundaLingua: false,
-    });
+    limparCamposDependentes(camposAdicionais);
+    resetarListasEControlesIniciais();
+  };
 
-    setListaModalidades([]);
-    setListaDres([]);
-    setListaUes([]);
-    setListaComponentesCurriculares([]);
-    setListaProficiencias([]);
-    setListaBimestres([]);
+  const onChangeAgrupamentoDados = () => {
+    resetarFiltrosAgrupamentoEAnoLetivo({ anoLetivo: undefined });
+  };
 
-    setDesabilitarModalidade(true);
-    setDesabilitarDre(true);
-    setDesabilitarUe(true);
-    setDesabilitarComponenteCurricular(true);
-    setDesabilitarProficiencia(true);
-    setDesabilitarAno(true);
-    setDesabilitarBimestre(true);
+  const onChangeAnoLetivo = async (value: number) => {
+    resetarFiltrosAgrupamentoEAnoLetivo();
 
     if (!value) return;
 
