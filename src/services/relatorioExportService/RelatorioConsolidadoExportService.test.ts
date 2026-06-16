@@ -60,7 +60,7 @@ describe("RelatorioConsolidadoExportService", () => {
           RacaId: 6,
           Pap: true,
           Aee: true,
-          Deficiente: false,
+          Deficiente: undefined,
           PossuiLinguaPortuguesaSegundaLingua: true,
         },
       },

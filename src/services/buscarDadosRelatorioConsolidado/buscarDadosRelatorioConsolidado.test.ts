@@ -63,7 +63,7 @@ describe("BuscarDadosRelatorioConsolidadoService", () => {
           GeneroId: 5,
           RacaId: 6,
           Pap: true,
-          Aee: false,
+          Aee: undefined,
           Deficiente: true,
           PossuiLinguaPortuguesaSegundaLingua: false,
         },

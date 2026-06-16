@@ -24,7 +24,9 @@ export const montarParametrosRelatorioConsolidado = (
   filtros: ValoresFiltroRelatorioConsolidado,
 ) => {
   const programas = filtros.programa ?? [];
-  const possuiFiltroPrograma = programas.length > 0;
+  const papSelecionado = programas.includes("pap");
+  const aeeSelecionado = programas.includes("aee");
+  const deficienteSelecionado = programas.includes("deficiente");
   const modalidadeNumero = paraNumeroOpcional(filtros.modalidade);
   const semestreId =
     modalidadeNumero === 5 ? undefined : paraNumeroOpcional(filtros.semestreId);
@@ -41,11 +43,9 @@ export const montarParametrosRelatorioConsolidado = (
     BimestreId: filtros.bimestre ?? undefined,
     GeneroId: paraNumeroOpcional(filtros.genero),
     RacaId: paraNumeroOpcional(filtros.raca),
-    Pap: possuiFiltroPrograma ? programas.includes("pap") : undefined,
-    Aee: possuiFiltroPrograma ? programas.includes("aee") : undefined,
-    Deficiente: possuiFiltroPrograma
-      ? programas.includes("deficiente")
-      : undefined,
+    Pap: papSelecionado ? true : undefined,
+    Aee: aeeSelecionado ? true : undefined,
+    Deficiente: deficienteSelecionado ? true : undefined,
     PossuiLinguaPortuguesaSegundaLingua: filtros.lpSegundaLingua,
   };
 };

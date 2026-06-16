@@ -684,6 +684,12 @@ describe("FiltroRelatorioConsolidado", () => {
       ).toBeInTheDocument();
     });
 
+    const selectSemestre = screen.getByTestId(
+      "sondagem-consolidado-select-semestre",
+    );
+    expect(selectSemestre).toHaveValue("1");
+    expect(selectSemestre).not.toHaveTextContent("Todos");
+
     fireEvent.change(screen.getByTestId("sondagem-consolidado-select-dre"), {
       target: { value: "10" },
     });
@@ -740,6 +746,10 @@ describe("FiltroRelatorioConsolidado", () => {
     fireEvent.change(screen.getByTestId("sondagem-consolidado-select-ue"), {
       target: { value: "20" },
     });
+
+    expect(
+      screen.getByTestId("sondagem-consolidado-select-semestre"),
+    ).toHaveValue("1");
 
     fireEvent.change(
       screen.getByTestId("sondagem-consolidado-select-semestre"),
