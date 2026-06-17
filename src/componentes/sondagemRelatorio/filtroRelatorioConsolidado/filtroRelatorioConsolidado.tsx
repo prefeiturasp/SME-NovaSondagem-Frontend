@@ -681,6 +681,13 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
               placeholder="Selecione"
               onChange={onChangeUe}
               disabled={desabilitarUe}
+              showSearch
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toString()
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
             />
           </Form.Item>
         </Col>
