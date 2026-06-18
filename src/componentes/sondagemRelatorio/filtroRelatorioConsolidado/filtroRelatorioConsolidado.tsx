@@ -124,7 +124,9 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     if (usuarioEhProfessorOuCJ()) {
       return ues ?? [];
     }
-    return ues ? [{ value: "todas", label: "Todas" }, ...ues] : [];
+    if (!ues || ues.length === 0) return [];
+    if (ues.length === 1) return ues;
+    return [{ value: "todas", label: "Todas" }, ...ues];
   };
 
   const [listaAnosLetivos, setListaAnosLetivos] = useState<SelectOption[]>([]);
