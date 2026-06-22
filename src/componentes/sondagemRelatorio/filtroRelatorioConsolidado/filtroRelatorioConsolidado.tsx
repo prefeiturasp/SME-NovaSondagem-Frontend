@@ -29,6 +29,7 @@ import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import ProficienciaService from "../../../services/proficienciaService/ProficienciaService";
 import RacaCorService from "../../../services/racaCorService/racaCorService";
 import UeService from "../../../services/ue/ueService";
+import { obterAnosTurmaPorModalidade } from "../../../services/ue/anosTurmaPorModalidade";
 import "./filtroRelatorioConsolidado.css";
 
 type SelectOption = {
@@ -456,6 +457,7 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
       dreId: value as number,
       anoLetivo,
       modalidade,
+      anosTurma: obterAnosTurmaPorModalidade(modalidade),
     });
 
     setListaUes(obterListaUesComFiltro(ues));

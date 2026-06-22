@@ -18,6 +18,7 @@ import BimestreService from "../../../services/bimestreService/bimestreService";
 import AnoLetivoService from "../../../services/anoLetivo/anoLetivoService";
 import DreService from "../../../services/dre/dreService";
 import UeService from "../../../services/ue/ueService";
+import { obterAnosTurmaPorModalidade } from "../../../services/ue/anosTurmaPorModalidade";
 import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import TurmaService from "../../../services/turma/turmaService";
 import DadosRelatorioService from "../../../services/buscarDadosRelatorio/buscarDadosRelatorio";
@@ -240,6 +241,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       dreId: value,
       anoLetivo: ano,
       modalidade,
+      anosTurma: obterAnosTurmaPorModalidade(modalidade),
     });
     if (ues) {
       setListaUEs(ues);

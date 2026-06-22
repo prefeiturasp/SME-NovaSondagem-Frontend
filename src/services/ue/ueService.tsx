@@ -6,6 +6,7 @@ interface UeParams {
   dreId: number;
   anoLetivo: number;
   modalidade?: number;
+  anosTurma?: string[];
 }
 
 interface UeResponse {
@@ -18,11 +19,16 @@ const UeService = async ({
   dreId,
   anoLetivo,
   modalidade,
+  anosTurma,
 }: UeParams): Promise<UeResponse[] | null> => {
   try {
-    const url = modalidade
-      ? `/v1/abrangencias/false/dres/${dreId}/ues?anoLetivo=${anoLetivo}&modalidade=${modalidade}`
-      : `/v1/abrangencias/false/dres/${dreId}/ues?anoLetivo=${anoLetivo}`;
+    let url = `/v1/abrangencias/false/dres/${dreId}/ues?anoLetivo=${anoLetivo}`;
+
+    if (modalidade) url += `&modalidade=${modalidade}`;
+
+    if (anosTurma?.length)
+      url += anosTurma.map((ano) => `&anosTurma=${ano}`).join("");
+
     const base = getSgpApiUrl();
 
     const resposta = await axios.get(`${base}${url}`, {
