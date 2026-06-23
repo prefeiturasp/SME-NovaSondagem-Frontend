@@ -31,6 +31,7 @@ import RacaCorService from "../../../services/racaCorService/racaCorService";
 import UeService from "../../../services/ue/ueService";
 import { obterAnosTurmaPorModalidade } from "../../../services/ue/anosTurmaPorModalidade";
 import "./filtroRelatorioConsolidado.css";
+import { filtrarModalidadesPermitidas } from "~/services/modalidade/filtrarModalidadesPermitidas";
 
 type SelectOption = {
   value: number | string | null;
@@ -168,12 +169,6 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     modalidadeSelecionada() === 3
       ? opcoesPrograma.filter((opcao) => opcao.value !== "pap")
       : opcoesPrograma;
-
-  const filtrarModalidadesPermitidas = (modalidades: SelectOption[]) =>
-    modalidades.filter((modalidade) => {
-      const id = Number(modalidade.value);
-      return id === 3 || id === 5;
-    });
 
   const mapearFiltrosFormulario = (): ValoresFiltroRelatorioConsolidado => {
     const valores = form.getFieldsValue();

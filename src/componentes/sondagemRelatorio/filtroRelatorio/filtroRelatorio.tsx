@@ -23,6 +23,7 @@ import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import TurmaService from "../../../services/turma/turmaService";
 import DadosRelatorioService from "../../../services/buscarDadosRelatorio/buscarDadosRelatorio";
 import { validarTurma } from "../../../services/turmaService";
+import { filtrarModalidadesPermitidas } from "~/services/modalidade/filtrarModalidadesPermitidas";
 
 type FiltroRelatorioProps = {
   form: FormInstance;
@@ -163,10 +164,9 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       anoLetivo: value,
     });
 
-    if (modalidades) {
-      setListaModalidades(modalidades);
-      setDesabilitarModalidade(false);
-    }
+    const modalidadesPermitidas = filtrarModalidadesPermitidas(modalidades ?? []);
+    setListaModalidades(modalidadesPermitidas);
+    setDesabilitarModalidade(modalidadesPermitidas.length === 0);
   };
 
   const onChangeModalidade = async (value: number | string | null) => {
