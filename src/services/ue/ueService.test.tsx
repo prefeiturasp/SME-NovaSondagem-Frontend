@@ -59,6 +59,39 @@ describe("UeService", () => {
     expect(resultado).toEqual([{ value: 10, label: "UE Modalidade" }]);
   });
 
+  it("deve enviar anosTurma como chaves repetidas quando informado", async () => {
+    (axios.get as jest.Mock).mockResolvedValueOnce({
+      data: [{ codigo: 1, nome: "UE A" }],
+    });
+
+    const resultado = await UeService({
+      token,
+      dreId,
+      anoLetivo,
+      modalidade,
+      anosTurma: ["1", "2", "3"],
+    });
+
+    expect(axios.get).toHaveBeenCalledWith(
+      `${baseUrl}/v1/abrangencias/false/dres/${dreId}/ues?anoLetivo=${anoLetivo}&modalidade=${modalidade}&anosTurma=1&anosTurma=2&anosTurma=3`,
+      expect.any(Object),
+    );
+    expect(resultado).toEqual([{ value: 1, label: "UE A" }]);
+  });
+
+  it("não deve enviar anosTurma quando não informado", async () => {
+    (axios.get as jest.Mock).mockResolvedValueOnce({
+      data: [{ codigo: 1, nome: "UE A" }],
+    });
+
+    await UeService({ token, dreId, anoLetivo, modalidade });
+
+    expect(axios.get).toHaveBeenCalledWith(
+      `${baseUrl}/v1/abrangencias/false/dres/${dreId}/ues?anoLetivo=${anoLetivo}&modalidade=${modalidade}`,
+      expect.any(Object),
+    );
+  });
+
   it("deve retornar null quando API retornar lista vazia", async () => {
     (axios.get as jest.Mock).mockResolvedValueOnce({
       data: [],
