@@ -22,21 +22,26 @@ const UeService = async ({
   anosTurma,
 }: UeParams): Promise<UeResponse[] | null> => {
   try {
-    let url = `/v1/abrangencias/false/dres/${dreId}/ues?anoLetivo=${anoLetivo}`;
-
-    if (modalidade) url += `&modalidade=${modalidade}`;
-
-    if (anosTurma?.length)
-      url += anosTurma.map((ano) => `&anosTurma=${ano}`).join("");
-
     const base = getSgpApiUrl();
-
-    const resposta = await axios.get(`${base}${url}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
+    const params = new URLSearchParams({
+      anoLetivo: String(anoLetivo),
     });
+
+    if (modalidade) {
+      params.append("modalidade", String(modalidade));
+    }
+
+    anosTurma?.forEach((ano) => params.append("anosTurma", ano));
+
+    const resposta = await axios.get(
+      `${base}/v1/abrangencias/false/dres/${dreId}/ues?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      },
+    );
 
     if (resposta?.data?.length > 0) {
       const dadosMapeados = resposta.data

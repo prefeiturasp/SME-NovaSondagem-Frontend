@@ -125,6 +125,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       modalidade,
       anoLetivo,
       periodo,
+      anosTurma: obterAnosTurmaPorModalidade(modalidade),
     });
 
     if (turmas) {
@@ -389,10 +390,10 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
 
     if (selectedModalidade === MODALIDADE_INFANTIL) {
-      setDesabilitarBimestre(false);
-      setDesabilitarSemestre(true);
-      obterBimestres(usuario?.token);
-    } else {
+    setDesabilitarBimestre(false);
+    setDesabilitarSemestre(true);
+    obterBimestres(usuario?.token);
+    } else {      
       setDesabilitarSemestre(false);
       setDesabilitarBimestre(true);
       setListaSemestres(OPCOES_SEMESTRE);
