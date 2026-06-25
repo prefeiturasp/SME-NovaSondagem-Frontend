@@ -361,6 +361,7 @@ const Conteudo: React.FC = () => {
 
             return {
               corFundo: legenda.corFundo,
+              corTexto: legenda.corTexto,
               descricaoLegenda: legenda.descricaoOpcaoResposta,
               textoLegenda: legenda.legenda,
               tipo,
