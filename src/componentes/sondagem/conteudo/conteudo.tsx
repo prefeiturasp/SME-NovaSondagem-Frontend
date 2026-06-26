@@ -370,7 +370,7 @@ const Conteudo: React.FC = () => {
         );
 
       if (
-        modalidade === Modalidade.EJA &&
+        Number(modalidade) === Modalidade.EJA &&
         profId === Proficiencia.CapacidadeLeitora
       )
         setDadosLegenda(LEGENDA_EJA_CAPACIDADE_LEITORA);
