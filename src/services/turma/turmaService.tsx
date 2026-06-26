@@ -8,6 +8,7 @@ interface TurmaParams {
   anoLetivo: number;
   periodo?: number;
   consideraNovosAnosInfantil?: boolean;
+  anosTurma?: string[];
 }
 
 interface TurmaResponse {
@@ -23,6 +24,7 @@ const TurmaService = async ({
   anoLetivo,
   periodo,
   consideraNovosAnosInfantil = true,
+  anosTurma,
 }: TurmaParams): Promise<TurmaResponse[] | null> => {
   try {
     const base = getSgpApiUrl();
@@ -35,6 +37,8 @@ const TurmaService = async ({
     if (periodo !== undefined) {
       params.append("periodo", String(periodo));
     }
+
+    anosTurma?.forEach((ano) => params.append("anosTurma", ano));
 
     const resposta = await axios.get(
       `${base}/v1/abrangencias/false/dres/ues/${urId}/turmas?${params.toString()}`,

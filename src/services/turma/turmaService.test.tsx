@@ -90,6 +90,44 @@ describe("TurmaService", () => {
     expect(resultado).toEqual([{ value: 20, label: "4ºC", ano: 4 }]);
   });
 
+  it("deve enviar anosTurma como chaves repetidas quando informado", async () => {
+    (axios.get as jest.Mock).mockResolvedValueOnce({
+      data: [{ codigo: 1, nome: "1ºA", ano: 1 }],
+    });
+
+    const resultado = await TurmaService({
+      token,
+      urId,
+      modalidade,
+      anoLetivo,
+      anosTurma: ["1", "2", "3"],
+    });
+
+    expect(axios.get).toHaveBeenCalledWith(
+      `${baseUrl}/v1/abrangencias/false/dres/ues/${urId}/turmas?anoLetivo=${anoLetivo}&modalidade=${modalidade}&consideraNovosAnosInfantil=true&anosTurma=1&anosTurma=2&anosTurma=3`,
+      expect.any(Object),
+    );
+    expect(resultado).toEqual([{ value: 1, label: "1ºA", ano: 1 }]);
+  });
+
+  it("não deve enviar anosTurma quando não informado", async () => {
+    (axios.get as jest.Mock).mockResolvedValueOnce({
+      data: [{ codigo: 2, nome: "2ºA", ano: 2 }],
+    });
+
+    await TurmaService({
+      token,
+      urId,
+      modalidade,
+      anoLetivo,
+    });
+
+    expect(axios.get).toHaveBeenCalledWith(
+      `${baseUrl}/v1/abrangencias/false/dres/ues/${urId}/turmas?anoLetivo=${anoLetivo}&modalidade=${modalidade}&consideraNovosAnosInfantil=true`,
+      expect.any(Object),
+    );
+  });
+
   it("deve retornar null quando API retornar lista vazia", async () => {
     (axios.get as jest.Mock).mockResolvedValueOnce({
       data: [],
