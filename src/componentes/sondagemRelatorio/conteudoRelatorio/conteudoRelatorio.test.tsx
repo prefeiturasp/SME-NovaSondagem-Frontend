@@ -250,7 +250,7 @@ describe("ConteudoRelatorio", () => {
 
     await waitFor(() => {
       const legendas = screen.getByTestId("legendas-relatorio");
-      expect(legendas).toHaveTextContent('"dataLen":6');
+      expect(legendas).toHaveTextContent('"dataLen":7');
       expect(legendas).toHaveTextContent('"first":"Localização"');
       expect(legendas).toHaveTextContent('"ano":9');
       expect(legendas).toHaveTextContent('"proficienciaId":6');
