@@ -25,7 +25,9 @@ const BuscarDadosRelatorioConsolidadoService = async ({
 }: BuscarDadosRelatorioConsolidadoParams): Promise<DadosTabelaDinamica | null> => {
   try {
     const programas = filtros.programa ?? [];
-    const possuiFiltroPrograma = programas.length > 0;
+    const papSelecionado = programas.includes("pap");
+    const aeeSelecionado = programas.includes("aee");
+    const deficienteSelecionado = programas.includes("deficiente");
     const generoId = paraNumeroOpcional(filtros.genero);
     const racaId = paraNumeroOpcional(filtros.raca);
     const modalidadeNumero = paraNumeroOpcional(filtros.modalidade);
@@ -53,11 +55,9 @@ const BuscarDadosRelatorioConsolidadoService = async ({
           BimestreId: filtros.bimestre ?? undefined,
           GeneroId: generoId,
           RacaId: racaId,
-          Pap: possuiFiltroPrograma ? programas.includes("pap") : undefined,
-          Aee: possuiFiltroPrograma ? programas.includes("aee") : undefined,
-          Deficiente: possuiFiltroPrograma
-            ? programas.includes("deficiente")
-            : undefined,
+          Pap: papSelecionado ? true : undefined,
+          Aee: aeeSelecionado ? true : undefined,
+          Deficiente: deficienteSelecionado ? true : undefined,
           PossuiLinguaPortuguesaSegundaLingua: filtros.lpSegundaLingua,
         },
       },
