@@ -132,7 +132,7 @@ describe("FiltroRelatorio - branches extras", () => {
       { value: 2026, label: "2026" },
     ]);
     (ModalidadeService as jest.Mock).mockResolvedValue([
-      { value: 1, label: "Fundamental" },
+      { value: 5, label: "Fundamental" },
     ]);
     (DreService as jest.Mock).mockResolvedValue([{ value: 10, label: "DRE" }]);
     (UeService as jest.Mock).mockResolvedValue([{ value: 20, label: "UE" }]);
@@ -181,7 +181,7 @@ describe("FiltroRelatorio - branches extras", () => {
     renderWithRef();
 
     await changeSelect("sondagem-select-ano-letivo", 2026);
-    await changeSelect("sondagem-select-modalidade", 1);
+    await changeSelect("sondagem-select-modalidade", 5);
     await changeSelect("sondagem-select-dre", 10);
     await changeSelect("sondagem-select-ue", 20);
     await changeSelect("sondagem-select-turma", 30);
@@ -189,7 +189,7 @@ describe("FiltroRelatorio - branches extras", () => {
     await waitFor(() => {
       expect(ComponenteCurricularService).toHaveBeenCalledWith({
         token: "fake-token",
-        modalidade: 1,
+        modalidade: 5,
       });
 
       const componenteSelect = screen.getByTestId(

@@ -18,10 +18,12 @@ import BimestreService from "../../../services/bimestreService/bimestreService";
 import AnoLetivoService from "../../../services/anoLetivo/anoLetivoService";
 import DreService from "../../../services/dre/dreService";
 import UeService from "../../../services/ue/ueService";
+import { obterAnosTurmaPorModalidade } from "../../../services/ue/anosTurmaPorModalidade";
 import ModalidadeService from "../../../services/modalidade/modalidadeService";
 import TurmaService from "../../../services/turma/turmaService";
 import DadosRelatorioService from "../../../services/buscarDadosRelatorio/buscarDadosRelatorio";
 import { validarTurma } from "../../../services/turmaService";
+import { filtrarModalidadesPermitidas } from "~/services/modalidade/filtrarModalidadesPermitidas";
 
 type FiltroRelatorioProps = {
   form: FormInstance;
@@ -123,6 +125,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       modalidade,
       anoLetivo,
       periodo,
+      anosTurma: obterAnosTurmaPorModalidade(modalidade),
     });
 
     if (turmas) {
@@ -162,10 +165,9 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       anoLetivo: value,
     });
 
-    if (modalidades) {
-      setListaModalidades(modalidades);
-      setDesabilitarModalidade(false);
-    }
+    const modalidadesPermitidas = filtrarModalidadesPermitidas(modalidades ?? []);
+    setListaModalidades(modalidadesPermitidas);
+    setDesabilitarModalidade(modalidadesPermitidas.length === 0);
   };
 
   const onChangeModalidade = async (value: number | string | null) => {
@@ -240,6 +242,7 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       dreId: value,
       anoLetivo: ano,
       modalidade,
+      anosTurma: obterAnosTurmaPorModalidade(modalidade),
     });
     if (ues) {
       setListaUEs(ues);
@@ -387,10 +390,10 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
 
     if (selectedModalidade === MODALIDADE_INFANTIL) {
-      setDesabilitarBimestre(false);
-      setDesabilitarSemestre(true);
-      obterBimestres(usuario?.token);
-    } else {
+    setDesabilitarBimestre(false);
+    setDesabilitarSemestre(true);
+    obterBimestres(usuario?.token);
+    } else {      
       setDesabilitarSemestre(false);
       setDesabilitarBimestre(true);
       setListaSemestres(OPCOES_SEMESTRE);
