@@ -161,9 +161,16 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
         .ant-select.select-colorido-${uniqueId} .ant-select-selection-search-input {
           color: ${textColor} !important;
         }
-        .ant-select.select-colorido-${uniqueId} .ant-select-arrow,
-        .ant-select.select-colorido-${uniqueId} .ant-select-clear {
+        .ant-select.select-colorido-${uniqueId} .ant-select-arrow {
           display: none !important;
+        }
+        .ant-select.select-colorido-${uniqueId} .ant-select-clear {
+          background-color: ${backgroundColor} !important;
+          color: ${textColor} !important;
+          opacity: 0.7;
+        }
+        .ant-select.select-colorido-${uniqueId} .ant-select-clear:hover {
+          opacity: 1;
         }
         .ant-select.select-colorido-${uniqueId}.ant-select-disabled .ant-select-selector {
           opacity: 0.6 !important;
