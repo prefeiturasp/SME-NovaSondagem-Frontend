@@ -1303,14 +1303,24 @@ describe("Conteudo", () => {
       });
     });
 
-    it("deve exibir mensagem de erro quando falhar", async () => {
+    it.each([
+      [{ message: "Erro ao salvar" }, "Erro ao salvar"],
+      [
+        {
+          mensagem:
+            "Não foi possível salvar as respostas, pois o período para preenchimento está encerrado.",
+        },
+        "Não foi possível salvar as respostas, pois o período para preenchimento está encerrado.",
+      ],
+    ])("deve exibir a mensagem de erro retornada pela API", async (
+      dadosErro,
+      mensagemEsperada,
+    ) => {
       mockGetQuestionarioComSalvar();
 
       (NovaSondagemServico.post as jest.Mock).mockRejectedValue({
         response: {
-          data: {
-            message: "Erro ao salvar",
-          },
+          data: dadosErro,
         },
       });
 
@@ -1388,7 +1398,7 @@ describe("Conteudo", () => {
         expect(notification.error).toHaveBeenCalledWith(
           expect.objectContaining({
             message: "Erro ao salvar sondagem",
-            description: "Erro ao salvar",
+            description: mensagemEsperada,
           }),
         );
       });
