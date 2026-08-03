@@ -167,9 +167,14 @@ const Conteudo: React.FC = () => {
     }
 
     try {
+      const ehEja = Number(modalidade) === Modalidade.EJA;
+
       const resposta = await NovaSondagemServico.get("/Bimestre", {
         headers: { "X-Token-Principal": usuario?.token },
-        params: { modalidade },
+        params: {
+          modalidade,
+          ...(ehEja ? { semestre: turmaSelecionada?.periodo } : {}),
+        },
       });
 
       if (resposta?.data?.length > 0) {
@@ -192,7 +197,7 @@ const Conteudo: React.FC = () => {
       console.error("Erro ao obter bimestres:", error);
       message.error("Erro ao carregar dados do bimestre.");
     }
-  }, [modalidade, usuario?.token]);
+  }, [modalidade, usuario?.token, turmaSelecionada?.periodo]);
 
   const resetando = useCallback(() => {
     formFiltro.resetFields();
