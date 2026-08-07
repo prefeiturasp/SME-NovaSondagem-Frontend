@@ -347,6 +347,7 @@ const Conteudo: React.FC = () => {
   ) => {
     const disciplinaId = componenteCurricularId ?? disciplinaSelecionada;
     const profId = proficienciaId ?? proficienciaSelecionada;
+    const ehEja = Number(modalidade) === Modalidade.EJA;
 
     try {
       const resposta = await NovaSondagemServico.get("/Questionario", {
@@ -358,6 +359,7 @@ const Conteudo: React.FC = () => {
           Modalidade: modalidade,
           Ano: ano,
           BimestreId: bimestreId ?? undefined,
+          ...(ehEja ? { SemestreId: turmaSelecionada?.periodo } : {}),
         },
       });
 
