@@ -586,6 +586,7 @@ describe("FiltroRelatorio", () => {
     expect(BimestreService).toHaveBeenCalledWith({
       token: "fake-token",
       modalidade: 3,
+      semestreId: 2,
     });
     expect(screen.getByRole("option", { name: "1º Bimestre" })).toHaveValue(
       "1",
@@ -715,6 +716,7 @@ describe("FiltroRelatorio", () => {
     expect(BimestreService).toHaveBeenCalledWith({
       token: "fake-token",
       modalidade: 3,
+      semestreId: 2,
     });
   });
 });
