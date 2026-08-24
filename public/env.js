@@ -1,5 +1,5 @@
 window.__ENV__ = {
-  VITE_NOVA_SONDAGEM_API: "${VITE_NOVA_SONDAGEM_API}",
-  VITE_NOVA_SONDAGEM_VERSAO: "${VITE_NOVA_SONDAGEM_VERSAO}",
-  VITE_SGP_API: "${VITE_SGP_API}",
+  VITE_NOVA_SONDAGEM_API: "https://hom-novasondagem.sme.prefeitura.sp.gov.br/api",
+  VITE_NOVA_SONDAGEM_VERSAO: "1.0",
+  VITE_SGP_API: "https://hom-novosgp.sme.prefeitura.sp.gov.br/api"
 };

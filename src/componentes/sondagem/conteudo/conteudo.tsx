@@ -6,8 +6,6 @@ import {
   Select,
   Row,
   Col,
-  message,
-  notification,
   Spin,
 } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
@@ -24,6 +22,12 @@ import NovaSondagemServico from "../../../core/servico/servico";
 import { Auditoria } from "../auditoria/auditoria";
 import { validarTurma } from "../../../services/turmaService";
 import styled from "styled-components";
+import {
+  msgError,
+  notifyError,
+  notifySuccess,
+  notifyWarning,
+} from "../../../core/config/antd-alerts";
 
 export const Icon = styled.i``;
 
@@ -124,7 +128,7 @@ const Conteudo: React.FC = () => {
       }
     } catch (error: any) {
       console.error("Erro ao obter disciplinas:", error);
-      message.error("Erro ao carregar dados da disciplina.");
+      msgError("Erro ao carregar dados da disciplina.");
     }
   }, [formFiltro, modalidade]);
 
@@ -155,7 +159,7 @@ const Conteudo: React.FC = () => {
         }
       } catch (error: any) {
         console.error("Erro ao obter proficiência:", error);
-        message.error("Erro ao carregar dados da proficiencia.");
+        msgError("Erro ao carregar dados da proficiencia.");
       }
     },
     [formFiltro, usuario?.token, modalidade],
@@ -190,7 +194,7 @@ const Conteudo: React.FC = () => {
       }
     } catch (error: any) {
       console.error("Erro ao obter bimestres:", error);
-      message.error("Erro ao carregar dados do bimestre.");
+      msgError("Erro ao carregar dados do bimestre.");
     }
   }, [modalidade, usuario?.token]);
 
@@ -390,14 +394,14 @@ const Conteudo: React.FC = () => {
       console.error("Erro ao buscar dados da lista:", error);
 
       if (error.response?.status === 404) {
-        notification.warning({
+        notifyWarning({
           message: "Dados não encontrados",
           description: error.response?.data?.message,
           duration: 5,
           placement: "topRight",
         });
       } else if (error.code === "ERR_NETWORK" || !error.response) {
-        notification.error({
+        notifyError({
           message: "Erro de conexão",
           description:
             "Não foi possível conectar ao servidor. Verifique sua conexão ou tente novamente mais tarde.",
@@ -405,7 +409,7 @@ const Conteudo: React.FC = () => {
           placement: "topRight",
         });
       } else {
-        message.error("Erro ao carregar dados da sondagem. Tente novamente.");
+        msgError("Erro ao carregar dados da sondagem. Tente novamente.");
       }
     }
   };
@@ -477,7 +481,7 @@ const Conteudo: React.FC = () => {
       });
 
       if (resposta.status === 200) {
-        notification.success({
+        notifySuccess({
           message: "Sondagem salva com sucesso!",
           description:
             "Os dados da sondagem foram salvos e estão disponíveis para consulta.",
@@ -503,7 +507,7 @@ const Conteudo: React.FC = () => {
             .join("\n")
         : null;
 
-      notification.error({
+      notifyError({
         message: "Erro ao salvar sondagem",
         description: errorDetails ?? errorMessage,
         duration: 5,

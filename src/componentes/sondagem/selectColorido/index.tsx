@@ -120,19 +120,6 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
       }
     };
 
-    const optionRender = (option: any) => {
-      return (
-        <div
-          style={{
-            padding: "8px 12px",
-            borderLeft: "4px solid transparent",
-          }}
-        >
-          {option.data.label}
-        </div>
-      );
-    };
-
     useEffect(() => {
       if (value !== null && value !== undefined) {
         const colors = getColorByValue(value);
@@ -184,14 +171,15 @@ const SelectColorido = forwardRef<any, SelectColoridoProps>(
           showSearch
           allowClear
           filterOption={filterOption}
-          optionRender={optionRender}
           {...props}
           value={value}
           onChange={handleChange}
-          onOpenChange={handleOpenChange}
+          onDropdownVisibleChange={handleOpenChange}
           onInputKeyDown={handleInputKeyDown}
           onKeyDown={onKeyDown}
-          classNames={{ popup: { root: `select-colorido-dropdown` } } as any}
+          popupClassName={`select-colorido-dropdown ${
+            (props as { popupClassName?: string }).popupClassName ?? ""
+          }`}
           className={`select-colorido select-colorido-${uniqueId} ${
             props.className ?? ""
           }`}

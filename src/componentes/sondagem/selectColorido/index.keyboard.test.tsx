@@ -9,7 +9,7 @@ jest.mock("antd", () => {
   Empty.PRESENTED_IMAGE_SIMPLE = "simple";
 
   const Select = React.forwardRef(
-    ({ onOpenChange, onInputKeyDown, className }: any, ref: any) => {
+    ({ onDropdownVisibleChange, onInputKeyDown, className }: any, ref: any) => {
       React.useImperativeHandle(ref, () => ({
         focus: jest.fn(),
         blur: jest.fn(),
@@ -17,7 +17,10 @@ jest.mock("antd", () => {
 
       return (
         <div className={className}>
-          <button data-testid="open" onClick={() => onOpenChange?.(true)}>
+          <button
+            data-testid="open"
+            onClick={() => onDropdownVisibleChange?.(true)}
+          >
             abrir
           </button>
           <input data-testid="input" onKeyDown={onInputKeyDown} />

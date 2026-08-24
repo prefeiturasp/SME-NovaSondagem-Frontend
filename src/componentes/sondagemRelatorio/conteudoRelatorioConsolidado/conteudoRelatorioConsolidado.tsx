@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Card, Form, notification } from "antd";
+import { Card, Form } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorioConsolidado from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
 import type { FiltroRelatorioConsolidadoRef } from "../filtroRelatorioConsolidado/filtroRelatorioConsolidado";
@@ -19,6 +19,7 @@ import type {
 } from "../../../core/dto/typesRelatorio";
 import RelatorioConsolidadoExportService from "../../../services/relatorioExportService/RelatorioConsolidadoExportService";
 import CabecalhoRelatorioAcoes from "../cabecalhoRelatorioAcoes/cabecalhoRelatorioAcoes";
+import { notifyError, notifySuccess } from "../../../core/config/antd-alerts";
 
 const ConteudoRelatorioConsolidado: React.FC = () => {
   const [formFiltro] = Form.useForm();
@@ -95,14 +96,14 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
       });
 
       if (sucesso) {
-        notification.success({
+        notifySuccess({
           message: "Sucesso",
           description:
             "Solicitação de geração do relatório consolidado gerada com sucesso. Em breve você receberá uma notificação com o resultado.",
           duration: 4,
         });
       } else {
-        notification.error({
+        notifyError({
           message: "Erro",
           description: "Falha ao gerar relatório consolidado. Tente novamente.",
           duration: 4,
@@ -110,7 +111,7 @@ const ConteudoRelatorioConsolidado: React.FC = () => {
       }
     } catch (error) {
       console.error("Erro ao gerar relatório consolidado:", error);
-      notification.error({
+      notifyError({
         message: "Erro",
         description: "Ocorreu um erro ao gerar o relatório consolidado.",
         duration: 4,
