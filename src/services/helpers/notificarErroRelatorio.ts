@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { notifyError } from "../../core/config/antd-alerts";
 
 type ApiErrorData = {
   title?: string;
@@ -48,7 +48,7 @@ export const notificarErroRelatorio = ({
   const mensagemErro = dadosErro?.title ?? dadosErro?.message ?? mensagemPadrao;
   const detalhesErro = formatarDetalhesErro(dadosErro?.errors);
 
-  notification.error({
+  notifyError({
     message: tituloNotificacao,
     description: detalhesErro ?? mensagemErro,
     duration: 5,

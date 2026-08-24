@@ -4,7 +4,7 @@ import { Button, Card } from "antd";
 const SemAcesso: React.FC = () => {
   return (
     <div style={styles.container}>
-      <Card variant="borderless" style={styles.card}>
+      <Card bordered={false} style={styles.card}>
         <div style={styles.imageContainer}>
           <img
             src="/acesso_negado.svg"

@@ -1,12 +1,15 @@
 import React from "react";
 import "./relatorio.css";
 import ConteudoRelatorioConsolidado from "../../componentes/sondagemRelatorio/conteudoRelatorioConsolidado/conteudoRelatorioConsolidado";
+import { AntdAppProvider } from "../../core/config/antd-app-provider";
 
 const RelatorioConsolidado: React.FC = () => {
   return (
-    <div className="classtudoRelatorio">
-      <ConteudoRelatorioConsolidado />
-    </div>
+    <AntdAppProvider>
+      <div className="classtudoRelatorio">
+        <ConteudoRelatorioConsolidado />
+      </div>
+    </AntdAppProvider>
   );
 };
 
