@@ -499,6 +499,7 @@ const Conteudo: React.FC = () => {
       const errorMessage =
         error.response?.data?.title ??
         error.response?.data?.message ??
+        error.response?.data?.mensagem ??
         "Erro ao salvar a sondagem. Tente novamente.";
 
       const errorDetails = error.response?.data?.errors
