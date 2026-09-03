@@ -384,7 +384,14 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
       setDesabilitarSemestre(false);
 
       if (proficienciaSelecionada !== null) {
-        obterBimestres(usuario?.token, MODALIDADE_EJA);
+        const semestreSelecionado = normalizarNumero(
+          form.getFieldValue("semestre"),
+        );
+        obterBimestres(
+          usuario?.token,
+          MODALIDADE_EJA,
+          semestreSelecionado ?? undefined,
+        );
       }
       return;
     }
@@ -506,10 +513,14 @@ const FiltroRelatorioInner: React.ForwardRefRenderFunction<
     }
   };
 
-  const obterBimestres = async (token: string, modalidade?: number) => {
+  const obterBimestres = async (
+    token: string,
+    modalidade?: number,
+    semestreId?: number,
+  ) => {
     const resposta = await BimestreService({
       token,
-      ...(modalidade === MODALIDADE_EJA ? { modalidade } : {}),
+      ...(modalidade === MODALIDADE_EJA ? { modalidade, semestreId } : {}),
     });
 
     if (resposta) {

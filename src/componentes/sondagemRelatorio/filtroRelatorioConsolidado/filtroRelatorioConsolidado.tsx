@@ -38,6 +38,8 @@ type SelectOption = {
   label: string;
 };
 
+const MODALIDADE_EJA = 3;
+
 export type FiltroRelatorioConsolidadoRef = {
   reset: () => void;
 };
@@ -163,12 +165,12 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
   };
 
   const modalidadeSelecionada = () => Number(form.getFieldValue("modalidade"));
-  const modalidadeEhEja = () => modalidadeSelecionada() === 3;
+  const modalidadeEhEja = () => modalidadeSelecionada() === MODALIDADE_EJA;
 
   const anoDeveFicarDesabilitado = () => modalidadeEhEja();
 
   const opcoesProgramaDisponiveis =
-    modalidadeSelecionada() === 3
+    modalidadeSelecionada() === MODALIDADE_EJA
       ? opcoesPrograma.filter((opcao) => opcao.value !== "pap")
       : opcoesPrograma;
 
@@ -384,7 +386,13 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
         token: usuario?.token,
         modalidade: String(value),
       }),
-      BimestreService({ token: usuario?.token, modalidade: value }),
+      BimestreService({
+        token: usuario?.token,
+        modalidade: value,
+        ...(Number(value) === MODALIDADE_EJA
+          ? { semestreId: form.getFieldValue("semestreId") }
+          : {}),
+      }),
     ]);
 
     setListaDres(obterListaDresComFiltro(dres));
@@ -490,8 +498,26 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
     setDesabilitarProficiencia(true);
   };
 
-  const onChangeSemestre = () => {
+  const onChangeSemestre = async (value: number) => {
     limparResultadoRelatorio();
+    form.setFieldsValue({ bimestre: null });
+    setListaBimestres([]);
+    setDesabilitarBimestre(true);
+
+    const modalidade = form.getFieldValue("modalidade");
+    if (modalidade) {
+      const bimestres = await BimestreService({
+        token: usuario?.token,
+        modalidade,
+        semestreId: value,
+      });
+
+      setListaBimestres(
+        bimestres ? [{ value: null, label: "Todos" }, ...bimestres] : [],
+      );
+      setDesabilitarBimestre(!bimestres || bimestres.length === 0);
+    }
+
     void tentarBuscarDadosConsolidado();
   };
 
@@ -520,7 +546,13 @@ const FiltroRelatorioConsolidadoInner: React.ForwardRefRenderFunction<
         idDisciplina: value,
         modalidade,
       }),
-      BimestreService({ token: usuario?.token, modalidade }),
+      BimestreService({
+        token: usuario?.token,
+        modalidade,
+        ...(modalidadeEhEja()
+          ? { semestreId: form.getFieldValue("semestreId") }
+          : {}),
+      }),
     ]);
 
     setListaProficiencias(proficiencias ?? []);
