@@ -153,6 +153,7 @@ describe("ConteudoRelatorioConsolidado", () => {
         ano: [1],
         componenteCurricular: 3,
         proficiencia: 4,
+        semestreId: 1,
       });
     });
 
@@ -190,6 +191,7 @@ describe("ConteudoRelatorioConsolidado", () => {
         bimestre: 2,
         componenteCurricular: 3,
         proficiencia: 4,
+        semestreId: 1,
       });
     });
 
@@ -228,6 +230,7 @@ describe("ConteudoRelatorioConsolidado", () => {
         ano: [1],
         componenteCurricular: 3,
         proficiencia: 4,
+        semestreId: 1,
       });
     });
 
@@ -259,6 +262,7 @@ describe("ConteudoRelatorioConsolidado", () => {
         ano: [1],
         componenteCurricular: 3,
         proficiencia: 4,
+        semestreId: 1,
       });
     });
 
@@ -315,6 +319,7 @@ describe("ConteudoRelatorioConsolidado", () => {
         ue: 20,
         componenteCurricular: 3,
         proficiencia: 4,
+        semestreId: 1,
       });
     });
 
@@ -357,6 +362,7 @@ describe("ConteudoRelatorioConsolidado", () => {
         ue: 20,
         componenteCurricular: 3,
         proficiencia: 4,
+        semestreId: 1,
       });
     });
 
