@@ -19,6 +19,7 @@ jest.mock("antd", () => {
     },
     notification: {
       success: jest.fn(),
+      info: jest.fn(),
       error: jest.fn(),
       warning: jest.fn(),
     },
@@ -1202,11 +1203,12 @@ describe("Conteudo", () => {
       );
     };
 
-    it("deve exibir mensagem de sucesso quando retornar status 200", async () => {
+    it("deve exibir sucesso quando a API confirmar a gravação", async () => {
       mockGetQuestionarioComSalvar();
 
       (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
         status: 200,
+        data: { resultado: "Gravado", quantidadeEstudantesNaoProcessados: 0 },
       });
 
       const store = createMockStoreWithUser({
@@ -1320,6 +1322,7 @@ describe("Conteudo", () => {
 
       (NovaSondagemServico.post as jest.Mock).mockRejectedValue({
         response: {
+          status: 400,
           data: dadosErro,
         },
       });
@@ -1409,6 +1412,7 @@ describe("Conteudo", () => {
 
       (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
         status: 200,
+        data: { resultado: "Gravado", quantidadeEstudantesNaoProcessados: 0 },
       });
 
       const store = createMockStoreWithUser({
@@ -1574,8 +1578,8 @@ describe("Conteudo", () => {
       await waitFor(() => {
         expect(notification.error).toHaveBeenCalledWith(
           expect.objectContaining({
-            message: "Erro ao salvar sondagem",
-            description: "Erro ao salvar a sondagem. Tente novamente.",
+            message: "Não foi possível confirmar o salvamento.",
+            description: "O preenchimento foi mantido. Confira os registros antes de tentar novamente.",
           }),
         );
       });
@@ -1584,6 +1588,7 @@ describe("Conteudo", () => {
     it("deve exibir notification com detalhes de erros de validação", async () => {
       (NovaSondagemServico.post as jest.Mock).mockRejectedValue({
         response: {
+          status: 400,
           data: {
             title: "Erro de validação",
             errors: {
@@ -1685,6 +1690,7 @@ describe("Conteudo", () => {
     it("deve enviar sondagemId do dadosLista", async () => {
       (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
         status: 200,
+        data: { resultado: "Gravado", quantidadeEstudantesNaoProcessados: 0 },
       });
 
       const store = createMockStoreWithUser({
@@ -1773,6 +1779,7 @@ describe("Conteudo", () => {
     it("deve garantir que alunos sejam incluídos no payload", async () => {
       (NovaSondagemServico.post as jest.Mock).mockResolvedValue({
         status: 200,
+        data: { resultado: "Gravado", quantidadeEstudantesNaoProcessados: 0 },
       });
 
       const store = createMockStoreWithUser({
