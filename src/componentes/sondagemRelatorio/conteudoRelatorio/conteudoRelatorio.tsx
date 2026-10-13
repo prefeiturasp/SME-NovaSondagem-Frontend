@@ -5,7 +5,7 @@ import type {
   LegendaQuestionario,
   ValoresFiltroRelatorio,
 } from "../../../core/dto/typesRelatorio";
-import { Card, Spin, Form, Row, notification } from "antd";
+import { Card, Spin, Form, Row } from "antd";
 import "./conteudoRelatorio.css";
 import FiltroRelatorio from "../filtroRelatorio/filtroRelatorio";
 import Legendas from "../../sondagem/legendas/legendas";
@@ -17,6 +17,7 @@ import Alerta from "../../biblioteca/Alerta";
 import RelatorioExportService from "../../../services/relatorioExportService/RelatorioExportService";
 import { useSelector } from "react-redux";
 import CabecalhoRelatorioAcoes from "../cabecalhoRelatorioAcoes/cabecalhoRelatorioAcoes";
+import { notifyError, notifySuccess } from "../../../core/config/antd-alerts";
 
 const ConteudoRelatorio: React.FC = () => {
   const [formFiltro] = Form.useForm();
@@ -56,14 +57,14 @@ const ConteudoRelatorio: React.FC = () => {
       });
 
       if (sucesso) {
-        notification.success({
+        notifySuccess({
           message: "Sucesso",
           description:
             "Solicitação de geração do relatório gerada com sucesso. Em breve você receberá uma notificação com o resultado.",
           duration: 4,
         });
       } else {
-        notification.error({
+        notifyError({
           message: "Erro",
           description: "Falha ao gerar relatório. Tente novamente.",
           duration: 4,
@@ -71,7 +72,7 @@ const ConteudoRelatorio: React.FC = () => {
       }
     } catch (error) {
       console.error("Erro ao gerar relatório:", error);
-      notification.error({
+      notifyError({
         message: "Erro",
         description: "Ocorreu um erro ao gerar o relatório.",
         duration: 4,

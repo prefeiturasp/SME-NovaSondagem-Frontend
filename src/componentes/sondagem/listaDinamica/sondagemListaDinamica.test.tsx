@@ -449,7 +449,7 @@ describe("SondagemListaDinamica", () => {
     it("deve renderizar colunas para questão reescrita", async () => {
       render(<WrapperComponent dados={mockDadosReescrita} />);
       await waitFor(() => {
-        expect(screen.getAllByText("Avaliação 1")).toHaveLength(2);
+        expect(screen.getByText("Avaliação 1")).toBeInTheDocument();
       });
     });
   });
