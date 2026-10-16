@@ -27,6 +27,38 @@ import styled from "styled-components";
 
 export const Icon = styled.i``;
 
+const notificarErroSalvamento = (error: any) => {
+  console.error("ERRO:", error);
+
+  const errorMessage =
+    error.response?.data?.title ??
+    error.response?.data?.message ??
+    error.response?.data?.mensagem ??
+    "Erro ao salvar a sondagem. Tente novamente.";
+
+  const errorDetails = error.response?.data?.errors
+    ? Object.entries(error.response.data.errors)
+        .map(
+          ([key, value]: [string, any]) =>
+            `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
+        )
+        .join("\n")
+    : null;
+
+  const erroValidacao =
+    error.response?.status >= 400 && error.response?.status < 500;
+  notification.error({
+    message: erroValidacao
+      ? "Erro ao salvar sondagem"
+      : "Não foi possível confirmar o salvamento.",
+    description: erroValidacao
+      ? errorDetails ?? errorMessage
+      : "O preenchimento foi mantido. Confira os registros antes de tentar novamente.",
+    duration: 5,
+    placement: "topRight",
+  });
+};
+
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
   const menuOculto = useSelector(
@@ -566,35 +598,7 @@ const Conteudo: React.FC = () => {
         });
       }
     } catch (error: any) {
-      console.error("ERRO:", error);
-
-      const errorMessage =
-        error.response?.data?.title ??
-        error.response?.data?.message ??
-        error.response?.data?.mensagem ??
-        "Erro ao salvar a sondagem. Tente novamente.";
-
-      const errorDetails = error.response?.data?.errors
-        ? Object.entries(error.response.data.errors)
-            .map(
-              ([key, value]: [string, any]) =>
-                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
-            )
-            .join("\n")
-        : null;
-
-      const erroValidacao =
-        error.response?.status >= 400 && error.response?.status < 500;
-      notification.error({
-        message: erroValidacao
-          ? "Erro ao salvar sondagem"
-          : "Não foi possível confirmar o salvamento.",
-        description: erroValidacao
-          ? errorDetails ?? errorMessage
-          : "O preenchimento foi mantido. Confira os registros antes de tentar novamente.",
-        duration: 5,
-        placement: "topRight",
-      });
+      notificarErroSalvamento(error);
     } finally {
       setLoadingSalvar(false);
     }
