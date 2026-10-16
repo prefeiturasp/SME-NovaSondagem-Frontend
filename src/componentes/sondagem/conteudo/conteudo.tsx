@@ -27,6 +27,38 @@ import styled from "styled-components";
 
 export const Icon = styled.i``;
 
+const notificarErroSalvamento = (error: any) => {
+  console.error("ERRO:", error);
+
+  const errorMessage =
+    error.response?.data?.title ??
+    error.response?.data?.message ??
+    error.response?.data?.mensagem ??
+    "Erro ao salvar a sondagem. Tente novamente.";
+
+  const errorDetails = error.response?.data?.errors
+    ? Object.entries(error.response.data.errors)
+        .map(
+          ([key, value]: [string, any]) =>
+            `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
+        )
+        .join("\n")
+    : null;
+
+  const erroValidacao =
+    error.response?.status >= 400 && error.response?.status < 500;
+  notification.error({
+    message: erroValidacao
+      ? "Erro ao salvar sondagem"
+      : "Não foi possível confirmar o salvamento.",
+    description: erroValidacao
+      ? errorDetails ?? errorMessage
+      : "O preenchimento foi mantido. Confira os registros antes de tentar novamente.",
+    duration: 5,
+    placement: "topRight",
+  });
+};
+
 const Conteudo: React.FC = () => {
   const usuario = useSelector((store: any) => store.usuario);
   const menuOculto = useSelector(
@@ -344,6 +376,7 @@ const Conteudo: React.FC = () => {
     componenteCurricularId?: number,
     proficienciaId?: number,
     bimestreId?: number | null,
+    aposSalvar = false,
   ) => {
     const disciplinaId = componenteCurricularId ?? disciplinaSelecionada;
     const profId = proficienciaId ?? proficienciaSelecionada;
@@ -393,8 +426,11 @@ const Conteudo: React.FC = () => {
         resposta.data.alteradoPor,
       ].filter((item) => item != null && item !== "");
       setDadosAuditoria(arrayAuditoria);
+      return true;
     } catch (error: any) {
       console.error("Erro ao buscar dados da lista:", error);
+
+      if (aposSalvar) return false;
 
       if (error.response?.status === 404) {
         notification.warning({
@@ -483,7 +519,68 @@ const Conteudo: React.FC = () => {
         headers: { "X-Token-Principal": usuario?.token },
       });
 
-      if (resposta.status === 200) {
+      const resultado = resposta.data?.resultado;
+      const naoProcessados = resposta.data?.quantidadeEstudantesNaoProcessados;
+
+      if (
+        resposta.status !== 200 ||
+        !["Gravado", "SemAlteracoes", "NaoProcessado"].includes(resultado) ||
+        !Number.isInteger(naoProcessados) ||
+        naoProcessados < 0
+      ) {
+        notification.error({
+          message: "Não foi possível confirmar o salvamento.",
+          description:
+            "A resposta recebida não confirmou o resultado. Confira os registros antes de tentar novamente.",
+          duration: 0,
+          placement: "topRight",
+        });
+        return;
+      }
+
+      if (resultado === "NaoProcessado") {
+        notification.warning({
+          message: "Nenhuma resposta foi gravada.",
+          description:
+            "Não foram encontrados estudantes ativos para esse salvamento.",
+          duration: 0,
+          placement: "topRight",
+        });
+        return;
+      }
+
+      if (naoProcessados > 0) {
+        notification.warning({
+          message:
+            resultado === "Gravado"
+              ? "Salvamento concluído somente para os estudantes ativos."
+              : "Nenhuma alteração para salvar nos estudantes ativos.",
+          description: `${naoProcessados} ${naoProcessados === 1
+            ? "estudante não foi processado por não estar ativo"
+            : "estudantes não foram processados por não estarem ativos"}. O preenchimento foi mantido na tela.`,
+          duration: 0,
+          placement: "topRight",
+        });
+        return;
+      }
+
+      if (resultado === "SemAlteracoes") {
+        notification.info({
+          message: "Nenhuma alteração para salvar.",
+          duration: 5,
+          placement: "topRight",
+        });
+        return;
+      }
+
+      const telaAtualizada = await buscarDadosListaDoBancoDeDados(
+        disciplinaSelecionada ?? undefined,
+        proficienciaSelecionada ?? undefined,
+        bimestreSelecionado,
+        true,
+      );
+
+      if (telaAtualizada) {
         notification.success({
           message: "Sondagem salva com sucesso!",
           description:
@@ -491,36 +588,31 @@ const Conteudo: React.FC = () => {
           duration: 5,
           placement: "topRight",
         });
-        executarBusca();
+      } else {
+        notification.warning({
+          message: "Sondagem salva, mas não foi possível atualizar a tela.",
+          description:
+            "O preenchimento foi mantido. Consulte novamente para conferir os registros salvos.",
+          duration: 0,
+          placement: "topRight",
+        });
       }
     } catch (error: any) {
-      console.error("ERRO:", error);
-
-      const errorMessage =
-        error.response?.data?.title ??
-        error.response?.data?.message ??
-        error.response?.data?.mensagem ??
-        "Erro ao salvar a sondagem. Tente novamente.";
-
-      const errorDetails = error.response?.data?.errors
-        ? Object.entries(error.response.data.errors)
-            .map(
-              ([key, value]: [string, any]) =>
-                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
-            )
-            .join("\n")
-        : null;
-
-      notification.error({
-        message: "Erro ao salvar sondagem",
-        description: errorDetails ?? errorMessage,
-        duration: 5,
-        placement: "topRight",
-      });
+      notificarErroSalvamento(error);
     } finally {
       setLoadingSalvar(false);
     }
-  }, [usuario?.token, gerarDados, turma]);
+  }, [
+    usuario?.token,
+    gerarDados,
+    turma,
+    dadosLista,
+    turmaSelecionada,
+    ano,
+    disciplinaSelecionada,
+    proficienciaSelecionada,
+    bimestreSelecionado,
+  ]);
 
   const CancelarCadastroSondagem = async () => {
     if (proficienciaSelecionada && disciplinaSelecionada) {
@@ -587,7 +679,7 @@ const Conteudo: React.FC = () => {
             onClick={() => {
               CancelarCadastroSondagem();
             }}
-            disabled={!podeSalvar}
+            disabled={!podeSalvar || loadingSalvar}
           >
             Cancelar
           </Button>
@@ -633,7 +725,7 @@ const Conteudo: React.FC = () => {
                     options={listaDisciplinas}
                     placeholder="Selecione o componente curricular"
                     onChange={onChangeDisciplinas}
-                    disabled={desabilitarDisciplina}
+                    disabled={desabilitarDisciplina || loadingSalvar}
                   />
                 </Form.Item>
               </Col>
@@ -654,7 +746,7 @@ const Conteudo: React.FC = () => {
                     options={listaProficiencia}
                     placeholder="Selecione a proficiência"
                     onChange={onChangeProficiencia}
-                    disabled={desabilitarProficiencia}
+                    disabled={desabilitarProficiencia || loadingSalvar}
                   />
                 </Form.Item>
               </Col>
@@ -670,7 +762,7 @@ const Conteudo: React.FC = () => {
                       options={listaBimestre}
                       placeholder="Selecione o bimestre"
                       onChange={onChangeBimestre}
-                      disabled={desabilitarBimestre}
+                      disabled={desabilitarBimestre || loadingSalvar}
                     />
                   </Form.Item>
                 </Col>
@@ -682,7 +774,7 @@ const Conteudo: React.FC = () => {
           <SondagemListaDinamica
             dados={dadosLista}
             formListaDinamica={formListaDinamica}
-            podeSalvar={podeSalvar}
+            podeSalvar={podeSalvar && !loadingSalvar}
             token={usuario?.token ?? ""}
           />
         </Spin>
