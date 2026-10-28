@@ -26,7 +26,6 @@ import styled from "styled-components";
 import {
   msgError,
   notifyError,
-  notifySuccess,
   notifyWarning,
 } from "../../../core/config/antd-alerts";
 
