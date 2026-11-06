@@ -31,13 +31,22 @@ export default defineConfig({
       },
       shared: {
         react: {
-          requiredVersion: "^18.2.0",
+          requiredVersion: "^19.2.8",
         },
         "react-dom": {
-          requiredVersion: "^18.2.0",
+          requiredVersion: "^19.2.8",
         },
         "react-redux": {
           requiredVersion: "^8.1.3",
+        },
+        redux: {
+          requiredVersion: "^4.0.4",
+        },
+        "@reduxjs/toolkit": {
+          requiredVersion: "^1.9.7",
+        },
+        "react-router-dom": {
+          requiredVersion: "^6.10.0",
         },
         antd: {
           requiredVersion: "^5.4.0",
