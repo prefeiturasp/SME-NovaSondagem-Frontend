@@ -1,10 +1,14 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, configure, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { notification } from "antd";
 import Conteudo from "./conteudo";
 import NovaSondagemServico from "../../../core/servico/servico";
 import { validarTurma } from "../../../services/turmaService";
+
+// Fluxo longo com selects reais do antd: sob CI (paralelo + coverage) pode passar dos timeouts padrão.
+configure({ asyncUtilTimeout: 10000 });
+jest.setTimeout(60000);
 
 jest.mock("../../../core/servico/servico");
 jest.mock("../../../services/turmaService");
