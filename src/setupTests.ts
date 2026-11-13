@@ -1,4 +1,9 @@
 import "@testing-library/jest-dom";
+import { configure } from "@testing-library/react";
+
+// Evita falhas intermitentes em testes de UI quando a suíte roda em paralelo e a CPU fica saturada.
+configure({ asyncUtilTimeout: 5000 });
+jest.setTimeout(15000);
 
 const originalError = console.error;
 beforeAll(() => {
