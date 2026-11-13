@@ -7,7 +7,6 @@ import {
   Row,
   Col,
   Spin,
-  notification,
 } from "antd";
 import SondagemListaDinamica from "../../../componentes/sondagem/listaDinamica/sondagemListaDinamica";
 import type { DadosTabelaDinamica } from "../../../core/dto/types";
@@ -26,6 +25,8 @@ import styled from "styled-components";
 import {
   msgError,
   notifyError,
+  notifyInfo,
+  notifySuccess,
   notifyWarning,
 } from "../../../core/config/antd-alerts";
 
@@ -51,7 +52,7 @@ const notificarErroSalvamento = (error: any) => {
 
   const erroValidacao =
     error.response?.status >= 400 && error.response?.status < 500;
-  notification.error({
+  notifyError({
     message: erroValidacao
       ? "Erro ao salvar sondagem"
       : "Não foi possível confirmar o salvamento.",
@@ -532,7 +533,7 @@ const Conteudo: React.FC = () => {
         !Number.isInteger(naoProcessados) ||
         naoProcessados < 0
       ) {
-        notification.error({
+        notifyError({
           message: "Não foi possível confirmar o salvamento.",
           description:
             "A resposta recebida não confirmou o resultado. Confira os registros antes de tentar novamente.",
@@ -543,7 +544,7 @@ const Conteudo: React.FC = () => {
       }
 
       if (resultado === "NaoProcessado") {
-        notification.warning({
+        notifyWarning({
           message: "Nenhuma resposta foi gravada.",
           description:
             "Não foram encontrados estudantes ativos para esse salvamento.",
@@ -554,7 +555,7 @@ const Conteudo: React.FC = () => {
       }
 
       if (naoProcessados > 0) {
-        notification.warning({
+        notifyWarning({
           message:
             resultado === "Gravado"
               ? "Salvamento concluído somente para os estudantes ativos."
@@ -569,7 +570,7 @@ const Conteudo: React.FC = () => {
       }
 
       if (resultado === "SemAlteracoes") {
-        notification.info({
+        notifyInfo({
           message: "Nenhuma alteração para salvar.",
           duration: 5,
           placement: "topRight",
@@ -585,7 +586,7 @@ const Conteudo: React.FC = () => {
       );
 
       if (telaAtualizada) {
-        notification.success({
+        notifySuccess({
           message: "Sondagem salva com sucesso!",
           description:
             "Os dados da sondagem foram salvos e estão disponíveis para consulta.",
@@ -593,7 +594,7 @@ const Conteudo: React.FC = () => {
           placement: "topRight",
         });
       } else {
-        notification.warning({
+        notifyWarning({
           message: "Sondagem salva, mas não foi possível atualizar a tela.",
           description:
             "O preenchimento foi mantido. Consulte novamente para conferir os registros salvos.",
